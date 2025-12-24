@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence, useAnimation } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
 import type { Character, CharacterRole, GearSlot } from '../types/character';
 import { getExperienceProgress } from '../utils/leveling';
@@ -9,7 +9,7 @@ import type { Item } from '../types/items';
 import { SkillGemTooltip } from './skills/SkillGemTooltip';
 import { AddCharacterModal } from './team/AddCharacterModal';
 import { EditCharacterModal } from './team/EditCharacterModal';
-import { getClassById, getClassPortrait, getClassBackground, getClassColor } from '../types/classes';
+import { getClassById, getClassBackground, getClassColor } from '../types/classes';
 import { ItemTooltip } from './shared/ItemTooltip';
 import { calculateTotalCharacterStats } from '../systems/equipmentStats';
 import { calculateArmorReduction, calculateEvasionChance } from '../types/character';
@@ -132,8 +132,7 @@ const GEAR_SLOT_NAMES: Record<GearSlot, string> = {
 // Equipment Slot Component
 function EquipmentSlot({ 
   slot, 
-  item, 
-  roleColor 
+  item
 }: { 
   slot: GearSlot; 
   item: Item | undefined;
@@ -192,8 +191,7 @@ function EquipmentSlot({
 // Skill Gem Display Component
 function SkillGemDisplay({ 
   skillGemId, 
-  supportGemIds,
-  roleColor 
+  supportGemIds
 }: { 
   skillGemId: string; 
   supportGemIds: string[];
@@ -273,8 +271,7 @@ function CharacterCard({
   onSelect,
   onEdit,
   onRemove,
-  inventory,
-  isNew = false,
+  inventory
 }: {
   character: Character;
   isSelected: boolean;
@@ -282,7 +279,6 @@ function CharacterCard({
   onEdit: () => void;
   onRemove: () => void;
   inventory: Item[];
-  isNew?: boolean;
 }) {
   const [isRemoving, setIsRemoving] = useState(false);
   
@@ -290,13 +286,11 @@ function CharacterCard({
   const classId = character.classId;
   const classData = classId ? getClassById(classId) : null;
   const classColors = classId ? getClassColor(classId) : null;
-  const portrait = classId ? getClassPortrait(classId) : null;
   const background = classId ? getClassBackground(classId) : null;
   
   // Use class colors if available, otherwise fall back to role colors
   const primaryColor = classColors?.primary || ROLE_COLORS[character.role].primary;
   const secondaryColor = classColors?.secondary || ROLE_COLORS[character.role].primary;
-  const roleColors = ROLE_COLORS[character.role];
   
   const progress = character.level < 100 ? getExperienceProgress(character) : null;
   
@@ -998,15 +992,14 @@ export function TeamTab() {
     selectedCharacterId, 
     selectCharacter, 
     addCharacter, 
-    removeCharacter,
-    updateCharacter
+    removeCharacter
   } = useGameStore();
   
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [newCharRole, setNewCharRole] = useState<CharacterRole>('tank');
   const [newCharClassId, setNewCharClassId] = useState<import('../types/classes').CharacterClassId | null>(null);
-  const [slotBeingFilled, setSlotBeingFilled] = useState<number | null>(null);
+  const [_slotBeingFilled, setSlotBeingFilled] = useState<number | null>(null);
 
   const selectedCharacter = team.find(c => c.id === selectedCharacterId);
   

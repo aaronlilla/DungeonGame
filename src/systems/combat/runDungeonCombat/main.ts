@@ -1,6 +1,5 @@
-import type { DungeonCombatParams, CombatContext } from '../types';
+import type { DungeonCombatParams } from '../types';
 import type { DungeonRunResult } from '../../../types/dungeon';
-import type { TeamMemberState, PlayerAbility, CombatState } from '../../../types/combat';
 import { sleep } from '../types';
 import { initializeCombat } from './initialization';
 import { processPull } from './pullProcessor';
@@ -27,7 +26,7 @@ export async function runDungeonCombat(params: DungeonCombatParams): Promise<Dun
     mapContext
   } = params;
 
-  const { setIsRunning, setRunResult } = callbacks;
+  const { setIsRunning } = callbacks;
 
   // Initialize combat
   const init = initializeCombat(

@@ -2,33 +2,30 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import type { 
-  Character, 
   CharacterRole, 
   Item, 
   DungeonKey, 
   DungeonRoute,
   DungeonRunResult,
-  EquippedSkillGem,
   MapItem,
   Fragment,
   LootDrop,
   LeagueEncounter
 } from '../types';
-import { generateMap, generateFragment } from '../types/maps';
-import { createCharacter } from '../types/character';
+import { generateMap } from '../types/maps';
+import { createCharacter, type Character } from '../types/character';
 import { SAMPLE_DUNGEON } from '../types/dungeon';
 import { generateRandomItem } from '../systems/crafting';
-import { SKILL_GEMS, SUPPORT_GEMS } from '../types/skills';
+import { SKILL_GEMS, SUPPORT_GEMS, getSkillGemById, getSupportGemById, canSupportApplyToSkill } from '../types/skills';
 import { addExperienceToCharacter as addExpToChar } from '../utils/leveling';
 import { createSmartSkillConfig, type SkillUsageConfig } from '../types/skillUsage';
 import type { TalentTierLevel } from '../types/talents';
-import { getItemGridSize, getItemBaseById, type GearSlot, ITEM_BASES, getBasesForSlot } from '../types/items';
-import { canPlaceItem, buildOccupancyGrid, findAvailablePosition, buildMapOccupancyGrid } from '../utils/gridUtils';
+import { getItemGridSize, type GearSlot } from '../types/items';
+import { canPlaceItem, buildOccupancyGrid, findAvailablePosition } from '../utils/gridUtils';
 import { applyOrbToItem } from '../systems/crafting';
 import { validateEquipment, getEquipmentSideEffects, checkItemRequirements } from '../utils/equipmentValidation';
 import { calculateTotalCharacterStats } from '../systems/equipmentStats';
-import { getClassById, type CharacterClassId } from '../types/classes';
-import type { Character } from '../types/character';
+import { getClassById } from '../types/classes';
 import { ALL_POE_BASE_ITEMS } from '../data/poeBaseItems';
 import { generatePoeItem } from '../systems/poeCrafting';
 import { poeItemToLegacyItem } from '../systems/poeItemAdapter';
@@ -235,7 +232,7 @@ function generateStarterItems(character: Character): Map<GearSlot, Item> {
   };
   
   // Helper to get appropriate PoE base item for a slot
-  const getPoeBaseForSlot = (slot: GearSlot, itemClass: PoeItemClass): typeof ALL_POE_BASE_ITEMS[0] | null => {
+  const getPoeBaseForSlot = (_slot: GearSlot, itemClass: PoeItemClass): typeof ALL_POE_BASE_ITEMS[0] | null => {
     // Get all bases for this item class at appropriate level, excluding talismans
     let candidates = ALL_POE_BASE_ITEMS.filter(b => 
       b.itemClass === itemClass && b.dropLevel <= level
@@ -690,7 +687,6 @@ export const useGameStore = create<GameState>()(
         let duplicatesRemoved = 0;
         
         for (const tab of state.stashTabs) {
-          const originalLength = tab.items.length;
           tab.items = tab.items.filter(stashItem => {
             if (seenItemIds.has(stashItem.itemId)) {
               // Duplicate detected - remove it
@@ -814,7 +810,24 @@ export const useGameStore = create<GameState>()(
         if (!char) return;
         
         const skillSlot = char.skillGems.find(s => s.slotIndex === skillSlotIndex);
-        if (!skillSlot) return;
+        if (!skillSlot || !skillSlot.skillGemId) return;
+        
+        // Validate support gem compatibility
+        const skill = getSkillGemById(skillSlot.skillGemId);
+        const support = getSupportGemById(supportGemId);
+        
+        if (!skill || !support) return;
+        
+        if (!canSupportApplyToSkill(support, skill)) {
+          console.warn(`Cannot equip ${support.name} to ${skill.name}: incompatible tags`);
+          return;
+        }
+        
+        // Check if support slot is within max slots
+        if (supportSlotIndex >= skill.maxSupportSlots) {
+          console.warn(`Cannot equip support gem: skill only has ${skill.maxSupportSlots} support slots`);
+          return;
+        }
         
         // Ensure support array is long enough
         while (skillSlot.supportGemIds.length <= supportSlotIndex) {
@@ -1074,7 +1087,7 @@ export const useGameStore = create<GameState>()(
         console.log('[CLEAR ALL MAPS] All maps:', state.mapStash.map(m => ({ id: m.id, tier: m.tier, name: m.name })));
       }),
 
-      moveMapInStash: (mapId, x, y) => {
+      moveMapInStash: (_mapId, _x, _y) => {
         // No longer needed - maps don't have fixed positions
         return true;
       },
@@ -1085,7 +1098,7 @@ export const useGameStore = create<GameState>()(
         console.log(`[Fragment Collected] ${fragment.name} (${baseId}). New count: ${state.fragmentCounts[baseId]}`);
       }),
       
-      removeFragment: (fragmentId) => set(state => {
+      removeFragment: (_fragmentId) => set(() => {
         // This is now deprecated, we use fragment counts
       }),
       
@@ -1493,7 +1506,7 @@ export const useGameStore = create<GameState>()(
                     
                     if (isOldFormat) {
                       // This is an Item object from old format
-                      const item = oldItem as Item;
+                      const item = oldItem as unknown as Item;
                       const itemSize = getItemGridSize(item);
                       const grid = buildOccupancyGrid(newStashTabs[tabIndex].items, state.inventory || []);
                       const pos = findAvailablePosition(grid, itemSize);
@@ -1551,7 +1564,6 @@ export const useGameStore = create<GameState>()(
         if (state.stashTabs && Array.isArray(state.stashTabs)) {
           for (const tab of state.stashTabs) {
             if (tab.items && Array.isArray(tab.items)) {
-              const originalLength = tab.items.length;
               tab.items = tab.items.filter(stashItem => {
                 if (stashItem && stashItem.itemId) {
                   if (seenItemIds.has(stashItem.itemId)) {
@@ -1585,7 +1597,6 @@ export const useGameStore = create<GameState>()(
             if (state.stashTabs && Array.isArray(state.stashTabs)) {
               for (const tab of state.stashTabs) {
                 if (tab.items && Array.isArray(tab.items)) {
-                  const originalLength = tab.items.length;
                   tab.items = tab.items.filter(stashItem => {
                     if (stashItem && stashItem.itemId) {
                       if (seenItemIds.has(stashItem.itemId)) {

@@ -1,4 +1,5 @@
-import type { DungeonRunResult, CombatState } from '../../types/dungeon';
+import type { DungeonRunResult } from '../../types/dungeon';
+import type { CombatState } from '../../types/combat';
 import type { TeamMemberState } from '../../types/combat';
 import { generateDungeonLoot, generateOrbDrops, generateFragmentDrops } from '../crafting';
 import type { DungeonCombatCallbacks } from './types';
@@ -16,7 +17,7 @@ export function createWipeResult(
   const wipeLootCount = Math.max(1, Math.floor(progressPercent * 3) + Math.floor(selectedKeyLevel / 5));
   const loot = generateDungeonLoot(selectedKeyLevel, false, 0).slice(0, wipeLootCount);
   const orbDrops = generateOrbDrops(selectedKeyLevel, false, progressPercent);
-  const fragmentDrops = generateFragmentDrops(selectedKeyLevel, false, 0, scaling.itemQuantity, scaling.itemRarity);
+  const fragmentDrops = generateFragmentDrops(selectedKeyLevel, false, 0, scaling.itemQuantity);
   const xp = Math.floor(200 * scaling.rewardMultiplier * progressPercent);
 
   return {
@@ -49,7 +50,7 @@ export function createTimeoutResult(
 ): DungeonRunResult {
   const loot = generateDungeonLoot(selectedKeyLevel, true, 0, scaling.itemQuantity, scaling.itemRarity);
   const orbDrops = generateOrbDrops(selectedKeyLevel, true);
-  const fragmentDrops = generateFragmentDrops(selectedKeyLevel, true, 0, scaling.itemQuantity, scaling.itemRarity);
+  const fragmentDrops = generateFragmentDrops(selectedKeyLevel, true, 0, scaling.itemQuantity);
   const xp = Math.floor(500 * scaling.rewardMultiplier);
 
   return {
@@ -85,7 +86,7 @@ export function createVictoryResult(
   
   const loot = generateDungeonLoot(selectedKeyLevel, true, upgradeLevel, scaling.itemQuantity, scaling.itemRarity);
   const orbDrops = generateOrbDrops(selectedKeyLevel, true);
-  const fragmentDrops = generateFragmentDrops(selectedKeyLevel, true, upgradeLevel, scaling.itemQuantity, scaling.itemRarity);
+  const fragmentDrops = generateFragmentDrops(selectedKeyLevel, true, upgradeLevel, scaling.itemQuantity);
   const xp = Math.floor(1000 * scaling.rewardMultiplier * (1 + upgradeLevel * 0.25));
 
   return {

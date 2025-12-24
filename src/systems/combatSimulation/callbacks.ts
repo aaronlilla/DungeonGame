@@ -5,7 +5,7 @@ import type { CombatRef } from '../../types/combat';
  * Creates no-op callbacks for simulation mode
  * These are required by runDungeonCombat but don't need to do anything in simulation
  */
-export function createSimulationCallbacks(combatRef: React.MutableRefObject<CombatRef>) {
+export function createSimulationCallbacks(_combatRef: React.MutableRefObject<CombatRef>) {
   // Track animation states (not used in simulation but required by callbacks)
   let teamFightAnim = 0;
   let enemyFightAnims: Record<string, number> = {};

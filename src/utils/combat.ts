@@ -62,15 +62,23 @@ function applyTeamAffectingTalents(
   return teamStates.map((member) => {
     let updatedMember = { ...member };
     
+    // Ensure evasion is always a number (not undefined)
+    if (updatedMember.evasion === undefined) {
+      updatedMember.evasion = 0;
+    }
+    
+    // Skip if this member doesn't have talent bonuses
+    if (!updatedMember.talentBonuses) return updatedMember;
+    
+    // Store reference to avoid repeated null checks
+    const memberTalentBonuses = updatedMember.talentBonuses;
+    
     // Check all team members for team-affecting talents
     team.forEach((char, charIdx) => {
       if (char.id === member.id) return; // Skip self
       
       const otherMemberBonuses = talentBonusesMap.get(char.id);
       if (!otherMemberBonuses) return;
-      
-      // Skip if this member doesn't have talent bonuses
-      if (!updatedMember.talentBonuses) return;
 
       // Apply allyProtection effects
       otherMemberBonuses.specialEffects.forEach(effect => {
@@ -78,37 +86,37 @@ function applyTeamAffectingTalents(
           // Apply based on condition
           const condition = effect.condition || '';
           if (condition === 'physical') {
-            updatedMember.talentBonuses.damageReduction += effect.value;
+            memberTalentBonuses.damageReduction += effect.value;
           } else if (condition === 'block') {
-            updatedMember.talentBonuses.blockBonus += effect.value;
+            memberTalentBonuses.blockBonus += effect.value;
           } else if (condition === 'armor') {
-            updatedMember.talentBonuses.armorMultiplier += effect.value;
+            memberTalentBonuses.armorMultiplier += effect.value;
           } else if (condition === 'elemental') {
-            updatedMember.talentBonuses.elementalDamageReduction = (updatedMember.talentBonuses.elementalDamageReduction || 0) + effect.value;
+            memberTalentBonuses.elementalDamageReduction = (memberTalentBonuses.elementalDamageReduction || 0) + effect.value;
           } else if (condition === 'suppression') {
-            updatedMember.talentBonuses.spellSuppressionChance += effect.value;
+            memberTalentBonuses.spellSuppressionChance += effect.value;
           } else if (condition === 'evasion') {
-            updatedMember.talentBonuses.evasionMultiplier += effect.value;
+            memberTalentBonuses.evasionMultiplier += effect.value;
           } else if (condition === 'attackDamage') {
-            updatedMember.talentBonuses.attackDamageReduction += effect.value;
+            memberTalentBonuses.attackDamageReduction += effect.value;
           } else if (condition === 'evade') {
-            updatedMember.talentBonuses.evadeChance += effect.value;
+            memberTalentBonuses.evadeChance += effect.value;
           }
         } else if (effect.type === 'allyEvadeChance') {
-          updatedMember.talentBonuses.evadeChance += effect.value;
+          memberTalentBonuses.evadeChance += effect.value;
         } else if (effect.type === 'allyEvasionRating') {
-          updatedMember.talentBonuses.evasionMultiplier += effect.value;
+          memberTalentBonuses.evasionMultiplier += effect.value;
         } else if (effect.type === 'allySpellDamageReduction') {
-          updatedMember.talentBonuses.spellDamageReduction += effect.value;
+          memberTalentBonuses.spellDamageReduction += effect.value;
         } else if (effect.type === 'allyChaosResistance') {
           // Store in a way that can be applied to resistances
-          updatedMember.talentBonuses.chaosResistance += effect.value;
+          memberTalentBonuses.chaosResistance += effect.value;
         } else if (effect.type === 'allyElementalDamageReduction') {
-          updatedMember.talentBonuses.elementalDamageReduction = (updatedMember.talentBonuses.elementalDamageReduction || 0) + effect.value;
+          memberTalentBonuses.elementalDamageReduction = (memberTalentBonuses.elementalDamageReduction || 0) + effect.value;
         } else if (effect.type === 'allyDamageReduction') {
-          updatedMember.talentBonuses.damageReduction += effect.value;
+          memberTalentBonuses.damageReduction += effect.value;
         } else if (effect.type === 'allyMaxLifeBonus') {
-          updatedMember.talentBonuses.healthMultiplier += effect.value;
+          memberTalentBonuses.healthMultiplier += effect.value;
         } else if (effect.type === 'allyMaxLifeFromHealing') {
           // This is applied dynamically when healing occurs
         } else if (effect.type === 'allyDRFromHealing') {
@@ -122,23 +130,23 @@ function applyTeamAffectingTalents(
         } else if (effect.type === 'allySuppressionShare') {
           // Share suppression chance
           const sourceSuppression = otherMemberBonuses.spellSuppressionChance || 0;
-          updatedMember.talentBonuses.spellSuppressionChance += Math.floor(sourceSuppression * (effect.value / 100));
+          memberTalentBonuses.spellSuppressionChance += Math.floor(sourceSuppression * (effect.value / 100));
         } else if (effect.type === 'allyAccuracyDebuffShare') {
           // Share accuracy debuff
           const sourceAccuracyDebuff = otherMemberBonuses.enemyAccuracyReduction || 0;
-          updatedMember.talentBonuses.enemyAccuracyReduction += Math.floor(sourceAccuracyDebuff * (effect.value / 100));
+          memberTalentBonuses.enemyAccuracyReduction += Math.floor(sourceAccuracyDebuff * (effect.value / 100));
         } else if (effect.type === 'allyESFromYours') {
           // Share ES percentage
           const sourceES = teamStates[charIdx]?.maxEnergyShield || 0;
-          updatedMember.talentBonuses.maxESBonus += Math.floor(sourceES * (effect.value / 100));
+          memberTalentBonuses.maxESBonus += Math.floor(sourceES * (effect.value / 100));
         } else if (effect.type === 'allyDRWhileRecharging') {
           // Applied dynamically when ES is recharging
         } else if (effect.type === 'allyDRWhileHighLife') {
           // Applied dynamically based on health
         } else if (effect.type === 'allyTakeLessDamage') {
-          updatedMember.talentBonuses.damageReduction += effect.value;
+          memberTalentBonuses.damageReduction += effect.value;
         } else if (effect.type === 'allyCritDamageReduction') {
-          updatedMember.talentBonuses.enemyCritDamageReduction += effect.value;
+          memberTalentBonuses.enemyCritDamageReduction += effect.value;
         } else if (effect.type === 'regenShareToAllies') {
           // Applied dynamically in buff processing
         }
@@ -234,8 +242,8 @@ export function initTeamStates(team: Character[], inventory: Item[] = []): TeamM
     let maxLife = getStat(char.baseStats.maxLife, 'maxLife');
     let maxMana = getStat(char.baseStats.maxMana, 'maxMana');
     let armor = getStat(char.baseStats.armor, 'armor');
-    let evasion = getStat(char.baseStats.evasion, 'evasion');
-    let energyShield = getStat(char.baseStats.energyShield, 'energyShield');
+    let evasion = getStat(char.baseStats.evasion ?? 0, 'evasion');
+    let energyShield = getStat(char.baseStats.energyShield ?? 0, 'energyShield');
     
     // Apply talent percentage bonuses
     if (talentBonuses.healthMultiplier > 0) {
@@ -338,9 +346,9 @@ export function initTeamStates(team: Character[], inventory: Item[] = []): TeamM
       mana: maxMana,
       maxMana: maxMana,
       armor: Math.max(0, armor), // Armor can't go negative
-      evasion: Math.max(0, evasion),
-      energyShield: Math.max(0, energyShield),
-      maxEnergyShield: Math.max(0, energyShield),
+      evasion: Math.max(0, evasion) as number, // Always a number, not undefined
+      energyShield: Math.max(0, energyShield) as number, // Always a number, not undefined
+      maxEnergyShield: Math.max(0, energyShield) as number, // Always a number, not undefined
       isDead: false,
       gcdEndTick: 0,
       blockChance: Math.min(75, Math.max(0, blockChance)), // Cap at 75%
@@ -364,9 +372,18 @@ export function initTeamStates(team: Character[], inventory: Item[] = []): TeamM
   });
   
   // Apply team-affecting talents from all team members
-  teamStates = applyTeamAffectingTalents(teamStates, team);
+  const updatedTeamStates = applyTeamAffectingTalents(teamStates, team);
   
-  return teamStates;
+  // Ensure all members have required properties as numbers (not undefined)
+  return updatedTeamStates.map((member): TeamMemberState => {
+    const result: TeamMemberState = {
+      ...member,
+      evasion: member.evasion ?? 0,
+      energyShield: member.energyShield ?? 0,
+      maxEnergyShield: member.maxEnergyShield ?? 0,
+    };
+    return result;
+  });
 }
 
 // Initialize player abilities

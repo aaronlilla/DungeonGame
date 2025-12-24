@@ -1,7 +1,7 @@
 import React from 'react';
-import type { PassiveNode, ClassPassiveTree } from '../../types/passives';
+import type { PassiveNode } from '../../types/passives';
 import type { Character } from '../../types/character';
-import { CLASS_PASSIVE_TREES, getPassiveTreeForClass, canAllocateNode, getDefaultClassForRole } from '../../types/passives';
+import { getPassiveTreeForClass, canAllocateNode, getDefaultClassForRole } from '../../types/passives';
 import { getClassById } from '../../types/classes';
 
 interface PassiveTreeProps {
@@ -123,7 +123,7 @@ export function PassiveTree({
         <div className="passive-tree">
           {tree.nodes.map(node => {
             const isAllocated = allocatedNodes.includes(node.id);
-            const canAllocate = canAllocateNode(classId, node.id, allocatedNodes);
+            const canAllocate = canAllocateNode(classId, node.id, allocatedNodes, character.level);
             const affordable = totalPointsUsed + node.pointCost <= tree.maxPoints;
             const nodeSize = getNodeSize(node.nodeType);
             const borderColor = getNodeBorderColor(node, isAllocated);

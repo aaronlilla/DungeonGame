@@ -6,9 +6,7 @@ import {
   getPassiveTree, 
   mapClassIdToTreeId, 
   canAllocateNode, 
-  canDeallocateNode,
-  getClassThemeColors,
-  getClassBackgroundImage
+  canDeallocateNode
 } from '../data/PassiveTreeData';
 
 // Import background images directly for better bundling
@@ -212,8 +210,6 @@ export function PassivesTab() {
     );
   }
 
-  const classData = selectedCharacter.classId ? getClassById(selectedCharacter.classId) : null;
-  const themeColors = getClassThemeColors(treeData.classId);
 
   return (
     <div className="passives-fullscreen">
@@ -237,7 +233,7 @@ export function PassivesTab() {
                       const node = treeData.nodes.get(nodeId);
                       if (node) {
                         if (node.isKeystone) charPoints += 3;
-                        else if (node.isNotable || node.isMastery) charPoints += 2;
+                        else if (node.isNotable) charPoints += 2;
                         else charPoints += 1;
                       }
                     }

@@ -68,7 +68,14 @@ export function BossSidebar({ boss, keyLevel, onClose }: BossSidebarProps) {
     isFinalBoss = true;
   }
 
-  const bossAbilities = getBossAbilities(bossDisplayName);
+  // Get abilities - try display name first, then fall back to underlying enemy name
+  let bossAbilities = getBossAbilities(bossDisplayName);
+  if (bossAbilities.length === 0 && bossEnemy) {
+    // Fallback: try the underlying enemy's name (e.g., "Bone Golem", "Death Knight", "Undying Lich")
+    // This handles cases where gate bosses have random final boss names assigned, or final bosses
+    // don't have abilities defined for their display name
+    bossAbilities = getBossAbilities(bossEnemy.name);
+  }
   const killBuff = BOSS_KILL_BUFFS[bossDisplayName];
   
   // Calculate boss stats for current key level

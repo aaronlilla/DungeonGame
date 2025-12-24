@@ -4,9 +4,10 @@
  */
 
 import type { Item, ItemRarity, GearSlot, ItemAffix } from '../types/items';
-import type { PoeItem, RolledAffix } from './poeCrafting';
+import type { PoeItem } from './poeCrafting';
+import type { RolledAffix } from '../types/poeAffixes';
 import { poeItemClassToGearSlot } from '../types/poeItems';
-import type { PoeBaseItem, PoeItemClass } from '../types/poeItems';
+import type { PoeItemClass } from '../types/poeItems';
 
 /**
  * Convert a RolledAffix to the legacy ItemAffix format
@@ -30,7 +31,7 @@ function convertAffixToLegacy(affix: RolledAffix, index: number): ItemAffix {
     tier: Math.floor(affix.ilvl / 10) + 1, // Estimate tier from ilvl
     value,
     // Store the full stat text for display
-    _poeStats: affix.stats.map(s => s.text),
+    _poeStats: affix.stats.map((s: import('../types/poeAffixes').RolledStat) => s.text),
     _poeName: affix.name,
   } as ItemAffix & { _poeStats?: string[]; _poeName?: string };
 }

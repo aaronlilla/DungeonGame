@@ -11,6 +11,9 @@ import {
   getOccupiedCells 
 } from '../../utils/gridUtils';
 import { StashGridItem } from './StashGridItem';
+import { getItemArtUrl, getFallbackArtUrl } from '../../utils/itemArt';
+import type { ExtendedItem } from '../../systems/poeItemAdapter';
+import { ALL_POE_BASE_ITEMS } from '../../data/poeBaseItems';
 
 interface StashGridProps {
   tab: StashTab;
@@ -64,6 +67,43 @@ export function StashGrid({
   
   // Track items being salvaged for animation
   const [salvagingItems, setSalvagingItems] = useState<Set<string>>(new Set());
+  
+  // Preload all item images when stash grid mounts or items change
+  useEffect(() => {
+    const preloadImages = () => {
+      tab.items.forEach(stashItem => {
+        const item = items.find(i => i.id === stashItem.itemId);
+        if (!item) return;
+        
+        const extItem = item as ExtendedItem;
+        const baseId = extItem._poeItem?.baseItem?.id || item.baseId;
+        if (!baseId) return;
+        
+        // Get art URL (same logic as StashGridItem)
+        const currentBaseItem = ALL_POE_BASE_ITEMS.find(b => b.id === baseId);
+        let artUrl: string | null = null;
+        
+        if (currentBaseItem?.visualIdentity) {
+          artUrl = getItemArtUrl(currentBaseItem.visualIdentity);
+        } else if (extItem._poeItem?.baseItem?.visualIdentity) {
+          artUrl = getItemArtUrl(extItem._poeItem.baseItem.visualIdentity);
+        } else {
+          const itemClass = currentBaseItem?.itemClass || extItem._poeItem?.baseItem?.itemClass;
+          if (itemClass) {
+            artUrl = getFallbackArtUrl(itemClass);
+          }
+        }
+        
+        // Preload the image
+        if (artUrl) {
+          const img = new Image();
+          img.src = artUrl;
+        }
+      });
+    };
+    
+    preloadImages();
+  }, [tab.items, items]);
   
   const moveItemInStash = useGameStore(state => state.moveItemInStash);
   const removeItemFromStash = useGameStore(state => state.removeItemFromStash);

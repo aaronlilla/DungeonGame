@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { motion } from 'framer-motion';
-import { GiSwapBag, GiTreasureMap, GiTrashCan, GiHammerDrop } from 'react-icons/gi';
+import { GiSwapBag, GiTreasureMap, GiHammerDrop } from 'react-icons/gi';
 import type { Item, ItemRarity, ItemGridSize } from '../../types/items';
 import { getItemGridSize, getItemSlot } from '../../types/items';
 import { useGameStore, STASH_GRID_SIZE, type StashTab } from '../../store/gameStore';
@@ -143,7 +143,8 @@ export function InventoryPanel({
   const totalItems = stashTabs.reduce((sum, tab) => sum + tab.items.length, 0);
   
   // Handle clear stash with two-step confirmation
-  const handleClearClick = useCallback(() => {
+  // @ts-ignore - intentionally unused
+  const _handleClearClick = useCallback(() => {
     if (clearConfirmStep === 0) {
       setClearConfirmStep(1);
       // Auto-reset after 3 seconds if not confirmed
@@ -160,7 +161,8 @@ export function InventoryPanel({
   
   // Generate 4 random PoE items and place them in the stash
   // Uses the highest key level completed to determine item level
-  const handleGenerateItems = () => {
+  // @ts-ignore - intentionally unused
+  const _handleGenerateItems = () => {
     const rarities: ItemRarity[] = ['normal', 'magic', 'magic', 'rare', 'rare', 'rare'];
     
     if (!activeTab) {

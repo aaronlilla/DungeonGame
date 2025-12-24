@@ -1,8 +1,8 @@
 import type { Item } from './items';
 import React from 'react';
 import { 
-  GiSkullCrossedBones, GiRat, GiTombstone, GiGhost, GiCrossedSwords,
-  GiWizardStaff, GiBatMask, GiSkullShield, GiShieldBash, GiHealthPotion, GiBroadsword
+  GiSkullCrossedBones, GiRat, GiTombstone, GiCrossedSwords,
+  GiWizardStaff, GiBatMask, GiSkullShield, GiShieldBash, GiBroadsword
 } from 'react-icons/gi';
 
 // Dungeon difficulty key level
@@ -204,12 +204,11 @@ export interface DungeonRunResult {
   // Map system
   mapTier?: number;  // The tier of the map that was run
   mapDrops?: import('./maps').MapItem[];
-  fragmentDrops?: import('./maps').Fragment[];
 }
 
 export interface CombatLogEntry {
   timestamp: number;
-  type: 'damage' | 'heal' | 'death' | 'ability' | 'buff' | 'debuff' | 'pull' | 'phase' | 'boss' | 'travel' | 'loot';
+  type: 'damage' | 'heal' | 'death' | 'ability' | 'buff' | 'debuff' | 'pull' | 'phase' | 'boss' | 'travel' | 'loot' | 'system' | 'level';
   source: string;
   target: string;
   value?: number;

@@ -1,5 +1,4 @@
 import type { EnemyType } from './dungeon';
-import type { Character } from './character';
 
 // Enemy combat behavior types
 export type EnemyBehavior = 'melee' | 'caster' | 'archer' | 'aoe' | 'tankbuster' | 'boss';

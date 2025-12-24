@@ -507,7 +507,7 @@ export function getLootFilterSound(item: Item): LootFilterSound {
 /**
  * Roll map affixes based on rarity
  */
-export function rollMapAffixes(rarity: MapRarity, itemLevel: number): MapAffix[] {
+export function rollMapAffixes(rarity: MapRarity, _itemLevel: number): MapAffix[] {
   const affixes: MapAffix[] = [];
   
   let numAffixes = 0;
@@ -533,7 +533,7 @@ export function rollMapAffixes(rarity: MapRarity, itemLevel: number): MapAffix[]
 /**
  * Generate a random map
  */
-export function generateMap(tier: number, rarity: MapRarity = 'normal'): MapItem {
+export function generateMap(tier: number, _rarity: MapRarity = 'normal'): MapItem {
   // Pick a random base, weighted by dropWeight
   const totalWeight = MAP_BASES.reduce((sum, base) => sum + base.dropWeight, 0);
   let roll = Math.random() * totalWeight;
@@ -597,7 +597,7 @@ export function generateFragment(): Fragment {
     description: base.description,
     quantityBonus: base.quantityBonus,
     rarityBonus: base.rarityBonus,
-    specialEffect: base.specialEffect as FragmentEffect | undefined
+    specialEffect: (base as any).specialEffect as FragmentEffect | undefined
   };
 }
 

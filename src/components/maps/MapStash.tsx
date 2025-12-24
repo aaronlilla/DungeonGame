@@ -90,12 +90,6 @@ export function MapStash({
     }
   };
 
-  // Group maps by tier for display
-  const mapsByTier = sortedMaps.reduce((acc, map) => {
-    if (!acc[map.tier]) acc[map.tier] = [];
-    acc[map.tier].push(map);
-    return acc;
-  }, {} as Record<number, MapItem[]>);
 
   // DEV: Generate test maps
   const handleGenerateTestMaps = () => {

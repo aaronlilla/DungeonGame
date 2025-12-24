@@ -20,7 +20,6 @@ export function calculatePlayerDamageToEnemy(
   lifeRemaining: number;
 } {
   // Check evasion for physical attacks
-  let evaded = false;
   if (damageType === 'physical' && enemy.evasion && playerAccuracy) {
     const evasionChance = calculateEvasionChance(enemy.evasion, playerAccuracy);
     if (Math.random() < evasionChance) {
@@ -62,7 +61,6 @@ export function calculatePlayerDamageToEnemy(
   
   // Energy shield absorbs damage first (PoE mechanic)
   const enemyES = enemy.energyShield || 0;
-  const enemyMaxES = enemy.maxEnergyShield || 0;
   const damageToES = Math.min(finalDamage, enemyES);
   const damageToLife = Math.max(0, finalDamage - enemyES);
   

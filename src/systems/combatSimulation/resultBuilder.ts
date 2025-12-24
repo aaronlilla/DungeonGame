@@ -1,5 +1,5 @@
 import type { Character } from '../../types/character';
-import type { Dungeon, RoutePull, DungeonRunResult } from '../../types/dungeon';
+import type { RoutePull, DungeonRunResult, CombatLogEntry } from '../../types/dungeon';
 import type { TestResult, DungeonCompletionTest } from './types';
 import type { StatsTracker } from './statsTracker';
 
@@ -11,7 +11,7 @@ export function buildTestResult(
   routePulls: RoutePull[],
   team: Character[],
   statsTracker: StatsTracker,
-  combatLog: typeof import('../../types/dungeon').CombatLogEntry[]
+  combatLog: CombatLogEntry[]
 ): TestResult {
   const result: TestResult = {
     passed: true,
@@ -44,6 +44,17 @@ export function buildTestResult(
       averageDPS: 0,
       averageHPS: 0,
       deaths: 0
+    },
+    formulaSummary: {
+      armorWorking: true,
+      evasionWorking: true,
+      blockWorking: true,
+      spellBlockWorking: true,
+      spellSuppressionWorking: true,
+      resistancesWorking: true,
+      energyShieldWorking: true,
+      criticalStrikesWorking: true,
+      healingWorking: true
     }
   };
 

@@ -1,24 +1,43 @@
 import type { TeamMemberState } from '../../types/combat';
 import { createFloatingNumber } from '../../utils/combat';
-import { sleep, TICK_MS, TICK_DURATION, secondsToTicks, ticksToSeconds } from './types';
+import { sleep, TICK_MS, secondsToTicks, ticksToSeconds } from './types';
 import type { CombatContext } from './types';
 
 /**
  * Validates and fixes health values for all team members to prevent NaN propagation
+ * Also ensures consistency between isDead and health values
  */
 function validateAndFixTeamHealth(teamStates: TeamMemberState[]): TeamMemberState[] {
   return teamStates.map(m => {
     const safeMaxHealth = (m.maxHealth != null && !isNaN(m.maxHealth) && isFinite(m.maxHealth) && m.maxHealth > 0) 
       ? m.maxHealth 
       : 1000;
-    const safeHealth = (m.health != null && !isNaN(m.health) && isFinite(m.health) && m.health >= 0) 
-      ? Math.max(0, Math.min(safeMaxHealth, m.health)) 
-      : (m.isDead ? 0 : safeMaxHealth);
+    
+    // Calculate safe health value
+    let safeHealth: number;
+    if (m.health != null && !isNaN(m.health) && isFinite(m.health) && m.health >= 0) {
+      safeHealth = Math.max(0, Math.min(safeMaxHealth, m.health));
+    } else {
+      safeHealth = m.isDead ? 0 : safeMaxHealth;
+    }
+    
+    // CRITICAL: Ensure consistency between isDead and health
+    // If health is 0 or less, member should be dead
+    // If isDead is false, health must be > 0
+    let finalIsDead = m.isDead;
+    if (safeHealth <= 0) {
+      finalIsDead = true;
+      safeHealth = 0; // Ensure dead members have exactly 0 health
+    } else if (!finalIsDead && safeHealth > 0) {
+      // Member is alive and has health - ensure isDead is false
+      finalIsDead = false;
+    }
     
     return {
       ...m,
       health: safeHealth,
-      maxHealth: safeMaxHealth
+      maxHealth: safeMaxHealth,
+      isDead: finalIsDead
     };
   });
 }
@@ -27,7 +46,7 @@ export async function performPostCombatRecovery(
   context: CombatContext,
   teamStates: TeamMemberState[]
 ): Promise<{ teamStates: TeamMemberState[]; timedOut: boolean }> {
-  const { combatRef, checkTimeout, totalTime, updateCombatState, currentCombatState, setScreenShake, setIsRunning } = context;
+  const { combatRef, checkTimeout, updateCombatState, currentCombatState, setScreenShake, setIsRunning } = context;
   // Pass combatRef to sleep calls for simulation speedup
   let timedOut = false;
   
@@ -101,7 +120,7 @@ export async function performPostCombatRecovery(
       }
     }
     const healerChar = context.team.find(c => c.id === healer.id);
-    const critChance = healerChar?.baseStats?.critChance || 10;
+    const critChance = healerChar?.baseStats?.criticalStrikeChance || 10;
     const isCritHeal = Math.random() < (critChance / 100);
     const finalHealAmount = isCritHeal ? Math.floor(healAmount * 1.5) : healAmount;
     const safeCurrentHealth = isNaN(injured.health) || !isFinite(injured.health) ? injured.maxHealth : injured.health;
@@ -156,7 +175,6 @@ export async function performPostCombatRecovery(
   
   if (healer.mana < healer.maxMana * 0.8 && !combatRef.current.stop && !timedOut) {
     const drinkTime = Math.ceil((1 - healer.mana / healer.maxMana) * 4);
-    const manaPerTick = Math.ceil((healer.maxMana - healer.mana) / (drinkTime * 100));
     
     updateCombatState(prev => ({ 
       ...prev, 
@@ -250,7 +268,7 @@ export async function performPostCombatRecovery(
       }
       
       const healerChar = context.team.find(c => c.id === healer.id);
-      const critChance = healerChar?.baseStats?.critChance || 10;
+      const critChance = healerChar?.baseStats?.criticalStrikeChance || 10;
       const isCritHeal = Math.random() < (critChance / 100);
       const finalHealAmount = isCritHeal ? Math.floor(healAmount * 1.5) : healAmount;
       const actualHeal = Math.min(injured.maxHealth - injured.health, finalHealAmount);
@@ -478,7 +496,7 @@ export async function performPostCombatRecovery(
       }
       
       const healerChar = context.team.find(c => c.id === healer.id);
-      const critChance = healerChar?.baseStats?.critChance || 10;
+      const critChance = healerChar?.baseStats?.criticalStrikeChance || 10;
       const isCritHeal = Math.random() < (critChance / 100);
       const finalHealAmount = isCritHeal ? Math.floor(healAmount * 1.5) : healAmount;
       
@@ -551,7 +569,6 @@ export async function performPostCombatRecovery(
       if (healer.mana < 16) {
         // Need to drink more mana
         const drinkTime = Math.ceil((1 - healer.mana / healer.maxMana) * 4);
-        const manaPerTick = Math.ceil((healer.maxMana - healer.mana) / (drinkTime * 100));
         
         updateCombatState(prev => ({
           ...prev,
@@ -606,6 +623,27 @@ export async function performPostCombatRecovery(
   // Final validation and ensure all alive members are at full health before returning
   teamStates = validateAndFixTeamHealth(teamStates);
   
+  // CRITICAL: Ensure all alive members have health > 0 and are at full health
+  // This is especially important after resurrection to prevent resurrected members from dying immediately
+  teamStates = teamStates.map(m => {
+    if (m.isDead) {
+      // Dead members should have 0 health
+      return { ...m, health: 0, isDead: true };
+    } else {
+      // Alive members MUST have health > 0 and should be at full health after recovery
+      const safeMaxHealth = (m.maxHealth != null && !isNaN(m.maxHealth) && isFinite(m.maxHealth) && m.maxHealth > 0) 
+        ? m.maxHealth 
+        : 1000;
+      // Ensure alive members are at full health after recovery
+      return { 
+        ...m, 
+        health: safeMaxHealth, 
+        maxHealth: safeMaxHealth,
+        isDead: false // Explicitly ensure isDead is false for alive members
+      };
+    }
+  });
+  
   // Double-check: if any alive members are below max health, they should have been healed
   // This is a safety check in case the healing loop exited prematurely
   const membersStillNeedingHealing = teamStates.filter(m => {
@@ -626,11 +664,14 @@ export async function performPostCombatRecovery(
         const safeMaxHealth = (m.maxHealth != null && !isNaN(m.maxHealth) && isFinite(m.maxHealth) && m.maxHealth > 0) 
           ? m.maxHealth 
           : 1000;
-        return { ...m, health: safeMaxHealth, maxHealth: safeMaxHealth };
+        return { ...m, health: safeMaxHealth, maxHealth: safeMaxHealth, isDead: false };
       }
       return m;
     });
   }
+  
+  // Final validation to ensure consistency
+  teamStates = validateAndFixTeamHealth(teamStates);
   
   return { teamStates, timedOut };
 }

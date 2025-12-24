@@ -9,7 +9,7 @@ interface SkillGemTooltipProps {
 }
 
 // Color coding for gem types
-const getGemColors = (category: string, damageType?: string): { primary: string; glow: string; bg: string } => {
+const getGemColors = (category: string): { primary: string; glow: string; bg: string } => {
   if (category === 'attack') return { primary: '#ff4757', glow: 'rgba(255, 71, 87, 0.4)', bg: 'rgba(255, 71, 87, 0.08)' };
   if (category === 'spell') return { primary: '#3498db', glow: 'rgba(52, 152, 219, 0.4)', bg: 'rgba(52, 152, 219, 0.08)' };
   if (category === 'heal') return { primary: '#2ecc71', glow: 'rgba(46, 204, 113, 0.4)', bg: 'rgba(46, 204, 113, 0.08)' };
@@ -38,7 +38,7 @@ export const SkillGemTooltip: React.FC<SkillGemTooltipProps> = ({
   position,
   gemLevel = 1
 }) => {
-  const colors = getGemColors(skill.category, skill.damageType);
+  const colors = getGemColors(skill.category);
   const isAttack = skill.category === 'attack';
   
   // Calculate position to keep on screen

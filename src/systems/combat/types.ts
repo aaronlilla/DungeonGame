@@ -3,14 +3,12 @@ import type {
   Dungeon, 
   RoutePull, 
   DungeonRunResult, 
-  EnemyPack, 
   CombatLogEntry 
 } from '../../types/dungeon';
 import type { Character } from '../../types/character';
 import type { 
   CombatState, 
   CombatRef, 
-  AnimatedEnemy, 
   FloatingNumber, 
   TeamMemberState,
   PlayerAbility

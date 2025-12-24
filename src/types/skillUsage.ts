@@ -118,7 +118,7 @@ export interface SkillUsageConfig {
 }
 
 // Default configurations by skill type
-export function createDefaultSkillConfig(skillType: 'damage' | 'heal' | 'buff' | 'debuff' | 'dot' | 'hot', skillId?: string): SkillUsageConfig {
+export function createDefaultSkillConfig(skillType: 'damage' | 'heal' | 'buff' | 'debuff' | 'dot' | 'hot', _skillId?: string): SkillUsageConfig {
   const baseConfig: SkillUsageConfig = {
     enabled: true,
     priority: 5,
@@ -455,7 +455,7 @@ function checkHealthCondition(operator: ComparisonOperator, value: number, thres
   }
 }
 
-// Human-readable description of a skill config
+// Human-readable description of a skill config (compact version for tooltips)
 export function describeSkillConfig(config: SkillUsageConfig): string {
   const conditions: string[] = [];
   
@@ -519,6 +519,91 @@ export function describeSkillConfig(config: SkillUsageConfig): string {
   }
   
   return conditions.length > 0 ? conditions.join(', ') : 'Always';
+}
+
+// Detailed, descriptive version for UI display
+export function describeSkillConfigDetailed(config: SkillUsageConfig): string {
+  if (!config.enabled) return 'Skill is disabled and will not be cast';
+  
+  const conditions: string[] = [];
+  
+  // Cooldown mode first (most important behavior)
+  if (config.cooldown.mode === 'on_cooldown') {
+    conditions.push('⚡ Uses immediately when available');
+  } else if (config.cooldown.mode === 'save_for_burst') {
+    conditions.push('💾 Saves for boss fights or Bloodlust');
+  }
+  
+  // Target count
+  switch (config.targetCount) {
+    case 'single': conditions.push('🎯 Only when exactly 1 enemy'); break;
+    case 'two_plus': conditions.push('👥 When 2 or more enemies'); break;
+    case 'three_plus': conditions.push('👥👥👥 When 3 or more enemies'); break;
+    case 'five_plus': conditions.push('👥👥👥👥👥 When 5 or more enemies'); break;
+    case 'aoe': conditions.push('💥 When maximum enemies present'); break;
+  }
+  
+  // Target type
+  switch (config.targetType) {
+    case 'elite': conditions.push('⭐ Only on elite enemies'); break;
+    case 'elite_plus': conditions.push('⭐ Only on elite+ enemies (elite, miniboss, boss)'); break;
+    case 'boss': conditions.push('👑 Only on bosses'); break;
+    case 'lowest_health': conditions.push('🎯 Targets lowest health enemy'); break;
+    case 'highest_health': conditions.push('🎯 Targets highest health enemy'); break;
+  }
+  
+  // Health conditions
+  if (config.selfHealth.enabled) {
+    const opDesc = operatorDescription(config.selfHealth.operator);
+    conditions.push(`❤️ When self HP ${opDesc} ${config.selfHealth.threshold}%`);
+  }
+  if (config.tankHealth.enabled) {
+    const opDesc = operatorDescription(config.tankHealth.operator);
+    conditions.push(`🛡️ When tank HP ${opDesc} ${config.tankHealth.threshold}%`);
+  }
+  if (config.allyHealth.enabled) {
+    const opDesc = operatorDescription(config.allyHealth.operator);
+    conditions.push(`🤝 When lowest ally HP ${opDesc} ${config.allyHealth.threshold}%`);
+  }
+  
+  // Mana
+  if (config.mana.enabled) {
+    const opDesc = operatorDescription(config.mana.operator);
+    conditions.push(`💧 When mana ${opDesc} ${config.mana.threshold}%`);
+  }
+  
+  // Party hurt
+  if (config.partyHurt.enabled) {
+    conditions.push(`👨‍👩‍👧‍👦 When ${config.partyHurt.minCount}+ allies below ${config.partyHurt.healthThreshold}% HP`);
+  }
+  
+  // Effect application (DOT/HOT)
+  if (config.effectApplication?.enabled) {
+    const targetName = config.effectApplication.targetGroup === 'enemies' ? 'enemies' : 'allies';
+    const effectType = config.effectApplication.targetGroup === 'enemies' ? 'DOT' : 'HOT';
+    if (config.effectApplication.count >= 99) {
+      conditions.push(`🔥 Keeps ${effectType} applied to all ${targetName}`);
+    } else {
+      const opDesc = operatorDescription(config.effectApplication.operator);
+      conditions.push(`🔥 When ${opDesc} ${config.effectApplication.count} ${targetName} have ${effectType}`);
+    }
+    if (config.effectApplication.prioritizeWithout) {
+      conditions.push(`   └ Prioritizes ${targetName} without the effect`);
+    }
+  }
+  
+  return conditions.length > 0 ? conditions.join('\n') : '✅ Always casts when available';
+}
+
+function operatorDescription(op: ComparisonOperator): string {
+  switch (op) {
+    case 'less_than': return 'is below';
+    case 'less_equal': return 'is at or below';
+    case 'greater_than': return 'is above';
+    case 'greater_equal': return 'is at or above';
+    case 'equal': return 'equals';
+    default: return '?';
+  }
 }
 
 function operatorSymbol(op: ComparisonOperator): string {

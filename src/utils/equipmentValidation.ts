@@ -74,8 +74,6 @@ export function validateEquipment(
   currentMainHand: Item | null,
   currentOffHand: Item | null
 ): EquipmentValidationResult {
-  const itemClass = getItemClass(item);
-  
   // Equipping to mainHand
   if (slot === 'mainHand') {
     if (isTwoHandedWeapon(item)) {
@@ -140,7 +138,7 @@ export function validateEquipment(
 export function getEquipmentSideEffects(
   item: Item,
   slot: string,
-  currentMainHand: Item | null,
+  _currentMainHand: Item | null,
   currentOffHand: Item | null
 ): { slotsToUnequip: ('mainHand' | 'offHand')[] } {
   const slotsToUnequip: ('mainHand' | 'offHand')[] = [];

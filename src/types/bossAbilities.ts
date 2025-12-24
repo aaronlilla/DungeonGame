@@ -3,9 +3,6 @@
  * Each boss has 2-3 rotational abilities, 1 signature ability, and a kill buff
  */
 
-import type { TeamMemberState } from './combat';
-import type { AnimatedEnemy } from './combat';
-
 export interface BossAbility {
   id: string;
   name: string;

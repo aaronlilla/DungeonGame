@@ -100,12 +100,13 @@ export function getArmorForLevel(level: number, armorMap: Map<number, number>): 
  * Map enemy danger level to item level for stat calculation
  * Danger levels: 1-5, mapped to iLvl ranges
  */
-function dangerLevelToItemLevel(dangerLevel: number, enemyType: 'normal' | 'elite' | 'miniboss' | 'boss'): number {
+// @ts-ignore - intentionally unused
+function _dangerLevelToItemLevel(_dangerLevel: number, _enemyType: 'normal' | 'elite' | 'miniboss' | 'boss'): number {
   // Base iLvl from danger level (roughly 1-5 maps to iLvl 1-50)
-  let baseILvl = dangerLevel * 10;
+  let baseILvl = _dangerLevel * 10;
   
   // Adjust by enemy type
-  switch (enemyType) {
+  switch (_enemyType) {
     case 'boss':
       baseILvl += 20; // Bosses are high level
       break;
@@ -141,12 +142,6 @@ export function assignEnemyDefensiveStats(enemy: DungeonEnemy): void {
   
   // Get PoE monster stats for defensive values
   const monsterStats = getMonsterStatsForLevel(characterLevel);
-  
-  const armorMap = parseArmorValuesByLevel();
-  const itemLevel = dangerLevelToItemLevel(enemy.dangerLevel, enemy.type);
-  
-  // Get base armor from affix data
-  const baseArmor = getArmorForLevel(itemLevel, armorMap);
   
   // Assign base values (can be overridden in enemy definitions)
   if (enemy.baseArmor === undefined) {

@@ -1,4 +1,4 @@
-import type { CombatState, AnimatedEnemy } from '../../types/combat';
+import type { AnimatedEnemy } from '../../types/combat';
 import type { EnemyPack } from '../../types/dungeon';
 import { getEnemyById } from '../../types/dungeon';
 import { getEnemyBehavior } from '../../utils/combat';
@@ -10,11 +10,11 @@ import type { CombatContext } from './types';
 export async function travelToPull(
   context: CombatContext,
   pullIdx: number,
-  packs: EnemyPack[],
+  _packs: EnemyPack[],
   targetX: number,
   targetY: number
 ): Promise<void> {
-  const { currentPos, totalTime, updateCombatState, checkTimeout, combatRef, dungeon } = context;
+  const { currentPos, totalTime, updateCombatState, checkTimeout, combatRef } = context;
   
   const distance = Math.sqrt(Math.pow(targetX - currentPos.x, 2) + Math.pow(targetY - currentPos.y, 2));
   const travelTime = Math.max(1.5, Math.min(5, distance / 200));
@@ -103,7 +103,7 @@ export function createPullEnemies(
   packs: EnemyPack[],
   pullIdx: number,
   scaling: { healthMultiplier: number; damageMultiplier: number },
-  shieldActive: boolean,
+  _shieldActive: boolean,
   mapAffixEffects?: MapAffixEffects,
   usedBossNames?: Set<string>
 ): AnimatedEnemy[] {

@@ -285,16 +285,16 @@ function initializeAffixData() {
   AFFIX_DATA.set('Body Armour:strength', strBodyArmour);
   
   // Some files have placeholder data - use strength body armour as fallback
-  const dexBodyData = normalizeAffixData(dexterityBodyArmour as RawAffixData);
+  const dexBodyData = normalizeAffixData(dexterityBodyArmour as unknown as RawAffixData);
   AFFIX_DATA.set('Body Armour:dexterity', dexBodyData.prefixes.length > 0 ? dexBodyData : strBodyArmour);
-  
-  const intBodyData = normalizeAffixData(intelligenceBodyArmour as RawAffixData);
+
+  const intBodyData = normalizeAffixData(intelligenceBodyArmour as unknown as RawAffixData);
   AFFIX_DATA.set('Body Armour:intelligence', intBodyData.prefixes.length > 0 ? intBodyData : strBodyArmour);
-  
-  const strDexBodyData = normalizeAffixData(strengthDexBodyArmour as RawAffixData);
+
+  const strDexBodyData = normalizeAffixData(strengthDexBodyArmour as unknown as RawAffixData);
   AFFIX_DATA.set('Body Armour:str_dex', strDexBodyData.prefixes.length > 0 ? strDexBodyData : strBodyArmour);
-  
-  const strIntBodyData = normalizeAffixData(strengthIntBodyArmour as RawAffixData);
+
+  const strIntBodyData = normalizeAffixData(strengthIntBodyArmour as unknown as RawAffixData);
   AFFIX_DATA.set('Body Armour:str_int', strIntBodyData.prefixes.length > 0 ? strIntBodyData : strBodyArmour);
   
   const dexIntBodyData = normalizeAffixData(dexIntBodyArmour as RawAffixData);
@@ -428,14 +428,15 @@ export function getAffixDataForItem(baseItem: PoeBaseItem): ItemClassAffixes | n
  * Get the best tier of an affix that can roll at a given item level
  * PoE rolls the HIGHEST tier that the item level allows
  */
-function getBestTierForItemLevel(group: AffixGroup, itemLevel: number): AffixTier | null {
+// @ts-ignore - intentionally unused
+function _getBestTierForItemLevel(_group: AffixGroup, _itemLevel: number): AffixTier | null {
   // Filter tiers that can roll at this item level
-  const availableTiers = group.modifiers.filter(tier => tier.ilvl <= itemLevel);
+  const availableTiers = _group.modifiers.filter((tier: AffixTier) => tier.ilvl <= _itemLevel);
   
   if (availableTiers.length === 0) return null;
   
   // Return the highest tier (highest ilvl requirement)
-  return availableTiers.reduce((best, tier) => 
+  return availableTiers.reduce((best: AffixTier, tier: AffixTier) => 
     tier.ilvl > best.ilvl ? tier : best
   );
 }
@@ -476,7 +477,7 @@ function getRandomTierForItemLevel(group: AffixGroup, itemLevel: number): AffixT
   const maxTier = group.modifiers.length;
   
   // Calculate weights for each available tier
-  const tiersWithWeights = sortedTiers.map((tier, index) => {
+  const tiersWithWeights = sortedTiers.map((tier) => {
     // Find this tier's position in the full tier list (not just available ones)
     const fullTierIndex = [...group.modifiers]
       .sort((a, b) => b.ilvl - a.ilvl)

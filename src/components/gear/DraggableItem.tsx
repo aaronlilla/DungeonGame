@@ -57,7 +57,7 @@ export function DraggableItem({
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   
   const colors = RARITY_COLORS[item.rarity] || RARITY_COLORS.common;
-  const slotIcon = SLOT_ICONS[item.slot];
+  const slotIcon = item.slot ? SLOT_ICONS[item.slot] : null;
   const size = getItemGridSize(item);
   
   // Size based on grid dimensions
@@ -90,7 +90,7 @@ export function DraggableItem({
     <>
       <motion.div
         draggable
-        onDragStart={handleDragStart}
+        onDragStart={handleDragStart as any}
         onDragEnd={handleDragEnd}
         onClick={handleClick}
         onMouseEnter={() => setIsHovered(true)}

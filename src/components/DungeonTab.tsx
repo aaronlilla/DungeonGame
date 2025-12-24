@@ -841,8 +841,8 @@ export function DungeonTab() {
     }
   };
 
-  // Check if we're fighting a boss
-  const bossEnemy = combatState.enemies.find(e => (e.type === 'boss' || e.type === 'miniboss') && e.health > 0);
+  // Check if we're fighting a boss (unused for now)
+  // const bossEnemy = combatState.enemies.find(e => (e.type === 'boss' || e.type === 'miniboss') && e.health > 0);
 
   // Show "no map activated" screen if no map is activated
   if (!activatedMap && !isRunning) {

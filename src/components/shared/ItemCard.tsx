@@ -161,7 +161,7 @@ function ItemTooltip({
         }} />
         
         {/* Implicit stats if any */}
-        {base?.implicitAffix && (
+        {item.implicit && (
           <div style={{
             fontSize: '0.7rem',
             color: 'rgba(180, 200, 220, 0.9)',
@@ -169,7 +169,7 @@ function ItemTooltip({
             textAlign: 'center',
             fontStyle: 'italic',
           }}>
-            {base.implicitAffix.description}
+            {getAffixDisplay(item.implicit)}
           </div>
         )}
         
@@ -255,7 +255,7 @@ export function ItemCard({ item, onClick, selected, compact = false }: ItemCardP
   const [isHovered, setIsHovered] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const colors = RARITY_COLORS[item.rarity] || RARITY_COLORS.common;
-  const slotIcon = SLOT_ICONS[item.slot];
+  const slotIcon = item.slot ? SLOT_ICONS[item.slot] : null;
   
   const handleMouseMove = (e: React.MouseEvent) => {
     setMousePos({ x: e.clientX, y: e.clientY });

@@ -420,7 +420,7 @@ export const SKILL_GEMS: SkillGem[] = [
     cooldown: 0,
     castTime: 0,
     maxSupportSlots: 4,
-    supportTags: ['spell', 'heal', 'duration'],
+    supportTags: ['spell', 'heal', 'duration', 'hot'],
     tags: ['spell', 'nature', 'heal', 'duration', 'hot'],
     damageEffectiveness: 30,
     baseCriticalStrikeChance: 8,
@@ -673,7 +673,7 @@ export const SKILL_GEMS: SkillGem[] = [
     cooldown: 0,
     castTime: 2.5,
     maxSupportSlots: 5,
-    supportTags: ['spell', 'cold', 'aoe', 'duration'],
+    supportTags: ['spell', 'cold', 'aoe', 'duration', 'dot'],
     tags: ['spell', 'cold', 'aoe', 'duration', 'dot', 'elemental'],
     damageEffectiveness: 35,
     baseCriticalStrikeChance: 6,
@@ -864,7 +864,7 @@ export const SKILL_GEMS: SkillGem[] = [
     cooldown: 0,
     castTime: 0.5,
     maxSupportSlots: 5,
-    supportTags: ['spell', 'fire', 'hit', 'channelling', 'aoe'],
+    supportTags: ['spell', 'fire', 'hit', 'channelling', 'aoe', 'dot'],
     tags: ['spell', 'fire', 'hit', 'channelling', 'elemental', 'cone', 'dot'],
     damageEffectiveness: 30,
     isChanneled: true,
@@ -940,9 +940,9 @@ export const SUPPORT_GEMS: SupportGem[] = [
   {
     id: 'melee_splash',
     name: 'Melee Splash Support',
-    description: 'Melee attacks deal splash damage to nearby enemies. 15% less damage. Requires melee and single-target tags.',
+    description: 'Melee attacks deal splash damage to nearby enemies. 15% less damage. Requires melee attack tag.',
     icon: React.createElement(GiWaterSplash),
-    requiredTags: ['melee', 'single-target'],
+    requiredTags: ['melee', 'attack'],
     multipliers: [
       { stat: 'damage', multiplier: 0.85, isMore: true }
     ],
@@ -1005,9 +1005,9 @@ export const SUPPORT_GEMS: SupportGem[] = [
   {
     id: 'efficacy',
     name: 'Efficacy Support',
-    description: '25% more damage. 20% increased duration. 10% increased mana cost. Requires spell, dot, or hot tag.',
+    description: '25% more damage. 20% increased duration. 10% increased mana cost. Requires spell with dot or hot effect.',
     icon: React.createElement(GiCog),
-    requiredTags: ['spell', 'dot', 'hot'],
+    requiredTags: ['spell', 'efficacy'], // Special tag - will be handled in compatibility function
     multipliers: [
       { stat: 'damage', multiplier: 1.25, isMore: true },
       { stat: 'duration', multiplier: 1.2, isMore: false }
@@ -1083,6 +1083,21 @@ export function getSkillsForRole(role: CharacterRole): SkillGem[] {
 
 export function canSupportApplyToSkill(support: SupportGem, skill: SkillGem): boolean {
   if (support.requiredTags.length === 0) return true;
+  
+  // Special case for efficacy: requires spell AND (dot OR hot)
+  if (support.id === 'efficacy') {
+    const hasSpell = skill.supportTags.includes('spell');
+    const hasDot = skill.supportTags.includes('dot');
+    const hasHot = skill.supportTags.includes('hot');
+    return hasSpell && (hasDot || hasHot);
+  }
+  
+  // For melee_splash: requires both melee AND attack
+  if (support.id === 'melee_splash') {
+    return skill.supportTags.includes('melee') && skill.supportTags.includes('attack');
+  }
+  
+  // Default: skill must have at least one of the required tags
   return support.requiredTags.some(tag => skill.supportTags.includes(tag));
 }
 

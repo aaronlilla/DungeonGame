@@ -1,31 +1,19 @@
-import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { Character, CharacterRole } from '../../types/character';
-import { GiShieldBash, GiHealthPotion, GiBroadsword, GiWizardStaff, GiFeather } from 'react-icons/gi';
+import type { Character } from '../../types/character';
+import { GiFeather } from 'react-icons/gi';
 import { getClassById, getClassPortrait, getClassColor } from '../../types/classes';
 
-const ROLE_ICONS: Record<CharacterRole, React.ReactNode> = {
-  tank: <GiShieldBash />,
-  healer: <GiHealthPotion />,
-  dps: <GiBroadsword />
-};
-
-const ROLE_PORTRAITS: Record<CharacterRole, React.ReactNode> = {
-  tank: <GiShieldBash />,
-  healer: <GiHealthPotion />,
-  dps: <GiWizardStaff />
-};
 
 // Animation variants
 const overlayVariants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1,
-    transition: { duration: 0.3, ease: 'easeOut' }
+    transition: { duration: 0.3, ease: 'easeOut' as const }
   },
   exit: { 
     opacity: 0,
-    transition: { duration: 0.2, ease: 'easeIn' }
+    transition: { duration: 0.2, ease: 'easeIn' as const }
   }
 };
 
@@ -43,7 +31,7 @@ const modalVariants = {
     filter: 'blur(0px)',
     transition: { 
       duration: 0.4, 
-      ease: [0.34, 1.56, 0.64, 1], // Bouncy spring
+      ease: [0.34, 1.56, 0.64, 1] as const, // Bouncy spring
     }
   },
   exit: { 
@@ -51,7 +39,7 @@ const modalVariants = {
     scale: 0.95,
     y: -10,
     filter: 'blur(5px)',
-    transition: { duration: 0.2, ease: 'easeIn' }
+    transition: { duration: 0.2, ease: 'easeIn' as const }
   }
 };
 
@@ -65,7 +53,6 @@ interface EditCharacterModalProps {
 export function EditCharacterModal({ 
   isOpen, 
   character, 
-  onConfirm, 
   onCancel 
 }: EditCharacterModalProps) {
   if (!character) return null;

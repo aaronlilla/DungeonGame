@@ -5,7 +5,7 @@ import type { CharacterClassId, CharacterClass } from '../../types/classes';
 import { getClassesForRole, getClassById, getClassPortrait } from '../../types/classes';
 import { useGameStore } from '../../store/gameStore';
 import { 
-  GiShieldBash, GiHealthPotion, GiBroadsword, GiScrollUnfurled, GiFeather, GiCrown,
+  GiShieldBash, GiBroadsword, GiScrollUnfurled,
   // Tank class icons
   GiCheckedShield, GiMagicShield, GiCrossedSwords, GiSwordClash, GiCloakDagger, GiGhost, 
   GiMagicSwirl, GiVortex, GiPortal,
@@ -16,7 +16,7 @@ import {
   GiSparkles, GiSwordsEmblem, GiHealthNormal,
   // Stat icons
   GiHearts, GiWaterDrop, GiShieldReflect, GiRunningNinja, GiBoltShield,
-  GiMagicGate, GiTargetArrows, GiPunchBlast, GiMuscleUp, GiLightningFrequency,
+  GiMagicGate, GiTargetArrows, GiPunchBlast, GiMuscleUp,
   GiBrain, GiHealthIncrease, GiWaterRecycling
 } from 'react-icons/gi';
 
@@ -25,11 +25,11 @@ const overlayVariants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1,
-    transition: { duration: 0.25, ease: 'easeOut' }
+    transition: { duration: 0.25, ease: 'easeOut' as const }
   },
   exit: { 
     opacity: 0,
-    transition: { duration: 0.2, ease: 'easeIn' }
+    transition: { duration: 0.2, ease: 'easeIn' as const }
   }
 };
 
@@ -40,13 +40,13 @@ const contentVariants = {
     y: 0,
     transition: { 
       duration: 0.3, 
-      ease: [0.4, 0, 0.2, 1]
+      ease: [0.4, 0, 0.2, 1] as const
     }
   },
   exit: { 
     opacity: 0, 
     y: 10,
-    transition: { duration: 0.2, ease: 'easeIn' }
+    transition: { duration: 0.2, ease: 'easeIn' as const }
   }
 };
 
@@ -57,13 +57,13 @@ const stepVariants = {
     x: 0,
     transition: { 
       duration: 0.3, 
-      ease: [0.4, 0, 0.2, 1]
+      ease: [0.4, 0, 0.2, 1] as const
     }
   },
   exit: { 
     opacity: 0, 
     x: -20,
-    transition: { duration: 0.2, ease: 'easeIn' }
+    transition: { duration: 0.2, ease: 'easeIn' as const }
   }
 };
 
@@ -75,12 +75,12 @@ const cardVariants = {
     transition: {
       delay: i * 0.03,
       duration: 0.3,
-      ease: [0.4, 0, 0.2, 1]
+      ease: [0.4, 0, 0.2, 1] as const
     }
   }),
   hover: {
     y: -4,
-    transition: { duration: 0.15, ease: 'easeOut' }
+    transition: { duration: 0.15, ease: 'easeOut' as const }
   },
   tap: {
     scale: 0.99,
@@ -95,20 +95,12 @@ const detailsVariants = {
     x: 0,
     transition: { 
       duration: 0.5, 
-      ease: [0.16, 1, 0.3, 1],
+      ease: [0.16, 1, 0.3, 1] as const,
       staggerChildren: 0.1
     }
   }
 };
 
-const detailItemVariants = {
-  hidden: { opacity: 0, y: 15 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
-  }
-};
 
 // Dark fantasy icons for each class
 const CLASS_ICONS: Record<CharacterClassId, React.ReactNode> = {

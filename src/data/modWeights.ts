@@ -197,7 +197,7 @@ export function getTierWeightMultiplier(tier: number): number {
 export function calculateModSpawnWeight(
   groupName: string, 
   tierNumber: number, 
-  maxTier: number,
+  _maxTier: number,
   itemTags: string[] = []
 ): number {
   // Check if mod can spawn on this item type

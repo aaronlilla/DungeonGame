@@ -232,7 +232,7 @@ export function MapModsPanel({ map, fragments = [] }: MapModsPanelProps) {
               </div>
               
               {/* Fragment effects */}
-              {fragments.filter(f => f !== null).map((fragment, idx) => fragment && (
+              {fragments.filter(f => f !== null).map((fragment) => fragment && (
                 <div
                   key={fragment.id}
                   style={{

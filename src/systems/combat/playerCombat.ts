@@ -1,7 +1,6 @@
 import type { AnimatedEnemy, TeamMemberState, FloatingNumber } from '../../types/combat';
 import type { Character } from '../../types/character';
 import { getEnemyById } from '../../types/dungeon';
-import { calculateExperienceFromEnemy } from '../../utils/leveling';
 import { createFloatingNumber } from '../../utils/combat';
 import { calculatePlayerDamageToEnemy } from '../../utils/enemyDamage';
 import {
@@ -11,7 +10,7 @@ import {
 } from '../../types/skills';
 import { processOnHealEffects, processOnHitEffects } from './talentEvents';
 import type { SkillGem } from '../../types/skills';
-import { TICK_DURATION, GCD_TICKS, TICKS_PER_SECOND, secondsToTicks } from './types';
+import { secondsToTicks, GCD_TICKS, TICKS_PER_SECOND } from './types';
 import type { CombatContext } from './types';
 import type { CombatLogEntry } from '../../types/dungeon';
 import { checkSkillConditions, createSmartSkillConfig, type SkillUsageConfig } from '../../types/skillUsage';
@@ -70,6 +69,26 @@ function safeSetEnemyHealth(enemy: { health: number; maxHealth: number }, newHea
 }
 
 /**
+ * Map damage types to supported types for calculatePlayerDamageToEnemy
+ */
+function mapDamageType(damageType: string): 'physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'shadow' | 'holy' {
+  // Map unsupported types to supported ones
+  if (damageType === 'nature') return 'chaos'; // Nature damage -> chaos
+  if (damageType === 'arcane') return 'shadow'; // Arcane damage -> shadow
+  if (damageType === 'mixed') return 'physical'; // Mixed damage -> physical as fallback
+  
+  // Return as-is if already supported
+  const supportedTypes: ('physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'shadow' | 'holy')[] = 
+    ['physical', 'fire', 'cold', 'lightning', 'chaos', 'shadow', 'holy'];
+  if (supportedTypes.includes(damageType as any)) {
+    return damageType as 'physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'shadow' | 'holy';
+  }
+  
+  // Default fallback
+  return 'physical';
+}
+
+/**
  * Calculate damage for a skill based on whether it's an attack (uses weapon) or spell (uses skill base damage)
  */
 function calculateSkillDamage(
@@ -77,7 +96,7 @@ function calculateSkillDamage(
   member: TeamMemberState,
   char: { baseStats?: { intelligence?: number; strength?: number } },
   bloodlustActive: boolean
-): { damage: number; damageType: 'physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'mixed' } {
+): { damage: number; damageType: 'physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'shadow' | 'holy' | 'mixed' } {
   const isAttackSkill = skill.tags?.includes('attack');
   const spellPowerMultiplier = (skill.damageEffectiveness || 100) / 100;
   
@@ -103,7 +122,7 @@ function calculateSkillDamage(
     const strength = char.baseStats?.strength || 20;
     const strengthBonus = 1 + (strength / 200); // +0.5% damage per point of strength
     // Apply talent damage multiplier
-    const talentDamageMultiplier = 1 + (member.talentBonuses.damageMultiplier / 100);
+    const talentDamageMultiplier = 1 + ((member.talentBonuses?.damageMultiplier || 0) / 100);
     const damage = Math.floor(totalWeaponDamage * spellPowerMultiplier * strengthBonus * talentDamageMultiplier * (bloodlustActive ? 1.3 : 1));
     
     // Determine primary damage type
@@ -127,11 +146,12 @@ function calculateSkillDamage(
     // Reduced base damage fallback from 150 to 50
     const baseDmg = skill.baseDamage || 50;
     // Apply talent damage multiplier
-    const talentDamageMultiplier = 1 + (member.talentBonuses.damageMultiplier / 100);
+    const talentDamageMultiplier = 1 + ((member.talentBonuses?.damageMultiplier || 0) / 100);
     // Reduced spell power effectiveness: divide by 200 instead of 100 for gentler scaling
     const damage = Math.floor(baseDmg * (1 + (spellPower * spellPowerMultiplier) / 200) * talentDamageMultiplier * (bloodlustActive ? 1.3 : 1));
     
-    return { damage, damageType: skill.damageType || 'physical' };
+    const damageType = skill.damageType === 'nature' ? 'physical' : (skill.damageType || 'physical') as 'physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'shadow' | 'holy' | 'mixed';
+    return { damage, damageType };
   }
 }
 
@@ -185,7 +205,7 @@ function applyLifesteal(
 export function processPlayerActions(
   context: CombatContext,
   teamStates: TeamMemberState[],
-  currentEnemies: AnimatedEnemy[],
+  _currentEnemies: AnimatedEnemy[],
   tickAliveEnemies: AnimatedEnemy[],
   currentTick: number
 ): { dpsFloatNumbers: FloatingNumber[]; dpsLogEntries: CombatLogEntry[] } {
@@ -193,7 +213,7 @@ export function processPlayerActions(
     const aliveMembers = teamStates.filter(m => !m.isDead);
     console.log(`[PlayerCombat] Processing player actions at tick ${currentTick} - Team: ${aliveMembers.length}/${teamStates.length} alive, Targets: ${tickAliveEnemies.length} enemies`);
   }
-  const { team, bloodlustActive, healerCooldowns, tankCooldowns, totalTime, selectedKeyLevel, scaling, experienceAwarded, updateCombatState, currentCombatState, setScreenShake, setTeamFightAnim, setEnemyFightAnims, awardExperience } = context;
+  const { team, bloodlustActive, healerCooldowns, tankCooldowns } = context;
   
   // Process healer healing
   processHealerHealing(context, teamStates, healerCooldowns, currentTick);
@@ -317,15 +337,17 @@ function processHealerHealing(
       const skillId = getSkillIdFromAbilityName(abilityName);
       const skill = skillId ? getSkillGemById(skillId) : undefined;
       
+      if (!skill) return;
+      
       // Apply talent mana cost reduction
       const talentManaCostReduction = currentHealer.talentBonuses?.manaCostReduction || 0;
       const effectiveManaCost = Math.max(0, skill.manaCost * (1 - talentManaCostReduction / 100));
       
-      if (skill && skill.baseHealing && currentHealer.mana >= effectiveManaCost) {
+      if (skill.baseHealing && currentHealer.mana >= effectiveManaCost) {
         const spellPowerMultiplier = (skill.damageEffectiveness || 100) / 100;
         const baseHeal = skill.baseHealing || 100;
         // Apply talent healing multiplier
-        const talentHealingMultiplier = 1 + (currentHealer.talentBonuses.healingMultiplier / 100);
+        const talentHealingMultiplier = 1 + ((currentHealer.talentBonuses?.healingMultiplier || 0) / 100);
         const healAmount = Math.floor(baseHeal * (1 + (spellPower * spellPowerMultiplier) / 100) * talentHealingMultiplier);
         const baseCritChance = skill.baseCriticalStrikeChance || 8;
         const increasedCritChance = healerChar?.baseStats?.criticalStrikeChance || 0;
@@ -616,7 +638,7 @@ function processHealerAutoAttack(
   const finalCritChance = calculateCriticalStrikeChance(baseCritChance, increasedCritChance);
   const isCrit = Math.random() < (finalCritChance / 100);
   // Apply talent damage multiplier
-  const talentDamageMultiplier = 1 + (member.talentBonuses?.damageMultiplier / 100);
+  const talentDamageMultiplier = 1 + ((member.talentBonuses?.damageMultiplier || 0) / 100);
   const roleDmg = 25;
   const baseDamage = Math.floor(roleDmg * (1 + strength / 150) * talentDamageMultiplier * (bloodlustActive ? 1.3 : 1));
   const finalDamage = isCrit ? Math.floor(baseDamage * 1.5) : baseDamage;
@@ -684,7 +706,7 @@ function processDpsActions(
   bloodlustActive: boolean,
   currentTick: number
 ): { floatNumbers: FloatingNumber[]; logEntries: CombatLogEntry[] } | null {
-  const { totalTime, updateCombatState, currentCombatState, setScreenShake, setTeamFightAnim, setEnemyFightAnims } = context;
+  const { totalTime, currentCombatState, setScreenShake, setTeamFightAnim, setEnemyFightAnims } = context;
   const floatNumbers: FloatingNumber[] = [];
   const logEntries: CombatLogEntry[] = [];
   
@@ -732,7 +754,7 @@ function processDpsActions(
       member.mana -= manaPerTick;
       
       // Set next tick time (modified by cast speed)
-      const baseCastSpeed = char.baseStats?.castSpeed || 100;
+      const baseCastSpeed = 100; // Base cast speed (not in BaseStats, using default)
       const castSpeedMultiplier = baseCastSpeed / 100;
       const baseTickRate = skill.channelTickRate || 0.5;
       const scaledTickRate = baseTickRate / castSpeedMultiplier;
@@ -756,7 +778,7 @@ function processDpsActions(
       const baseDmg = skill.baseDamage || 15;
       const rampBonus = skill.channelRampUp ? 1 + ((member.channelStacks || 0) * (skill.channelRampUp / 100)) : 1;
       // Apply talent damage multiplier
-      const talentDamageMultiplier = 1 + (member.talentBonuses?.damageMultiplier / 100);
+      const talentDamageMultiplier = 1 + ((member.talentBonuses?.damageMultiplier || 0) / 100);
       // Reduced spell power effectiveness: divide by 200 instead of 100 for gentler scaling
       const damage = Math.floor(baseDmg * (1 + (spellPower * spellPowerMultiplier) / 200) * talentDamageMultiplier * (bloodlustActive ? 1.3 : 1) * rampBonus);
       const critMultiplier = (char.baseStats?.criticalStrikeMultiplier || 150) / 100;
@@ -774,7 +796,7 @@ function processDpsActions(
         currentAlive.forEach(enemy => {
           const damageResult = calculatePlayerDamageToEnemy(
             finalDamage,
-            damageType,
+            mapDamageType(damageType),
             enemy,
             member.accuracy
           );
@@ -800,7 +822,7 @@ function processDpsActions(
         targets.forEach(enemy => {
           const damageResult = calculatePlayerDamageToEnemy(
             finalDamage,
-            damageType,
+            mapDamageType(damageType),
             enemy,
             member.accuracy
           );
@@ -836,14 +858,14 @@ function processDpsActions(
           // Apply enemy armor and defensive stats
           const damageResult = calculatePlayerDamageToEnemy(
             finalDamage,
-            skill.damageType || 'fire', // Use skill's damage type
+            mapDamageType(skill.damageType || 'fire'), // Use skill's damage type
             target,
             member.accuracy
           );
           
           if (damageResult.evaded) {
             // Enemy evaded - skip damage
-            return;
+            return null;
           }
           
           const safeESRemaining = isNaN(damageResult.esRemaining) || !isFinite(damageResult.esRemaining) ? (target.energyShield || 0) : Math.max(0, damageResult.esRemaining);
@@ -887,7 +909,7 @@ function processDpsActions(
             },
             member, // sourceState
             teamStates, // allTeamStates
-            currentEnemies // allEnemies
+            tickAliveEnemies // allEnemies
           );
           logEntries.push(verboseLog);
           
@@ -956,7 +978,7 @@ function processDpsActions(
       member.channelManaPerTick = skill.manaPerTick;
       
       // Set first tick time - apply talent cast speed bonus
-      const baseCastSpeed = char.baseStats?.castSpeed || 100;
+      const baseCastSpeed = 100; // Base cast speed (not in BaseStats, using default)
       const talentCastSpeedBonus = member.talentBonuses?.castSpeedBonus || 0;
       const castSpeedMultiplier = (baseCastSpeed / 100) * (1 + (talentCastSpeedBonus / 100));
       const baseTickRate = skill.channelTickRate || 0.5;
@@ -1029,7 +1051,7 @@ function processDpsActions(
       currentAlive.forEach(enemy => {
         const damageResult = calculatePlayerDamageToEnemy(
           finalDamage,
-          allEnemiesDamageType,
+          mapDamageType(allEnemiesDamageType),
           enemy,
           member.accuracy
         );
@@ -1103,7 +1125,7 @@ function processDpsActions(
         // Apply enemy armor and defensive stats
         const damageResult = calculatePlayerDamageToEnemy(
           finalDamage,
-          skill.damageType || 'fire',
+          mapDamageType(skill.damageType || 'fire'),
           target,
           member.accuracy
         );
@@ -1216,7 +1238,7 @@ function processDpsActions(
       const strength = char.baseStats?.strength || 20;
       const dexterity = char.baseStats?.dexterity || 20;
       // Apply talent damage multiplier
-      const talentDamageMultiplier = 1 + (member.talentBonuses?.damageMultiplier / 100);
+      const talentDamageMultiplier = 1 + ((member.talentBonuses?.damageMultiplier || 0) / 100);
       const baseDamage = 30 + Math.floor((strength + dexterity) / 4); // Moderate base damage
       const baseCritChance = 5;
       const increasedCritChance = char.baseStats?.criticalStrikeChance || 0;
@@ -1395,7 +1417,7 @@ function processTankActions(
         const baseDmg = shieldSlamSkill.baseDamage || 75;
         const strengthBonus = 1 + (strength * 0.002);
         // Apply talent damage multiplier
-        const talentDamageMultiplier = 1 + (member.talentBonuses?.damageMultiplier / 100);
+        const talentDamageMultiplier = 1 + ((member.talentBonuses?.damageMultiplier || 0) / 100);
         const shieldSlamDmg = Math.floor(baseDmg * attackPowerMultiplier * strengthBonus * talentDamageMultiplier * (bloodlustActive ? 1.3 : 1));
         const critMultiplier = (char.baseStats?.criticalStrikeMultiplier || 150) / 100;
         const finalDamage = isCrit ? Math.floor(shieldSlamDmg * critMultiplier) : shieldSlamDmg;
@@ -1452,7 +1474,7 @@ function processTankActions(
     
     // Thunder Clap (filler ability)
     // Apply talent damage multiplier
-    const talentDamageMultiplier = 1 + (member.talentBonuses?.damageMultiplier / 100);
+    const talentDamageMultiplier = 1 + ((member.talentBonuses?.damageMultiplier || 0) / 100);
     const thunderClapDmg = Math.floor(50 * (1 + strength / 150) * talentDamageMultiplier * (bloodlustActive ? 1.3 : 1));
     const finalDamage = isCrit ? Math.floor(thunderClapDmg * 1.5) : thunderClapDmg;
     let totalDamageDealt = 0;

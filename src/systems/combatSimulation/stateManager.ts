@@ -104,10 +104,11 @@ export class SimulationStateManager {
     
     // Merge partialState, handling Set specially
     for (const key in partialState) {
-      if (key === 'killedGateBosses' && partialState[key] instanceof Set) {
-        mergedState[key] = partialState[key];
-      } else if (partialState[key] !== undefined) {
-        mergedState[key] = partialState[key];
+      const typedKey = key as keyof Partial<CombatState>;
+      if (key === 'killedGateBosses' && partialState[typedKey] instanceof Set) {
+        (mergedState as any)[key] = partialState[typedKey];
+      } else if (partialState[typedKey] !== undefined) {
+        (mergedState as any)[key] = partialState[typedKey];
       }
     }
     
@@ -160,7 +161,6 @@ export class SimulationStateManager {
     // Also check and resurrect in combatState.teamStates directly (in case it wasn't in newState)
     // This ensures dead teammates are always immediately resurrected
     if (this.combatState.teamStates && this.combatState.teamStates.length > 0) {
-      const currentTime = this.combatState.timeElapsed;
       let anyDead = false;
       this.combatState.teamStates.forEach((member, index) => {
         if (member.isDead) {

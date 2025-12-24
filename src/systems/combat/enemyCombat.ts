@@ -11,7 +11,7 @@ import {
   calculateDamageWithResistances
 } from '../../types/character';
 import { createFloatingNumber } from '../../utils/combat';
-import { TICK_DURATION, TICKS_PER_SECOND, secondsToTicks, ticksToSeconds } from './types';
+import { secondsToTicks, ticksToSeconds } from './types';
 import type { CombatContext } from './types';
 import { processOnBlockEffects, processOnEvadeEffects, processOnLowHealthEffects } from './talentEvents';
 import {
@@ -22,7 +22,7 @@ import {
   processDebuffDamage,
   isAbilityReady
 } from './bossAbilities';
-import { createVerboseDamageLog, createVerboseStateLog } from './verboseLogging';
+import { createVerboseDamageLog } from './verboseLogging';
 
 /**
  * Track damage taken by a team member for statistics
@@ -73,7 +73,7 @@ export function processEnemyAttacks(
   currentEnemies: AnimatedEnemy[],
   currentTick: number
 ): void {
-  const { stunActive, shieldActive, scaling, totalTime, updateCombatState, currentCombatState, setTeamFightAnim, setEnemyFightAnims, batchedFloatingNumbers, batchedLogEntries } = context;
+  const { stunActive } = context;
   
   if (stunActive) {
     console.log(`[EnemyCombat] Skipping enemy attacks - stunActive is true`);
@@ -118,7 +118,7 @@ export function processEnemyAttacks(
     
     // Check if cast is complete (bosses handle their own cast completion in processBossAttack)
     if (enemy.behavior !== 'boss' && enemy.isCasting && enemy.castEndTick && currentTick >= enemy.castEndTick) {
-      processEnemyCastComplete(context, enemy, teamStates, totalTime, currentTick);
+      processEnemyCastComplete(context, enemy, teamStates, context.totalTime, currentTick);
       enemy.isCasting = false;
       enemy.castStartTick = undefined;
       enemy.castEndTick = undefined;
@@ -172,7 +172,7 @@ export function processEnemyAttacks(
 /**
  * Check if enemy can start a new action
  */
-function canEnemyAct(enemy: AnimatedEnemy, currentTick: number): boolean {
+function canEnemyAct(enemy: AnimatedEnemy, _currentTick: number): boolean {
   if (enemy.isCasting) return false;
   return true;
 }
@@ -198,8 +198,8 @@ function processEnemyCastComplete(
   context: CombatContext,
   enemy: AnimatedEnemy,
   teamStates: TeamMemberState[],
-  totalTime: number,
-  currentTick: number
+  _totalTime: number,
+  _currentTick: number
 ): void {
   const { scaling, shieldActive, updateCombatState, currentCombatState, setTeamFightAnim, setEnemyFightAnims, batchedFloatingNumbers, batchedLogEntries } = context;
   const target = teamStates.find(m => m.id === enemy.castTarget);
@@ -221,14 +221,14 @@ function processEnemyCastComplete(
   
   let dmg = 0;
   let blocked = false;
-  let damageType: string = 'physical';
+  let damageType: 'physical' | 'chaos' | 'fire' | 'cold' | 'lightning' | 'shadow' | 'holy' | 'magic' = 'physical';
   let damageBlocked = 0;
   
     if (isTankbuster && tankbusterAbility) {
     const baseAbilityDamage = tankbusterAbility.damage || 300;
     const scaledAbilityDamage = baseAbilityDamage * scaling.damageMultiplier * 1.25; // Tankbuster - reduced from 2.5x, still dangerous
     const rawDamage = scaledAbilityDamage * (shieldActive ? 0.5 : 1);
-    damageType = (tankbusterAbility.damageType || 'physical') as string;
+    damageType = (tankbusterAbility.damageType || 'physical') as 'physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'shadow' | 'holy' | 'magic';
     
     if (damageType === 'physical') {
       const armorMult = calculateArmorReduction(effectiveArmor, rawDamage);
@@ -245,7 +245,7 @@ function processEnemyCastComplete(
         target.lastBlockTime = Date.now();
         
         // Process onBlock effects
-        processOnBlockEffects(target, damageBlocked, currentTick, teamStates);
+        processOnBlockEffects(target, damageBlocked, _currentTick, teamStates);
       }
       const damageResult = calculateDamageWithResistances(
         damageAfterArmor, 'physical',
@@ -297,13 +297,13 @@ function processEnemyCastComplete(
     if (Math.random() < evasionChance) {
       dmg = 0;
       if (batchedLogEntries) {
-        batchedLogEntries.push({ timestamp: totalTime, type: 'ability', source: enemy.name, target: target.name, message: `💨 ${target.name} evades ${enemy.name}'s attack!` });
+        batchedLogEntries.push({ timestamp: _totalTime, type: 'ability', source: enemy.name, target: target.name, message: `💨 ${target.name} evades ${enemy.name}'s attack!` });
       } else {
-        updateCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'ability', source: enemy.name, target: target.name, message: `💨 ${target.name} evades ${enemy.name}'s attack!` }] }));
+        updateCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: _totalTime, type: 'ability', source: enemy.name, target: target.name, message: `💨 ${target.name} evades ${enemy.name}'s attack!` }] }));
       }
       
       // Process onEvade effects
-      processOnEvadeEffects(target, enemy.name, currentTick, teamStates);
+      processOnEvadeEffects(target, enemy.name, _currentTick, teamStates);
     } else {
       const armorMult = calculateArmorReduction(effectiveArmor, rawDamage);
       let damageAfterArmor = Math.floor(rawDamage * armorMult * painSuppMult);
@@ -319,7 +319,7 @@ function processEnemyCastComplete(
         target.lastBlockTime = Date.now();
         
         // Process onBlock effects
-        processOnBlockEffects(target, blockedDamage, currentTick, teamStates);
+        processOnBlockEffects(target, blockedDamage, _currentTick, teamStates);
       }
       const damageResult = calculateDamageWithResistances(
         damageAfterArmor, 'physical',
@@ -337,7 +337,7 @@ function processEnemyCastComplete(
     const enemyDef = getEnemyById(enemy.enemyId);
     const ability = enemyDef?.abilities?.find(a => a.name === enemy.castAbility);
     const abilityDamage = ability?.damage;
-    damageType = (ability?.damageType || 'shadow') as string;
+    damageType = (ability?.damageType || 'shadow') as 'physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'shadow' | 'holy' | 'magic';
     let rawSpellDamage = abilityDamage !== undefined 
       ? abilityDamage * scaling.damageMultiplier * 0.3 
       : enemy.damage * 0.12;
@@ -367,14 +367,14 @@ function processEnemyCastComplete(
     const safeFinalDamageToES = isNaN(finalDamageToES) || !isFinite(finalDamageToES) ? 0 : Math.max(0, finalDamageToES);
     const safeFinalDamageToLife = isNaN(finalDamageToLife) || !isFinite(finalDamageToLife) ? 0 : Math.max(0, finalDamageToLife);
     const safeCurrentHealth = isNaN(target.health) || !isFinite(target.health) ? (target.maxHealth || 0) : target.health;
-    const safeCurrentES = isNaN(target.energyShield) || !isFinite(target.energyShield) ? 0 : (target.energyShield || 0);
+    const safeCurrentES = (target.energyShield === undefined || isNaN(target.energyShield) || !isFinite(target.energyShield)) ? 0 : target.energyShield;
     target.energyShield = Math.max(0, safeCurrentES - safeFinalDamageToES);
     target.health = Math.max(0, safeCurrentHealth - safeFinalDamageToLife);
     dmg = safeFinalDamageToES + safeFinalDamageToLife;
     
     // Process onLowHealth effects if health dropped below threshold
     if (target.maxHealth > 0 && target.health / target.maxHealth < 0.5) {
-      processOnLowHealthEffects(target, currentTick, teamStates);
+      processOnLowHealthEffects(target, _currentTick, teamStates);
     }
   }
   
@@ -390,7 +390,7 @@ function processEnemyCastComplete(
       if (batchedFloatingNumbers && batchedLogEntries) {
         batchedFloatingNumbers.push(thornsFloatNum);
         batchedLogEntries.push({ 
-          timestamp: totalTime, 
+          timestamp: _totalTime, 
           type: 'damage', 
           source: target.name, 
           target: enemy.name, 
@@ -403,7 +403,7 @@ function processEnemyCastComplete(
           ...prev, 
           floatingNumbers: [...prev.floatingNumbers.slice(-20), thornsFloatNum],
           combatLog: [...prev.combatLog, { 
-            timestamp: totalTime, 
+            timestamp: _totalTime, 
             type: 'damage', 
             source: target.name, 
             target: enemy.name, 
@@ -425,12 +425,11 @@ function processEnemyCastComplete(
   setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 }));
   const jitterX = (Math.random() * 80) - 40;
   const jitterY = (Math.random() * 60) - 30;
-  const icon = isTankbuster ? '💥' : isAuto ? '🗡️' : '🔮';
   const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 40 + jitterY);
   
   // Create verbose log entry with full stats
   const verboseLog = createVerboseDamageLog(
-    totalTime,
+    _totalTime,
     enemy.name,
     target.name,
     dmg,
@@ -464,9 +463,9 @@ function processEnemyCastComplete(
   if (target.health <= 0 && !target.isDead) {
     target.isDead = true;
     if (batchedLogEntries) {
-      batchedLogEntries.push({ timestamp: totalTime, type: 'death', source: '', target: target.name, message: `💀 ${target.name} has died!` });
+      batchedLogEntries.push({ timestamp: _totalTime, type: 'death', source: '', target: target.name, message: `💀 ${target.name} has died!` });
     } else {
-      updateCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'death', source: '', target: target.name, message: `💀 ${target.name} has died!` }] }));
+      updateCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: _totalTime, type: 'death', source: '', target: target.name, message: `💀 ${target.name} has died!` }] }));
     }
   }
 }
@@ -479,10 +478,10 @@ function performMeleeAttackOnTarget(
   context: CombatContext,
   enemy: AnimatedEnemy,
   target: TeamMemberState,
-  currentTick: number,
+  _currentTick: number,
   damageMultiplier: number = 1.0
 ): boolean {
-  const { shieldActive, totalTime, updateCombatState, currentCombatState, setTeamFightAnim, setEnemyFightAnims, batchedFloatingNumbers, batchedLogEntries } = context;
+  const { shieldActive, currentCombatState, batchedFloatingNumbers, batchedLogEntries, totalTime, updateCombatState, setTeamFightAnim, setEnemyFightAnims } = context;
   
   const effectiveArmor = target.armor * (1 + (target.armorBuff || 0) / 100);
   const painSuppMult = target.damageReduction ? (1 - target.damageReduction / 100) : 1;
@@ -549,12 +548,12 @@ function performMeleeAttackOnTarget(
 function processMeleeAttack(
   context: CombatContext,
   enemy: AnimatedEnemy,
-  teamStates: TeamMemberState[],
+  _teamStates: TeamMemberState[],
   tank: TeamMemberState | undefined,
   aliveMembers: TeamMemberState[],
   currentTick: number
 ): void {
-  const { shieldActive, totalTime, updateCombatState, currentCombatState, setTeamFightAnim, setEnemyFightAnims, batchedFloatingNumbers, batchedLogEntries } = context;
+  const { shieldActive, currentCombatState, batchedFloatingNumbers, batchedLogEntries, totalTime, updateCombatState, setTeamFightAnim, setEnemyFightAnims } = context;
   
   if (!canEnemyAct(enemy, currentTick)) return;
   
@@ -626,13 +625,13 @@ function processMeleeAttack(
 function processTankbusterAttack(
   context: CombatContext,
   enemy: AnimatedEnemy,
-  teamStates: TeamMemberState[],
+  _teamStates: TeamMemberState[],
   tank: TeamMemberState | undefined,
   aliveMembers: TeamMemberState[],
   currentTick: number,
   reservedTargets: Set<string>
 ): void {
-  const { shieldActive, totalTime, updateCombatState, currentCombatState, setTeamFightAnim, setEnemyFightAnims } = context;
+  const { totalTime, updateCombatState } = context;
   
   if (!canEnemyAct(enemy, currentTick)) return;
   
@@ -667,7 +666,7 @@ function processTankbusterAttack(
 function processCasterAttack(
   context: CombatContext,
   enemy: AnimatedEnemy,
-  teamStates: TeamMemberState[],
+  _teamStates: TeamMemberState[],
   aliveMembers: TeamMemberState[],
   currentTick: number,
   reservedTargets: Set<string>
@@ -1160,7 +1159,7 @@ function processBossAttack(
         const baseDamage = enemy.damage || 30; // Use enemy damage or default
         const effectiveArmor = meleeTarget.armor * (1 + (meleeTarget.armorBuff || 0) / 100);
         const painSuppMult = meleeTarget.damageReduction ? (1 - meleeTarget.damageReduction / 100) : 1;
-        const rawDamage = baseDamage * (shieldActive ? 0.5 : 1) * scaling.damageTakenMultiplier;
+        const rawDamage = baseDamage * (shieldActive ? 0.5 : 1) * scaling.damageMultiplier;
         
         let evasionChance = meleeTarget.evasion ? calculateEvasionChance(meleeTarget.evasion, baseDamage * 100) : 0;
         const flatEvadeChance = meleeTarget.talentBonuses?.evadeChance || 0;
@@ -1171,7 +1170,10 @@ function processBossAttack(
         if (Math.random() < evasionChance) {
           // Evaded
           dmg = 0;
-          batchedFloatingNumbers.push(createFloatingNumber(0, 'evade', 0, 0));
+          if (batchedFloatingNumbers) {
+            // Evade is shown as blocked type for visual feedback
+            batchedFloatingNumbers.push(createFloatingNumber(0, 'blocked', 0, 0));
+          }
         } else {
           const armorMult = calculateArmorReduction(effectiveArmor, rawDamage);
           dmg = Math.floor(rawDamage * armorMult * painSuppMult);
@@ -1181,7 +1183,9 @@ function processBossAttack(
           }
           
           meleeTarget.health = Math.max(0, meleeTarget.health - dmg);
-          batchedFloatingNumbers.push(createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', 0, 0));
+          if (batchedFloatingNumbers) {
+            batchedFloatingNumbers.push(createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', 0, 0));
+          }
           
           if (meleeTarget.health <= 0 && !meleeTarget.isDead) {
             meleeTarget.isDead = true;
@@ -1189,9 +1193,7 @@ function processBossAttack(
           }
         }
         
-        enemy.lastAttackTick = currentTick;
-        
-        if (dmg > 0) {
+        if (dmg > 0 && batchedLogEntries) {
           batchedLogEntries.push({
             timestamp: currentTick / 10,
             type: 'damage',
@@ -1257,7 +1259,6 @@ function processBossAttack(
       const newFloats: FloatingNumber[] = [];
       
       currentAliveMembers.forEach(member => {
-        const effectiveArmor = member.armor * (1 + (member.armorBuff || 0) / 100);
         const talentDR = member.talentBonuses?.damageReduction || 0;
         const painSuppMult = talentDR > 0 ? (1 - talentDR / 100) : 1;
         const rawAoeDamage = enemy.damage * (shieldActive ? 0.5 : 1) * aoeDmgMultiplier;

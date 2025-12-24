@@ -181,7 +181,7 @@ export function CombatPanel({ isRunning, combatState, enemyFightAnims }: CombatP
                         marginBottom: isBoss ? '1rem' : '0.5rem',
                         position: isDying ? 'absolute' : 'relative',
                         width: isDying ? '100%' : 'auto',
-                        zIndex: isDying ? 100 : 'auto',
+                        zIndex: isBoss ? 100 : (isDying ? 100 : 'auto'),
                         padding: isBoss ? '1.2rem 1.4rem' : '0.5rem 0.6rem',
                         // Grand, official look for bosses
                         background: isBoss 
@@ -278,10 +278,11 @@ export function CombatPanel({ isRunning, combatState, enemyFightAnims }: CombatP
                           position: 'relative',
                           flexShrink: 0,
                           boxShadow: isBoss
-                            ? `inset 0 2px 6px rgba(0,0,0,0.6), 0 0 20px ${colors.primary}50, 0 4px 12px rgba(0,0,0,0.5)`
+                            ? `inset 0 2px 6px rgba(0,0,0,0.6), 0 0 20px ${colors.primary}50, 0 4px 12px rgba(0,0,0,0.5), 0 8px 16px rgba(0, 0, 0, 0.8)`
                             : 'inset 0 1px 3px rgba(0,0,0,0.5)',
                           overflow: 'hidden',
                           backgroundImage: isBoss ? `radial-gradient(circle at center, ${colors.primary}20, transparent 70%)` : 'none',
+                          filter: isBoss ? 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.8)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6))' : 'none',
                         }}>
                           {(() => {
                             const enemyImage = getEnemyImage(enemy.name);

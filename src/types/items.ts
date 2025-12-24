@@ -1,5 +1,4 @@
 import type { GearSlot, BaseStats, CharacterRole } from './character';
-import type { DamageType } from './skills';
 import { poeItemClassToGearSlot } from './poeItems';
 
 // Re-export GearSlot for convenience
@@ -40,7 +39,7 @@ export interface AffixDefinition {
   id: string;
   name: string;
   type: AffixType;
-  statModified: keyof BaseStats | 'addedDamage' | 'resistance' | 'lifeOnHit' | 'manaOnKill';
+  statModified: keyof BaseStats | 'addedDamage' | 'resistance' | 'lifeOnHit' | 'manaOnKill' | 'haste' | 'versatility' | 'mastery' | 'leech';
   tiers: AffixTier[];
   allowedSlots: GearSlot[];
   tags: string[];
@@ -114,6 +113,7 @@ export const SLOT_GRID_SIZES: Record<GearSlot, ItemGridSize> = {
 interface PoeBaseItemSize {
   inventoryWidth: number;
   inventoryHeight: number;
+  itemClass?: import('./poeItems').PoeItemClass;
 }
 
 interface PoeItemRef {

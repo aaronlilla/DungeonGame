@@ -8,7 +8,7 @@ import type { BossAbility, BossDebuff, BossBuff } from '../../types/bossAbilitie
 import { BOSS_ABILITIES } from '../../types/bossAbilities';
 import { calculateArmorReduction, rollBlock, BLOCK_DAMAGE_REDUCTION } from '../../types/character';
 import { createFloatingNumber } from '../../utils/combat';
-import { secondsToTicks, ticksToSeconds, GCD_TICKS } from './types';
+import { secondsToTicks } from './types';
 
 export interface BossAbilityState {
   cooldowns: Map<string, number>; // abilityId -> tick when cooldown ends
@@ -91,7 +91,7 @@ export function isAbilityReady(ability: BossAbility, abilityState: BossAbilitySt
 function getAbilityTarget(
   ability: BossAbility,
   teamStates: TeamMemberState[],
-  bossEnemy: AnimatedEnemy
+  _bossEnemy: AnimatedEnemy
 ): TeamMemberState[] {
   const aliveMembers = teamStates.filter(m => !m.isDead);
   
@@ -180,7 +180,7 @@ function calculateAbilityDamage(
       
     case 'unyielding_strike':
       // Scales with boss armor
-      baseDamage += (bossEnemy.armor / 10);
+      baseDamage += ((bossEnemy.armor || 0) / 10);
       break;
       
     case 'unending_verse':
@@ -345,7 +345,7 @@ export function processDebuffDamage(
   partyDebuffs: PartyDebuffState,
   currentTick: number,
   bossName: string,
-  updateCombatState: ((updater: (prev: CombatState) => CombatState) => void) | ((updater: (prev: CombatState) => CombatState) => CombatState),
+  _updateCombatState: ((updater: (prev: CombatState) => CombatState) => void) | ((updater: (prev: CombatState) => CombatState) => CombatState),
   batchedFloatingNumbers?: import('../../types/combat').FloatingNumber[],
   batchedLogEntries?: import('../../types/dungeon').CombatLogEntry[]
 ): void {
@@ -475,7 +475,7 @@ export function executeBossAbility(
   bossBuffs: BossBuffState,
   currentTick: number,
   bossName: string,
-  updateCombatState: (updater: (prev: CombatState) => CombatState) => CombatState,
+  _updateCombatState: ((updater: (prev: CombatState) => CombatState) => void) | ((updater: (prev: CombatState) => CombatState) => CombatState),
   batchedFloatingNumbers?: import('../../types/combat').FloatingNumber[],
   batchedLogEntries?: import('../../types/dungeon').CombatLogEntry[]
 ): { damageDealt: number; targetsHit: number } {
@@ -542,7 +542,6 @@ export function executeBossAbility(
       
       // Create visual feedback
       const tankDiff = Math.abs(tank.health - (tank.maxHealth * safeTankPercent));
-      const bossDiff = Math.abs(bossEnemy.health - (bossEnemy.maxHealth * safeBossPercent));
       
       if (batchedFloatingNumbers) {
         batchedFloatingNumbers.push(createFloatingNumber(tankDiff, safeTankPercent > safeBossPercent ? 'heal' : 'enemy', 0, 0));

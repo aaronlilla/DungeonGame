@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import type { MapItem } from '../../types/maps';
 import { MapGridItem } from './MapGridItem';
 import { STASH_GRID_SIZE } from '../../store/gameStore';
-import { buildMapOccupancyGrid } from '../../utils/gridUtils';
 
 interface MapStashGridProps {
   maps: MapItem[];
@@ -152,7 +151,7 @@ export function MapStashGrid({
   useEffect(() => {
     if (!heldMapId) return;
     
-    const handleMouseUp = (e: MouseEvent) => {
+    const handleMouseUp = () => {
       if (gridMousePos && isValidDrop && onMoveMap) {
         // Place map at grid position
         onMoveMap(heldMapId, gridMousePos.x, gridMousePos.y);
@@ -177,14 +176,6 @@ export function MapStashGrid({
   const gridWidth = STASH_GRID_SIZE * cellSize;
   const gridHeight = STASH_GRID_SIZE * cellSize;
   
-  // Calculate tier counts for summary
-  const tierCounts = React.useMemo(() => {
-    const counts = new Map<number, number>();
-    maps.forEach(map => {
-      counts.set(map.tier, (counts.get(map.tier) || 0) + 1);
-    });
-    return Array.from(counts.entries()).sort((a, b) => b[0] - a[0]);
-  }, [maps]);
 
   return (
     <>

@@ -5,7 +5,6 @@ import type {
   TargetCountCondition, 
   TargetTypeCondition,
   ComparisonOperator,
-  EffectApplicationCondition
 } from '../../types/skillUsage';
 import { createSmartSkillConfig, describeSkillConfig } from '../../types/skillUsage';
 import type { SkillGem } from '../../types/skills';

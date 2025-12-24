@@ -356,14 +356,6 @@ const SLOT_CONFIG: Partial<Record<GearSlot, { label: string; icon: React.ReactNo
   ring2: { label: 'Ring', icon: <GiRing /> },
 };
 
-const RARITY_COLORS: Record<string, { primary: string; glow: string; bg: string }> = {
-  normal: { primary: '#9ca3af', glow: 'rgba(156, 163, 175, 0.4)', bg: 'rgba(156, 163, 175, 0.08)' },
-  common: { primary: '#9ca3af', glow: 'rgba(156, 163, 175, 0.4)', bg: 'rgba(156, 163, 175, 0.08)' },
-  magic: { primary: '#60a5fa', glow: 'rgba(96, 165, 250, 0.5)', bg: 'rgba(96, 165, 250, 0.1)' },
-  rare: { primary: '#fbbf24', glow: 'rgba(251, 191, 36, 0.5)', bg: 'rgba(251, 191, 36, 0.1)' },
-  unique: { primary: '#f97316', glow: 'rgba(249, 115, 22, 0.5)', bg: 'rgba(249, 115, 22, 0.1)' },
-  legendary: { primary: '#a855f7', glow: 'rgba(168, 85, 247, 0.5)', bg: 'rgba(168, 85, 247, 0.12)' },
-};
 
 // Cell size for equipment slots
 const CELL_SIZE = 52;
@@ -378,7 +370,7 @@ function EquipmentSlot({
   slot,
   equippedItem,
   inventory,
-  onEquip,
+  onEquip: _onEquip,
   onUnequip,
   heldItemId,
   onEquipHeldItem,
@@ -505,30 +497,6 @@ function EquipmentSlot({
   // Blocked = slot matches but validation fails (show red)
   const isBlockedSlot = slotTypeMatches && !equipmentValidation.canEquip;
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const itemId = e.dataTransfer.getData('text/plain');
-    console.log('[EquipmentSlot] handleDrop - itemId:', itemId, 'slot:', slot);
-    if (itemId) {
-      const droppedItem = inventory.find(i => i.id === itemId);
-      console.log('[EquipmentSlot] droppedItem:', droppedItem?.name, 'itemSlot:', droppedItem ? getItemSlot(droppedItem) : null);
-      if (droppedItem) {
-        const itemSlot = getItemSlot(droppedItem);
-        const isValidSlot = itemSlot === slot ||
-          (itemSlot === 'ring1' && (slot === 'ring1' || slot === 'ring2')) ||
-          (itemSlot === 'ring2' && (slot === 'ring1' || slot === 'ring2')) ||
-          (slot === 'ring1' && itemSlot?.startsWith('ring')) ||
-          (slot === 'ring2' && itemSlot?.startsWith('ring'));
-
-        console.log('[EquipmentSlot] isValidSlot:', isValidSlot);
-        if (isValidSlot) {
-          onEquip(slot, itemId);
-        }
-      }
-    }
-  }, [inventory, slot, onEquip]);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     // If we're holding an item, try to equip it

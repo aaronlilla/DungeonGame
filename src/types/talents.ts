@@ -83,7 +83,7 @@ export type TalentEffectType =
 export interface TalentEffect {
   type: TalentEffectType;
   value: number;
-  stat?: keyof BaseStats;
+  stat?: keyof BaseStats | 'spellSuppression' | 'maxSpellSuppression' | 'maxSpellBlockChance';
   description: string;
   condition?: string;
 }

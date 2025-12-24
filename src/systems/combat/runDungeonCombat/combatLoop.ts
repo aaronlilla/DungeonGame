@@ -1,6 +1,6 @@
-import type { AnimatedEnemy, TeamMemberState, CombatState, PlayerAbility, MapLootDrop, FloatingNumber } from '../../../types/combat';
+import type { AnimatedEnemy, TeamMemberState, CombatState, PlayerAbility, FloatingNumber } from '../../../types/combat';
 import type { CombatContext } from '../types';
-import { sleep, TICK_MS, TICK_DURATION, TICKS_PER_SECOND, GCD_TICKS, ticksToSeconds } from '../types';
+import { sleep, TICK_MS, ticksToSeconds, secondsToTicks, TICK_DURATION, TICKS_PER_SECOND } from '../types';
 import { processBuffsAndRegen } from '../buffs';
 import { processEnemyAttacks } from '../enemyCombat';
 import { processPlayerActions } from '../playerCombat';
@@ -37,10 +37,10 @@ export interface CombatLoopResult {
 export async function runCombatLoop(
   context: CombatContext,
   pullEnemies: AnimatedEnemy[],
-  pullIdx: number,
+  _pullIdx: number,
   totalForcesCleared: number
 ): Promise<CombatLoopResult> {
-  const { combatRef, dungeon, selectedKeyLevel, scaling, team, stunActive, experienceAwarded, callbacks, updateCombatState, checkTimeout, awardExperience } = context;
+  const { combatRef, team, stunActive, experienceAwarded, checkTimeout, awardExperience, updateCombatState, selectedKeyLevel, scaling } = context;
   
   // Validate inputs
   if (!pullEnemies || pullEnemies.length === 0) {
@@ -240,7 +240,7 @@ export async function runCombatLoop(
           }));
           
           // Check if cast complete
-          if (currentTick >= combatRef.current.resurrectCastEndTick) {
+          if (combatRef.current.resurrectCastEndTick !== undefined && currentTick >= combatRef.current.resurrectCastEndTick) {
             // Apply resurrection
             teamStates = teamStates.map(m => 
               m.id === rezTargetId 
@@ -316,7 +316,6 @@ export async function runCombatLoop(
     const currentAliveEnemies = currentEnemies.filter(e => e.health > 0);
     
     // Get references AFTER the teamStates reassignment so modifications persist
-    const tank = teamStates.find(m => m.role === 'tank' && !m.isDead);
     const aliveMembers = teamStates.filter(m => !m.isDead);
     
     // Process enemy attacks using module
@@ -413,7 +412,6 @@ export async function runCombatLoop(
           experienceAwarded.add(enemy.id);
           
           // Generate real-time loot drops
-          const enemyDef = getEnemyById(enemy.enemyId);
           const enemyType = enemy.type === 'miniboss' ? 'miniboss' : 
                            enemy.type === 'elite' ? 'elite' : 'normal';
           

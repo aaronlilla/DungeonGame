@@ -11,11 +11,9 @@ import type {
 } from '../types';
 import { 
   calculateKeyScaling, 
-  selectRandomAffixes, 
   calculateTimerUpgrade,
   SAMPLE_DUNGEON 
 } from '../types/dungeon';
-import { SKILL_GEMS, SUPPORT_GEMS, getSkillGemById, getSupportGemById } from '../types/skills';
 import { calculatePassiveBonuses, getDefaultClassForRole } from '../types/passives';
 import { generateDungeonLoot, generateOrbDrops, generateFragmentDrops } from './crafting';
 
@@ -76,12 +74,14 @@ function calculateEffectiveStats(character: Character): {
     : { stats: {}, effects: [] };
   
   // Combine base stats with passive bonuses
-  const health = base.health + (passiveBonuses.stats.health || 0);
-  const maxHealth = base.maxHealth + (passiveBonuses.stats.maxHealth || 0);
+  // BaseStats uses 'life' and 'maxLife', not 'health' and 'maxHealth'
+  const health = base.life + (passiveBonuses.stats.life || 0);
+  const maxHealth = base.maxLife + (passiveBonuses.stats.maxLife || 0);
   const mana = base.mana + (passiveBonuses.stats.mana || 0);
   const maxMana = base.maxMana + (passiveBonuses.stats.maxMana || 0);
-  const attackPower = base.attackPower + (passiveBonuses.stats.attackPower || 0);
-  const spellPower = base.spellPower + (passiveBonuses.stats.spellPower || 0);
+  // BaseStats doesn't have attackPower/spellPower, calculate from attributes
+  const attackPower = (base.strength * 0.1) + (passiveBonuses.stats.strength || 0) * 0.1;
+  const spellPower = (base.intelligence * 0.1) + (passiveBonuses.stats.intelligence || 0) * 0.1;
   const armor = base.armor + (passiveBonuses.stats.armor || 0);
   
   // Calculate damage based on role
@@ -425,7 +425,8 @@ export function simulateDungeonRun(
 ): DungeonRunResult {
   const dungeon = SAMPLE_DUNGEON; // For now, just use the sample dungeon
   const scaling = calculateKeyScaling(keyLevel);
-  const affixes = selectRandomAffixes(keyLevel, Math.min(3, Math.floor(keyLevel / 3) + 1)).map(a => a.id);
+  // TODO: Implement dungeon affix selection
+  const affixes: string[] = [];
   
   // Initialize simulation state
   const state: SimulationState = {
@@ -472,7 +473,9 @@ export function simulateDungeonRun(
       enemies: packs.flatMap(p => p.enemies),
       position: packs[0]?.position || { x: 0, y: 0 },
       pullRadius: 0,
-      totalForces: packs.reduce((sum, p) => sum + p.totalForces, 0)
+      totalForces: packs.reduce((sum, p) => sum + p.totalForces, 0),
+      gate: pull.gate,
+      difficulty: packs[0]?.difficulty || 1
     };
     
     simulatePull(state, combinedPack, dungeon, scaling, affixes);
@@ -502,7 +505,7 @@ export function simulateDungeonRun(
   // Generate loot
   const loot = generateDungeonLoot(keyLevel, success, upgradeLevel, scaling.itemQuantity, scaling.itemRarity);
   const orbDrops = generateOrbDrops(keyLevel, success);
-  const fragmentDrops = generateFragmentDrops(keyLevel, success, upgradeLevel, scaling.itemQuantity, scaling.itemRarity);
+  const fragmentDrops = generateFragmentDrops(keyLevel, success, upgradeLevel, scaling.itemQuantity);
   
   // Calculate experience
   const experienceGained = success 
@@ -547,7 +550,8 @@ export function quickSimulate(team: Character[], keyLevel: number): DungeonRunRe
     author: 'System',
     pulls: dungeon.enemyPacks.map((pack, i) => ({
       pullNumber: i + 1,
-      packIds: [pack.id]
+      packIds: [pack.id],
+      gate: pack.gate
     }))
   };
   

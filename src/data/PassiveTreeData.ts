@@ -272,7 +272,12 @@ export function canDeallocateNode(
   let startId = tree.startNodeId;
   if (!remaining.has(startId)) {
     // If start isn't allocated, find any allocated node to start from
-    startId = remaining.values().next().value;
+    const firstAllocated = remaining.values().next().value;
+    if (!firstAllocated) {
+      // No allocated nodes, return true (empty allocation is valid)
+      return true;
+    }
+    startId = firstAllocated;
   }
   
   // BFS to check connectivity

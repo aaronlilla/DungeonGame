@@ -1,4 +1,4 @@
-import type { Item, ItemRarity, ItemAffix, GearSlot, InfluenceType } from '../types/items';
+import type { Item, ItemRarity, ItemAffix, GearSlot } from '../types/items';
 import { 
   ITEM_BASES, 
   AFFIX_DEFINITIONS, 
@@ -9,7 +9,7 @@ import {
 import type { OrbType } from '../store/gameStore';
 
 // Import the new PoE crafting system
-import { generatePoeItem, generatePoeDungeonLoot, calculateItemLevel, type PoeItem, type PoeItemRarity } from './poeCrafting';
+import { generatePoeItem, generatePoeDungeonLoot, calculateItemLevel, type PoeItemRarity } from './poeCrafting';
 import { poeItemToLegacyItem } from './poeItemAdapter';
 import { generateMap, generateFragment, type MapItem, type Fragment } from '../types/maps';
 
@@ -610,7 +610,7 @@ export function getLootDropRarity(item: Item): 'common' | 'uncommon' | 'rare' | 
  * @returns Array of loot drops
  */
 export function generateEnemyLootDrops(
-  enemyHealth: number,
+  _enemyHealth: number,
   enemyType: 'normal' | 'elite' | 'miniboss' | 'boss',
   currentTier: number,
   highestCompleted: number,
@@ -619,20 +619,6 @@ export function generateEnemyLootDrops(
   rarityBonus: number = 0
 ): MapLootDrop[] {
   const drops: MapLootDrop[] = [];
-  
-  // Health scaling factor (enemies with more health drop more loot)
-  // Base health reference: ~1000 for normal at T1
-  const healthFactor = Math.sqrt(enemyHealth / 1000);
-  
-  // Type multipliers
-  const typeMultipliers = {
-    normal: 0.3,
-    elite: 1.0,
-    miniboss: 2.5,
-    boss: 5.0  // Boss drops ~50% of total loot value
-  };
-  
-  const dropMultiplier = typeMultipliers[enemyType] * healthFactor * (1 + quantityBonus);
   
   // Position jitter for drops - spread them out in a grid-like pattern
   let dropIndex = 0;
@@ -802,10 +788,10 @@ export function generateEnemyLootDrops(
   // Fragments can drop from any tier, but higher tiers have better chances
   // Elite and higher enemies have a chance to drop fragments
   const fragmentBaseChance = {
-    normal: 0.002,      // 0.2% chance from normal enemies
-    elite: 0.015,       // 1.5% chance from elites
-    miniboss: 0.08,     // 8% chance from minibosses
-    boss: 0.25          // 25% chance from bosses
+    normal: 0.0005,      // 0.05% chance from normal enemies
+    elite: 0.00375,       // 0.375% chance from elites
+    miniboss: 0.02,     // 2% chance from minibosses
+    boss: 0.0625          // 6.25% chance from bosses
   };
   
   // Tier scaling: higher tiers have better fragment drop rates
@@ -841,14 +827,13 @@ export function generateFragmentDrops(
   keyLevel: number, 
   success: boolean,
   upgradeLevel: number,
-  quantityBonus: number = 0,
-  rarityBonus: number = 0
+  quantityBonus: number = 0
 ): Fragment[] {
   const fragments: Fragment[] = [];
   
   if (!success) {
     // Failed runs rarely drop fragments
-    if (Math.random() < 0.05) {
+    if (Math.random() < 0.0125) {
       fragments.push(generateFragment());
     }
     return fragments;
@@ -856,7 +841,7 @@ export function generateFragmentDrops(
   
   // Base fragment drops for successful runs
   // Higher tiers and upgrade levels increase fragment drops
-  const baseChance = 0.15 + (keyLevel / 100) + (upgradeLevel * 0.1);
+  const baseChance = 0.0375 + (keyLevel / 100) + (upgradeLevel * 0.1);
   const numRolls = 1 + Math.floor(keyLevel / 10); // Extra roll every 10 levels
   
   for (let i = 0; i < numRolls; i++) {

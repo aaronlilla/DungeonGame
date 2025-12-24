@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Character } from '../../types/character';
 import { GiShieldBash, GiHealthPotion, GiBroadsword, GiWizardStaff } from 'react-icons/gi';
-import { getExperienceProgress, getExperienceRequiredForLevel } from '../../utils/leveling';
+import { getExperienceProgress } from '../../utils/leveling';
 import { getClassById } from '../../types/classes';
 
 const ROLE_ICONS: Record<string, React.ReactNode> = {
@@ -22,7 +22,8 @@ interface CharacterDetailsProps {
   onRemove: () => void;
 }
 
-const formatStatName = (key: string): string => {
+// @ts-ignore - intentionally unused
+const _formatStatName = (key: string): string => {
   // PoE stat name formatting
   const statNames: Record<string, string> = {
     strength: 'Strength',

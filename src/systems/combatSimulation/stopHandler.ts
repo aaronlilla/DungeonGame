@@ -8,7 +8,7 @@ import type { CombatRef } from '../../types/combat';
 export function setupStopHandler(
   stopRef: { current: boolean } | undefined,
   combatRef: React.MutableRefObject<CombatRef>
-): NodeJS.Timeout | null {
+): ReturnType<typeof setInterval> | null {
   if (!stopRef) {
     return null;
   }

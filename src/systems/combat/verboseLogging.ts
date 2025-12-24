@@ -237,10 +237,10 @@ export function createVerboseDamageLog(
 ): CombatLogEntry {
   const healthBefore = data?.healthBefore ?? targetState.health;
   const healthAfter = data?.healthAfter ?? (targetState.health - damage);
-  const esBefore = data?.esBefore ?? ('energyShield' in targetState ? targetState.energyShield : 0);
-  const esAfter = data?.esAfter ?? ('energyShield' in targetState ? (targetState.energyShield - damage) : 0);
+  const esBefore = data?.esBefore ?? ('energyShield' in targetState ? (targetState.energyShield ?? 0) : 0);
+  const esAfter = data?.esAfter ?? ('energyShield' in targetState ? ((targetState.energyShield ?? 0) - damage) : 0);
   const maxHealth = data?.maxHealth ?? targetState.maxHealth;
-  const maxES = data?.maxES ?? ('maxEnergyShield' in targetState ? targetState.maxEnergyShield : 0);
+  const maxES = data?.maxES ?? ('maxEnergyShield' in targetState ? (targetState.maxEnergyShield ?? 0) : 0);
   
   let message = `${source} deals ${damage} damage to ${target}`;
   if (data?.damageBlocked) {
@@ -256,7 +256,7 @@ export function createVerboseDamageLog(
     message += ` with ${data.abilityName}`;
   }
   message += `\n  Target Health: ${healthBefore}/${maxHealth} -> ${healthAfter}/${maxHealth}`;
-  if (maxES > 0) {
+  if (maxES !== undefined && maxES > 0) {
     message += ` | ES: ${esBefore}/${maxES} -> ${esAfter}/${maxES}`;
   }
   if (data?.damageType) {
@@ -380,9 +380,9 @@ export function createVerboseStateLog(
   
   let message = `[STATE] ${entityName}: Health ${health}/${maxHealth} (${healthPercent}%)`;
   
-  if ('energyShield' in entityState && entityState.energyShield > 0) {
-    const maxES = entityState.maxEnergyShield || 0;
-    const esPercent = maxES > 0 ? ((entityState.energyShield / maxES) * 100).toFixed(1) : '0.0';
+  if ('energyShield' in entityState && (entityState.energyShield ?? 0) > 0) {
+    const maxES = entityState.maxEnergyShield ?? 0;
+    const esPercent = maxES > 0 ? (((entityState.energyShield ?? 0) / maxES) * 100).toFixed(1) : '0.0';
     message += ` | ES ${entityState.energyShield}/${maxES} (${esPercent}%)`;
   }
   
@@ -414,8 +414,6 @@ export function createVerboseTickSummary(
   teamStates: TeamMemberState[],
   enemies: AnimatedEnemy[]
 ): CombatLogEntry {
-  const aliveTeam = teamStates.filter(m => !m.isDead);
-  const aliveEnemies = enemies.filter(e => e.health > 0);
   
   let message = `[TICK ${tick}] Full Entity State Snapshot:\n`;
   

@@ -1,6 +1,6 @@
 import type { AnimatedEnemy, TeamMemberState, CombatState } from '../../../types/combat';
 import type { CombatContext } from '../types';
-import { sleep, TICK_MS, TICK_DURATION, TICKS_PER_SECOND, GCD_TICKS, secondsToTicks, ticksToSeconds } from '../types';
+import { sleep, TICK_MS, secondsToTicks, ticksToSeconds, GCD_TICKS } from '../types';
 import { 
   calculateArmorReduction, 
   rollBlock, 
@@ -18,7 +18,6 @@ import {
   executeBossAbility,
   processDebuffDamage,
   isAbilityReady,
-  type BossAbilityState,
   type PartyDebuffState,
   type PartyBuffState,
   type BossBuffState
@@ -62,7 +61,7 @@ export async function runBossFight(
   currentPos: { x: number; y: number },
   totalForcesCleared: number
 ): Promise<BossFightResult> {
-  const { combatRef, dungeon, selectedKeyLevel, scaling, teamStates: initialTeamStates, currentCombatState: initialCombatState, stunActive, callbacks, updateCombatState, checkTimeout, batchedFloatingNumbers, batchedLogEntries, usedBossNames } = context;
+  const { combatRef, scaling, teamStates: initialTeamStates, currentCombatState: initialCombatState, stunActive, updateCombatState, checkTimeout, batchedFloatingNumbers, batchedLogEntries, usedBossNames } = context;
   
   // Assign random boss name if not already assigned
   if (!boss.displayName) {
@@ -262,7 +261,7 @@ export async function runBossFight(
           }));
           
           // Check if cast complete
-          if (currentTick >= combatRef.current.resurrectCastEndTick) {
+          if (combatRef.current.resurrectCastEndTick !== undefined && currentTick >= combatRef.current.resurrectCastEndTick) {
             // Apply resurrection
             teamStates = teamStates.map(m => 
               m.id === rezTargetId 
@@ -736,9 +735,7 @@ export async function runBossFight(
     }
     
     // Update boss enemy state for UI
-    const castProgress = bossVolleyCasting && bossVolleyStartTick 
-      ? ((currentTick - bossVolleyStartTick) / BOSS_VOLLEY_CAST_TICKS) * 100 
-      : 0;
+    // Update boss enemy state for UI
     
     const bossEnemyState: AnimatedEnemy = {
       ...bossEnemy,

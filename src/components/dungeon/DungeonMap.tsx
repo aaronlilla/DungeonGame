@@ -309,7 +309,7 @@ export const DungeonMap = memo(function DungeonMap({
                           : 'linear-gradient(135deg, rgba(55,65,81,0.9) 0%, rgba(31,41,55,1) 100%)', 
             border: isGateBoss ? 'none' : `3px solid ${isCurrentTarget ? '#ef4444' : inCurrentPull ? '#22c55e' : inRoute ? '#16a34a' : isAvailable && isCreatingPull ? '#fbbf24' : dominantType === 'elite' ? '#f97316' : '#4b5563'}`, 
             boxShadow: isGateBoss 
-              ? 'none'
+              ? '0 8px 16px rgba(0, 0, 0, 0.8), 0 4px 8px rgba(0, 0, 0, 0.6)'
               : isCurrentTarget 
                 ? '0 0 20px rgba(239,68,68,0.7), 0 0 40px rgba(239,68,68,0.3), inset 0 0 10px rgba(0,0,0,0.3)' 
                 : inCurrentPull 
@@ -319,12 +319,13 @@ export const DungeonMap = memo(function DungeonMap({
                     : '0 4px 12px rgba(0,0,0,0.5), inset 0 0 6px rgba(0,0,0,0.2)', 
             animation: isCurrentTarget ? 'pulse 0.6s ease-in-out infinite' : 'none', 
             position: 'relative', 
-            zIndex: inCurrentPull || isCurrentTarget || isGateBoss ? 15 : 10,
+            zIndex: isGateBoss ? 100 : (inCurrentPull || isCurrentTarget ? 15 : 10),
             overflow: 'hidden',
             // PERFORMANCE: Only transition transform and opacity (GPU-accelerated)
             transition: 'transform 0.2s ease, opacity 0.3s ease, box-shadow 0.2s ease',
             cursor: isGateBoss && onGateBossClick && !isRunning ? 'pointer' : (!unlocked || inRoute || isRunning ? 'default' : 'pointer'),
-            willChange: 'transform, opacity'
+            willChange: 'transform, opacity',
+            filter: isGateBoss ? 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.8)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6))' : 'none'
           }} 
           onClick={(e) => {
             e.stopPropagation();
@@ -365,14 +366,22 @@ export const DungeonMap = memo(function DungeonMap({
                 height: '100%',
                 objectFit: 'contain',
                 imageRendering: 'crisp-edges',
-                filter: (isCurrentTarget || inCurrentPull) && !isGateBoss ? 'drop-shadow(0 0 4px rgba(255,255,255,0.5))' : 'none',
+                filter: isGateBoss 
+                  ? 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.8)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6))'
+                  : (isCurrentTarget || inCurrentPull) 
+                    ? 'drop-shadow(0 0 4px rgba(255,255,255,0.5))' 
+                    : 'none',
                 position: 'relative',
                 zIndex: 1
               }}
             />
           ) : (
             <span style={{
-              filter: (isCurrentTarget || inCurrentPull) && !isGateBoss ? 'drop-shadow(0 0 4px rgba(255,255,255,0.5))' : 'none',
+              filter: isGateBoss 
+                ? 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.8)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6))'
+                : (isCurrentTarget || inCurrentPull) 
+                  ? 'drop-shadow(0 0 4px rgba(255,255,255,0.5))' 
+                  : 'none',
               position: 'relative',
               zIndex: 1,
               fontSize: `${baseSize * 0.5}px`
@@ -456,9 +465,9 @@ export const DungeonMap = memo(function DungeonMap({
             WebkitOverflowScrolling: 'touch' // Smooth scrolling on iOS
           }}
         >
-          <div style={{ width: `${dungeon.mapWidth}px`, height: `${dungeon.mapHeight}px`, position: 'relative', background: 'linear-gradient(135deg, #0a0908 0%, #1e1a16 50%, #0a0908 100%)' }}>
+          <div style={{ width: `${dungeon.mapWidth}px`, height: `${dungeon.mapHeight}px`, position: 'relative', background: 'linear-gradient(135deg, #050504 0%, #0f0d0b 50%, #050504 100%)' }}>
             {/* Dungeon background image overlay */}
-            <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${dungeonBackground})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.25, pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${dungeonBackground})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.125, pointerEvents: 'none' }} />
             <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '50px 50px', pointerEvents: 'none' }} />
 
             {/* Gate Progress - Sleek 2-line design */}
@@ -750,10 +759,11 @@ export const DungeonMap = memo(function DungeonMap({
                     left: `${boss.position.x}px`, 
                     top: `${boss.position.y}px`, 
                     transform: 'translate(-50%, -50%)', 
-                    zIndex: 15, 
+                    zIndex: 100, 
                     opacity: bossOpacity, 
                     transition: 'opacity 0.3s ease',
-                    cursor: !isRunning && onBossClick ? 'pointer' : 'default'
+                    cursor: !isRunning && onBossClick ? 'pointer' : 'default',
+                    filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.8)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6))'
                   }}
                 >
                   {bossImage ? (

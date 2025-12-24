@@ -10,7 +10,8 @@
 
 import type { Character, BaseStats } from '../types/character';
 import type { Item } from '../types/items';
-import type { PoeItem, WeaponProperties, ArmourProperties } from '../types/poeItems';
+import type { WeaponProperties, ArmourProperties } from '../types/poeItems';
+import type { PoeItem } from './poeCrafting';
 import type { RolledAffix, RolledStat } from '../types/poeAffixes';
 import { parseStatRange } from '../types/poeAffixes';
 
@@ -449,7 +450,7 @@ export function calculateTotalCharacterStats(
   // Get all equipped items
   const equippedItems: Item[] = [];
   
-  for (const [slot, itemId] of Object.entries(character.equippedGear)) {
+  for (const [, itemId] of Object.entries(character.equippedGear)) {
     if (itemId) {
       const item = inventory.find(i => i.id === itemId);
       if (item) {
@@ -467,7 +468,7 @@ export function calculateTotalCharacterStats(
   for (const [stat, value] of Object.entries(equipmentBonuses)) {
     const key = stat as keyof BaseStats;
     if (typeof totalStats[key] === 'number' && typeof value === 'number') {
-      (totalStats as Record<string, number>)[key] = (totalStats[key] as number) + value;
+      (totalStats as unknown as Record<string, number>)[key] = (totalStats[key] as number) + value;
     }
   }
   

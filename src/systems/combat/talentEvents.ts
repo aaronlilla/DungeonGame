@@ -1,5 +1,4 @@
 import type { TeamMemberState } from '../../types/combat';
-import type { TalentEffect } from '../../types/talents';
 import { secondsToTicks } from './types';
 
 /**
@@ -7,23 +6,15 @@ import { secondsToTicks } from './types';
  * These effects trigger on specific combat events like onHit, onHeal, onBlock, etc.
  */
 
-interface EventContext {
-  source?: TeamMemberState;
-  target?: TeamMemberState;
-  damage?: number;
-  healAmount?: number;
-  currentTick: number;
-  teamStates: TeamMemberState[];
-}
 
 /**
  * Process onHit effects - triggered when a character deals damage
  */
 export function processOnHitEffects(
   source: TeamMemberState,
-  damage: number,
+  _damage: number,
   currentTick: number,
-  teamStates: TeamMemberState[]
+  _teamStates: TeamMemberState[]
 ): void {
   if (!source.talentBonuses?.specialEffects) return;
   
@@ -55,10 +46,10 @@ export function processOnHitEffects(
  */
 export function processOnHealEffects(
   source: TeamMemberState,
-  target: TeamMemberState,
+  _target: TeamMemberState,
   healAmount: number,
   currentTick: number,
-  teamStates: TeamMemberState[]
+  _teamStates: TeamMemberState[]
 ): void {
   if (!source.talentBonuses?.specialEffects) return;
   
@@ -83,7 +74,7 @@ export function processOnHealEffects(
       // Check for ally DR from healing (Blood Confessor)
       if (condition.includes('allyDR')) {
         // Apply damage reduction to allies
-        teamStates.forEach(ally => {
+        _teamStates.forEach((ally: TeamMemberState) => {
           if (ally.id !== source.id && !ally.isDead) {
             if (!ally.damageReduction) ally.damageReduction = 0;
             ally.damageReduction = Math.min(100, ally.damageReduction + effect.value);
@@ -102,7 +93,7 @@ export function processOnBlockEffects(
   target: TeamMemberState,
   blockedDamage: number,
   currentTick: number,
-  teamStates: TeamMemberState[]
+  _teamStates: TeamMemberState[]
 ): void {
   if (!target.talentBonuses?.specialEffects) return;
   
@@ -143,9 +134,9 @@ export function processOnBlockEffects(
  */
 export function processOnEvadeEffects(
   target: TeamMemberState,
-  enemyName: string,
+  _enemyName: string,
   currentTick: number,
-  teamStates: TeamMemberState[]
+  _teamStates: TeamMemberState[]
 ): void {
   if (!target.talentBonuses?.specialEffects) return;
   
@@ -198,7 +189,7 @@ export function processOnEvadeEffects(
 export function processOnLowHealthEffects(
   target: TeamMemberState,
   currentTick: number,
-  teamStates: TeamMemberState[]
+  _teamStates: TeamMemberState[]
 ): void {
   if (!target.talentBonuses?.specialEffects) return;
   
@@ -226,7 +217,7 @@ export function processOnLowHealthEffects(
  */
 export function processOnFullHealthEffects(
   target: TeamMemberState,
-  currentTick: number
+  _currentTick: number
 ): void {
   if (!target.talentBonuses?.specialEffects) return;
   
@@ -237,7 +228,7 @@ export function processOnFullHealthEffects(
     e => e.type === 'onFullHealth'
   );
   
-  fullHealthEffects.forEach(effect => {
+  fullHealthEffects.forEach(_effect => {
     // Apply full health bonuses (damage increase, etc.)
     // Would need to track this separately
   });

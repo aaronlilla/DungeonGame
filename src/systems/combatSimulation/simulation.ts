@@ -352,7 +352,7 @@ export async function runCombatSimulationTest(
   stopRef?: { current: boolean }
 ): Promise<TestResult> {
   // First, run static formula tests
-  const { results: formulaTests, allPassed: staticTestsPassed } = runFormulaTests();
+  const { results: formulaTests } = runFormulaTests();
   
   const scaling = calculateKeyScaling(keyLevel);
   const routePulls = generateAutoRoute(dungeon);
@@ -594,7 +594,7 @@ function getBehavior(enemyId: string): SimEnemy['behavior'] {
   return 'melee';
 }
 
-function processCombatTick(state: SimState, scaling: any, onCombatLog?: CombatLogCallback, isBoss = false): void {
+function processCombatTick(state: SimState, _scaling: any, onCombatLog?: CombatLogCallback, isBoss = false): void {
   const aliveTeam = state.team.filter(m => !m.isDead);
   const aliveEnemies = state.enemies.filter(e => !e.isDead);
   
@@ -888,7 +888,7 @@ function calculateEnemySpellDamage(enemy: SimEnemy, target: SimTeamMember, spell
   return finalDamage;
 }
 
-function applyDamageToMember(target: SimTeamMember, damage: number, source: string, attackType: string, state: SimState, onCombatLog?: CombatLogCallback, icon = '⚔️'): void {
+function applyDamageToMember(target: SimTeamMember, damage: number, source: string, _attackType: string, state: SimState, onCombatLog?: CombatLogCallback, icon = '⚔️'): void {
   if (damage === 0) return;
   
   // Energy shield absorbs first
@@ -1026,7 +1026,7 @@ function autoResurrect(state: SimState, onCombatLog?: CombatLogCallback): void {
   });
 }
 
-async function performRecovery(state: SimState, onCombatLog?: CombatLogCallback, stopRef?: { current: boolean }): Promise<void> {
+async function performRecovery(state: SimState, _onCombatLog?: CombatLogCallback, stopRef?: { current: boolean }): Promise<void> {
   state.phase = 'recovery';
   
   const healer = state.team.find(m => m.role === 'healer' && !m.isDead);

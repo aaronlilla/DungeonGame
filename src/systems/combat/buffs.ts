@@ -1,7 +1,7 @@
 import type { TeamMemberState } from '../../types/combat';
-import type { Character } from '../../types/character';
 import { TICK_DURATION } from './types';
 import type { CombatContext } from './types';
+import { createFloatingNumber } from '../../utils/combat';
 
 /**
  * Process buffs, HoTs, and regen for one tick
@@ -151,13 +151,12 @@ export function processBuffsAndRegen(
         
         const jitterX = (Math.random() * 80) - 40;
         const jitterY = (Math.random() * 60) - 30;
-        const floatNum = { 
-          value: finalHealAmount, 
-          type: 'heal' as const, 
-          x: currentCombatState.teamPosition.x + jitterX, 
-          y: currentCombatState.teamPosition.y - 45 + jitterY,
-          timestamp: Date.now()
-        };
+        const floatNum = createFloatingNumber(
+          finalHealAmount, 
+          'heal', 
+          currentCombatState.teamPosition.x + jitterX, 
+          currentCombatState.teamPosition.y - 45 + jitterY
+        );
         const hotHealTimestamp = Date.now();
         m.lastHealTime = hotHealTimestamp;
         m.lastHealAmount = actualHeal;

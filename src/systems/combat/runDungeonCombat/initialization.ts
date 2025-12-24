@@ -72,7 +72,7 @@ export function initializeCombat(
     leagueEncounters: []  // League mechanics (spawned when map opens)
   };
   
-  setCombatState(combatState);
+  setCombatState(() => combatState);
   
   // Track healer ability cooldowns (tick-based)
   const healerCooldowns = { painSuppressionEndTick: 0 };
@@ -149,11 +149,12 @@ export function initializeCombat(
   };
   
   // Helper to update combat state (syncs local state AND context.currentCombatState)
-  const updateCombatState = (updater: (prev: CombatState) => CombatState) => {
+  const updateCombatState = (updater: (prev: CombatState) => CombatState): CombatState => {
     currentCombatState = updater(currentCombatState);
     // Also update context.currentCombatState so modules get the latest state
     context.currentCombatState = currentCombatState;
     setCombatState(() => currentCombatState);
+    return currentCombatState;
   };
   
   // Assign the updateCombatState to context

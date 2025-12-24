@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import type { SkillGem, SupportGem } from '../../types/skills';
 import type { SkillUsageConfig } from '../../types/skillUsage';
-import { describeSkillConfig, createSmartSkillConfig } from '../../types/skillUsage';
+import { describeSkillConfig, describeSkillConfigDetailed, createSmartSkillConfig } from '../../types/skillUsage';
 import { SkillUsageConfigModal } from './SkillUsageConfigModal';
 import { getTagColor } from '../../utils/tagColors';
 import { SkillGemTooltip } from './SkillGemTooltip';
@@ -177,29 +177,85 @@ export function SkillSlot({
           
           {/* Support gem slots */}
           <div className="support-slots">
-            {Array(skill.maxSupportSlots).fill(null).map((_, supportIndex) => {
-              const support = supports[supportIndex];
-              return (
-                <div
-                  key={supportIndex}
-                  className={`support-slot ${support ? 'filled' : ''}`}
-                  onClick={() => {
-                    if (support) {
-                      onUnequipSupport(supportIndex);
-                    } else {
-                      onSelectSupportSlot(supportIndex);
-                    }
-                  }}
-                  style={{ cursor: 'pointer' }}
-                >
-                  {support ? (
-                    <span style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>{support.icon}</span>
-                  ) : (
-                    <span style={{ fontSize: '1rem', color: 'var(--text-dim)', opacity: 0.4 }}>+</span>
-                  )}
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.35rem', flex: '0 0 auto' }}>
+              {Array(skill.maxSupportSlots).fill(null).map((_, supportIndex) => {
+                const support = supports[supportIndex];
+                return (
+                  <div
+                    key={supportIndex}
+                    className={`support-slot ${support ? 'filled' : ''}`}
+                    onClick={() => {
+                      if (support) {
+                        onUnequipSupport(supportIndex);
+                      } else {
+                        onSelectSupportSlot(supportIndex);
+                      }
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {support ? (
+                      <span style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>{support.icon}</span>
+                    ) : (
+                      <span style={{ fontSize: '1rem', color: 'var(--text-dim)', opacity: 0.4 }}>+</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            
+            {/* Skill usage conditions description */}
+            {effectiveConfig && (
+              <div 
+                className="skill-conditions-description"
+                onClick={() => setIsConfigOpen(true)}
+                style={{
+                  padding: '0.5rem 0.75rem',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(139, 90, 43, 0.4)',
+                  fontSize: '0.7rem',
+                  lineHeight: '1.4',
+                  color: 'rgba(180, 175, 170, 0.9)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  whiteSpace: 'pre-line',
+                  minWidth: '250px',
+                  maxWidth: '400px',
+                  flex: '1 1 300px',
+                  alignSelf: 'flex-start'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(0, 0, 0, 0.5)';
+                  e.currentTarget.style.borderColor = 'rgba(139, 90, 43, 0.7)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
+                  e.currentTarget.style.borderColor = 'rgba(139, 90, 43, 0.4)';
+                }}
+              >
+                <div style={{ 
+                  fontSize: '0.65rem', 
+                  color: 'rgba(140, 135, 120, 0.7)', 
+                  marginBottom: '0.35rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.3rem'
+                }}>
+                  <span>⚙️</span>
+                  <span>Casting Conditions</span>
                 </div>
-              );
-            })}
+                <div style={{ fontSize: '0.7rem', lineHeight: '1.5' }}>
+                  {describeSkillConfigDetailed(effectiveConfig).split('\n').map((line, idx) => (
+                    <div key={idx} style={{ marginBottom: '0.2rem' }}>
+                      {line}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
           
           {/* Config Modal */}

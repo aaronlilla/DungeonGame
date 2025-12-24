@@ -129,10 +129,36 @@ export function StashGridItem({
     return null;
   }, [baseId, extItem._poeItem?.baseItem?.visualIdentity, extItem._poeItem?.baseItem?.itemClass]);
   
-  // Reset image state when art URL changes
+  // Preload image when art URL changes
   React.useEffect(() => {
+    if (!artUrl) {
+      setImageLoaded(false);
+      setImageError(false);
+      return;
+    }
+    
+    // Reset state
     setImageLoaded(false);
     setImageError(false);
+    
+    // Preload the image immediately
+    const img = new Image();
+    img.onload = () => {
+      setImageLoaded(true);
+      setImageError(false);
+    };
+    img.onerror = () => {
+      setImageError(true);
+      setImageLoaded(false);
+    };
+    img.src = artUrl;
+    
+    // Cleanup: abort loading if component unmounts or URL changes
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+      img.src = '';
+    };
   }, [artUrl]);
   
   const width = size.width * cellSize;
@@ -221,8 +247,17 @@ export function StashGridItem({
           <img
             src={artUrl}
             alt={item.name}
-            onLoad={() => setImageLoaded(true)}
-            onError={() => setImageError(true)}
+            loading="eager"
+            onLoad={() => {
+              // Double-check: if preload succeeded, this should also succeed
+              if (!imageLoaded) {
+                setImageLoaded(true);
+              }
+            }}
+            onError={() => {
+              setImageError(true);
+              setImageLoaded(false);
+            }}
             style={{
               width: '90%',
               height: '90%',

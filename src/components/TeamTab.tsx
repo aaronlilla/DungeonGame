@@ -999,7 +999,6 @@ export function TeamTab() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [newCharRole, setNewCharRole] = useState<CharacterRole>('tank');
   const [newCharClassId, setNewCharClassId] = useState<import('../types/classes').CharacterClassId | null>(null);
-  const [slotBeingFilled, setSlotBeingFilled] = useState<number | null>(null);
 
   const selectedCharacter = team.find(c => c.id === selectedCharacterId);
   
@@ -1059,7 +1058,6 @@ export function TeamTab() {
       // For tank and healer, open the modal to select a class
       setNewCharRole(slotRole);
       setNewCharClassId(null);
-      setSlotBeingFilled(slotIndex);
       setShowAddModal(true);
     }
   };
@@ -1070,7 +1068,6 @@ export function TeamTab() {
       const characterName = classData?.name || newCharRole.toUpperCase();
       addCharacter(characterName, newCharRole, newCharClassId);
       setNewCharClassId(null);
-      setSlotBeingFilled(null);
       setShowAddModal(false);
     }
   };

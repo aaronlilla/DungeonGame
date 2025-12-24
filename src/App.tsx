@@ -60,11 +60,17 @@ function App() {
   }
 
   // Redirect to team tab if team is incomplete and user tries to access other tabs
+  const lastRedirectRef = React.useRef<string>('');
   useEffect(() => {
-    if (team.length < 5 && activeTab !== 'team') {
+    // Only redirect if team is incomplete AND we're not already on the team tab
+    // Use a ref to prevent infinite loops by tracking the last redirect attempt
+    const redirectKey = `${team.length}-${activeTab}`;
+    if (team.length < 5 && activeTab !== 'team' && lastRedirectRef.current !== redirectKey) {
+      lastRedirectRef.current = redirectKey;
       setActiveTab('team');
     }
-  }, [team.length, activeTab, setActiveTab]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [team.length, activeTab]); // setActiveTab is stable from Zustand, no need to include it
 
   const renderTabContent = () => {
     const LoadingFallback = () => (

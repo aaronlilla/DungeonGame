@@ -1420,44 +1420,9 @@ export const useGameStore = create<GameState>()(
       },
 
       initializeNewGame: () => set(state => {
-        // Create starter team
-        state.team = [
-          createCharacter('Defender', 'tank'),
-          createCharacter('Mender', 'healer'),
-          createCharacter('Striker', 'dps'),
-          createCharacter('Caster', 'dps'),
-          createCharacter('Assassin', 'dps')
-        ];
-        
-        // Auto-equip default skills for each role with smart usage configs
-        state.team.forEach(char => {
-          if (char.role === 'tank') {
-            // Tank skills: Shield Slam, Shield Block, Defensive Stance, Thunder Clap
-            char.skillGems = [
-              { slotIndex: 0, skillGemId: 'shield_slam', supportGemIds: [], usageConfig: createSmartSkillConfig('shield_slam') },
-              { slotIndex: 1, skillGemId: 'shield_block', supportGemIds: [], usageConfig: createSmartSkillConfig('shield_block') },
-              { slotIndex: 2, skillGemId: 'defensive_stance', supportGemIds: [], usageConfig: createSmartSkillConfig('defensive_stance') },
-              { slotIndex: 3, skillGemId: 'thunder_clap', supportGemIds: [], usageConfig: createSmartSkillConfig('thunder_clap') }
-            ];
-          } else if (char.role === 'healer') {
-            // Healer skills: Healing Wave, Massive Heal, Rejuvenation, Pain Suppression
-            char.skillGems = [
-              { slotIndex: 0, skillGemId: 'healing_wave', supportGemIds: [], usageConfig: createSmartSkillConfig('healing_wave') },
-              { slotIndex: 1, skillGemId: 'massive_heal', supportGemIds: [], usageConfig: createSmartSkillConfig('massive_heal') },
-              { slotIndex: 2, skillGemId: 'rejuvenation', supportGemIds: [], usageConfig: createSmartSkillConfig('rejuvenation') },
-              { slotIndex: 3, skillGemId: 'pain_suppression', supportGemIds: [], usageConfig: createSmartSkillConfig('pain_suppression') }
-            ];
-          } else if (char.role === 'dps') {
-            // DPS skills: Fireball, Shadow Bolt, Blow Up
-            char.skillGems = [
-              { slotIndex: 0, skillGemId: 'fireball', supportGemIds: [], usageConfig: createSmartSkillConfig('fireball') },
-              { slotIndex: 1, skillGemId: 'shadow_bolt', supportGemIds: [], usageConfig: createSmartSkillConfig('shadow_bolt') },
-              { slotIndex: 2, skillGemId: 'blow_up', supportGemIds: [], usageConfig: createSmartSkillConfig('blow_up') }
-            ];
-          }
-        });
-        
-        state.selectedCharacterId = state.team[0].id;
+        // Start with empty team - user must create characters
+        state.team = [];
+        state.selectedCharacterId = null;
         
         // Give starter orbs
         state.orbs = {

@@ -38,10 +38,10 @@ function App() {
   // Initialize game only on first load if no team exists (not when team is cleared)
   const hasCheckedInit = React.useRef(false);
   useEffect(() => {
-    if (!hasCheckedInit.current && team.length === 0) {
+    if (!hasCheckedInit.current) {
       initializeNewGame();
+      hasCheckedInit.current = true;
     }
-    hasCheckedInit.current = true;
   }, []); // Only run once on mount
 
   // One-time migration: clear stash to fix old items with bad data
@@ -58,6 +58,13 @@ function App() {
   if (!assetsLoaded) {
     return <LoadingScreen onLoadComplete={() => setAssetsLoaded(true)} />;
   }
+
+  // Redirect to team tab if team is incomplete and user tries to access other tabs
+  useEffect(() => {
+    if (team.length < 5 && activeTab !== 'team') {
+      setActiveTab('team');
+    }
+  }, [team.length, activeTab, setActiveTab]);
 
   const renderTabContent = () => {
     const LoadingFallback = () => (
@@ -96,16 +103,26 @@ function App() {
         <div className="nav-ember nav-ember-6" />
         <div className="nav-ember nav-ember-7" />
         <div className="nav-ember nav-ember-8" />
-        {TABS.map(tab => (
-          <button
-            key={tab.id}
-            className={`nav-tab ${activeTab === tab.id ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab.id as typeof activeTab)}
-          >
-            <span className="tab-icon">{tab.icon}</span>
-            {tab.label}
-          </button>
-        ))}
+        {TABS.map(tab => {
+          // Prevent navigation to other tabs until team has 5 members
+          const isDisabled = team.length < 5 && tab.id !== 'team';
+          return (
+            <button
+              key={tab.id}
+              className={`nav-tab ${activeTab === tab.id ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`}
+              onClick={() => {
+                if (!isDisabled) {
+                  setActiveTab(tab.id as typeof activeTab);
+                }
+              }}
+              disabled={isDisabled}
+              title={isDisabled ? 'Complete your team (5 members) to unlock this tab' : ''}
+            >
+              <span className="tab-icon">{tab.icon}</span>
+              {tab.label}
+            </button>
+          );
+        })}
         <div style={{ flex: 1 }} />
         <div className="nav-stats">
           <div className="stat-display">

@@ -988,6 +988,30 @@ h4 {
   filter: drop-shadow(0 0 6px rgba(201, 162, 39, 0.5));
 }
 
+.nav-tab.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: auto;
+}
+
+.nav-tab.disabled:hover {
+  color: var(--text-secondary);
+  background: transparent;
+  transform: none;
+  text-shadow: none;
+}
+
+.nav-tab.disabled:hover::before {
+  height: 0;
+  opacity: 0;
+}
+
+.nav-tab.disabled .tab-icon {
+  opacity: 0.3;
+  transform: scale(1);
+  filter: none;
+}
+
 .nav-stats {
   display: flex;
   gap: 0.5rem;

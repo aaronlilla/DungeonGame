@@ -7,7 +7,6 @@ import { getExperienceProgress } from '../utils/leveling';
 import { getSkillGemById, getSupportGemById } from '../types/skills';
 import type { Item } from '../types/items';
 import { SkillGemTooltip } from './skills/SkillGemTooltip';
-import { AddCharacterModal } from './team/AddCharacterModal';
 import { EditCharacterModal } from './team/EditCharacterModal';
 import { getClassById, getClassBackground, getClassColor } from '../types/classes';
 import { ItemTooltip } from './shared/ItemTooltip';
@@ -995,11 +994,7 @@ export function TeamTab() {
     removeCharacter
   } = useGameStore();
   
-  const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [newCharRole, setNewCharRole] = useState<CharacterRole>('tank');
-  const [newCharClassId, setNewCharClassId] = useState<import('../types/classes').CharacterClassId | null>(null);
-  const [_slotBeingFilled, setSlotBeingFilled] = useState<number | null>(null);
 
   const selectedCharacter = team.find(c => c.id === selectedCharacterId);
   
@@ -1020,23 +1015,12 @@ export function TeamTab() {
   };
 
   const handleSlotClick = (slotIndex: number) => {
-    const slot = TEAM_SLOTS[slotIndex];
-    setSlotBeingFilled(slotIndex);
-    setNewCharRole(slot.role);
-    setNewCharClassId(null);
-    setShowAddModal(true);
+    // Automatically generate a temp DPS character (same as dialogue does)
+    const timestamp = Date.now().toString().slice(-4); // Last 4 digits of timestamp for uniqueness
+    const placeholderName = `DPS Fighter ${timestamp}`;
+    addCharacter(placeholderName, 'dps');
   };
 
-  const handleAddCharacter = () => {
-    if (newCharClassId) {
-      const classData = getClassById(newCharClassId);
-      const characterName = classData?.name || newCharRole.toUpperCase();
-      addCharacter(characterName, newCharRole, newCharClassId);
-      setNewCharClassId(null);
-      setSlotBeingFilled(null);
-      setShowAddModal(false);
-    }
-  };
 
   const openEditModal = () => {
     if (selectedCharacter) {
@@ -1151,21 +1135,6 @@ export function TeamTab() {
           })}
         </AnimatePresence>
       </div>
-
-      <AddCharacterModal
-        isOpen={showAddModal}
-        role={newCharRole}
-        classId={newCharClassId}
-        onRoleChange={setNewCharRole}
-        onClassChange={setNewCharClassId}
-        onConfirm={handleAddCharacter}
-        onCancel={() => {
-          setShowAddModal(false);
-          setNewCharRole('tank');
-          setNewCharClassId(null);
-          setSlotBeingFilled(null);
-        }}
-      />
 
       <EditCharacterModal
         isOpen={showEditModal}

@@ -1170,57 +1170,65 @@ function processBossAttack(
       console.log(`[BOSS COMBAT DEBUG] Available abilities were:`, bossAbilities.map(a => a.name));
       console.log(`[BOSS COMBAT DEBUG] Falling back to melee attack...`);
       
-      // Perform basic melee attack when no abilities are ready
-      const meleeTarget = tank || aliveMembers[Math.floor(Math.random() * aliveMembers.length)];
-      if (meleeTarget && !meleeTarget.isDead) {
-        // Boss melee attacks are instant, no cast time
-        const baseDamage = enemy.damage || 30; // Use enemy damage or default
-        const effectiveArmor = meleeTarget.armor * (1 + (meleeTarget.armorBuff || 0) / 100);
-        const painSuppMult = meleeTarget.damageReduction ? (1 - meleeTarget.damageReduction / 100) : 1;
-        const rawDamage = baseDamage * (shieldActive ? 0.5 : 1) * scaling.damageMultiplier;
-        
-        let evasionChance = meleeTarget.evasion ? calculateEvasionChance(meleeTarget.evasion, baseDamage * 100) : 0;
-        const flatEvadeChance = meleeTarget.talentBonuses?.evadeChance || 0;
-        evasionChance = Math.min(0.95, evasionChance + (flatEvadeChance / 100));
-        let dmg = 0;
-        let blocked = false;
-        
-        if (Math.random() < evasionChance) {
-          // Evaded
-          dmg = 0;
-          if (batchedFloatingNumbers) {
-            // Evade is shown as blocked type for visual feedback
-            batchedFloatingNumbers.push(createFloatingNumber(0, 'blocked', 0, 0));
-          }
-        } else {
-          const armorMult = calculateArmorReduction(effectiveArmor, rawDamage);
-          dmg = Math.floor(rawDamage * armorMult * painSuppMult);
-          blocked = rollBlock(meleeTarget.blockChance || 0);
-          if (blocked) {
-            dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+      // Perform basic melee attack when no abilities are ready (but only if cooldown allows)
+      if (enemy.autoAttackEndTick === undefined || currentTick >= enemy.autoAttackEndTick) {
+        const meleeTarget = tank || aliveMembers[Math.floor(Math.random() * aliveMembers.length)];
+        if (meleeTarget && !meleeTarget.isDead) {
+          // Boss melee attacks are instant, no cast time
+          const baseDamage = enemy.damage || 30; // Use enemy damage or default
+          const effectiveArmor = meleeTarget.armor * (1 + (meleeTarget.armorBuff || 0) / 100);
+          const painSuppMult = meleeTarget.damageReduction ? (1 - meleeTarget.damageReduction / 100) : 1;
+          const rawDamage = baseDamage * (shieldActive ? 0.5 : 1) * scaling.damageMultiplier;
+          
+          let evasionChance = meleeTarget.evasion ? calculateEvasionChance(meleeTarget.evasion, baseDamage * 100) : 0;
+          const flatEvadeChance = meleeTarget.talentBonuses?.evadeChance || 0;
+          evasionChance = Math.min(0.95, evasionChance + (flatEvadeChance / 100));
+          let dmg = 0;
+          let blocked = false;
+          
+          if (Math.random() < evasionChance) {
+            // Evaded
+            dmg = 0;
+            if (batchedFloatingNumbers) {
+              // Evade is shown as blocked type for visual feedback
+              batchedFloatingNumbers.push(createFloatingNumber(0, 'blocked', 0, 0));
+            }
+          } else {
+            const armorMult = calculateArmorReduction(effectiveArmor, rawDamage);
+            dmg = Math.floor(rawDamage * armorMult * painSuppMult);
+            blocked = rollBlock(meleeTarget.blockChance || 0);
+            if (blocked) {
+              dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+            }
+            
+            meleeTarget.health = Math.max(0, meleeTarget.health - dmg);
+            if (batchedFloatingNumbers) {
+              batchedFloatingNumbers.push(createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', 0, 0));
+            }
+            
+            if (meleeTarget.health <= 0 && !meleeTarget.isDead) {
+              meleeTarget.isDead = true;
+              context.applyDeathPenalty(meleeTarget.id);
+            }
           }
           
-          meleeTarget.health = Math.max(0, meleeTarget.health - dmg);
-          if (batchedFloatingNumbers) {
-            batchedFloatingNumbers.push(createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', 0, 0));
+          if (dmg > 0 && batchedLogEntries) {
+            batchedLogEntries.push({
+              timestamp: currentTick / 10,
+              type: 'damage',
+              source: bossName,
+              target: meleeTarget.name,
+              value: dmg,
+              ability: 'Melee Attack',
+              message: `${bossName} hits ${meleeTarget.name} for ${dmg} damage!`
+            });
           }
           
-          if (meleeTarget.health <= 0 && !meleeTarget.isDead) {
-            meleeTarget.isDead = true;
-            context.applyDeathPenalty(meleeTarget.id);
-          }
-        }
-        
-        if (dmg > 0 && batchedLogEntries) {
-          batchedLogEntries.push({
-            timestamp: currentTick / 10,
-            type: 'damage',
-            source: bossName,
-            target: meleeTarget.name,
-            value: dmg,
-            ability: 'Melee Attack',
-            message: `${bossName} hits ${meleeTarget.name} for ${dmg} damage!`
-          });
+          // Set cooldown for next melee attack (1.5 seconds)
+          const enemySpeed = context.mapAffixEffects?.enemySpeed || 0;
+          const meleeCooldownSeconds = 1.5;
+          const adjustedCooldown = applyEnemySpeedToCooldown(meleeCooldownSeconds, enemySpeed);
+          enemy.autoAttackEndTick = currentTick + secondsToTicks(adjustedCooldown);
         }
       }
       console.log(`[BOSS COMBAT DEBUG] ========== processBossAttack COMPLETE (melee attack) at tick ${currentTick} ==========`);
@@ -1363,99 +1371,108 @@ function processBossAttack(
   }
   
   // Priority 3: Melee attack on tank (or random target if no tank) - HITS HARD
-  const meleeTarget = tank || aliveMembers[Math.floor(Math.random() * aliveMembers.length)];
-  if (!meleeTarget) {
-    return;
-  }
-  
-  const effectiveArmor = meleeTarget.armor * (1 + (meleeTarget.armorBuff || 0) / 100);
-  const painSuppMult = meleeTarget.damageReduction ? (1 - meleeTarget.damageReduction / 100) : 1;
-  const rawDamage = enemy.damage * (shieldActive ? 0.5 : 1) * 1.25; // 125% damage for melee - reduced from 2.5x, still dangerous
-  
-  let evasionChance = meleeTarget.evasion ? calculateEvasionChance(meleeTarget.evasion, enemy.damage * 100) : 0;
-  // Apply flat evade chance from talents (direct % bonus)
-  const flatEvadeChance = meleeTarget.talentBonuses?.evadeChance || 0;
-  evasionChance = Math.min(0.95, evasionChance + (flatEvadeChance / 100));
-  let dmg = 0;
-  let blocked = false;
-  
-  if (Math.random() < evasionChance) {
-    updateCombatState(prev => ({ 
-      ...prev, 
-      combatLog: [...prev.combatLog, { 
-        timestamp: totalTime, 
-        type: 'ability', 
-        source: enemy.name, 
-        target: meleeTarget.name, 
-        message: `💨 ${meleeTarget.name} evades ${enemy.name}'s attack!` 
-      }] 
-    }));
-  } else {
-    const armorMult = calculateArmorReduction(effectiveArmor, rawDamage);
-    let damageAfterArmor = Math.floor(rawDamage * armorMult * painSuppMult);
-    const blockChance = (meleeTarget.blockChance || 0) + (meleeTarget.blockBuff || 0);
-    blocked = rollBlock(blockChance);
-    
-    if (blocked) {
-      damageAfterArmor = Math.floor(damageAfterArmor * (1 - BLOCK_DAMAGE_REDUCTION));
-      meleeTarget.lastBlockTime = Date.now();
+  // Only perform melee attack if cooldown allows (prevents attacking every tick)
+  if (enemy.autoAttackEndTick === undefined || currentTick >= enemy.autoAttackEndTick) {
+    const meleeTarget = tank || aliveMembers[Math.floor(Math.random() * aliveMembers.length)];
+    if (!meleeTarget) {
+      return;
     }
     
-    const damageResult = calculateDamageWithResistances(
-      damageAfterArmor, 'physical',
-      { 
-        health: meleeTarget.health, 
-        maxHealth: meleeTarget.maxHealth, 
-        energyShield: meleeTarget.energyShield || 0, 
-        maxEnergyShield: meleeTarget.maxEnergyShield || 0, 
-        fireResistance: meleeTarget.fireResistance || 0, 
-        coldResistance: meleeTarget.coldResistance || 0, 
-        lightningResistance: meleeTarget.lightningResistance || 0, 
-        chaosResistance: meleeTarget.chaosResistance || 0 
+    const effectiveArmor = meleeTarget.armor * (1 + (meleeTarget.armorBuff || 0) / 100);
+    const painSuppMult = meleeTarget.damageReduction ? (1 - meleeTarget.damageReduction / 100) : 1;
+    const rawDamage = enemy.damage * (shieldActive ? 0.5 : 1) * 1.25; // 125% damage for melee - reduced from 2.5x, still dangerous
+    
+    let evasionChance = meleeTarget.evasion ? calculateEvasionChance(meleeTarget.evasion, enemy.damage * 100) : 0;
+    // Apply flat evade chance from talents (direct % bonus)
+    const flatEvadeChance = meleeTarget.talentBonuses?.evadeChance || 0;
+    evasionChance = Math.min(0.95, evasionChance + (flatEvadeChance / 100));
+    let dmg = 0;
+    let blocked = false;
+    
+    if (Math.random() < evasionChance) {
+      updateCombatState(prev => ({ 
+        ...prev, 
+        combatLog: [...prev.combatLog, { 
+          timestamp: totalTime, 
+          type: 'ability', 
+          source: enemy.name, 
+          target: meleeTarget.name, 
+          message: `💨 ${meleeTarget.name} evades ${enemy.name}'s attack!` 
+        }] 
+      }));
+    } else {
+      const armorMult = calculateArmorReduction(effectiveArmor, rawDamage);
+      let damageAfterArmor = Math.floor(rawDamage * armorMult * painSuppMult);
+      const blockChance = (meleeTarget.blockChance || 0) + (meleeTarget.blockBuff || 0);
+      blocked = rollBlock(blockChance);
+      
+      if (blocked) {
+        damageAfterArmor = Math.floor(damageAfterArmor * (1 - BLOCK_DAMAGE_REDUCTION));
+        meleeTarget.lastBlockTime = Date.now();
       }
-    );
-    meleeTarget.energyShield = Math.max(0, damageResult.esRemaining);
-    meleeTarget.health = Math.max(0, damageResult.lifeRemaining);
-    dmg = damageResult.totalDamage;
-    
-    trackDamageTaken(meleeTarget, dmg, enemy.name, 'Melee Attack');
-    
-    if (dmg > 0) {
-      setTeamFightAnim(prev => prev + 1);
-      setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 }));
       
-      const jitterX = (Math.random() * 80) - 40;
-      const jitterY = (Math.random() * 60) - 30;
-      const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 40 + jitterY);
+      const damageResult = calculateDamageWithResistances(
+        damageAfterArmor, 'physical',
+        { 
+          health: meleeTarget.health, 
+          maxHealth: meleeTarget.maxHealth, 
+          energyShield: meleeTarget.energyShield || 0, 
+          maxEnergyShield: meleeTarget.maxEnergyShield || 0, 
+          fireResistance: meleeTarget.fireResistance || 0, 
+          coldResistance: meleeTarget.coldResistance || 0, 
+          lightningResistance: meleeTarget.lightningResistance || 0, 
+          chaosResistance: meleeTarget.chaosResistance || 0 
+        }
+      );
+      meleeTarget.energyShield = Math.max(0, damageResult.esRemaining);
+      meleeTarget.health = Math.max(0, damageResult.lifeRemaining);
+      dmg = damageResult.totalDamage;
       
-      updateCombatState(prev => ({ 
-        ...prev, 
-        floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum], 
-        combatLog: [...prev.combatLog, { 
-          timestamp: totalTime, 
-          type: 'damage', 
-          source: enemy.name, 
-          target: meleeTarget.name, 
-          value: dmg, 
-          ability: 'Melee Attack', 
-          message: `⚔️ ${enemy.name} hits ${meleeTarget.name} for ${dmg}${blocked ? ' (BLOCKED!)' : ''}!` 
-        }] 
-      }));
+      trackDamageTaken(meleeTarget, dmg, enemy.name, 'Melee Attack');
+      
+      if (dmg > 0) {
+        setTeamFightAnim(prev => prev + 1);
+        setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 }));
+        
+        const jitterX = (Math.random() * 80) - 40;
+        const jitterY = (Math.random() * 60) - 30;
+        const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 40 + jitterY);
+        
+        updateCombatState(prev => ({ 
+          ...prev, 
+          floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum], 
+          combatLog: [...prev.combatLog, { 
+            timestamp: totalTime, 
+            type: 'damage', 
+            source: enemy.name, 
+            target: meleeTarget.name, 
+            value: dmg, 
+            ability: 'Melee Attack', 
+            message: `⚔️ ${enemy.name} hits ${meleeTarget.name} for ${dmg}${blocked ? ' (BLOCKED!)' : ''}!` 
+          }] 
+        }));
+      }
+      
+      if (meleeTarget.health <= 0 && !meleeTarget.isDead) {
+        meleeTarget.isDead = true;
+        updateCombatState(prev => ({ 
+          ...prev, 
+          combatLog: [...prev.combatLog, { 
+            timestamp: totalTime, 
+            type: 'death', 
+            source: enemy.name, 
+            target: meleeTarget.name, 
+            message: `💀 ${meleeTarget.name} has died!` 
+          }] 
+        }));
+      }
     }
     
-    if (meleeTarget.health <= 0 && !meleeTarget.isDead) {
-      meleeTarget.isDead = true;
-      updateCombatState(prev => ({ 
-        ...prev, 
-        combatLog: [...prev.combatLog, { 
-          timestamp: totalTime, 
-          type: 'death', 
-          source: enemy.name, 
-          target: meleeTarget.name, 
-          message: `💀 ${meleeTarget.name} has died!` 
-        }] 
-      }));
-    }
+    // Set cooldown for next melee attack (1.5 seconds between attacks)
+    const enemySpeed = context.mapAffixEffects?.enemySpeed || 0;
+    const meleeCooldownSeconds = 1.5;
+    const adjustedCooldown = applyEnemySpeedToCooldown(meleeCooldownSeconds, enemySpeed);
+    enemy.autoAttackEndTick = currentTick + secondsToTicks(adjustedCooldown);
   }
 }
 

@@ -7,6 +7,7 @@ import { getExperienceProgress } from '../utils/leveling';
 import { getSkillGemById, getSupportGemById } from '../types/skills';
 import type { Item } from '../types/items';
 import { SkillGemTooltip } from './skills/SkillGemTooltip';
+import { AddCharacterModal } from './team/AddCharacterModal';
 import { EditCharacterModal } from './team/EditCharacterModal';
 import { getClassById, getClassBackground, getClassColor } from '../types/classes';
 import { ItemTooltip } from './shared/ItemTooltip';
@@ -994,31 +995,84 @@ export function TeamTab() {
     removeCharacter
   } = useGameStore();
   
+  const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [newCharRole, setNewCharRole] = useState<CharacterRole>('tank');
+  const [newCharClassId, setNewCharClassId] = useState<import('../types/classes').CharacterClassId | null>(null);
+  const [slotBeingFilled, setSlotBeingFilled] = useState<number | null>(null);
 
   const selectedCharacter = team.find(c => c.id === selectedCharacterId);
   
-  // Get character for a specific slot (by role matching)
-  const getCharacterForSlot = (slotIndex: number): Character | null => {
-    const slotRole = TEAM_SLOTS[slotIndex].role;
-    const charactersOfRole = team.filter(c => c.role === slotRole);
+  // Build a slot-ordered team array: map characters to their slots by role and order
+  // This ensures stable slot assignments - characters don't move between slots when new ones are added
+  const slotOrderedTeam = useMemo(() => {
+    const ordered: (Character | null)[] = Array(5).fill(null);
     
-    // Count how many slots of this role come before this slot
-    let roleSlotIndex = 0;
-    for (let i = 0; i < slotIndex; i++) {
-      if (TEAM_SLOTS[i].role === slotRole) {
-        roleSlotIndex++;
+    // Group characters by role
+    const byRole = {
+      tank: team.filter(c => c.role === 'tank'),
+      healer: team.filter(c => c.role === 'healer'),
+      dps: team.filter(c => c.role === 'dps')
+    };
+    
+    // Assign characters to slots in order
+    let tankIdx = 0, healerIdx = 0, dpsIdx = 0;
+    
+    for (let slotIdx = 0; slotIdx < TEAM_SLOTS.length; slotIdx++) {
+      const slotRole = TEAM_SLOTS[slotIdx].role;
+      
+      if (slotRole === 'tank' && tankIdx < byRole.tank.length) {
+        ordered[slotIdx] = byRole.tank[tankIdx++];
+      } else if (slotRole === 'healer' && healerIdx < byRole.healer.length) {
+        ordered[slotIdx] = byRole.healer[healerIdx++];
+      } else if (slotRole === 'dps' && dpsIdx < byRole.dps.length) {
+        ordered[slotIdx] = byRole.dps[dpsIdx++];
       }
     }
     
-    return charactersOfRole[roleSlotIndex] || null;
+    return ordered;
+  }, [team]);
+  
+  // Get character for a specific slot (direct index access to slot-ordered array)
+  const getCharacterForSlot = (slotIndex: number): Character | null => {
+    return slotOrderedTeam[slotIndex] || null;
   };
 
-  const handleSlotClick = () => {
-    // Automatically generate a temp DPS character (same as dialogue does)
-    const timestamp = Date.now().toString().slice(-4); // Last 4 digits of timestamp for uniqueness
-    const placeholderName = `DPS Fighter ${timestamp}`;
-    addCharacter(placeholderName, 'dps');
+  const handleSlotClick = (slotIndex: number) => {
+    const slot = TEAM_SLOTS[slotIndex];
+    const slotRole = slot.role;
+    
+    // Check if this slot already has a character
+    const existingChar = getCharacterForSlot(slotIndex);
+    if (existingChar) {
+      // Slot already filled, select the character instead
+      selectCharacter(existingChar.id);
+      return;
+    }
+    
+    if (slotRole === 'dps') {
+      // Automatically generate a temp DPS character (same as dialogue does)
+      const timestamp = Date.now().toString().slice(-4); // Last 4 digits of timestamp for uniqueness
+      const placeholderName = `DPS Fighter ${timestamp}`;
+      addCharacter(placeholderName, 'dps');
+    } else {
+      // For tank and healer, open the modal to select a class
+      setNewCharRole(slotRole);
+      setNewCharClassId(null);
+      setSlotBeingFilled(slotIndex);
+      setShowAddModal(true);
+    }
+  };
+
+  const handleAddCharacter = () => {
+    if (newCharClassId) {
+      const classData = getClassById(newCharClassId);
+      const characterName = classData?.name || newCharRole.toUpperCase();
+      addCharacter(characterName, newCharRole, newCharClassId);
+      setNewCharClassId(null);
+      setSlotBeingFilled(null);
+      setShowAddModal(false);
+    }
   };
 
 
@@ -1112,7 +1166,7 @@ export function TeamTab() {
             if (character) {
               return (
                 <CharacterCard
-                  key={`slot-${slotIndex}-${character.id}`}
+                  key={character.id}
                   character={character}
                   isSelected={character.id === selectedCharacterId}
                   onSelect={() => selectCharacter(character.id)}
@@ -1125,7 +1179,7 @@ export function TeamTab() {
               return (
                 <EmptySlotCard 
                   key={`empty-${slotIndex}`} 
-                  onClick={handleSlotClick}
+                  onClick={() => handleSlotClick(slotIndex)}
                   index={slotIndex}
                   role={slot.role}
                   label={slot.label}
@@ -1135,6 +1189,20 @@ export function TeamTab() {
           })}
         </AnimatePresence>
       </div>
+
+      <AddCharacterModal
+        isOpen={showAddModal}
+        role={newCharRole}
+        classId={newCharClassId}
+        onRoleChange={setNewCharRole}
+        onClassChange={setNewCharClassId}
+        onConfirm={handleAddCharacter}
+        onCancel={() => {
+          setShowAddModal(false);
+          setNewCharRole('tank');
+          setNewCharClassId(null);
+        }}
+      />
 
       <EditCharacterModal
         isOpen={showEditModal}

@@ -235,32 +235,34 @@ export const SAMPLE_ENEMIES: DungeonEnemy[] = [
   // ========== TANKBUSTERS - DANGEROUS ==========
   // Crushing Blow chunks the tank - multiple tankbusters require cooldowns
   // Base stats will be calculated from PoE monster data based on dangerLevel and type
+  // Reduced base damage values to prevent one-shots on level 1 tanks (110 HP)
+  // At tier 1: 70 base * 1.0 scaling * 1.25 multiplier = 87.5 raw → ~45-50 damage after armor (40-45% of HP)
   { id: 'bone_crusher', name: 'Bone Crusher', icon: React.createElement(GiShieldBash), type: 'normal', baseHealth: 0, baseDamage: 0, enemyForces: 2, dangerLevel: 3, abilities: [
-    { id: 'crushing_blow', name: 'Crushing Blow', description: 'Deals massive physical damage to the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 180, castTime: 2.0, cooldown: 4.0, interruptible: false, avoidable: false, effects: [] }
+    { id: 'crushing_blow', name: 'Crushing Blow', description: 'Deals massive physical damage to the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 70, castTime: 2.0, cooldown: 4.0, interruptible: false, avoidable: false, effects: [] }
   ]},
   { id: 'grave_executioner', name: 'Grave Executioner', icon: React.createElement(GiSkullShield), type: 'normal', baseHealth: 0, baseDamage: 0, enemyForces: 2, dangerLevel: 3, abilities: [
-    { id: 'crushing_blow', name: 'Crushing Blow', description: 'Deals massive physical damage to the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 180, castTime: 2.0, cooldown: 4.0, interruptible: false, avoidable: false, effects: [] }
+    { id: 'crushing_blow', name: 'Crushing Blow', description: 'Deals massive physical damage to the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 70, castTime: 2.0, cooldown: 4.0, interruptible: false, avoidable: false, effects: [] }
   ]},
   { id: 'tomb_smasher', name: 'Tomb Smasher', icon: React.createElement(GiShieldBash), type: 'elite', baseHealth: 0, baseDamage: 0, enemyForces: 4, dangerLevel: 4, abilities: [
-    { id: 'crushing_blow', name: 'Crushing Blow', description: 'Deals massive physical damage to the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 220, castTime: 2.0, cooldown: 4.0, interruptible: false, avoidable: false, effects: [] }
+    { id: 'crushing_blow', name: 'Crushing Blow', description: 'Deals massive physical damage to the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 85, castTime: 2.0, cooldown: 4.0, interruptible: false, avoidable: false, effects: [] }
   ]},
   
   // ========== ELITE CASTERS - DANGEROUS ==========
   // Spell damage hurts but DPS can survive 5-6 hits
   { id: 'dark_sorcerer', name: 'Dark Sorcerer', icon: React.createElement(GiWizardStaff), type: 'elite', baseHealth: 0, baseDamage: 0, enemyForces: 4, dangerLevel: 3, abilities: [
-    { id: 'ice_bolt', name: 'Ice Bolt', description: 'Fires a shard of ice at a random party member', damageType: 'cold', tags: ['spell', 'ranged', 'projectile', 'cold'], damage: 120, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
+    { id: 'ice_bolt', name: 'Ice Bolt', description: 'Fires a shard of ice at a random party member', damageType: 'cold', tags: ['spell', 'ranged', 'projectile', 'cold'], damage: 50, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
   ]},
   { id: 'necromancer', name: 'Lesser Necromancer', icon: React.createElement(GiWizardStaff), type: 'elite', baseHealth: 0, baseDamage: 0, enemyForces: 5, dangerLevel: 4, abilities: [
-    { id: 'lightning_bolt', name: 'Lightning Bolt', description: 'Fires a bolt of lightning at a random party member', damageType: 'lightning', tags: ['spell', 'ranged', 'projectile', 'lightning'], damage: 140, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
+    { id: 'lightning_bolt', name: 'Lightning Bolt', description: 'Fires a bolt of lightning at a random party member', damageType: 'lightning', tags: ['spell', 'ranged', 'projectile', 'lightning'], damage: 60, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
   ]},
   
   // ========== NORMAL CASTERS - MODERATE ==========
   // Manageable damage, good for learning
   { id: 'skeleton_mage', name: 'Skeleton Mage', icon: React.createElement(GiWizardStaff), type: 'normal', baseHealth: 0, baseDamage: 0, enemyForces: 2, dangerLevel: 2, abilities: [
-    { id: 'fire_bolt', name: 'Fire Bolt', description: 'Fires a bolt of fire at a random party member', damageType: 'fire', tags: ['spell', 'ranged', 'projectile', 'fire'], damage: 80, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
+    { id: 'fire_bolt', name: 'Fire Bolt', description: 'Fires a bolt of fire at a random party member', damageType: 'fire', tags: ['spell', 'ranged', 'projectile', 'fire'], damage: 35, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
   ]},
   { id: 'crypt_warlock', name: 'Crypt Warlock', icon: React.createElement(GiWizardStaff), type: 'normal', baseHealth: 0, baseDamage: 0, enemyForces: 2, dangerLevel: 2, abilities: [
-    { id: 'shadow_bolt', name: 'Shadow Bolt', description: 'Fires a bolt of shadow at a random party member', damageType: 'shadow', tags: ['spell', 'ranged', 'projectile', 'shadow'], damage: 90, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
+    { id: 'shadow_bolt', name: 'Shadow Bolt', description: 'Fires a bolt of shadow at a random party member', damageType: 'shadow', tags: ['spell', 'ranged', 'projectile', 'shadow'], damage: 40, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
   ]},
   
   // ========== HARD MELEE - ABOVE AVERAGE DAMAGE ==========
@@ -284,14 +286,15 @@ export const SAMPLE_ENEMIES: DungeonEnemy[] = [
   
   // ========== MINIBOSS - GATE BOSSES ==========
   // Tough fights - require active tanking and healing!
+  // Reduced base damage to ~50-60% of tank HP instead of one-shotting
   { id: 'bone_golem', name: 'Bone Golem', icon: React.createElement(GiShieldBash), type: 'miniboss', baseHealth: 0, baseDamage: 0, enemyForces: 0, dangerLevel: 5, abilities: [
-    { id: 'ground_slam', name: 'Ground Slam', description: 'Slams the ground with devastating force, crushing the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 250, castTime: 1.5, cooldown: 5.0, interruptible: false, avoidable: false, effects: [] }
+    { id: 'ground_slam', name: 'Ground Slam', description: 'Slams the ground with devastating force, crushing the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 100, castTime: 1.5, cooldown: 5.0, interruptible: false, avoidable: false, effects: [] }
   ]},
   { id: 'death_knight', name: 'Death Knight', icon: React.createElement(GiSkullShield), type: 'miniboss', baseHealth: 0, baseDamage: 0, enemyForces: 0, dangerLevel: 5, abilities: [
-    { id: 'mortal_strike', name: 'Mortal Strike', description: 'A brutal strike that wounds the tank deeply', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 280, castTime: 1.5, cooldown: 5.0, interruptible: false, avoidable: false, effects: [] }
+    { id: 'mortal_strike', name: 'Mortal Strike', description: 'A brutal strike that wounds the tank deeply', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 110, castTime: 1.5, cooldown: 5.0, interruptible: false, avoidable: false, effects: [] }
   ]},
   { id: 'lich', name: 'Undying Lich', icon: React.createElement(GiWizardStaff), type: 'miniboss', baseHealth: 0, baseDamage: 0, enemyForces: 0, dangerLevel: 5, abilities: [
-    { id: 'soul_rend', name: 'Soul Rend', description: 'Tears at the tank\'s soul with dark magic', damageType: 'shadow', tags: ['spell', 'ranged', 'shadow'], damage: 260, castTime: 1.5, cooldown: 5.0, interruptible: false, avoidable: false, effects: [] }
+    { id: 'soul_rend', name: 'Soul Rend', description: 'Tears at the tank\'s soul with dark magic', damageType: 'shadow', tags: ['spell', 'ranged', 'shadow'], damage: 90, castTime: 1.5, cooldown: 5.0, interruptible: false, avoidable: false, effects: [] }
   ]},
   
   // ========== FINAL BOSS ==========

@@ -35,14 +35,23 @@ function App() {
     clearStash
   } = useGameStore();
 
-  // Initialize game only on first load if no team exists (not when team is cleared)
+  // Initialize game only on first load if no saved data exists
   const hasCheckedInit = React.useRef(false);
+  const lastRedirectRef = React.useRef<string>('');
+  
   useEffect(() => {
     if (!hasCheckedInit.current) {
-      initializeNewGame();
+      // Check if there's already saved data - Zustand persist stores data in localStorage
+      // Check if the persisted state exists before initializing
+      const savedData = localStorage.getItem('mythic-delve-save');
+      if (!savedData) {
+        // Only initialize if there's no saved data at all (truly new game)
+        initializeNewGame();
+      }
+      // If savedData exists, Zustand persist middleware will restore it automatically
       hasCheckedInit.current = true;
     }
-  }, []); // Only run once on mount
+  }, [initializeNewGame]); // Only run once on mount
 
   // One-time migration: clear stash to fix old items with bad data
   useEffect(() => {
@@ -54,13 +63,7 @@ function App() {
     }
   }, [clearStash]);
 
-  // Show loading screen until assets are loaded
-  if (!assetsLoaded) {
-    return <LoadingScreen onLoadComplete={() => setAssetsLoaded(true)} />;
-  }
-
   // Redirect to team tab if team is incomplete and user tries to access other tabs
-  const lastRedirectRef = React.useRef<string>('');
   useEffect(() => {
     // Only redirect if team is incomplete AND we're not already on the team tab
     // Use a ref to prevent infinite loops by tracking the last redirect attempt
@@ -71,6 +74,11 @@ function App() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [team.length, activeTab]); // setActiveTab is stable from Zustand, no need to include it
+
+  // Show loading screen until assets are loaded
+  if (!assetsLoaded) {
+    return <LoadingScreen onLoadComplete={() => setAssetsLoaded(true)} />;
+  }
 
   const renderTabContent = () => {
     const LoadingFallback = () => (

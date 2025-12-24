@@ -64,7 +64,7 @@ export const BOSS_ABILITIES: Record<string, BossAbility[]> = {
       castTime: 0,
       cooldown: 2,
       isSignature: false,
-      damage: 50, // Scaled up for balanced DPS (~25 DPS)
+      damage: 30, // Reduced from 50 - hits all party members, balanced for healing throughput
       damageType: 'physical',
       targetType: 'all',
       effects: [{ type: 'debuff', name: 'Gilded', duration: 5, stacks: true, maxStacks: 5, value: 10 }]
@@ -76,7 +76,7 @@ export const BOSS_ABILITIES: Record<string, BossAbility[]> = {
       castTime: 2,
       cooldown: 6,
       isSignature: false,
-      damage: 60, // Scaled up for balanced DPS (~10 DPS)
+      damage: 40, // Reduced from 60 - tank buster, but shouldn't one-shot when combined with other abilities
       damageType: 'mixed',
       targetType: 'tank',
       effects: [{ type: 'buff', name: 'Treasury Armor', duration: 3, value: 20 }]
@@ -273,7 +273,7 @@ export const BOSS_ABILITIES: Record<string, BossAbility[]> = {
       castTime: 2,
       cooldown: 7,
       isSignature: false,
-      damage: 70, // Scaled up for balanced DPS (~10 DPS)
+      damage: 40, // Reduced from 70 - hits all party members, balanced for healing throughput
       damageType: 'chaos',
       targetType: 'all',
       effects: [{ type: 'removeCharges', name: 'Identity Collapse' }]
@@ -285,7 +285,7 @@ export const BOSS_ABILITIES: Record<string, BossAbility[]> = {
       castTime: 0,
       cooldown: 4,
       isSignature: false,
-      damage: 100, // Scaled up for balanced DPS (~25 DPS)
+      damage: 50, // Reduced from 100 - hits all party members, balanced for healing throughput
       damageType: 'chaos',
       targetType: 'all'
     },
@@ -297,7 +297,7 @@ export const BOSS_ABILITIES: Record<string, BossAbility[]> = {
       cooldown: 999, // Once per fight
       isSignature: true,
       isOncePerFight: true,
-      damage: 60,
+      damage: 40, // Reduced from 60 - hits all party members, balanced for healing throughput
       damageType: 'chaos',
       targetType: 'all'
     }

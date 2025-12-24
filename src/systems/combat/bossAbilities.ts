@@ -664,8 +664,8 @@ export function executeBossAbility(
   console.log(`[EXECUTE ABILITY DEBUG] Effects applied`);
   
   // Update ability state
-  // Reduce cooldowns by 60% (multiply by 0.4) so bosses use abilities much more frequently
-  const reducedCooldown = ability.cooldown * 0.4;
+  // Reduce cooldowns by 30% (multiply by 0.7) - less aggressive than before to prevent abilities from firing too rapidly
+  const reducedCooldown = ability.cooldown * 0.7;
   const cooldownTicks = secondsToTicks(reducedCooldown);
   const cooldownEndTick = currentTick + cooldownTicks;
   console.log(`[EXECUTE ABILITY DEBUG] Setting cooldown: ${ability.cooldown}s = ${cooldownTicks} ticks`);

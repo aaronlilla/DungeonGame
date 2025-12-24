@@ -1,0 +1,2411 @@
+{
+  "itemClass": "Dexterity/Intelligence Helmet",
+  "affixes": {
+    "prefixes": [
+      {
+        "group": "BaseLocalDefences",
+        "mods": [
+          {
+            "modifier": "Will-o-wisp's",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 5,
+                "max": 9
+              },
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 3,
+                "max": 4
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Nymph's",
+            "iLvl": 18,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 10,
+                "max": 27
+              },
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 5,
+                "max": 12
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Sylph's",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 28,
+                "max": 48
+              },
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 13,
+                "max": 22
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Cherub's",
+            "iLvl": 38,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 49,
+                "max": 85
+              },
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 23,
+                "max": 28
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Spirit's",
+            "iLvl": 46,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 86,
+                "max": 145
+              },
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 29,
+                "max": 48
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "BaseLocalDefencesAndLife",
+        "mods": [
+          {
+            "modifier": "Acolyte's",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 8,
+                "max": 10
+              },
+              {
+                "stat": "+# to maximum Mana",
+                "min": 11,
+                "max": 15
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "resource",
+              "mana",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Deacon's",
+            "iLvl": 46,
+            "stats": [
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 11,
+                "max": 15
+              },
+              {
+                "stat": "+# to maximum Mana",
+                "min": 16,
+                "max": 19
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "resource",
+              "mana",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Priest's",
+            "iLvl": 62,
+            "stats": [
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 16,
+                "max": 25
+              },
+              {
+                "stat": "+# to maximum Mana",
+                "min": 20,
+                "max": 22
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "resource",
+              "mana",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Monk's",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 8,
+                "max": 10
+              },
+              {
+                "stat": "+# to maximum Life",
+                "min": 18,
+                "max": 23
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "resource",
+              "life",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Prior's",
+            "iLvl": 46,
+            "stats": [
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 11,
+                "max": 15
+              },
+              {
+                "stat": "+# to maximum Life",
+                "min": 24,
+                "max": 28
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "resource",
+              "life",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Abbot's",
+            "iLvl": 62,
+            "stats": [
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 16,
+                "max": 25
+              },
+              {
+                "stat": "+# to maximum Life",
+                "min": 29,
+                "max": 33
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "resource",
+              "life",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Flea's",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 14,
+                "max": 20
+              },
+              {
+                "stat": "+# to maximum Life",
+                "min": 18,
+                "max": 23
+              }
+            ],
+            "tags": [
+              "evasion",
+              "resource",
+              "life",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Fawn's",
+            "iLvl": 46,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 21,
+                "max": 42
+              },
+              {
+                "stat": "+# to maximum Life",
+                "min": 24,
+                "max": 28
+              }
+            ],
+            "tags": [
+              "evasion",
+              "resource",
+              "life",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Ram's",
+            "iLvl": 62,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 43,
+                "max": 95
+              },
+              {
+                "stat": "+# to maximum Life",
+                "min": 29,
+                "max": 33
+              }
+            ],
+            "tags": [
+              "evasion",
+              "resource",
+              "life",
+              "defences"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AttackerTakesDamageNoRange",
+        "mods": [
+          {
+            "modifier": "Thorny",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "Reflects # Physical Damage to Melee Attackers",
+                "min": 1,
+                "max": 4
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical"
+            ]
+          },
+          {
+            "modifier": "Spiny",
+            "iLvl": 10,
+            "stats": [
+              {
+                "stat": "Reflects # Physical Damage to Melee Attackers",
+                "min": 5,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedMana",
+        "mods": [
+          {
+            "modifier": "Beryl",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 15,
+                "max": 19
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Cobalt",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 20,
+                "max": 24
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Azure",
+            "iLvl": 17,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 25,
+                "max": 29
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Sapphire",
+            "iLvl": 23,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 30,
+                "max": 34
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Cerulean",
+            "iLvl": 29,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 35,
+                "max": 39
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Aqua",
+            "iLvl": 35,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 40,
+                "max": 44
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Opalescent",
+            "iLvl": 42,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 45,
+                "max": 49
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Gentian",
+            "iLvl": 51,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 50,
+                "max": 54
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Chalybeous",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 55,
+                "max": 59
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Mazarine",
+            "iLvl": 69,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 60,
+                "max": 64
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Blue",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 65,
+                "max": 68
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Zaffre",
+            "iLvl": 81,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 69,
+                "max": 73
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreaseSpecificSocketedGemLevel",
+        "mods": [
+          {
+            "modifier": "Taskmaster's",
+            "iLvl": 14,
+            "stats": [
+              {
+                "stat": "+# to Level of all Minion Skill Gems",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "minion",
+              "gem"
+            ]
+          },
+          {
+            "modifier": "Overseer's",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "+# to Level of all Minion Skill Gems",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "minion",
+              "gem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ItemFoundRarityIncreasePrefix",
+        "mods": [
+          {
+            "modifier": "Magpie's",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "% increased Rarity of Items found",
+                "min": 8,
+                "max": 12
+              }
+            ],
+            "tags": [
+              "drop"
+            ]
+          },
+          {
+            "modifier": "Pirate's",
+            "iLvl": 39,
+            "stats": [
+              {
+                "stat": "% increased Rarity of Items found",
+                "min": 13,
+                "max": 18
+              }
+            ],
+            "tags": [
+              "drop"
+            ]
+          },
+          {
+            "modifier": "Dragon's",
+            "iLvl": 62,
+            "stats": [
+              {
+                "stat": "% increased Rarity of Items found",
+                "min": 19,
+                "max": 24
+              }
+            ],
+            "tags": [
+              "drop"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "DefencesPercentAndStunRecovery",
+        "mods": [
+          {
+            "modifier": "Mosquito's",
+            "iLvl": 2,
+            "stats": [
+              {
+                "stat": "% increased Evasion and Energy Shield",
+                "min": 6,
+                "max": 13
+              },
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 6,
+                "max": 7
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Moth's",
+            "iLvl": 19,
+            "stats": [
+              {
+                "stat": "% increased Evasion and Energy Shield",
+                "min": 14,
+                "max": 20
+              },
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 8,
+                "max": 9
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Butterfly's",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "% increased Evasion and Energy Shield",
+                "min": 21,
+                "max": 26
+              },
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 10,
+                "max": 11
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Wasp's",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "% increased Evasion and Energy Shield",
+                "min": 27,
+                "max": 32
+              },
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 12,
+                "max": 13
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Dragonfly's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Evasion and Energy Shield",
+                "min": 33,
+                "max": 38
+              },
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 14,
+                "max": 15
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Hummingbird's",
+            "iLvl": 78,
+            "stats": [
+              {
+                "stat": "% increased Evasion and Energy Shield",
+                "min": 39,
+                "max": 42
+              },
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 16,
+                "max": 17
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedLife",
+        "mods": [
+          {
+            "modifier": "Hale",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 3,
+                "max": 9
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Healthy",
+            "iLvl": 5,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 10,
+                "max": 24
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Sanguine",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 25,
+                "max": 39
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Stalwart",
+            "iLvl": 18,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 40,
+                "max": 54
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Stout",
+            "iLvl": 24,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 55,
+                "max": 69
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Robust",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 70,
+                "max": 84
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Rotund",
+            "iLvl": 36,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 85,
+                "max": 99
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Virile",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 100,
+                "max": 114
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Athlete's",
+            "iLvl": 54,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 115,
+                "max": 129
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Fecund",
+            "iLvl": 64,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 130,
+                "max": 144
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "DefencesPercent",
+        "mods": [
+          {
+            "modifier": "Shadowy",
+            "iLvl": 3,
+            "stats": [
+              {
+                "stat": "% increased Evasion and Energy Shield",
+                "min": 15,
+                "max": 26
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Ethereal",
+            "iLvl": 19,
+            "stats": [
+              {
+                "stat": "% increased Evasion and Energy Shield",
+                "min": 27,
+                "max": 42
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Unworldly",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "% increased Evasion and Energy Shield",
+                "min": 43,
+                "max": 55
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Ephemeral",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "% increased Evasion and Energy Shield",
+                "min": 56,
+                "max": 67
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Evanescent",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Evasion and Energy Shield",
+                "min": 68,
+                "max": 79
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Unreal",
+            "iLvl": 72,
+            "stats": [
+              {
+                "stat": "% increased Evasion and Energy Shield",
+                "min": 80,
+                "max": 91
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Illusory",
+            "iLvl": 84,
+            "stats": [
+              {
+                "stat": "% increased Evasion and Energy Shield",
+                "min": 92,
+                "max": 100
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "evasion",
+              "defences"
+            ]
+          }
+        ]
+      }
+    ],
+    "suffixes": [
+      {
+        "group": "LifeRegeneration",
+        "mods": [
+          {
+            "modifier": "of the Newt",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 1,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of the Lizard",
+            "iLvl": 7,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 2.1,
+                "max": 8
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of the Flatworm",
+            "iLvl": 19,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 8.1,
+                "max": 16
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of the Starfish",
+            "iLvl": 31,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 16.1,
+                "max": 24
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of the Hydra",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 24.1,
+                "max": 32
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of the Troll",
+            "iLvl": 55,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 32.1,
+                "max": 48
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of Ryslatha",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 48.1,
+                "max": 64
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of the Phoenix",
+            "iLvl": 74,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 64.1,
+                "max": 96
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of Recuperation",
+            "iLvl": 78,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 96.1,
+                "max": 128
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ChaosResistance",
+        "mods": [
+          {
+            "modifier": "of the Lost",
+            "iLvl": 16,
+            "stats": [
+              {
+                "stat": "+#% to Chaos Resistance",
+                "min": 5,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "chaos",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of Banishment",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "+#% to Chaos Resistance",
+                "min": 11,
+                "max": 15
+              }
+            ],
+            "tags": [
+              "chaos",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of Eviction",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "+#% to Chaos Resistance",
+                "min": 16,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "chaos",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of Expulsion",
+            "iLvl": 56,
+            "stats": [
+              {
+                "stat": "+#% to Chaos Resistance",
+                "min": 21,
+                "max": 25
+              }
+            ],
+            "tags": [
+              "chaos",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of Exile",
+            "iLvl": 65,
+            "stats": [
+              {
+                "stat": "+#% to Chaos Resistance",
+                "min": 26,
+                "max": 30
+              }
+            ],
+            "tags": [
+              "chaos",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of Bameth",
+            "iLvl": 81,
+            "stats": [
+              {
+                "stat": "+#% to Chaos Resistance",
+                "min": 31,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "chaos",
+              "resistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LightningResistance",
+        "mods": [
+          {
+            "modifier": "of the Cloud",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "+#% to Lightning Resistance",
+                "min": 6,
+                "max": 11
+              }
+            ],
+            "tags": [
+              "elemental",
+              "lightning",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Squall",
+            "iLvl": 13,
+            "stats": [
+              {
+                "stat": "+#% to Lightning Resistance",
+                "min": 12,
+                "max": 17
+              }
+            ],
+            "tags": [
+              "elemental",
+              "lightning",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Storm",
+            "iLvl": 25,
+            "stats": [
+              {
+                "stat": "+#% to Lightning Resistance",
+                "min": 18,
+                "max": 23
+              }
+            ],
+            "tags": [
+              "elemental",
+              "lightning",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Thunderhead",
+            "iLvl": 37,
+            "stats": [
+              {
+                "stat": "+#% to Lightning Resistance",
+                "min": 24,
+                "max": 29
+              }
+            ],
+            "tags": [
+              "elemental",
+              "lightning",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Tempest",
+            "iLvl": 49,
+            "stats": [
+              {
+                "stat": "+#% to Lightning Resistance",
+                "min": 30,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "elemental",
+              "lightning",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Maelstrom",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "+#% to Lightning Resistance",
+                "min": 36,
+                "max": 41
+              }
+            ],
+            "tags": [
+              "elemental",
+              "lightning",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Lightning",
+            "iLvl": 72,
+            "stats": [
+              {
+                "stat": "+#% to Lightning Resistance",
+                "min": 42,
+                "max": 45
+              }
+            ],
+            "tags": [
+              "elemental",
+              "lightning",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of Ephij",
+            "iLvl": 84,
+            "stats": [
+              {
+                "stat": "+#% to Lightning Resistance",
+                "min": 46,
+                "max": 48
+              }
+            ],
+            "tags": [
+              "elemental",
+              "lightning",
+              "resistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ColdResistance",
+        "mods": [
+          {
+            "modifier": "of the Inuit",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "+#% to Cold Resistance",
+                "min": 6,
+                "max": 11
+              }
+            ],
+            "tags": [
+              "elemental",
+              "cold",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Seal",
+            "iLvl": 14,
+            "stats": [
+              {
+                "stat": "+#% to Cold Resistance",
+                "min": 12,
+                "max": 17
+              }
+            ],
+            "tags": [
+              "elemental",
+              "cold",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Penguin",
+            "iLvl": 26,
+            "stats": [
+              {
+                "stat": "+#% to Cold Resistance",
+                "min": 18,
+                "max": 23
+              }
+            ],
+            "tags": [
+              "elemental",
+              "cold",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Yeti",
+            "iLvl": 38,
+            "stats": [
+              {
+                "stat": "+#% to Cold Resistance",
+                "min": 24,
+                "max": 29
+              }
+            ],
+            "tags": [
+              "elemental",
+              "cold",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Walrus",
+            "iLvl": 50,
+            "stats": [
+              {
+                "stat": "+#% to Cold Resistance",
+                "min": 30,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "elemental",
+              "cold",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Polar Bear",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "+#% to Cold Resistance",
+                "min": 36,
+                "max": 41
+              }
+            ],
+            "tags": [
+              "elemental",
+              "cold",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Ice",
+            "iLvl": 72,
+            "stats": [
+              {
+                "stat": "+#% to Cold Resistance",
+                "min": 42,
+                "max": 45
+              }
+            ],
+            "tags": [
+              "elemental",
+              "cold",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of Haast",
+            "iLvl": 84,
+            "stats": [
+              {
+                "stat": "+#% to Cold Resistance",
+                "min": 46,
+                "max": 48
+              }
+            ],
+            "tags": [
+              "elemental",
+              "cold",
+              "resistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Intelligence",
+        "mods": [
+          {
+            "modifier": "of the Pupil",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "+# to Intelligence",
+                "min": 8,
+                "max": 12
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Student",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "+# to Intelligence",
+                "min": 13,
+                "max": 17
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Prodigy",
+            "iLvl": 22,
+            "stats": [
+              {
+                "stat": "+# to Intelligence",
+                "min": 18,
+                "max": 22
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Augur",
+            "iLvl": 33,
+            "stats": [
+              {
+                "stat": "+# to Intelligence",
+                "min": 23,
+                "max": 27
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Philosopher",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "+# to Intelligence",
+                "min": 28,
+                "max": 32
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Sage",
+            "iLvl": 55,
+            "stats": [
+              {
+                "stat": "+# to Intelligence",
+                "min": 33,
+                "max": 37
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Savant",
+            "iLvl": 66,
+            "stats": [
+              {
+                "stat": "+# to Intelligence",
+                "min": 38,
+                "max": 42
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Virtuoso",
+            "iLvl": 74,
+            "stats": [
+              {
+                "stat": "+# to Intelligence",
+                "min": 43,
+                "max": 50
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Genius",
+            "iLvl": 82,
+            "stats": [
+              {
+                "stat": "+# to Intelligence",
+                "min": 51,
+                "max": 55
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Polymath",
+            "iLvl": 85,
+            "stats": [
+              {
+                "stat": "+# to Intelligence",
+                "min": 56,
+                "max": 60
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LocalAttributeRequirements",
+        "mods": [
+          {
+            "modifier": "of the Worthy",
+            "iLvl": 36,
+            "stats": [
+              {
+                "stat": "% reduced Attribute Requirements",
+                "min": 18,
+                "max": 18
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of the Apt",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% reduced Attribute Requirements",
+                "min": 32,
+                "max": 32
+              }
+            ],
+            "tags": []
+          }
+        ]
+      },
+      {
+        "group": "Dexterity",
+        "mods": [
+          {
+            "modifier": "of the Mongoose",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 8,
+                "max": 12
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Lynx",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 13,
+                "max": 17
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Fox",
+            "iLvl": 22,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 18,
+                "max": 22
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Falcon",
+            "iLvl": 33,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 23,
+                "max": 27
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Panther",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 28,
+                "max": 32
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Leopard",
+            "iLvl": 55,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 33,
+                "max": 37
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Jaguar",
+            "iLvl": 66,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 38,
+                "max": 42
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Phantom",
+            "iLvl": 74,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 43,
+                "max": 50
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Wind",
+            "iLvl": 82,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 51,
+                "max": 55
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "StunRecovery",
+        "mods": [
+          {
+            "modifier": "of Thick Skin",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 11,
+                "max": 13
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Stone Skin",
+            "iLvl": 17,
+            "stats": [
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 14,
+                "max": 16
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Iron Skin",
+            "iLvl": 28,
+            "stats": [
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 17,
+                "max": 19
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Steel Skin",
+            "iLvl": 42,
+            "stats": [
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 20,
+                "max": 22
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Adamantite Skin",
+            "iLvl": 56,
+            "stats": [
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 23,
+                "max": 25
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Corundum Skin",
+            "iLvl": 79,
+            "stats": [
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 26,
+                "max": 28
+              }
+            ],
+            "tags": []
+          }
+        ]
+      },
+      {
+        "group": "LightRadiusAndAccuracy",
+        "mods": [
+          {
+            "modifier": "of Shining",
+            "iLvl": 8,
+            "stats": [
+              {
+                "stat": "% increased Light Radius",
+                "min": 5,
+                "max": 5
+              },
+              {
+                "stat": "% increased Global Accuracy Rating",
+                "min": 9,
+                "max": 11
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of Light",
+            "iLvl": 15,
+            "stats": [
+              {
+                "stat": "% increased Light Radius",
+                "min": 10,
+                "max": 10
+              },
+              {
+                "stat": "% increased Global Accuracy Rating",
+                "min": 12,
+                "max": 15
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of Radiance",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "% increased Light Radius",
+                "min": 15,
+                "max": 15
+              },
+              {
+                "stat": "% increased Global Accuracy Rating",
+                "min": 16,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ItemFoundRarityIncrease",
+        "mods": [
+          {
+            "modifier": "of Plunder",
+            "iLvl": 3,
+            "stats": [
+              {
+                "stat": "% increased Rarity of Items found",
+                "min": 6,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "drop"
+            ]
+          },
+          {
+            "modifier": "of Raiding",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "% increased Rarity of Items found",
+                "min": 11,
+                "max": 14
+              }
+            ],
+            "tags": [
+              "drop"
+            ]
+          },
+          {
+            "modifier": "of Archaeology",
+            "iLvl": 53,
+            "stats": [
+              {
+                "stat": "% increased Rarity of Items found",
+                "min": 15,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "drop"
+            ]
+          },
+          {
+            "modifier": "of Excavation",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "% increased Rarity of Items found",
+                "min": 21,
+                "max": 26
+              }
+            ],
+            "tags": [
+              "drop"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ChanceToSuppressSpells",
+        "mods": [
+          {
+            "modifier": "of Rebuttal",
+            "iLvl": 46,
+            "stats": [
+              {
+                "stat": "+#% chance to Suppress Spell Damage",
+                "min": 5,
+                "max": 6
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Snuffing",
+            "iLvl": 57,
+            "stats": [
+              {
+                "stat": "+#% chance to Suppress Spell Damage",
+                "min": 7,
+                "max": 8
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Revoking",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "+#% chance to Suppress Spell Damage",
+                "min": 9,
+                "max": 10
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Abjuration",
+            "iLvl": 76,
+            "stats": [
+              {
+                "stat": "+#% chance to Suppress Spell Damage",
+                "min": 11,
+                "max": 12
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Nullification",
+            "iLvl": 85,
+            "stats": [
+              {
+                "stat": "+#% chance to Suppress Spell Damage",
+                "min": 13,
+                "max": 14
+              }
+            ],
+            "tags": []
+          }
+        ]
+      },
+      {
+        "group": "IncreasedAccuracy",
+        "mods": [
+          {
+            "modifier": "of Steadiness",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 50,
+                "max": 100
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of Precision",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 100,
+                "max": 165
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of the Sniper",
+            "iLvl": 40,
+            "stats": [
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 166,
+                "max": 250
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of the Marksman",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 251,
+                "max": 350
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of the Ranger",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 351,
+                "max": 480
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of Lioneye",
+            "iLvl": 85,
+            "stats": [
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 481,
+                "max": 600
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "EnergyShieldRegeneration",
+        "mods": [
+          {
+            "modifier": "of Allaying",
+            "iLvl": 46,
+            "stats": [
+              {
+                "stat": "% increased Energy Shield Recharge Rate",
+                "min": 24,
+                "max": 26
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "of Diffusion",
+            "iLvl": 57,
+            "stats": [
+              {
+                "stat": "% increased Energy Shield Recharge Rate",
+                "min": 27,
+                "max": 29
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "of Dispersal",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% increased Energy Shield Recharge Rate",
+                "min": 30,
+                "max": 32
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "of Buffering",
+            "iLvl": 76,
+            "stats": [
+              {
+                "stat": "% increased Energy Shield Recharge Rate",
+                "min": 33,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "of Ardour",
+            "iLvl": 85,
+            "stats": [
+              {
+                "stat": "% increased Energy Shield Recharge Rate",
+                "min": 36,
+                "max": 38
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "defences"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "FireResistance",
+        "mods": [
+          {
+            "modifier": "of the Whelpling",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "+#% to Fire Resistance",
+                "min": 6,
+                "max": 11
+              }
+            ],
+            "tags": [
+              "elemental",
+              "fire",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Salamander",
+            "iLvl": 12,
+            "stats": [
+              {
+                "stat": "+#% to Fire Resistance",
+                "min": 12,
+                "max": 17
+              }
+            ],
+            "tags": [
+              "elemental",
+              "fire",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Drake",
+            "iLvl": 24,
+            "stats": [
+              {
+                "stat": "+#% to Fire Resistance",
+                "min": 18,
+                "max": 23
+              }
+            ],
+            "tags": [
+              "elemental",
+              "fire",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Kiln",
+            "iLvl": 36,
+            "stats": [
+              {
+                "stat": "+#% to Fire Resistance",
+                "min": 24,
+                "max": 29
+              }
+            ],
+            "tags": [
+              "elemental",
+              "fire",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Furnace",
+            "iLvl": 48,
+            "stats": [
+              {
+                "stat": "+#% to Fire Resistance",
+                "min": 30,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "elemental",
+              "fire",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Volcano",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "+#% to Fire Resistance",
+                "min": 36,
+                "max": 41
+              }
+            ],
+            "tags": [
+              "elemental",
+              "fire",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Magma",
+            "iLvl": 72,
+            "stats": [
+              {
+                "stat": "+#% to Fire Resistance",
+                "min": 42,
+                "max": 45
+              }
+            ],
+            "tags": [
+              "elemental",
+              "fire",
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of Tzteosh",
+            "iLvl": 84,
+            "stats": [
+              {
+                "stat": "+#% to Fire Resistance",
+                "min": 46,
+                "max": 48
+              }
+            ],
+            "tags": [
+              "elemental",
+              "fire",
+              "resistance"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

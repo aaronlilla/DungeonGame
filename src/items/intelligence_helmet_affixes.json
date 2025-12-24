@@ -1,0 +1,1899 @@
+{
+  "item_class": "Helmet",
+  "base_attribute": "Intelligence",
+  "slot": "Helmet",
+  "affixes": {
+    "prefixes": [
+      {
+        "group": "BaseLocalDefences",
+        "stat_line": "+# to maximum Energy Shield",
+        "mods": [
+          {
+            "name": "Shining",
+            "ilvl": 3,
+            "stats": [
+              {
+                "id": "local_maximum_energy_shield",
+                "text": "+(3-5) to maximum Energy Shield",
+                "min": 3,
+                "max": 5
+              }
+            ]
+          },
+          {
+            "name": "Glimmering",
+            "ilvl": 11,
+            "stats": [
+              {
+                "id": "local_maximum_energy_shield",
+                "text": "+(6-11) to maximum Energy Shield",
+                "min": 6,
+                "max": 11
+              }
+            ]
+          },
+          {
+            "name": "Glittering",
+            "ilvl": 17,
+            "stats": [
+              {
+                "id": "local_maximum_energy_shield",
+                "text": "+(12-16) to maximum Energy Shield",
+                "min": 12,
+                "max": 16
+              }
+            ]
+          },
+          {
+            "name": "Glowing",
+            "ilvl": 23,
+            "stats": [
+              {
+                "id": "local_maximum_energy_shield",
+                "text": "+(17-23) to maximum Energy Shield",
+                "min": 17,
+                "max": 23
+              }
+            ]
+          },
+          {
+            "name": "Radiating",
+            "ilvl": 29,
+            "stats": [
+              {
+                "id": "local_maximum_energy_shield",
+                "text": "+(24-30) to maximum Energy Shield",
+                "min": 24,
+                "max": 30
+              }
+            ]
+          },
+          {
+            "name": "Pulsing",
+            "ilvl": 35,
+            "stats": [
+              {
+                "id": "local_maximum_energy_shield",
+                "text": "+(31-38) to maximum Energy Shield",
+                "min": 31,
+                "max": 38
+              }
+            ]
+          },
+          {
+            "name": "Seething",
+            "ilvl": 43,
+            "stats": [
+              {
+                "id": "local_maximum_energy_shield",
+                "text": "+(39-49) to maximum Energy Shield",
+                "min": 39,
+                "max": 49
+              }
+            ]
+          },
+          {
+            "name": "Blazing",
+            "ilvl": 51,
+            "stats": [
+              {
+                "id": "local_maximum_energy_shield",
+                "text": "+(50-61) to maximum Energy Shield",
+                "min": 50,
+                "max": 61
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "energy_shield",
+          "defences"
+        ]
+      },
+      {
+        "group": "BaseLocalDefencesAndLife",
+        "stat_lines": [
+          "+# to maximum Energy Shield",
+          "+# to maximum Life"
+        ],
+        "mods": [
+          {
+            "name": "Monk's",
+            "ilvl": 30,
+            "stats": [
+              {
+                "id": "local_maximum_energy_shield",
+                "text": "+(8-10) to maximum Energy Shield",
+                "min": 8,
+                "max": 10
+              },
+              {
+                "id": "maximum_life",
+                "text": "+(18-23) to maximum Life",
+                "min": 18,
+                "max": 23
+              }
+            ]
+          },
+          {
+            "name": "Prior's",
+            "ilvl": 46,
+            "stats": [
+              {
+                "id": "local_maximum_energy_shield",
+                "text": "+(11-15) to maximum Energy Shield",
+                "min": 11,
+                "max": 15
+              },
+              {
+                "id": "maximum_life",
+                "text": "+(24-28) to maximum Life",
+                "min": 24,
+                "max": 28
+              }
+            ]
+          },
+          {
+            "name": "Abbot's",
+            "ilvl": 62,
+            "stats": [
+              {
+                "id": "local_maximum_energy_shield",
+                "text": "+(16-25) to maximum Energy Shield",
+                "min": 16,
+                "max": 25
+              },
+              {
+                "id": "maximum_life",
+                "text": "+(29-33) to maximum Life",
+                "min": 29,
+                "max": 33
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "energy_shield",
+          "resource",
+          "life",
+          "defences"
+        ]
+      },
+      {
+        "group": "BaseLocalDefencesAndLife",
+        "stat_lines": [
+          "+# to maximum Energy Shield",
+          "+# to maximum Mana"
+        ],
+        "mods": [
+          {
+            "name": "Acolyte's",
+            "ilvl": 30,
+            "stats": [
+              {
+                "id": "local_maximum_energy_shield",
+                "text": "+(8-10) to maximum Energy Shield",
+                "min": 8,
+                "max": 10
+              },
+              {
+                "id": "maximum_mana",
+                "text": "+(11-15) to maximum Mana",
+                "min": 11,
+                "max": 15
+              }
+            ]
+          },
+          {
+            "name": "Deacon's",
+            "ilvl": 46,
+            "stats": [
+              {
+                "id": "local_maximum_energy_shield",
+                "text": "+(11-15) to maximum Energy Shield",
+                "min": 11,
+                "max": 15
+              },
+              {
+                "id": "maximum_mana",
+                "text": "+(16-19) to maximum Mana",
+                "min": 16,
+                "max": 19
+              }
+            ]
+          },
+          {
+            "name": "Priest's",
+            "ilvl": 62,
+            "stats": [
+              {
+                "id": "local_maximum_energy_shield",
+                "text": "+(16-25) to maximum Energy Shield",
+                "min": 16,
+                "max": 25
+              },
+              {
+                "id": "maximum_mana",
+                "text": "+(20-22) to maximum Mana",
+                "min": 20,
+                "max": 22
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "energy_shield",
+          "resource",
+          "mana",
+          "defences"
+        ]
+      },
+      {
+        "group": "AttackerTakesDamageNoRange",
+        "stat_line": "Reflects # Physical Damage to Melee Attackers",
+        "mods": [
+          {
+            "name": "Thorny",
+            "ilvl": 1,
+            "stats": [
+              {
+                "id": "reflect_physical_damage_melee",
+                "text": "Reflects (1-4) Physical Damage to Melee Attackers",
+                "min": 1,
+                "max": 4
+              }
+            ]
+          },
+          {
+            "name": "Spiny",
+            "ilvl": 10,
+            "stats": [
+              {
+                "id": "reflect_physical_damage_melee",
+                "text": "Reflects (5-10) Physical Damage to Melee Attackers",
+                "min": 5,
+                "max": 10
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "physical_damage",
+          "damage",
+          "physical"
+        ]
+      },
+      {
+        "group": "IncreasedMana",
+        "stat_line": "+# to maximum Mana",
+        "mods": [
+          {
+            "name": "Beryl",
+            "ilvl": 1,
+            "stats": [
+              {
+                "id": "maximum_mana",
+                "text": "+(15-19) to maximum Mana",
+                "min": 15,
+                "max": 19
+              }
+            ]
+          },
+          {
+            "name": "Cobalt",
+            "ilvl": 11,
+            "stats": [
+              {
+                "id": "maximum_mana",
+                "text": "+(20-24) to maximum Mana",
+                "min": 20,
+                "max": 24
+              }
+            ]
+          },
+          {
+            "name": "Azure",
+            "ilvl": 17,
+            "stats": [
+              {
+                "id": "maximum_mana",
+                "text": "+(25-29) to maximum Mana",
+                "min": 25,
+                "max": 29
+              }
+            ]
+          },
+          {
+            "name": "Sapphire",
+            "ilvl": 23,
+            "stats": [
+              {
+                "id": "maximum_mana",
+                "text": "+(30-34) to maximum Mana",
+                "min": 30,
+                "max": 34
+              }
+            ]
+          },
+          {
+            "name": "Cerulean",
+            "ilvl": 29,
+            "stats": [
+              {
+                "id": "maximum_mana",
+                "text": "+(35-39) to maximum Mana",
+                "min": 35,
+                "max": 39
+              }
+            ]
+          },
+          {
+            "name": "Aqua",
+            "ilvl": 35,
+            "stats": [
+              {
+                "id": "maximum_mana",
+                "text": "+(40-44) to maximum Mana",
+                "min": 40,
+                "max": 44
+              }
+            ]
+          },
+          {
+            "name": "Opalescent",
+            "ilvl": 42,
+            "stats": [
+              {
+                "id": "maximum_mana",
+                "text": "+(45-49) to maximum Mana",
+                "min": 45,
+                "max": 49
+              }
+            ]
+          },
+          {
+            "name": "Gentian",
+            "ilvl": 51,
+            "stats": [
+              {
+                "id": "maximum_mana",
+                "text": "+(50-54) to maximum Mana",
+                "min": 50,
+                "max": 54
+              }
+            ]
+          },
+          {
+            "name": "Chalybeous",
+            "ilvl": 60,
+            "stats": [
+              {
+                "id": "maximum_mana",
+                "text": "+(55-59) to maximum Mana",
+                "min": 55,
+                "max": 59
+              }
+            ]
+          },
+          {
+            "name": "Mazarine",
+            "ilvl": 69,
+            "stats": [
+              {
+                "id": "maximum_mana",
+                "text": "+(60-64) to maximum Mana",
+                "min": 60,
+                "max": 64
+              }
+            ]
+          },
+          {
+            "name": "Blue",
+            "ilvl": 75,
+            "stats": [
+              {
+                "id": "maximum_mana",
+                "text": "+(65-68) to maximum Mana",
+                "min": 65,
+                "max": 68
+              }
+            ]
+          },
+          {
+            "name": "Zaffre",
+            "ilvl": 81,
+            "stats": [
+              {
+                "id": "maximum_mana",
+                "text": "+(69-73) to maximum Mana",
+                "min": 69,
+                "max": 73
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "resource",
+          "mana"
+        ]
+      },
+      {
+        "group": "IncreaseSpecificSocketedGemLevel",
+        "stat_line": "+# to Level of all Minion Skill Gems",
+        "mods": [
+          {
+            "name": "Taskmaster's",
+            "ilvl": 14,
+            "stats": [
+              {
+                "id": "minion_gem_level",
+                "text": "+1 to Level of all Minion Skill Gems",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "name": "Overseer's",
+            "ilvl": 75,
+            "stats": [
+              {
+                "id": "minion_gem_level",
+                "text": "+2 to Level of all Minion Skill Gems",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "minion",
+          "gem"
+        ]
+      },
+      {
+        "group": "ItemFoundRarityIncreasePrefix",
+        "stat_line": "#% increased Rarity of Items found",
+        "mods": [
+          {
+            "name": "Magpie's",
+            "ilvl": 20,
+            "stats": [
+              {
+                "id": "item_rarity_percent",
+                "text": "(8-12)% increased Rarity of Items found",
+                "min": 8,
+                "max": 12
+              }
+            ]
+          },
+          {
+            "name": "Pirate's",
+            "ilvl": 39,
+            "stats": [
+              {
+                "id": "item_rarity_percent",
+                "text": "(13-18)% increased Rarity of Items found",
+                "min": 13,
+                "max": 18
+              }
+            ]
+          },
+          {
+            "name": "Dragon's",
+            "ilvl": 62,
+            "stats": [
+              {
+                "id": "item_rarity_percent",
+                "text": "(19-24)% increased Rarity of Items found",
+                "min": 19,
+                "max": 24
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "drop"
+        ]
+      },
+      {
+        "group": "DefencesPercentAndStunRecovery",
+        "stat_lines": [
+          "#% increased Energy Shield",
+          "#% increased Stun and Block Recovery"
+        ],
+        "mods": [
+          {
+            "name": "Pixie's",
+            "ilvl": 3,
+            "stats": [
+              {
+                "id": "energy_shield_percent",
+                "text": "(6-13)% increased Energy Shield",
+                "min": 6,
+                "max": 13
+              },
+              {
+                "id": "stun_block_recovery_percent",
+                "text": "(6-7)% increased Stun and Block Recovery",
+                "min": 6,
+                "max": 7
+              }
+            ]
+          },
+          {
+            "name": "Gremlin's",
+            "ilvl": 18,
+            "stats": [
+              {
+                "id": "energy_shield_percent",
+                "text": "(14-20)% increased Energy Shield",
+                "min": 14,
+                "max": 20
+              },
+              {
+                "id": "stun_block_recovery_percent",
+                "text": "(8-9)% increased Stun and Block Recovery",
+                "min": 8,
+                "max": 9
+              }
+            ]
+          },
+          {
+            "name": "Boggart's",
+            "ilvl": 30,
+            "stats": [
+              {
+                "id": "energy_shield_percent",
+                "text": "(21-26)% increased Energy Shield",
+                "min": 21,
+                "max": 26
+              },
+              {
+                "id": "stun_block_recovery_percent",
+                "text": "(10-11)% increased Stun and Block Recovery",
+                "min": 10,
+                "max": 11
+              }
+            ]
+          },
+          {
+            "name": "Naga's",
+            "ilvl": 44,
+            "stats": [
+              {
+                "id": "energy_shield_percent",
+                "text": "(27-32)% increased Energy Shield",
+                "min": 27,
+                "max": 32
+              },
+              {
+                "id": "stun_block_recovery_percent",
+                "text": "(12-13)% increased Stun and Block Recovery",
+                "min": 12,
+                "max": 13
+              }
+            ]
+          },
+          {
+            "name": "Djinn's",
+            "ilvl": 60,
+            "stats": [
+              {
+                "id": "energy_shield_percent",
+                "text": "(33-38)% increased Energy Shield",
+                "min": 33,
+                "max": 38
+              },
+              {
+                "id": "stun_block_recovery_percent",
+                "text": "(14-15)% increased Stun and Block Recovery",
+                "min": 14,
+                "max": 15
+              }
+            ]
+          },
+          {
+            "name": "Seraphim's",
+            "ilvl": 78,
+            "stats": [
+              {
+                "id": "energy_shield_percent",
+                "text": "(39-42)% increased Energy Shield",
+                "min": 39,
+                "max": 42
+              },
+              {
+                "id": "stun_block_recovery_percent",
+                "text": "(16-17)% increased Stun and Block Recovery",
+                "min": 16,
+                "max": 17
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "energy_shield",
+          "defences"
+        ]
+      },
+      {
+        "group": "IncreasedLife",
+        "stat_line": "+# to maximum Life",
+        "mods": [
+          {
+            "name": "Hale",
+            "ilvl": 1,
+            "stats": [
+              {
+                "id": "maximum_life",
+                "text": "+(3-9) to maximum Life",
+                "min": 3,
+                "max": 9
+              }
+            ]
+          },
+          {
+            "name": "Healthy",
+            "ilvl": 5,
+            "stats": [
+              {
+                "id": "maximum_life",
+                "text": "+(10-24) to maximum Life",
+                "min": 10,
+                "max": 24
+              }
+            ]
+          },
+          {
+            "name": "Sanguine",
+            "ilvl": 11,
+            "stats": [
+              {
+                "id": "maximum_life",
+                "text": "+(25-39) to maximum Life",
+                "min": 25,
+                "max": 39
+              }
+            ]
+          },
+          {
+            "name": "Stalwart",
+            "ilvl": 18,
+            "stats": [
+              {
+                "id": "maximum_life",
+                "text": "+(40-54) to maximum Life",
+                "min": 40,
+                "max": 54
+              }
+            ]
+          },
+          {
+            "name": "Stout",
+            "ilvl": 24,
+            "stats": [
+              {
+                "id": "maximum_life",
+                "text": "+(55-69) to maximum Life",
+                "min": 55,
+                "max": 69
+              }
+            ]
+          },
+          {
+            "name": "Robust",
+            "ilvl": 30,
+            "stats": [
+              {
+                "id": "maximum_life",
+                "text": "+(70-84) to maximum Life",
+                "min": 70,
+                "max": 84
+              }
+            ]
+          },
+          {
+            "name": "Rotund",
+            "ilvl": 36,
+            "stats": [
+              {
+                "id": "maximum_life",
+                "text": "+(85-99) to maximum Life",
+                "min": 85,
+                "max": 99
+              }
+            ]
+          },
+          {
+            "name": "Virile",
+            "ilvl": 44,
+            "stats": [
+              {
+                "id": "maximum_life",
+                "text": "+(100-114) to maximum Life",
+                "min": 100,
+                "max": 114
+              }
+            ]
+          },
+          {
+            "name": "Athlete's",
+            "ilvl": 54,
+            "stats": [
+              {
+                "id": "maximum_life",
+                "text": "+(115-129) to maximum Life",
+                "min": 115,
+                "max": 129
+              }
+            ]
+          },
+          {
+            "name": "Fecund",
+            "ilvl": 64,
+            "stats": [
+              {
+                "id": "maximum_life",
+                "text": "+(130-144) to maximum Life",
+                "min": 130,
+                "max": 144
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "resource",
+          "life"
+        ]
+      },
+      {
+        "group": "DefencesPercent",
+        "stat_line": "#% increased Energy Shield",
+        "mods": [
+          {
+            "name": "Protective",
+            "ilvl": 3,
+            "stats": [
+              {
+                "id": "energy_shield_percent",
+                "text": "(11-28)% increased Energy Shield",
+                "min": 11,
+                "max": 28
+              }
+            ]
+          },
+          {
+            "name": "Strong-Willed",
+            "ilvl": 18,
+            "stats": [
+              {
+                "id": "energy_shield_percent",
+                "text": "(27-42)% increased Energy Shield",
+                "min": 27,
+                "max": 42
+              }
+            ]
+          },
+          {
+            "name": "Resolute",
+            "ilvl": 30,
+            "stats": [
+              {
+                "id": "energy_shield_percent",
+                "text": "(43-55)% increased Energy Shield",
+                "min": 43,
+                "max": 55
+              }
+            ]
+          },
+          {
+            "name": "Fearless",
+            "ilvl": 44,
+            "stats": [
+              {
+                "id": "energy_shield_percent",
+                "text": "(56-67)% increased Energy Shield",
+                "min": 56,
+                "max": 67
+              }
+            ]
+          },
+          {
+            "name": "Dauntless",
+            "ilvl": 60,
+            "stats": [
+              {
+                "id": "energy_shield_percent",
+                "text": "(68-79)% increased Energy Shield",
+                "min": 68,
+                "max": 79
+              }
+            ]
+          },
+          {
+            "name": "Indomitable",
+            "ilvl": 72,
+            "stats": [
+              {
+                "id": "energy_shield_percent",
+                "text": "(80-91)% increased Energy Shield",
+                "min": 80,
+                "max": 91
+              }
+            ]
+          },
+          {
+            "name": "Unassailable",
+            "ilvl": 84,
+            "stats": [
+              {
+                "id": "energy_shield_percent",
+                "text": "(92-100)% increased Energy Shield",
+                "min": 92,
+                "max": 100
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "energy_shield",
+          "defences"
+        ]
+      }
+    ],
+    "suffixes": [
+      {
+        "group": "LifeRegeneration",
+        "stat_line": "Regenerate # Life per second",
+        "mods": [
+          {
+            "name": "of the Newt",
+            "ilvl": 1,
+            "stats": [
+              {
+                "id": "life_regen_flat",
+                "text": "Regenerate (1-2) Life per second",
+                "min": 1,
+                "max": 2
+              }
+            ]
+          },
+          {
+            "name": "of the Lizard",
+            "ilvl": 7,
+            "stats": [
+              {
+                "id": "life_regen_flat",
+                "text": "Regenerate (2.1-8) Life per second",
+                "min": 2.1,
+                "max": 8
+              }
+            ]
+          },
+          {
+            "name": "of the Flatworm",
+            "ilvl": 19,
+            "stats": [
+              {
+                "id": "life_regen_flat",
+                "text": "Regenerate (8.1-16) Life per second",
+                "min": 8.1,
+                "max": 16
+              }
+            ]
+          },
+          {
+            "name": "of the Starfish",
+            "ilvl": 31,
+            "stats": [
+              {
+                "id": "life_regen_flat",
+                "text": "Regenerate (16.1-24) Life per second",
+                "min": 16.1,
+                "max": 24
+              }
+            ]
+          },
+          {
+            "name": "of the Hydra",
+            "ilvl": 44,
+            "stats": [
+              {
+                "id": "life_regen_flat",
+                "text": "Regenerate (24.1-32) Life per second",
+                "min": 24.1,
+                "max": 32
+              }
+            ]
+          },
+          {
+            "name": "of the Troll",
+            "ilvl": 55,
+            "stats": [
+              {
+                "id": "life_regen_flat",
+                "text": "Regenerate (32.1-48) Life per second",
+                "min": 32.1,
+                "max": 48
+              }
+            ]
+          },
+          {
+            "name": "of Ryslatha",
+            "ilvl": 68,
+            "stats": [
+              {
+                "id": "life_regen_flat",
+                "text": "Regenerate (48.1-64) Life per second",
+                "min": 48.1,
+                "max": 64
+              }
+            ]
+          },
+          {
+            "name": "of the Phoenix",
+            "ilvl": 74,
+            "stats": [
+              {
+                "id": "life_regen_flat",
+                "text": "Regenerate (64.1-96) Life per second",
+                "min": 64.1,
+                "max": 96
+              }
+            ]
+          },
+          {
+            "name": "of Recuperation",
+            "ilvl": 78,
+            "stats": [
+              {
+                "id": "life_regen_flat",
+                "text": "Regenerate (96.1-128) Life per second",
+                "min": 96.1,
+                "max": 128
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "flat_life_regen",
+          "resource",
+          "life"
+        ]
+      },
+      {
+        "group": "FireResistance",
+        "stat_line": "+#% to Fire Resistance",
+        "mods": [
+          {
+            "name": "of the Whelpling",
+            "ilvl": 1,
+            "stats": [
+              {
+                "id": "fire_res_percent",
+                "text": "+(6-11)% to Fire Resistance",
+                "min": 6,
+                "max": 11
+              }
+            ]
+          },
+          {
+            "name": "of the Salamander",
+            "ilvl": 12,
+            "stats": [
+              {
+                "id": "fire_res_percent",
+                "text": "+(12-17)% to Fire Resistance",
+                "min": 12,
+                "max": 17
+              }
+            ]
+          },
+          {
+            "name": "of the Drake",
+            "ilvl": 24,
+            "stats": [
+              {
+                "id": "fire_res_percent",
+                "text": "+(18-23)% to Fire Resistance",
+                "min": 18,
+                "max": 23
+              }
+            ]
+          },
+          {
+            "name": "of the Kiln",
+            "ilvl": 36,
+            "stats": [
+              {
+                "id": "fire_res_percent",
+                "text": "+(24-29)% to Fire Resistance",
+                "min": 24,
+                "max": 29
+              }
+            ]
+          },
+          {
+            "name": "of the Furnace",
+            "ilvl": 48,
+            "stats": [
+              {
+                "id": "fire_res_percent",
+                "text": "+(30-35)% to Fire Resistance",
+                "min": 30,
+                "max": 35
+              }
+            ]
+          },
+          {
+            "name": "of the Volcano",
+            "ilvl": 60,
+            "stats": [
+              {
+                "id": "fire_res_percent",
+                "text": "+(36-41)% to Fire Resistance",
+                "min": 36,
+                "max": 41
+              }
+            ]
+          },
+          {
+            "name": "of the Magma",
+            "ilvl": 72,
+            "stats": [
+              {
+                "id": "fire_res_percent",
+                "text": "+(42-45)% to Fire Resistance",
+                "min": 42,
+                "max": 45
+              }
+            ]
+          },
+          {
+            "name": "of Tzteosh",
+            "ilvl": 84,
+            "stats": [
+              {
+                "id": "fire_res_percent",
+                "text": "+(46-48)% to Fire Resistance",
+                "min": 46,
+                "max": 48
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "elemental",
+          "fire",
+          "resistance"
+        ]
+      },
+      {
+        "group": "LightningResistance",
+        "stat_line": "+#% to Lightning Resistance",
+        "mods": [
+          {
+            "name": "of the Cloud",
+            "ilvl": 1,
+            "stats": [
+              {
+                "id": "lightning_res_percent",
+                "text": "+(6-11)% to Lightning Resistance",
+                "min": 6,
+                "max": 11
+              }
+            ]
+          },
+          {
+            "name": "of the Squall",
+            "ilvl": 13,
+            "stats": [
+              {
+                "id": "lightning_res_percent",
+                "text": "+(12-17)% to Lightning Resistance",
+                "min": 12,
+                "max": 17
+              }
+            ]
+          },
+          {
+            "name": "of the Storm",
+            "ilvl": 25,
+            "stats": [
+              {
+                "id": "lightning_res_percent",
+                "text": "+(18-23)% to Lightning Resistance",
+                "min": 18,
+                "max": 23
+              }
+            ]
+          },
+          {
+            "name": "of the Thunderhead",
+            "ilvl": 37,
+            "stats": [
+              {
+                "id": "lightning_res_percent",
+                "text": "+(24-29)% to Lightning Resistance",
+                "min": 24,
+                "max": 29
+              }
+            ]
+          },
+          {
+            "name": "of the Tempest",
+            "ilvl": 49,
+            "stats": [
+              {
+                "id": "lightning_res_percent",
+                "text": "+(30-35)% to Lightning Resistance",
+                "min": 30,
+                "max": 35
+              }
+            ]
+          },
+          {
+            "name": "of the Maelstrom",
+            "ilvl": 60,
+            "stats": [
+              {
+                "id": "lightning_res_percent",
+                "text": "+(36-41)% to Lightning Resistance",
+                "min": 36,
+                "max": 41
+              }
+            ]
+          },
+          {
+            "name": "of the Lightning",
+            "ilvl": 72,
+            "stats": [
+              {
+                "id": "lightning_res_percent",
+                "text": "+(42-45)% to Lightning Resistance",
+                "min": 42,
+                "max": 45
+              }
+            ]
+          },
+          {
+            "name": "of Ephij",
+            "ilvl": 84,
+            "stats": [
+              {
+                "id": "lightning_res_percent",
+                "text": "+(46-48)% to Lightning Resistance",
+                "min": 46,
+                "max": 48
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "elemental",
+          "lightning",
+          "resistance"
+        ]
+      },
+      {
+        "group": "ColdResistance",
+        "stat_line": "+#% to Cold Resistance",
+        "mods": [
+          {
+            "name": "of the Inuit",
+            "ilvl": 1,
+            "stats": [
+              {
+                "id": "cold_res_percent",
+                "text": "+(6-11)% to Cold Resistance",
+                "min": 6,
+                "max": 11
+              }
+            ]
+          },
+          {
+            "name": "of the Seal",
+            "ilvl": 14,
+            "stats": [
+              {
+                "id": "cold_res_percent",
+                "text": "+(12-17)% to Cold Resistance",
+                "min": 12,
+                "max": 17
+              }
+            ]
+          },
+          {
+            "name": "of the Penguin",
+            "ilvl": 26,
+            "stats": [
+              {
+                "id": "cold_res_percent",
+                "text": "+(18-23)% to Cold Resistance",
+                "min": 18,
+                "max": 23
+              }
+            ]
+          },
+          {
+            "name": "of the Yeti",
+            "ilvl": 38,
+            "stats": [
+              {
+                "id": "cold_res_percent",
+                "text": "+(24-29)% to Cold Resistance",
+                "min": 24,
+                "max": 29
+              }
+            ]
+          },
+          {
+            "name": "of the Walrus",
+            "ilvl": 50,
+            "stats": [
+              {
+                "id": "cold_res_percent",
+                "text": "+(30-35)% to Cold Resistance",
+                "min": 30,
+                "max": 35
+              }
+            ]
+          },
+          {
+            "name": "of the Polar Bear",
+            "ilvl": 60,
+            "stats": [
+              {
+                "id": "cold_res_percent",
+                "text": "+(36-41)% to Cold Resistance",
+                "min": 36,
+                "max": 41
+              }
+            ]
+          },
+          {
+            "name": "of the Ice",
+            "ilvl": 72,
+            "stats": [
+              {
+                "id": "cold_res_percent",
+                "text": "+(42-45)% to Cold Resistance",
+                "min": 42,
+                "max": 45
+              }
+            ]
+          },
+          {
+            "name": "of Haast",
+            "ilvl": 84,
+            "stats": [
+              {
+                "id": "cold_res_percent",
+                "text": "+(46-48)% to Cold Resistance",
+                "min": 46,
+                "max": 48
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "elemental",
+          "cold",
+          "resistance"
+        ]
+      },
+      {
+        "group": "Intelligence",
+        "stat_line": "+# to Intelligence",
+        "mods": [
+          {
+            "name": "of the Pupil",
+            "ilvl": 1,
+            "stats": [
+              {
+                "id": "intelligence",
+                "text": "+(8-12) to Intelligence",
+                "min": 8,
+                "max": 12
+              }
+            ]
+          },
+          {
+            "name": "of the Student",
+            "ilvl": 11,
+            "stats": [
+              {
+                "id": "intelligence",
+                "text": "+(13-17) to Intelligence",
+                "min": 13,
+                "max": 17
+              }
+            ]
+          },
+          {
+            "name": "of the Prodigy",
+            "ilvl": 22,
+            "stats": [
+              {
+                "id": "intelligence",
+                "text": "+(18-22) to Intelligence",
+                "min": 18,
+                "max": 22
+              }
+            ]
+          },
+          {
+            "name": "of the Augur",
+            "ilvl": 33,
+            "stats": [
+              {
+                "id": "intelligence",
+                "text": "+(23-27) to Intelligence",
+                "min": 23,
+                "max": 27
+              }
+            ]
+          },
+          {
+            "name": "of the Philosopher",
+            "ilvl": 44,
+            "stats": [
+              {
+                "id": "intelligence",
+                "text": "+(28-32) to Intelligence",
+                "min": 28,
+                "max": 32
+              }
+            ]
+          },
+          {
+            "name": "of the Sage",
+            "ilvl": 55,
+            "stats": [
+              {
+                "id": "intelligence",
+                "text": "+(33-37) to Intelligence",
+                "min": 33,
+                "max": 37
+              }
+            ]
+          },
+          {
+            "name": "of the Savant",
+            "ilvl": 66,
+            "stats": [
+              {
+                "id": "intelligence",
+                "text": "+(38-42) to Intelligence",
+                "min": 38,
+                "max": 42
+              }
+            ]
+          },
+          {
+            "name": "of the Virtuoso",
+            "ilvl": 74,
+            "stats": [
+              {
+                "id": "intelligence",
+                "text": "+(43-50) to Intelligence",
+                "min": 43,
+                "max": 50
+              }
+            ]
+          },
+          {
+            "name": "of the Genius",
+            "ilvl": 82,
+            "stats": [
+              {
+                "id": "intelligence",
+                "text": "+(51-55) to Intelligence",
+                "min": 51,
+                "max": 55
+              }
+            ]
+          },
+          {
+            "name": "of the Polymath",
+            "ilvl": 85,
+            "stats": [
+              {
+                "id": "intelligence",
+                "text": "+(56-60) to Intelligence",
+                "min": 56,
+                "max": 60
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "attribute"
+        ]
+      },
+      {
+        "group": "LocalAttributeRequirements",
+        "stat_line": "#% reduced Attribute Requirements",
+        "mods": [
+          {
+            "name": "of the Worthy",
+            "ilvl": 36,
+            "stats": [
+              {
+                "id": "reduced_attribute_requirements_percent",
+                "text": "18% reduced Attribute Requirements",
+                "value": 18
+              }
+            ]
+          },
+          {
+            "name": "of the Apt",
+            "ilvl": 60,
+            "stats": [
+              {
+                "id": "reduced_attribute_requirements_percent",
+                "text": "32% reduced Attribute Requirements",
+                "value": 32
+              }
+            ]
+          }
+        ],
+        "tags": []
+      },
+      {
+        "group": "StunRecovery",
+        "stat_line": "#% increased Stun and Block Recovery",
+        "mods": [
+          {
+            "name": "of Thick Skin",
+            "ilvl": 1,
+            "stats": [
+              {
+                "id": "stun_block_recovery_percent",
+                "text": "(11-13)% increased Stun and Block Recovery",
+                "min": 11,
+                "max": 13
+              }
+            ]
+          },
+          {
+            "name": "of Stone Skin",
+            "ilvl": 17,
+            "stats": [
+              {
+                "id": "stun_block_recovery_percent",
+                "text": "(14-16)% increased Stun and Block Recovery",
+                "min": 14,
+                "max": 16
+              }
+            ]
+          },
+          {
+            "name": "of Iron Skin",
+            "ilvl": 28,
+            "stats": [
+              {
+                "id": "stun_block_recovery_percent",
+                "text": "(17-19)% increased Stun and Block Recovery",
+                "min": 17,
+                "max": 19
+              }
+            ]
+          },
+          {
+            "name": "of Steel Skin",
+            "ilvl": 42,
+            "stats": [
+              {
+                "id": "stun_block_recovery_percent",
+                "text": "(20-22)% increased Stun and Block Recovery",
+                "min": 20,
+                "max": 22
+              }
+            ]
+          },
+          {
+            "name": "of Adamantite Skin",
+            "ilvl": 56,
+            "stats": [
+              {
+                "id": "stun_block_recovery_percent",
+                "text": "(23-25)% increased Stun and Block Recovery",
+                "min": 23,
+                "max": 25
+              }
+            ]
+          },
+          {
+            "name": "of Corundum Skin",
+            "ilvl": 79,
+            "stats": [
+              {
+                "id": "stun_block_recovery_percent",
+                "text": "(26-28)% increased Stun and Block Recovery",
+                "min": 26,
+                "max": 28
+              }
+            ]
+          }
+        ],
+        "tags": []
+      },
+      {
+        "group": "LightRadiusAndAccuracy",
+        "stat_lines": [
+          "#% increased Light Radius",
+          "#% increased Global Accuracy Rating"
+        ],
+        "mods": [
+          {
+            "name": "of Shining",
+            "ilvl": 8,
+            "stats": [
+              {
+                "id": "light_radius_percent",
+                "text": "5% increased Light Radius",
+                "value": 5
+              },
+              {
+                "id": "global_accuracy_percent",
+                "text": "(9-11)% increased Global Accuracy Rating",
+                "min": 9,
+                "max": 11
+              }
+            ]
+          },
+          {
+            "name": "of Light",
+            "ilvl": 15,
+            "stats": [
+              {
+                "id": "light_radius_percent",
+                "text": "10% increased Light Radius",
+                "value": 10
+              },
+              {
+                "id": "global_accuracy_percent",
+                "text": "(12-15)% increased Global Accuracy Rating",
+                "min": 12,
+                "max": 15
+              }
+            ]
+          },
+          {
+            "name": "of Radiance",
+            "ilvl": 30,
+            "stats": [
+              {
+                "id": "light_radius_percent",
+                "text": "15% increased Light Radius",
+                "value": 15
+              },
+              {
+                "id": "global_accuracy_percent",
+                "text": "(16-20)% increased Global Accuracy Rating",
+                "min": 16,
+                "max": 20
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "attack"
+        ]
+      },
+      {
+        "group": "ItemFoundRarityIncrease",
+        "stat_line": "#% increased Rarity of Items found",
+        "mods": [
+          {
+            "name": "of Plunder",
+            "ilvl": 3,
+            "stats": [
+              {
+                "id": "item_rarity_percent",
+                "text": "(6-10)% increased Rarity of Items found",
+                "min": 6,
+                "max": 10
+              }
+            ]
+          },
+          {
+            "name": "of Raiding",
+            "ilvl": 30,
+            "stats": [
+              {
+                "id": "item_rarity_percent",
+                "text": "(11-14)% increased Rarity of Items found",
+                "min": 11,
+                "max": 14
+              }
+            ]
+          },
+          {
+            "name": "of Archaeology",
+            "ilvl": 53,
+            "stats": [
+              {
+                "id": "item_rarity_percent",
+                "text": "(15-20)% increased Rarity of Items found",
+                "min": 15,
+                "max": 20
+              }
+            ]
+          },
+          {
+            "name": "of Excavation",
+            "ilvl": 75,
+            "stats": [
+              {
+                "id": "item_rarity_percent",
+                "text": "(21-26)% increased Rarity of Items found",
+                "min": 21,
+                "max": 26
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "drop"
+        ]
+      },
+      {
+        "group": "IncreasedAccuracy",
+        "stat_line": "+# to Accuracy Rating",
+        "mods": [
+          {
+            "name": "of Steadiness",
+            "ilvl": 1,
+            "stats": [
+              {
+                "id": "accuracy_rating",
+                "text": "+(50-100) to Accuracy Rating",
+                "min": 50,
+                "max": 100
+              }
+            ]
+          },
+          {
+            "name": "of Precision",
+            "ilvl": 20,
+            "stats": [
+              {
+                "id": "accuracy_rating",
+                "text": "+(100-165) to Accuracy Rating",
+                "min": 100,
+                "max": 165
+              }
+            ]
+          },
+          {
+            "name": "of the Sniper",
+            "ilvl": 40,
+            "stats": [
+              {
+                "id": "accuracy_rating",
+                "text": "+(166-250) to Accuracy Rating",
+                "min": 166,
+                "max": 250
+              }
+            ]
+          },
+          {
+            "name": "of the Marksman",
+            "ilvl": 60,
+            "stats": [
+              {
+                "id": "accuracy_rating",
+                "text": "+(251-350) to Accuracy Rating",
+                "min": 251,
+                "max": 350
+              }
+            ]
+          },
+          {
+            "name": "of the Ranger",
+            "ilvl": 75,
+            "stats": [
+              {
+                "id": "accuracy_rating",
+                "text": "+(351-480) to Accuracy Rating",
+                "min": 351,
+                "max": 480
+              }
+            ]
+          },
+          {
+            "name": "of Lioneye",
+            "ilvl": 85,
+            "stats": [
+              {
+                "id": "accuracy_rating",
+                "text": "+(481-600) to Accuracy Rating",
+                "min": 481,
+                "max": 600
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "attack"
+        ]
+      },
+      {
+        "group": "EnergyShieldRegeneration",
+        "stat_line": "#% increased Energy Shield Recharge Rate",
+        "mods": [
+          {
+            "name": "of Allaying",
+            "ilvl": 46,
+            "stats": [
+              {
+                "id": "energy_shield_recharge_rate_percent",
+                "text": "(24-26)% increased Energy Shield Recharge Rate",
+                "min": 24,
+                "max": 26
+              }
+            ]
+          },
+          {
+            "name": "of Diffusion",
+            "ilvl": 57,
+            "stats": [
+              {
+                "id": "energy_shield_recharge_rate_percent",
+                "text": "(27-29)% increased Energy Shield Recharge Rate",
+                "min": 27,
+                "max": 29
+              }
+            ]
+          },
+          {
+            "name": "of Dispersal",
+            "ilvl": 68,
+            "stats": [
+              {
+                "id": "energy_shield_recharge_rate_percent",
+                "text": "(30-32)% increased Energy Shield Recharge Rate",
+                "min": 30,
+                "max": 32
+              }
+            ]
+          },
+          {
+            "name": "of Buffering",
+            "ilvl": 76,
+            "stats": [
+              {
+                "id": "energy_shield_recharge_rate_percent",
+                "text": "(33-35)% increased Energy Shield Recharge Rate",
+                "min": 33,
+                "max": 35
+              }
+            ]
+          },
+          {
+            "name": "of Ardour",
+            "ilvl": 85,
+            "stats": [
+              {
+                "id": "energy_shield_recharge_rate_percent",
+                "text": "(36-38)% increased Energy Shield Recharge Rate",
+                "min": 36,
+                "max": 38
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "energy_shield",
+          "defences"
+        ]
+      },
+      {
+        "group": "ChaosResistance",
+        "stat_line": "+#% to Chaos Resistance",
+        "mods": [
+          {
+            "name": "of the Lost",
+            "ilvl": 16,
+            "stats": [
+              {
+                "id": "chaos_res_percent",
+                "text": "+(5-10)% to Chaos Resistance",
+                "min": 5,
+                "max": 10
+              }
+            ]
+          },
+          {
+            "name": "of Banishment",
+            "ilvl": 30,
+            "stats": [
+              {
+                "id": "chaos_res_percent",
+                "text": "+(11-15)% to Chaos Resistance",
+                "min": 11,
+                "max": 15
+              }
+            ]
+          },
+          {
+            "name": "of Eviction",
+            "ilvl": 44,
+            "stats": [
+              {
+                "id": "chaos_res_percent",
+                "text": "+(16-20)% to Chaos Resistance",
+                "min": 16,
+                "max": 20
+              }
+            ]
+          },
+          {
+            "name": "of Expulsion",
+            "ilvl": 56,
+            "stats": [
+              {
+                "id": "chaos_res_percent",
+                "text": "+(21-25)% to Chaos Resistance",
+                "min": 21,
+                "max": 25
+              }
+            ]
+          },
+          {
+            "name": "of Exile",
+            "ilvl": 65,
+            "stats": [
+              {
+                "id": "chaos_res_percent",
+                "text": "+(26-30)% to Chaos Resistance",
+                "min": 26,
+                "max": 30
+              }
+            ]
+          },
+          {
+            "name": "of Bameth",
+            "ilvl": 81,
+            "stats": [
+              {
+                "id": "chaos_res_percent",
+                "text": "+(31-35)% to Chaos Resistance",
+                "min": 31,
+                "max": 35
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "chaos",
+          "resistance"
+        ]
+      }
+    ]
+  },
+  "source": {
+    "notes": "Structured from affix tiers as provided in chat (normal items)."
+  }
+}

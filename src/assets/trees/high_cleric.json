@@ -1,0 +1,101 @@
+{
+  "name": "High Cleric",
+  "color": "#ffd700",
+  "nodes": [
+    {"id": "start", "name": "HIGH CLERIC", "ring": 0, "angle": 0, "isStart": true, "stats": ["You can allocate Passives starting from here"], "connections": ["travel_n", "travel_e", "travel_s", "travel_w"]},
+
+    {"id": "travel_n", "name": "Altar Path", "ring": 1.5, "angle": 90, "stats": ["+12% Holy Damage"], "connections": ["start", "travel_n2"]},
+    {"id": "travel_n2", "name": "Sacred Road", "ring": 3, "angle": 90, "stats": ["+15% Holy Damage"], "connections": ["travel_n", "travel_n3", "holy_cluster1"]},
+    {"id": "travel_n3", "name": "Divine Way", "ring": 4.5, "angle": 90, "stats": ["+18% Holy Damage"], "connections": ["travel_n2", "altar_notable", "consecrate_cluster1"]},
+    {"id": "altar_notable", "name": "Altar of Light", "ring": 6, "angle": 90, "isNotable": true, "stats": ["+45% Holy Damage", "+30% Healing Effect", "Holy skills create Consecrated Ground"], "connections": ["travel_n3", "travel_n4"]},
+    {"id": "travel_n4", "name": "Heaven's Road", "ring": 7.5, "angle": 90, "stats": ["+22% Holy Damage"], "connections": ["altar_notable", "altar_key"]},
+    {"id": "altar_key", "name": "SEAT OF THE DIVINE", "ring": 9, "angle": 90, "isKeystone": true, "stats": ["+100% Holy Damage", "+80% Healing Effect", "All ground becomes Consecrated", "Consecrated Ground grants immunity to debuffs"], "connections": ["travel_n4"]},
+
+    {"id": "holy_cluster1", "name": "Light Touch", "ring": 3.5, "angle": 115, "stats": ["+15% Holy Damage"], "connections": ["travel_n2", "holy_cluster2"]},
+    {"id": "holy_cluster2", "name": "Radiant Power", "ring": 4, "angle": 125, "stats": ["+18% Holy Damage"], "connections": ["holy_cluster1", "holy_cluster_notable"]},
+    {"id": "holy_cluster_notable", "name": "Sacred Flame", "ring": 4.5, "angle": 120, "isNotable": true, "stats": ["+40% Holy Damage", "Holy inflicts Burning", "+20% Fire Damage"], "connections": ["holy_cluster2"]},
+
+    {"id": "consecrate_cluster1", "name": "Holy Ground", "ring": 5, "angle": 70, "stats": ["+15% Consecrate Effect"], "connections": ["travel_n3", "consecrate_cluster2"]},
+    {"id": "consecrate_cluster2", "name": "Blessed Ground", "ring": 5.5, "angle": 60, "stats": ["+20% Consecrate Effect"], "connections": ["consecrate_cluster1", "consecrate_cluster_notable"]},
+    {"id": "consecrate_cluster_notable", "name": "Eternal Consecration", "ring": 6, "angle": 65, "isNotable": true, "stats": ["+50% Consecrate Effect", "Consecration also damages enemies"], "connections": ["consecrate_cluster2"]},
+
+    {"id": "travel_e", "name": "Healing Path", "ring": 1.5, "angle": 0, "stats": ["+12% Healing Effect"], "connections": ["start", "travel_e2"]},
+    {"id": "travel_e2", "name": "Restoration Road", "ring": 3, "angle": 0, "stats": ["+15% Healing Effect"], "connections": ["travel_e", "travel_e3", "heal_cluster1"]},
+    {"id": "travel_e3", "name": "Mending Way", "ring": 4.5, "angle": 0, "stats": ["+18% Healing Effect"], "connections": ["travel_e2", "heal_notable", "buff_cluster1"]},
+    {"id": "heal_notable", "name": "Divine Restoration", "ring": 6, "angle": 0, "isNotable": true, "stats": ["+45% Healing Effect", "Healing removes one debuff", "Healing grants temporary shield"], "connections": ["travel_e3", "travel_e4"]},
+    {"id": "travel_e4", "name": "Miracle Road", "ring": 7.5, "angle": 0, "stats": ["+22% Healing Effect"], "connections": ["heal_notable", "heal_key"]},
+    {"id": "heal_key", "name": "DIVINE BLESSING", "ring": 9, "angle": 0, "isKeystone": true, "stats": ["+100% Healing Effect", "+60% Buff Effect", "Healing grants 5% damage reduction", "Healed allies cannot die for 2 seconds"], "connections": ["travel_e4"]},
+
+    {"id": "heal_cluster1", "name": "Gentle Touch", "ring": 3.5, "angle": 335, "stats": ["+15% Healing Effect"], "connections": ["travel_e2", "heal_cluster2"]},
+    {"id": "heal_cluster2", "name": "Soothing Hands", "ring": 4, "angle": 325, "stats": ["+18% Healing Effect"], "connections": ["heal_cluster1", "heal_cluster_notable"]},
+    {"id": "heal_cluster_notable", "name": "Sacred Touch", "ring": 4.5, "angle": 330, "isNotable": true, "stats": ["+40% Healing Effect", "Healing has +30% Area"], "connections": ["heal_cluster2"]},
+
+    {"id": "buff_cluster1", "name": "Blessing", "ring": 5, "angle": 25, "stats": ["+12% Buff Effect"], "connections": ["travel_e3", "buff_cluster2"]},
+    {"id": "buff_cluster2", "name": "Empowerment", "ring": 5.5, "angle": 35, "stats": ["+15% Buff Effect"], "connections": ["buff_cluster1", "buff_cluster_notable"]},
+    {"id": "buff_cluster_notable", "name": "Divine Empowerment", "ring": 6, "angle": 30, "isNotable": true, "stats": ["+35% Buff Effect", "Buffs are 50% more effective"], "connections": ["buff_cluster2"]},
+
+    {"id": "travel_s", "name": "Foundation Path", "ring": 1.5, "angle": 270, "stats": ["+40 Life"], "connections": ["start", "travel_s2"]},
+    {"id": "travel_s2", "name": "Cornerstone Road", "ring": 3, "angle": 270, "stats": ["+50 Life"], "connections": ["travel_s", "travel_s3", "defense_cluster1"]},
+    {"id": "travel_s3", "name": "Keystone Way", "ring": 4.5, "angle": 270, "stats": ["+60 Life"], "connections": ["travel_s2", "foundation_notable", "regen_cluster1"]},
+    {"id": "foundation_notable", "name": "Foundation of Faith", "ring": 6, "angle": 270, "isNotable": true, "stats": ["+150 Life", "+150 Armour", "+5% Physical Reduction"], "connections": ["travel_s3", "travel_s4"]},
+    {"id": "travel_s4", "name": "Eternal Road", "ring": 7.5, "angle": 270, "stats": ["+80 Life"], "connections": ["foundation_notable", "foundation_key"]},
+    {"id": "foundation_key", "name": "ETERNAL FOUNDATION", "ring": 9, "angle": 270, "isKeystone": true, "stats": ["+400 Life", "+400 Armour", "+15% Physical Reduction", "Cannot be knocked back", "Immune to Stun"], "connections": ["travel_s4"]},
+
+    {"id": "defense_cluster1", "name": "Vestment", "ring": 3.5, "angle": 245, "stats": ["+50 Armour", "+30 Life"], "connections": ["travel_s2", "defense_cluster2"]},
+    {"id": "defense_cluster2", "name": "Holy Garb", "ring": 4, "angle": 235, "stats": ["+70 Armour", "+40 Life"], "connections": ["defense_cluster1", "defense_cluster_notable"]},
+    {"id": "defense_cluster_notable", "name": "Sacred Vestments", "ring": 4.5, "angle": 240, "isNotable": true, "stats": ["+150 Armour", "+100 Life", "+10% All Elemental Res"], "connections": ["defense_cluster2"]},
+
+    {"id": "regen_cluster1", "name": "Recovery", "ring": 5, "angle": 290, "stats": ["+0.3% Life Regen"], "connections": ["travel_s3", "regen_cluster2"]},
+    {"id": "regen_cluster2", "name": "Renewal", "ring": 5.5, "angle": 300, "stats": ["+0.4% Life Regen"], "connections": ["regen_cluster1", "regen_cluster_notable"]},
+    {"id": "regen_cluster_notable", "name": "Eternal Recovery", "ring": 6, "angle": 295, "isNotable": true, "stats": ["+1.5% Life Regen", "Revive with 30% Life once per fight"], "connections": ["regen_cluster2"]},
+
+    {"id": "travel_w", "name": "Aura Path", "ring": 1.5, "angle": 180, "stats": ["+12% Aura Effect"], "connections": ["start", "travel_w2"]},
+    {"id": "travel_w2", "name": "Presence Road", "ring": 3, "angle": 180, "stats": ["+15% Aura Effect"], "connections": ["travel_w", "travel_w3", "aura_cluster1"]},
+    {"id": "travel_w3", "name": "Radiance Way", "ring": 4.5, "angle": 180, "stats": ["+18% Aura Effect"], "connections": ["travel_w2", "aura_notable", "mana_cluster1"]},
+    {"id": "aura_notable", "name": "Sacred Presence", "ring": 6, "angle": 180, "isNotable": true, "stats": ["+45% Aura Effect", "+30% Buff Duration", "Auras grant +15% Holy Damage"], "connections": ["travel_w3", "travel_w4"]},
+    {"id": "travel_w4", "name": "Divine Radiance", "ring": 7.5, "angle": 180, "stats": ["+22% Aura Effect"], "connections": ["aura_notable", "aura_key"]},
+    {"id": "aura_key", "name": "HEAVEN'S REACH", "ring": 9, "angle": 180, "isKeystone": true, "stats": ["+80% Aura Effect", "+50% Buff Duration", "Auras affect Allies anywhere", "Auras grant +20% damage to Allies"], "connections": ["travel_w4"]},
+
+    {"id": "aura_cluster1", "name": "Resonance", "ring": 3.5, "angle": 155, "stats": ["+15% Aura Effect"], "connections": ["travel_w2", "aura_cluster2"]},
+    {"id": "aura_cluster2", "name": "Harmony", "ring": 4, "angle": 145, "stats": ["+18% Aura Effect"], "connections": ["aura_cluster1", "aura_cluster_notable"]},
+    {"id": "aura_cluster_notable", "name": "Divine Harmony", "ring": 4.5, "angle": 150, "isNotable": true, "stats": ["+40% Aura Effect", "Auras reserve 15% less Mana"], "connections": ["aura_cluster2"]},
+
+    {"id": "mana_cluster1", "name": "Mana Pool", "ring": 5, "angle": 200, "stats": ["+30 Mana"], "connections": ["travel_w3", "mana_cluster2"]},
+    {"id": "mana_cluster2", "name": "Mana Flow", "ring": 5.5, "angle": 210, "stats": ["+40 Mana"], "connections": ["mana_cluster1", "mana_cluster_notable"]},
+    {"id": "mana_cluster_notable", "name": "Infinite Mana", "ring": 6, "angle": 205, "isNotable": true, "stats": ["+100 Mana", "+0.5% Mana Regen", "+10% Mana Recovery"], "connections": ["mana_cluster2"]},
+
+    {"id": "travel_ne", "name": "NE Path", "ring": 2, "angle": 45, "stats": ["+10% Holy Damage", "+10% Healing"], "connections": ["travel_n", "travel_ne2"]},
+    {"id": "travel_ne2", "name": "NE Road", "ring": 3.5, "angle": 45, "stats": ["+12% Holy Damage", "+12% Healing"], "connections": ["travel_ne", "hybrid_hh_notable"]},
+    {"id": "hybrid_hh_notable", "name": "Holy Healer", "ring": 5, "angle": 45, "isNotable": true, "stats": ["+30% Holy Damage", "+30% Healing", "Holy Damage heals allies for 5%"], "connections": ["travel_ne2"]},
+
+    {"id": "travel_se", "name": "SE Path", "ring": 2, "angle": 315, "stats": ["+10% Healing", "+30 Life"], "connections": ["travel_e", "travel_se2"]},
+    {"id": "travel_se2", "name": "SE Road", "ring": 3.5, "angle": 315, "stats": ["+12% Healing", "+40 Life"], "connections": ["travel_se", "hybrid_hl_notable"]},
+    {"id": "hybrid_hl_notable", "name": "Vital Healer", "ring": 5, "angle": 315, "isNotable": true, "stats": ["+30% Healing Effect", "+100 Life", "Gain 2% Max Life when you heal"], "connections": ["travel_se2"]},
+
+    {"id": "travel_sw", "name": "SW Path", "ring": 2, "angle": 225, "stats": ["+35 Life", "+10% Aura Effect"], "connections": ["travel_s", "travel_sw2"]},
+    {"id": "travel_sw2", "name": "SW Road", "ring": 3.5, "angle": 225, "stats": ["+45 Life", "+12% Aura Effect"], "connections": ["travel_sw", "hybrid_la_notable"]},
+    {"id": "hybrid_la_notable", "name": "Enduring Presence", "ring": 5, "angle": 225, "isNotable": true, "stats": ["+100 Life", "+30% Aura Effect", "Auras heal for 0.5% per second"], "connections": ["travel_sw2"]},
+
+    {"id": "travel_nw", "name": "NW Path", "ring": 2, "angle": 135, "stats": ["+10% Holy Damage", "+10% Aura Effect"], "connections": ["travel_w", "travel_nw2"]},
+    {"id": "travel_nw2", "name": "NW Road", "ring": 3.5, "angle": 135, "stats": ["+12% Holy Damage", "+12% Aura Effect"], "connections": ["travel_nw", "hybrid_ha_notable"]},
+    {"id": "hybrid_ha_notable", "name": "Radiant Aura", "ring": 5, "angle": 135, "isNotable": true, "stats": ["+30% Holy Damage", "+30% Aura Effect", "Auras deal Holy Damage to enemies"], "connections": ["travel_nw2"]},
+
+    {"id": "spell1", "name": "Spell Power", "ring": 7, "angle": 45, "stats": ["+15% Spell Damage"], "connections": ["altar_notable", "spell2"]},
+    {"id": "spell2", "name": "Spell Mastery", "ring": 7.5, "angle": 50, "stats": ["+18% Spell Damage"], "connections": ["spell1", "spell_notable"]},
+    {"id": "spell_notable", "name": "Divine Spellcaster", "ring": 8, "angle": 45, "isNotable": true, "stats": ["+45% Spell Damage", "+25% Cast Speed", "Spells heal allies for 10% damage"], "connections": ["spell2"]},
+
+    {"id": "cleanse1", "name": "Cleanse", "ring": 7, "angle": 315, "stats": ["+15% Debuff Removal"], "connections": ["heal_notable", "cleanse2"]},
+    {"id": "cleanse2", "name": "Purify", "ring": 7.5, "angle": 310, "stats": ["+20% Debuff Removal"], "connections": ["cleanse1", "cleanse_notable"]},
+    {"id": "cleanse_notable", "name": "Divine Purification", "ring": 8, "angle": 315, "isNotable": true, "stats": ["Remove all debuffs on heal", "Debuff removal heals for 5% Max Life"], "connections": ["cleanse2"]},
+
+    {"id": "sanctuary1", "name": "Sanctuary", "ring": 7, "angle": 225, "stats": ["+10% Damage Reduction"], "connections": ["foundation_notable", "sanctuary2"]},
+    {"id": "sanctuary2", "name": "Holy Sanctuary", "ring": 7.5, "angle": 220, "stats": ["+12% Damage Reduction"], "connections": ["sanctuary1", "sanctuary_notable"]},
+    {"id": "sanctuary_notable", "name": "Divine Sanctuary", "ring": 8, "angle": 225, "isNotable": true, "stats": ["+20% Damage Reduction", "Create protective dome reducing damage by 15%"], "connections": ["sanctuary2"]},
+
+    {"id": "choir1", "name": "Choir", "ring": 7, "angle": 135, "stats": ["+15% Aura Range"], "connections": ["aura_notable", "choir2"]},
+    {"id": "choir2", "name": "Sacred Choir", "ring": 7.5, "angle": 130, "stats": ["+20% Aura Range"], "connections": ["choir1", "choir_notable"]},
+    {"id": "choir_notable", "name": "Heavenly Choir", "ring": 8, "angle": 135, "isNotable": true, "stats": ["+50% Aura Range", "Auras stun nearby enemies every 10 seconds"], "connections": ["choir2"]},
+
+    {"id": "apex_key", "name": "HIGH PRIEST OF LIGHT", "ring": 10.5, "angle": 0, "isKeystone": true, "stats": ["+150% Holy Damage", "+150% Healing Effect", "+100% Aura Effect", "+400 Life", "Allies share your Life Regen", "You and Allies cannot die while you have Mana (drains 10% Mana per fatal hit)"], "connections": ["altar_key", "heal_key", "foundation_key", "aura_key"]}
+  ]
+}

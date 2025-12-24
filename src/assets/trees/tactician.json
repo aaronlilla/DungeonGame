@@ -1,0 +1,101 @@
+{
+  "name": "Tactician",
+  "color": "#daa520",
+  "nodes": [
+    {"id": "start", "name": "TACTICIAN", "ring": 0, "angle": 0, "isStart": true, "stats": ["You can allocate Passives starting from here"], "connections": ["travel_n", "travel_e", "travel_s", "travel_w"]},
+
+    {"id": "travel_n", "name": "Command Path", "ring": 1.5, "angle": 90, "stats": ["+12% Buff Effect"], "connections": ["start", "travel_n2"]},
+    {"id": "travel_n2", "name": "Order Road", "ring": 3, "angle": 90, "stats": ["+15% Buff Effect"], "connections": ["travel_n", "travel_n3", "buff_cluster1"]},
+    {"id": "travel_n3", "name": "Directive Way", "ring": 4.5, "angle": 90, "stats": ["+18% Buff Effect"], "connections": ["travel_n2", "buff_notable", "duration_cluster1"]},
+    {"id": "buff_notable", "name": "Master Tactician", "ring": 6, "angle": 90, "isNotable": true, "stats": ["+45% Buff Effect", "+30% Buff Duration", "Buffs affect all allies"], "connections": ["travel_n3", "travel_n4"]},
+    {"id": "travel_n4", "name": "Strategy Path", "ring": 7.5, "angle": 90, "stats": ["+22% Buff Effect"], "connections": ["buff_notable", "buff_key"]},
+    {"id": "buff_key", "name": "SUPREME COMMAND", "ring": 9, "angle": 90, "isKeystone": true, "stats": ["+100% Buff Effect", "+60% Buff Duration", "Buffs are twice as effective", "Allies gain your buffs"], "connections": ["travel_n4"]},
+
+    {"id": "buff_cluster1", "name": "Inspire", "ring": 3.5, "angle": 115, "stats": ["+15% Buff Effect"], "connections": ["travel_n2", "buff_cluster2"]},
+    {"id": "buff_cluster2", "name": "Motivate", "ring": 4, "angle": 125, "stats": ["+18% Buff Effect"], "connections": ["buff_cluster1", "buff_cluster_notable"]},
+    {"id": "buff_cluster_notable", "name": "Rally", "ring": 4.5, "angle": 120, "isNotable": true, "stats": ["+40% Buff Effect", "Buffs also heal"], "connections": ["buff_cluster2"]},
+
+    {"id": "duration_cluster1", "name": "Extend", "ring": 5, "angle": 70, "stats": ["+20% Buff Duration"], "connections": ["travel_n3", "duration_cluster2"]},
+    {"id": "duration_cluster2", "name": "Prolong", "ring": 5.5, "angle": 60, "stats": ["+25% Buff Duration"], "connections": ["duration_cluster1", "duration_cluster_notable"]},
+    {"id": "duration_cluster_notable", "name": "Eternal Buff", "ring": 6, "angle": 65, "isNotable": true, "stats": ["+50% Buff Duration", "Buffs never expire early"], "connections": ["duration_cluster2"]},
+
+    {"id": "travel_e", "name": "Healing Path", "ring": 1.5, "angle": 0, "stats": ["+12% Healing Effect"], "connections": ["start", "travel_e2"]},
+    {"id": "travel_e2", "name": "Recovery Road", "ring": 3, "angle": 0, "stats": ["+15% Healing Effect"], "connections": ["travel_e", "travel_e3", "heal_cluster1"]},
+    {"id": "travel_e3", "name": "Restoration Way", "ring": 4.5, "angle": 0, "stats": ["+18% Healing Effect"], "connections": ["travel_e2", "heal_notable", "cooldown_cluster1"]},
+    {"id": "heal_notable", "name": "Field Medic", "ring": 6, "angle": 0, "isNotable": true, "stats": ["+45% Healing Effect", "Healing also buffs allies", "+20% Cooldown Recovery"], "connections": ["travel_e3", "travel_e4"]},
+    {"id": "travel_e4", "name": "Miracle Path", "ring": 7.5, "angle": 0, "stats": ["+22% Healing Effect"], "connections": ["heal_notable", "heal_key"]},
+    {"id": "heal_key", "name": "BATTLEFIELD SURGEON", "ring": 9, "angle": 0, "isKeystone": true, "stats": ["+100% Healing Effect", "Healing removes all debuffs", "Healing grants damage immunity for 1s", "Allies cannot die while being healed"], "connections": ["travel_e4"]},
+
+    {"id": "heal_cluster1", "name": "First Aid", "ring": 3.5, "angle": 335, "stats": ["+15% Healing"], "connections": ["travel_e2", "heal_cluster2"]},
+    {"id": "heal_cluster2", "name": "Treatment", "ring": 4, "angle": 325, "stats": ["+18% Healing"], "connections": ["heal_cluster1", "heal_cluster_notable"]},
+    {"id": "heal_cluster_notable", "name": "Emergency Care", "ring": 4.5, "angle": 330, "isNotable": true, "stats": ["+40% Healing", "Healing is instant at low ally Life"], "connections": ["heal_cluster2"]},
+
+    {"id": "cooldown_cluster1", "name": "Quick Cooldown", "ring": 5, "angle": 25, "stats": ["+10% Cooldown Recovery"], "connections": ["travel_e3", "cooldown_cluster2"]},
+    {"id": "cooldown_cluster2", "name": "Rapid Cooldown", "ring": 5.5, "angle": 35, "stats": ["+12% Cooldown Recovery"], "connections": ["cooldown_cluster1", "cooldown_cluster_notable"]},
+    {"id": "cooldown_cluster_notable", "name": "No Cooldown", "ring": 6, "angle": 30, "isNotable": true, "stats": ["+30% Cooldown Recovery", "20% chance to reset cooldowns"], "connections": ["cooldown_cluster2"]},
+
+    {"id": "travel_s", "name": "Defense Path", "ring": 1.5, "angle": 270, "stats": ["+40 Life"], "connections": ["start", "travel_s2"]},
+    {"id": "travel_s2", "name": "Fortify Road", "ring": 3, "angle": 270, "stats": ["+55 Life"], "connections": ["travel_s", "travel_s3", "life_cluster1"]},
+    {"id": "travel_s3", "name": "Bulwark Way", "ring": 4.5, "angle": 270, "stats": ["+70 Life"], "connections": ["travel_s2", "life_notable", "armor_cluster1"]},
+    {"id": "life_notable", "name": "Tactical Defense", "ring": 6, "angle": 270, "isNotable": true, "stats": ["+180 Life", "+120 Armour", "+10% Damage Reduction"], "connections": ["travel_s3", "travel_s4"]},
+    {"id": "travel_s4", "name": "Fortress Path", "ring": 7.5, "angle": 270, "stats": ["+90 Life"], "connections": ["life_notable", "life_key"]},
+    {"id": "life_key", "name": "TACTICAL FORTRESS", "ring": 9, "angle": 270, "isKeystone": true, "stats": ["+400 Life", "+300 Armour", "+20% Damage Reduction", "Cannot be Stunned", "Allies near you share your defenses"], "connections": ["travel_s4"]},
+
+    {"id": "life_cluster1", "name": "Vitality", "ring": 3.5, "angle": 245, "stats": ["+50 Life"], "connections": ["travel_s2", "life_cluster2"]},
+    {"id": "life_cluster2", "name": "Constitution", "ring": 4, "angle": 235, "stats": ["+65 Life"], "connections": ["life_cluster1", "life_cluster_notable"]},
+    {"id": "life_cluster_notable", "name": "Endurance", "ring": 4.5, "angle": 240, "isNotable": true, "stats": ["+140 Life", "+8% Max Life"], "connections": ["life_cluster2"]},
+
+    {"id": "armor_cluster1", "name": "Plate", "ring": 5, "angle": 290, "stats": ["+60 Armour"], "connections": ["travel_s3", "armor_cluster2"]},
+    {"id": "armor_cluster2", "name": "Mail", "ring": 5.5, "angle": 300, "stats": ["+80 Armour"], "connections": ["armor_cluster1", "armor_cluster_notable"]},
+    {"id": "armor_cluster_notable", "name": "Full Plate", "ring": 6, "angle": 295, "isNotable": true, "stats": ["+200 Armour", "5% Phys Reduction"], "connections": ["armor_cluster2"]},
+
+    {"id": "travel_w", "name": "Aura Path", "ring": 1.5, "angle": 180, "stats": ["+12% Aura Effect"], "connections": ["start", "travel_w2"]},
+    {"id": "travel_w2", "name": "Presence Road", "ring": 3, "angle": 180, "stats": ["+15% Aura Effect"], "connections": ["travel_w", "travel_w3", "aura_cluster1"]},
+    {"id": "travel_w3", "name": "Radiance Way", "ring": 4.5, "angle": 180, "stats": ["+18% Aura Effect"], "connections": ["travel_w2", "aura_notable", "range_cluster1"]},
+    {"id": "aura_notable", "name": "Command Presence", "ring": 6, "angle": 180, "isNotable": true, "stats": ["+45% Aura Effect", "+50% Aura Range", "Auras also buff"], "connections": ["travel_w3", "travel_w4"]},
+    {"id": "travel_w4", "name": "Dominion Path", "ring": 7.5, "angle": 180, "stats": ["+22% Aura Effect"], "connections": ["aura_notable", "aura_key"]},
+    {"id": "aura_key", "name": "BATTLEFIELD DOMINION", "ring": 9, "angle": 180, "isKeystone": true, "stats": ["+100% Aura Effect", "+100% Aura Range", "Auras affect entire battlefield", "Enemies in auras are weakened"], "connections": ["travel_w4"]},
+
+    {"id": "aura_cluster1", "name": "Resonance", "ring": 3.5, "angle": 155, "stats": ["+15% Aura Effect"], "connections": ["travel_w2", "aura_cluster2"]},
+    {"id": "aura_cluster2", "name": "Harmony", "ring": 4, "angle": 145, "stats": ["+18% Aura Effect"], "connections": ["aura_cluster1", "aura_cluster_notable"]},
+    {"id": "aura_cluster_notable", "name": "Symphony", "ring": 4.5, "angle": 150, "isNotable": true, "stats": ["+40% Aura Effect", "Auras reserve less"], "connections": ["aura_cluster2"]},
+
+    {"id": "range_cluster1", "name": "Reach", "ring": 5, "angle": 200, "stats": ["+20% Aura Range"], "connections": ["travel_w3", "range_cluster2"]},
+    {"id": "range_cluster2", "name": "Expand", "ring": 5.5, "angle": 210, "stats": ["+25% Aura Range"], "connections": ["range_cluster1", "range_cluster_notable"]},
+    {"id": "range_cluster_notable", "name": "Massive Range", "ring": 6, "angle": 205, "isNotable": true, "stats": ["+60% Aura Range", "Auras have no range limit"], "connections": ["range_cluster2"]},
+
+    {"id": "travel_ne", "name": "NE Path", "ring": 2, "angle": 45, "stats": ["+10% Buff Effect", "+10% Healing"], "connections": ["travel_n", "travel_ne2"]},
+    {"id": "travel_ne2", "name": "NE Road", "ring": 3.5, "angle": 45, "stats": ["+12% Buff Effect", "+12% Healing"], "connections": ["travel_ne", "hybrid_bh_notable"]},
+    {"id": "hybrid_bh_notable", "name": "Buffing Healer", "ring": 5, "angle": 45, "isNotable": true, "stats": ["+30% Buff Effect", "+30% Healing", "Healing applies buffs"], "connections": ["travel_ne2"]},
+
+    {"id": "travel_se", "name": "SE Path", "ring": 2, "angle": 315, "stats": ["+10% Healing", "+35 Life"], "connections": ["travel_e", "travel_se2"]},
+    {"id": "travel_se2", "name": "SE Road", "ring": 3.5, "angle": 315, "stats": ["+12% Healing", "+45 Life"], "connections": ["travel_se", "hybrid_hl_notable"]},
+    {"id": "hybrid_hl_notable", "name": "Vital Healer", "ring": 5, "angle": 315, "isNotable": true, "stats": ["+30% Healing", "+100 Life", "Healing scales with your Life"], "connections": ["travel_se2"]},
+
+    {"id": "travel_sw", "name": "SW Path", "ring": 2, "angle": 225, "stats": ["+35 Life", "+10% Aura Effect"], "connections": ["travel_s", "travel_sw2"]},
+    {"id": "travel_sw2", "name": "SW Road", "ring": 3.5, "angle": 225, "stats": ["+45 Life", "+12% Aura Effect"], "connections": ["travel_sw", "hybrid_la_notable"]},
+    {"id": "hybrid_la_notable", "name": "Aura Defense", "ring": 5, "angle": 225, "isNotable": true, "stats": ["+100 Life", "+30% Aura Effect", "Auras grant defense"], "connections": ["travel_sw2"]},
+
+    {"id": "travel_nw", "name": "NW Path", "ring": 2, "angle": 135, "stats": ["+10% Aura Effect", "+10% Buff Effect"], "connections": ["travel_w", "travel_nw2"]},
+    {"id": "travel_nw2", "name": "NW Road", "ring": 3.5, "angle": 135, "stats": ["+12% Aura Effect", "+12% Buff Effect"], "connections": ["travel_nw", "hybrid_ab_notable"]},
+    {"id": "hybrid_ab_notable", "name": "Aura Buff", "ring": 5, "angle": 135, "isNotable": true, "stats": ["+30% Aura Effect", "+30% Buff Effect", "Auras count as buffs"], "connections": ["travel_nw2"]},
+
+    {"id": "war_cry1", "name": "War Cry 1", "ring": 7, "angle": 45, "stats": ["+20% War Cry Effect"], "connections": ["buff_notable", "war_cry2"]},
+    {"id": "war_cry2", "name": "War Cry 2", "ring": 7.5, "angle": 50, "stats": ["+25% War Cry Effect"], "connections": ["war_cry1", "war_cry_notable"]},
+    {"id": "war_cry_notable", "name": "Battle Commander", "ring": 8, "angle": 45, "isNotable": true, "stats": ["+50% War Cry Effect", "War Cries affect all allies"], "connections": ["war_cry2"]},
+
+    {"id": "cleanse1", "name": "Cleanse 1", "ring": 7, "angle": 315, "stats": ["+20% Debuff Removal"], "connections": ["heal_notable", "cleanse2"]},
+    {"id": "cleanse2", "name": "Cleanse 2", "ring": 7.5, "angle": 310, "stats": ["+25% Debuff Removal"], "connections": ["cleanse1", "cleanse_notable"]},
+    {"id": "cleanse_notable", "name": "Mass Cleanse", "ring": 8, "angle": 315, "isNotable": true, "stats": ["Remove all debuffs from allies", "Debuff removal heals"], "connections": ["cleanse2"]},
+
+    {"id": "taunt1", "name": "Taunt 1", "ring": 7, "angle": 225, "stats": ["+20% Taunt Effect"], "connections": ["life_notable", "taunt2"]},
+    {"id": "taunt2", "name": "Taunt 2", "ring": 7.5, "angle": 220, "stats": ["+25% Taunt Effect"], "connections": ["taunt1", "taunt_notable"]},
+    {"id": "taunt_notable", "name": "Mass Taunt", "ring": 8, "angle": 225, "isNotable": true, "stats": ["+50% Taunt Effect", "Taunted enemies deal less damage"], "connections": ["taunt2"]},
+
+    {"id": "inspire1", "name": "Inspire 1", "ring": 7, "angle": 135, "stats": ["+15% Ally Damage"], "connections": ["aura_notable", "inspire2"]},
+    {"id": "inspire2", "name": "Inspire 2", "ring": 7.5, "angle": 130, "stats": ["+18% Ally Damage"], "connections": ["inspire1", "inspire_notable"]},
+    {"id": "inspire_notable", "name": "War Leader", "ring": 8, "angle": 135, "isNotable": true, "stats": ["+40% Ally Damage", "Allies gain your offensive stats"], "connections": ["inspire2"]},
+
+    {"id": "apex_key", "name": "GRAND TACTICIAN", "ring": 10.5, "angle": 0, "isKeystone": true, "stats": ["Master of the battlefield", "+150% Buff Effect", "+100% Healing", "+100% Aura Effect", "+300 Life", "All allies share all your effects", "Enemies near you are weakened", "Team cannot be defeated while you live"], "connections": ["buff_key", "heal_key", "life_key", "aura_key"]}
+  ]
+}

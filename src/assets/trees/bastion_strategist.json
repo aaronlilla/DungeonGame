@@ -1,0 +1,101 @@
+{
+  "name": "Bastion Strategist",
+  "color": "#cd853f",
+  "nodes": [
+    {"id": "start", "name": "BASTION STRATEGIST", "ring": 0, "angle": 0, "isStart": true, "stats": ["You can allocate Passives starting from here"], "connections": ["travel_n", "travel_e", "travel_s", "travel_w"]},
+
+    {"id": "travel_n", "name": "Command Path", "ring": 1.5, "angle": 90, "stats": ["+12% Aura Effect"], "connections": ["start", "travel_n2"]},
+    {"id": "travel_n2", "name": "Order Road", "ring": 3, "angle": 90, "stats": ["+15% Aura Effect"], "connections": ["travel_n", "travel_n3", "aura_cluster1"]},
+    {"id": "travel_n3", "name": "Directive Way", "ring": 4.5, "angle": 90, "stats": ["+18% Aura Effect"], "connections": ["travel_n2", "aura_notable", "range_cluster1"]},
+    {"id": "aura_notable", "name": "Strategic Command", "ring": 6, "angle": 90, "isNotable": true, "stats": ["+45% Aura Effect", "+50% Aura Range", "Auras grant bonus defenses"], "connections": ["travel_n3", "travel_n4"]},
+    {"id": "travel_n4", "name": "Dominion Path", "ring": 7.5, "angle": 90, "stats": ["+22% Aura Effect"], "connections": ["aura_notable", "aura_key"]},
+    {"id": "aura_key", "name": "BATTLEFIELD COMMANDER", "ring": 9, "angle": 90, "isKeystone": true, "stats": ["+100% Aura Effect", "Auras affect entire battlefield", "Auras boost all ally stats", "Enemies in auras are weakened"], "connections": ["travel_n4"]},
+
+    {"id": "aura_cluster1", "name": "Presence", "ring": 3.5, "angle": 115, "stats": ["+15% Aura Effect"], "connections": ["travel_n2", "aura_cluster2"]},
+    {"id": "aura_cluster2", "name": "Dominance", "ring": 4, "angle": 125, "stats": ["+18% Aura Effect"], "connections": ["aura_cluster1", "aura_cluster_notable"]},
+    {"id": "aura_cluster_notable", "name": "Commanding Presence", "ring": 4.5, "angle": 120, "isNotable": true, "stats": ["+40% Aura Effect", "Auras reserve less Mana"], "connections": ["aura_cluster2"]},
+
+    {"id": "range_cluster1", "name": "Reach", "ring": 5, "angle": 70, "stats": ["+20% Aura Range"], "connections": ["travel_n3", "range_cluster2"]},
+    {"id": "range_cluster2", "name": "Expand", "ring": 5.5, "angle": 60, "stats": ["+25% Aura Range"], "connections": ["range_cluster1", "range_cluster_notable"]},
+    {"id": "range_cluster_notable", "name": "Infinite Reach", "ring": 6, "angle": 65, "isNotable": true, "stats": ["+60% Aura Range", "Auras have no range limit"], "connections": ["range_cluster2"]},
+
+    {"id": "travel_e", "name": "Defense Path", "ring": 1.5, "angle": 0, "stats": ["+60 Armour"], "connections": ["start", "travel_e2"]},
+    {"id": "travel_e2", "name": "Fortification Road", "ring": 3, "angle": 0, "stats": ["+80 Armour"], "connections": ["travel_e", "travel_e3", "armor_cluster1"]},
+    {"id": "travel_e3", "name": "Bulwark Way", "ring": 4.5, "angle": 0, "stats": ["+100 Armour"], "connections": ["travel_e2", "armor_notable", "phys_cluster1"]},
+    {"id": "armor_notable", "name": "Strategic Defense", "ring": 6, "angle": 0, "isNotable": true, "stats": ["+300 Armour", "+15% Armour", "+10% Phys Reduction"], "connections": ["travel_e3", "travel_e4"]},
+    {"id": "travel_e4", "name": "Bastion Path", "ring": 7.5, "angle": 0, "stats": ["+120 Armour"], "connections": ["armor_notable", "armor_key"]},
+    {"id": "armor_key", "name": "STRATEGIC FORTRESS", "ring": 9, "angle": 0, "isKeystone": true, "stats": ["+800 Armour", "+30% Armour", "+20% Phys Reduction", "Allies share your Armour bonus"], "connections": ["travel_e4"]},
+
+    {"id": "armor_cluster1", "name": "Plate", "ring": 3.5, "angle": 335, "stats": ["+80 Armour"], "connections": ["travel_e2", "armor_cluster2"]},
+    {"id": "armor_cluster2", "name": "Mail", "ring": 4, "angle": 325, "stats": ["+100 Armour"], "connections": ["armor_cluster1", "armor_cluster_notable"]},
+    {"id": "armor_cluster_notable", "name": "Full Plate", "ring": 4.5, "angle": 330, "isNotable": true, "stats": ["+250 Armour", "+60 Life"], "connections": ["armor_cluster2"]},
+
+    {"id": "phys_cluster1", "name": "Thick Skin", "ring": 5, "angle": 25, "stats": ["3% Phys Reduction"], "connections": ["travel_e3", "phys_cluster2"]},
+    {"id": "phys_cluster2", "name": "Stone Skin", "ring": 5.5, "angle": 35, "stats": ["4% Phys Reduction"], "connections": ["phys_cluster1", "phys_cluster_notable"]},
+    {"id": "phys_cluster_notable", "name": "Impenetrable", "ring": 6, "angle": 30, "isNotable": true, "stats": ["10% Phys Reduction", "Cannot be Stunned"], "connections": ["phys_cluster2"]},
+
+    {"id": "travel_s", "name": "Life Path", "ring": 1.5, "angle": 270, "stats": ["+45 Life"], "connections": ["start", "travel_s2"]},
+    {"id": "travel_s2", "name": "Vital Road", "ring": 3, "angle": 270, "stats": ["+60 Life"], "connections": ["travel_s", "travel_s3", "life_cluster1"]},
+    {"id": "travel_s3", "name": "Heart Way", "ring": 4.5, "angle": 270, "stats": ["+75 Life"], "connections": ["travel_s2", "life_notable", "regen_cluster1"]},
+    {"id": "life_notable", "name": "Strategic Vitality", "ring": 6, "angle": 270, "isNotable": true, "stats": ["+200 Life", "+15% Max Life", "Allies in auras gain your Life bonus"], "connections": ["travel_s3", "travel_s4"]},
+    {"id": "travel_s4", "name": "Immortal Path", "ring": 7.5, "angle": 270, "stats": ["+95 Life"], "connections": ["life_notable", "life_key"]},
+    {"id": "life_key", "name": "STRATEGIC IMMORTAL", "ring": 9, "angle": 270, "isKeystone": true, "stats": ["+500 Life", "+30% Max Life", "+3% Life Regen", "Team cannot die while you have Life"], "connections": ["travel_s4"]},
+
+    {"id": "life_cluster1", "name": "Vitality", "ring": 3.5, "angle": 245, "stats": ["+60 Life"], "connections": ["travel_s2", "life_cluster2"]},
+    {"id": "life_cluster2", "name": "Constitution", "ring": 4, "angle": 235, "stats": ["+75 Life"], "connections": ["life_cluster1", "life_cluster_notable"]},
+    {"id": "life_cluster_notable", "name": "Robust", "ring": 4.5, "angle": 240, "isNotable": true, "stats": ["+180 Life", "+12% Max Life"], "connections": ["life_cluster2"]},
+
+    {"id": "regen_cluster1", "name": "Recovery", "ring": 5, "angle": 290, "stats": ["+0.4% Life Regen"], "connections": ["travel_s3", "regen_cluster2"]},
+    {"id": "regen_cluster2", "name": "Renewal", "ring": 5.5, "angle": 300, "stats": ["+0.5% Life Regen"], "connections": ["regen_cluster1", "regen_cluster_notable"]},
+    {"id": "regen_cluster_notable", "name": "Strategic Renewal", "ring": 6, "angle": 295, "isNotable": true, "stats": ["+1.5% Life Regen", "Allies share your Regen"], "connections": ["regen_cluster2"]},
+
+    {"id": "travel_w", "name": "Block Path", "ring": 1.5, "angle": 180, "stats": ["+5% Block Chance"], "connections": ["start", "travel_w2"]},
+    {"id": "travel_w2", "name": "Guard Road", "ring": 3, "angle": 180, "stats": ["+6% Block Chance"], "connections": ["travel_w", "travel_w3", "block_cluster1"]},
+    {"id": "travel_w3", "name": "Shield Way", "ring": 4.5, "angle": 180, "stats": ["+7% Block Chance"], "connections": ["travel_w2", "block_notable", "spell_block_cluster1"]},
+    {"id": "block_notable", "name": "Strategic Block", "ring": 6, "angle": 180, "isNotable": true, "stats": ["+15% Block", "+10% Spell Block", "Block counters"], "connections": ["travel_w3", "travel_w4"]},
+    {"id": "travel_w4", "name": "Bastion Path", "ring": 7.5, "angle": 180, "stats": ["+8% Block Chance"], "connections": ["block_notable", "block_key"]},
+    {"id": "block_key", "name": "STRATEGIC SHIELD", "ring": 9, "angle": 180, "isKeystone": true, "stats": ["+25% Block", "+20% Spell Block", "Max Block 85%", "Block protects nearby allies"], "connections": ["travel_w4"]},
+
+    {"id": "block_cluster1", "name": "Shield Wall", "ring": 3.5, "angle": 155, "stats": ["+6% Block"], "connections": ["travel_w2", "block_cluster2"]},
+    {"id": "block_cluster2", "name": "Iron Guard", "ring": 4, "angle": 145, "stats": ["+7% Block"], "connections": ["block_cluster1", "block_cluster_notable"]},
+    {"id": "block_cluster_notable", "name": "Perfect Guard", "ring": 4.5, "angle": 150, "isNotable": true, "stats": ["+12% Block", "Block restores Life"], "connections": ["block_cluster2"]},
+
+    {"id": "spell_block_cluster1", "name": "Magic Ward", "ring": 5, "angle": 200, "stats": ["+4% Spell Block"], "connections": ["travel_w3", "spell_block_cluster2"]},
+    {"id": "spell_block_cluster2", "name": "Arcane Ward", "ring": 5.5, "angle": 210, "stats": ["+5% Spell Block"], "connections": ["spell_block_cluster1", "spell_block_cluster_notable"]},
+    {"id": "spell_block_cluster_notable", "name": "Spell Deflection", "ring": 6, "angle": 205, "isNotable": true, "stats": ["+12% Spell Block", "Reflect blocked spells"], "connections": ["spell_block_cluster2"]},
+
+    {"id": "travel_ne", "name": "NE Path", "ring": 2, "angle": 45, "stats": ["+10% Aura Effect", "+50 Armour"], "connections": ["travel_n", "travel_ne2"]},
+    {"id": "travel_ne2", "name": "NE Road", "ring": 3.5, "angle": 45, "stats": ["+12% Aura Effect", "+70 Armour"], "connections": ["travel_ne", "hybrid_aa_notable"]},
+    {"id": "hybrid_aa_notable", "name": "Defensive Aura", "ring": 5, "angle": 45, "isNotable": true, "stats": ["+30% Aura Effect", "+180 Armour", "Auras grant Armour"], "connections": ["travel_ne2"]},
+
+    {"id": "travel_se", "name": "SE Path", "ring": 2, "angle": 315, "stats": ["+50 Armour", "+40 Life"], "connections": ["travel_e", "travel_se2"]},
+    {"id": "travel_se2", "name": "SE Road", "ring": 3.5, "angle": 315, "stats": ["+70 Armour", "+55 Life"], "connections": ["travel_se", "hybrid_al_notable"]},
+    {"id": "hybrid_al_notable", "name": "Fortified Defense", "ring": 5, "angle": 315, "isNotable": true, "stats": ["+180 Armour", "+140 Life", "Defense synergy"], "connections": ["travel_se2"]},
+
+    {"id": "travel_sw", "name": "SW Path", "ring": 2, "angle": 225, "stats": ["+40 Life", "+4% Block"], "connections": ["travel_s", "travel_sw2"]},
+    {"id": "travel_sw2", "name": "SW Road", "ring": 3.5, "angle": 225, "stats": ["+55 Life", "+5% Block"], "connections": ["travel_sw", "hybrid_lb_notable"]},
+    {"id": "hybrid_lb_notable", "name": "Vital Block", "ring": 5, "angle": 225, "isNotable": true, "stats": ["+140 Life", "+12% Block", "Block heals"], "connections": ["travel_sw2"]},
+
+    {"id": "travel_nw", "name": "NW Path", "ring": 2, "angle": 135, "stats": ["+4% Block", "+10% Aura Effect"], "connections": ["travel_w", "travel_nw2"]},
+    {"id": "travel_nw2", "name": "NW Road", "ring": 3.5, "angle": 135, "stats": ["+5% Block", "+12% Aura Effect"], "connections": ["travel_nw", "hybrid_ba_notable"]},
+    {"id": "hybrid_ba_notable", "name": "Blocking Aura", "ring": 5, "angle": 135, "isNotable": true, "stats": ["+12% Block", "+30% Aura Effect", "Auras grant Block"], "connections": ["travel_nw2"]},
+
+    {"id": "taunt1", "name": "Taunt 1", "ring": 7, "angle": 45, "stats": ["+20% Taunt Effect"], "connections": ["aura_notable", "taunt2"]},
+    {"id": "taunt2", "name": "Taunt 2", "ring": 7.5, "angle": 50, "stats": ["+25% Taunt Effect"], "connections": ["taunt1", "taunt_notable"]},
+    {"id": "taunt_notable", "name": "Strategic Taunt", "ring": 8, "angle": 45, "isNotable": true, "stats": ["+50% Taunt Effect", "Taunt all enemies in aura", "Taunted enemies deal less damage"], "connections": ["taunt2"]},
+
+    {"id": "fortify1", "name": "Fortify 1", "ring": 7, "angle": 315, "stats": ["+15% Fortify Effect"], "connections": ["armor_notable", "fortify2"]},
+    {"id": "fortify2", "name": "Fortify 2", "ring": 7.5, "angle": 310, "stats": ["+20% Fortify Effect"], "connections": ["fortify1", "fortify_notable"]},
+    {"id": "fortify_notable", "name": "Strategic Fortify", "ring": 8, "angle": 315, "isNotable": true, "stats": ["+50% Fortify Effect", "Fortify never expires", "Allies gain Fortify in aura"], "connections": ["fortify2"]},
+
+    {"id": "heal1", "name": "Heal 1", "ring": 7, "angle": 225, "stats": ["+15% Healing Effect"], "connections": ["life_notable", "heal2"]},
+    {"id": "heal2", "name": "Heal 2", "ring": 7.5, "angle": 220, "stats": ["+20% Healing Effect"], "connections": ["heal1", "heal_notable"]},
+    {"id": "heal_notable", "name": "Strategic Healing", "ring": 8, "angle": 225, "isNotable": true, "stats": ["+50% Healing Effect", "Auras heal allies", "Healing is stronger in aura"], "connections": ["heal2"]},
+
+    {"id": "counter1", "name": "Counter 1", "ring": 7, "angle": 135, "stats": ["+20% Counter Damage"], "connections": ["block_notable", "counter2"]},
+    {"id": "counter2", "name": "Counter 2", "ring": 7.5, "angle": 130, "stats": ["+25% Counter Damage"], "connections": ["counter1", "counter_notable"]},
+    {"id": "counter_notable", "name": "Strategic Counter", "ring": 8, "angle": 135, "isNotable": true, "stats": ["+50% Counter Damage", "Counter always hits", "Allies counter with you"], "connections": ["counter2"]},
+
+    {"id": "apex_key", "name": "SUPREME STRATEGIST", "ring": 10.5, "angle": 0, "isKeystone": true, "stats": ["Master tactician of the battlefield", "+150% Aura Effect", "+1000 Armour", "+500 Life", "+30% Block", "All allies share all your defenses", "Enemies in your aura are weakened and take more damage", "Team is immortal while you stand"], "connections": ["aura_key", "armor_key", "life_key", "block_key"]}
+  ]
+}

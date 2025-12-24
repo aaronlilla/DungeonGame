@@ -1,0 +1,101 @@
+{
+  "name": "Arcane Bulwark",
+  "color": "#9966cc",
+  "nodes": [
+    {"id": "start", "name": "ARCANE BULWARK", "ring": 0, "angle": 0, "isStart": true, "stats": ["You can allocate Passives starting from here"], "connections": ["travel_n", "travel_e", "travel_s", "travel_w"]},
+
+    {"id": "travel_n", "name": "Barrier Path", "ring": 1.5, "angle": 90, "stats": ["+40 Energy Shield"], "connections": ["start", "travel_n2"]},
+    {"id": "travel_n2", "name": "Ward Road", "ring": 3, "angle": 90, "stats": ["+55 Energy Shield"], "connections": ["travel_n", "travel_n3", "es_cluster1"]},
+    {"id": "travel_n3", "name": "Aegis Way", "ring": 4.5, "angle": 90, "stats": ["+70 Energy Shield"], "connections": ["travel_n2", "es_notable", "recharge_cluster1"]},
+    {"id": "es_notable", "name": "Arcane Shield", "ring": 6, "angle": 90, "isNotable": true, "stats": ["+180 ES", "+20% Max ES", "ES recharge cannot be interrupted"], "connections": ["travel_n3", "travel_n4"]},
+    {"id": "travel_n4", "name": "Eternity Path", "ring": 7.5, "angle": 90, "stats": ["+90 Energy Shield"], "connections": ["es_notable", "es_key"]},
+    {"id": "es_key", "name": "ARCANE FORTRESS", "ring": 9, "angle": 90, "isKeystone": true, "stats": ["+400 ES", "+35% Max ES", "ES protects Life completely", "ES recharge rate tripled"], "connections": ["travel_n4"]},
+
+    {"id": "es_cluster1", "name": "Spirit Pool", "ring": 3.5, "angle": 115, "stats": ["+50 ES"], "connections": ["travel_n2", "es_cluster2"]},
+    {"id": "es_cluster2", "name": "Spirit Flow", "ring": 4, "angle": 125, "stats": ["+65 ES"], "connections": ["es_cluster1", "es_cluster_notable"]},
+    {"id": "es_cluster_notable", "name": "Overflowing Spirit", "ring": 4.5, "angle": 120, "isNotable": true, "stats": ["+150 ES", "+12% Max ES"], "connections": ["es_cluster2"]},
+
+    {"id": "recharge_cluster1", "name": "Quick Charge", "ring": 5, "angle": 70, "stats": ["+15% ES Recharge"], "connections": ["travel_n3", "recharge_cluster2"]},
+    {"id": "recharge_cluster2", "name": "Rapid Charge", "ring": 5.5, "angle": 60, "stats": ["+20% ES Recharge"], "connections": ["recharge_cluster1", "recharge_cluster_notable"]},
+    {"id": "recharge_cluster_notable", "name": "Instant Recharge", "ring": 6, "angle": 65, "isNotable": true, "stats": ["+50% ES Recharge Rate", "ES starts recharging 1s faster"], "connections": ["recharge_cluster2"]},
+
+    {"id": "travel_e", "name": "Block Path", "ring": 1.5, "angle": 0, "stats": ["+4% Block Chance"], "connections": ["start", "travel_e2"]},
+    {"id": "travel_e2", "name": "Guard Road", "ring": 3, "angle": 0, "stats": ["+5% Block Chance"], "connections": ["travel_e", "travel_e3", "block_cluster1"]},
+    {"id": "travel_e3", "name": "Shield Way", "ring": 4.5, "angle": 0, "stats": ["+6% Block Chance"], "connections": ["travel_e2", "block_notable", "spell_block_cluster1"]},
+    {"id": "block_notable", "name": "Arcane Block", "ring": 6, "angle": 0, "isNotable": true, "stats": ["+12% Block", "+10% Spell Block", "Block restores ES"], "connections": ["travel_e3", "travel_e4"]},
+    {"id": "travel_e4", "name": "Perfection Path", "ring": 7.5, "angle": 0, "stats": ["+7% Block Chance"], "connections": ["block_notable", "block_key"]},
+    {"id": "block_key", "name": "PERFECT WARD", "ring": 9, "angle": 0, "isKeystone": true, "stats": ["+20% Block", "+20% Spell Block", "Block is instant", "Blocked damage restores ES"], "connections": ["travel_e4"]},
+
+    {"id": "block_cluster1", "name": "Shield Stance", "ring": 3.5, "angle": 335, "stats": ["+5% Block"], "connections": ["travel_e2", "block_cluster2"]},
+    {"id": "block_cluster2", "name": "Guard Stance", "ring": 4, "angle": 325, "stats": ["+6% Block"], "connections": ["block_cluster1", "block_cluster_notable"]},
+    {"id": "block_cluster_notable", "name": "Perfect Stance", "ring": 4.5, "angle": 330, "isNotable": true, "stats": ["+12% Block", "Counter on Block"], "connections": ["block_cluster2"]},
+
+    {"id": "spell_block_cluster1", "name": "Magic Guard", "ring": 5, "angle": 25, "stats": ["+4% Spell Block"], "connections": ["travel_e3", "spell_block_cluster2"]},
+    {"id": "spell_block_cluster2", "name": "Arcane Guard", "ring": 5.5, "angle": 35, "stats": ["+5% Spell Block"], "connections": ["spell_block_cluster1", "spell_block_cluster_notable"]},
+    {"id": "spell_block_cluster_notable", "name": "Spell Deflection", "ring": 6, "angle": 30, "isNotable": true, "stats": ["+12% Spell Block", "Reflect blocked spells"], "connections": ["spell_block_cluster2"]},
+
+    {"id": "travel_s", "name": "Spell Path", "ring": 1.5, "angle": 270, "stats": ["+12% Spell Damage"], "connections": ["start", "travel_s2"]},
+    {"id": "travel_s2", "name": "Magic Road", "ring": 3, "angle": 270, "stats": ["+15% Spell Damage"], "connections": ["travel_s", "travel_s3", "spell_cluster1"]},
+    {"id": "travel_s3", "name": "Arcane Way", "ring": 4.5, "angle": 270, "stats": ["+18% Spell Damage"], "connections": ["travel_s2", "spell_notable", "cast_cluster1"]},
+    {"id": "spell_notable", "name": "Arcane Power", "ring": 6, "angle": 270, "isNotable": true, "stats": ["+45% Spell Damage", "+20% Cast Speed", "Spells also restore ES"], "connections": ["travel_s3", "travel_s4"]},
+    {"id": "travel_s4", "name": "Mastery Path", "ring": 7.5, "angle": 270, "stats": ["+22% Spell Damage"], "connections": ["spell_notable", "spell_key"]},
+    {"id": "spell_key", "name": "ARCANE MASTERY", "ring": 9, "angle": 270, "isKeystone": true, "stats": ["+80% Spell Damage", "+40% Cast Speed", "Spells cannot be interrupted", "Spell damage heals ES"], "connections": ["travel_s4"]},
+
+    {"id": "spell_cluster1", "name": "Spark", "ring": 3.5, "angle": 245, "stats": ["+15% Spell Damage"], "connections": ["travel_s2", "spell_cluster2"]},
+    {"id": "spell_cluster2", "name": "Bolt", "ring": 4, "angle": 235, "stats": ["+18% Spell Damage"], "connections": ["spell_cluster1", "spell_cluster_notable"]},
+    {"id": "spell_cluster_notable", "name": "Thunder", "ring": 4.5, "angle": 240, "isNotable": true, "stats": ["+40% Spell Damage", "+50 Mana"], "connections": ["spell_cluster2"]},
+
+    {"id": "cast_cluster1", "name": "Quick Cast", "ring": 5, "angle": 290, "stats": ["+10% Cast Speed"], "connections": ["travel_s3", "cast_cluster2"]},
+    {"id": "cast_cluster2", "name": "Rapid Cast", "ring": 5.5, "angle": 300, "stats": ["+12% Cast Speed"], "connections": ["cast_cluster1", "cast_cluster_notable"]},
+    {"id": "cast_cluster_notable", "name": "Instant Cast", "ring": 6, "angle": 295, "isNotable": true, "stats": ["+30% Cast Speed", "10% chance to cast twice"], "connections": ["cast_cluster2"]},
+
+    {"id": "travel_w", "name": "Mana Path", "ring": 1.5, "angle": 180, "stats": ["+30 Mana"], "connections": ["start", "travel_w2"]},
+    {"id": "travel_w2", "name": "Flow Road", "ring": 3, "angle": 180, "stats": ["+40 Mana"], "connections": ["travel_w", "travel_w3", "mana_cluster1"]},
+    {"id": "travel_w3", "name": "Current Way", "ring": 4.5, "angle": 180, "stats": ["+50 Mana"], "connections": ["travel_w2", "mana_notable", "regen_cluster1"]},
+    {"id": "mana_notable", "name": "Arcane Pool", "ring": 6, "angle": 180, "isNotable": true, "stats": ["+150 Mana", "+15% Max Mana", "+0.5% Mana Regen"], "connections": ["travel_w3", "travel_w4"]},
+    {"id": "travel_w4", "name": "Infinity Path", "ring": 7.5, "angle": 180, "stats": ["+60 Mana"], "connections": ["mana_notable", "mana_key"]},
+    {"id": "mana_key", "name": "INFINITE MANA", "ring": 9, "angle": 180, "isKeystone": true, "stats": ["+300 Mana", "+30% Max Mana", "+2% Mana Regen", "Mana regenerates during casting"], "connections": ["travel_w4"]},
+
+    {"id": "mana_cluster1", "name": "Pool", "ring": 3.5, "angle": 155, "stats": ["+35 Mana"], "connections": ["travel_w2", "mana_cluster2"]},
+    {"id": "mana_cluster2", "name": "Reservoir", "ring": 4, "angle": 145, "stats": ["+45 Mana"], "connections": ["mana_cluster1", "mana_cluster_notable"]},
+    {"id": "mana_cluster_notable", "name": "Ocean", "ring": 4.5, "angle": 150, "isNotable": true, "stats": ["+100 Mana", "+10% Max Mana"], "connections": ["mana_cluster2"]},
+
+    {"id": "regen_cluster1", "name": "Flow", "ring": 5, "angle": 200, "stats": ["+0.3% Mana Regen"], "connections": ["travel_w3", "regen_cluster2"]},
+    {"id": "regen_cluster2", "name": "Stream", "ring": 5.5, "angle": 210, "stats": ["+0.4% Mana Regen"], "connections": ["regen_cluster1", "regen_cluster_notable"]},
+    {"id": "regen_cluster_notable", "name": "River", "ring": 6, "angle": 205, "isNotable": true, "stats": ["+1% Mana Regen", "Mana regen not interrupted"], "connections": ["regen_cluster2"]},
+
+    {"id": "travel_ne", "name": "NE Path", "ring": 2, "angle": 45, "stats": ["+30 ES", "+3% Block"], "connections": ["travel_n", "travel_ne2"]},
+    {"id": "travel_ne2", "name": "NE Road", "ring": 3.5, "angle": 45, "stats": ["+40 ES", "+4% Block"], "connections": ["travel_ne", "hybrid_eb_notable"]},
+    {"id": "hybrid_eb_notable", "name": "Shielded Ward", "ring": 5, "angle": 45, "isNotable": true, "stats": ["+100 ES", "+10% Block", "Block restores ES"], "connections": ["travel_ne2"]},
+
+    {"id": "travel_se", "name": "SE Path", "ring": 2, "angle": 315, "stats": ["+3% Block", "+10% Spell Damage"], "connections": ["travel_e", "travel_se2"]},
+    {"id": "travel_se2", "name": "SE Road", "ring": 3.5, "angle": 315, "stats": ["+4% Block", "+12% Spell Damage"], "connections": ["travel_se", "hybrid_bs_notable"]},
+    {"id": "hybrid_bs_notable", "name": "Spell Shield", "ring": 5, "angle": 315, "isNotable": true, "stats": ["+10% Block", "+30% Spell Damage", "Blocked attacks empower spells"], "connections": ["travel_se2"]},
+
+    {"id": "travel_sw", "name": "SW Path", "ring": 2, "angle": 225, "stats": ["+10% Spell Damage", "+25 Mana"], "connections": ["travel_s", "travel_sw2"]},
+    {"id": "travel_sw2", "name": "SW Road", "ring": 3.5, "angle": 225, "stats": ["+12% Spell Damage", "+35 Mana"], "connections": ["travel_sw", "hybrid_sm_notable"]},
+    {"id": "hybrid_sm_notable", "name": "Mana Mastery", "ring": 5, "angle": 225, "isNotable": true, "stats": ["+30% Spell Damage", "+80 Mana", "Spell cost reduced"], "connections": ["travel_sw2"]},
+
+    {"id": "travel_nw", "name": "NW Path", "ring": 2, "angle": 135, "stats": ["+25 Mana", "+30 ES"], "connections": ["travel_w", "travel_nw2"]},
+    {"id": "travel_nw2", "name": "NW Road", "ring": 3.5, "angle": 135, "stats": ["+35 Mana", "+40 ES"], "connections": ["travel_nw", "hybrid_me_notable"]},
+    {"id": "hybrid_me_notable", "name": "Spirit Mana", "ring": 5, "angle": 135, "isNotable": true, "stats": ["+80 Mana", "+100 ES", "Mana protects ES"], "connections": ["travel_nw2"]},
+
+    {"id": "crit1", "name": "Crit 1", "ring": 7, "angle": 45, "stats": ["+15% Spell Crit"], "connections": ["es_notable", "crit2"]},
+    {"id": "crit2", "name": "Crit 2", "ring": 7.5, "angle": 50, "stats": ["+20% Spell Crit"], "connections": ["crit1", "crit_notable"]},
+    {"id": "crit_notable", "name": "Arcane Precision", "ring": 8, "angle": 45, "isNotable": true, "stats": ["+40% Spell Crit", "+30% Crit Multi", "Crits restore ES"], "connections": ["crit2"]},
+
+    {"id": "counter1", "name": "Counter 1", "ring": 7, "angle": 315, "stats": ["+20% Counter Damage"], "connections": ["block_notable", "counter2"]},
+    {"id": "counter2", "name": "Counter 2", "ring": 7.5, "angle": 310, "stats": ["+25% Counter Damage"], "connections": ["counter1", "counter_notable"]},
+    {"id": "counter_notable", "name": "Arcane Counter", "ring": 8, "angle": 315, "isNotable": true, "stats": ["+50% Counter Damage", "Counter with spells"], "connections": ["counter2"]},
+
+    {"id": "aoe1", "name": "AoE 1", "ring": 7, "angle": 225, "stats": ["+15% AoE"], "connections": ["spell_notable", "aoe2"]},
+    {"id": "aoe2", "name": "AoE 2", "ring": 7.5, "angle": 220, "stats": ["+20% AoE"], "connections": ["aoe1", "aoe_notable"]},
+    {"id": "aoe_notable", "name": "Massive AoE", "ring": 8, "angle": 225, "isNotable": true, "stats": ["+50% AoE", "AoE scales with Mana"], "connections": ["aoe2"]},
+
+    {"id": "reserve1", "name": "Reserve 1", "ring": 7, "angle": 135, "stats": ["-5% Mana Reserved"], "connections": ["mana_notable", "reserve2"]},
+    {"id": "reserve2", "name": "Reserve 2", "ring": 7.5, "angle": 130, "stats": ["-7% Mana Reserved"], "connections": ["reserve1", "reserve_notable"]},
+    {"id": "reserve_notable", "name": "Efficient Reserve", "ring": 8, "angle": 135, "isNotable": true, "stats": ["-15% Mana Reserved", "Reserved Mana grants ES"], "connections": ["reserve2"]},
+
+    {"id": "apex_key", "name": "ARCANE PINNACLE", "ring": 10.5, "angle": 0, "isKeystone": true, "stats": ["Master of arcane defense", "+500 ES", "+25% Block", "+100% Spell Damage", "+200 Mana", "ES cannot be bypassed", "Block and ES synergize perfectly", "Spells are uninterruptible"], "connections": ["es_key", "block_key", "spell_key", "mana_key"]}
+  ]
+}

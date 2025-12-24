@@ -1,0 +1,2821 @@
+{
+  "itemClass": "Two Handed Axe",
+  "affixes": {
+    "prefixes": [
+      {
+        "group": "LocalIncreasedPhysicalDamagePercentAndAccuracyRating",
+        "mods": [
+          {
+            "modifier": "Squire's",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 15,
+                "max": 19
+              },
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 16,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Journeyman's",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 20,
+                "max": 24
+              },
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 21,
+                "max": 46
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Reaver's",
+            "iLvl": 23,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 25,
+                "max": 34
+              },
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 47,
+                "max": 72
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Mercenary's",
+            "iLvl": 35,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 35,
+                "max": 44
+              },
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 73,
+                "max": 97
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Champion's",
+            "iLvl": 46,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 45,
+                "max": 54
+              },
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 98,
+                "max": 123
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Conqueror's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 55,
+                "max": 64
+              },
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 124,
+                "max": 149
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Emperor's",
+            "iLvl": 73,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 65,
+                "max": 74
+              },
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 150,
+                "max": 174
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Dictator's",
+            "iLvl": 83,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 75,
+                "max": 79
+              },
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 175,
+                "max": 200
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedWeaponElementalDamagePercent",
+        "mods": [
+          {
+            "modifier": "Catalysing",
+            "iLvl": 4,
+            "stats": [
+              {
+                "stat": "% increased Elemental Damage with Attack Skills",
+                "min": 19,
+                "max": 34
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Infusing",
+            "iLvl": 15,
+            "stats": [
+              {
+                "stat": "% increased Elemental Damage with Attack Skills",
+                "min": 36,
+                "max": 51
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Empowering",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "% increased Elemental Damage with Attack Skills",
+                "min": 53,
+                "max": 61
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Unleashed",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Elemental Damage with Attack Skills",
+                "min": 63,
+                "max": 71
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Overpowering",
+            "iLvl": 81,
+            "stats": [
+              {
+                "stat": "% increased Elemental Damage with Attack Skills",
+                "min": 73,
+                "max": 85
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Devastating",
+            "iLvl": 86,
+            "stats": [
+              {
+                "stat": "% increased Elemental Damage with Attack Skills",
+                "min": 87,
+                "max": 100
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreaseSpecificSocketedGemLevel",
+        "mods": [
+          {
+            "modifier": "Combatant's",
+            "iLvl": 8,
+            "stats": [
+              {
+                "stat": "+# to Level of Socketed Melee Gems",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "attack",
+              "gem"
+            ]
+          },
+          {
+            "modifier": "Weaponmaster's",
+            "iLvl": 63,
+            "stats": [
+              {
+                "stat": "+# to Level of Socketed Melee Gems",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "attack",
+              "gem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "FireDamage",
+        "mods": [
+          {
+            "modifier": "Heated",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "Adds # to # Fire Damage",
+                "min": [
+                  3,
+                  6
+                ],
+                "max": [
+                  5,
+                  7
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Smouldering",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "Adds # to # Fire Damage",
+                "min": [
+                  14,
+                  29
+                ],
+                "max": [
+                  20,
+                  33
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Smoking",
+            "iLvl": 18,
+            "stats": [
+              {
+                "stat": "Adds # to # Fire Damage",
+                "min": [
+                  23,
+                  47
+                ],
+                "max": [
+                  31,
+                  54
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Burning",
+            "iLvl": 26,
+            "stats": [
+              {
+                "stat": "Adds # to # Fire Damage",
+                "min": [
+                  32,
+                  65
+                ],
+                "max": [
+                  44,
+                  76
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Flaming",
+            "iLvl": 33,
+            "stats": [
+              {
+                "stat": "Adds # to # Fire Damage",
+                "min": [
+                  45,
+                  91
+                ],
+                "max": [
+                  61,
+                  106
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Scorching",
+            "iLvl": 42,
+            "stats": [
+              {
+                "stat": "Adds # to # Fire Damage",
+                "min": [
+                  63,
+                  128
+                ],
+                "max": [
+                  85,
+                  148
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Incinerating",
+            "iLvl": 51,
+            "stats": [
+              {
+                "stat": "Adds # to # Fire Damage",
+                "min": [
+                  85,
+                  172
+                ],
+                "max": [
+                  115,
+                  200
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Blasting",
+            "iLvl": 62,
+            "stats": [
+              {
+                "stat": "Adds # to # Fire Damage",
+                "min": [
+                  110,
+                  223
+                ],
+                "max": [
+                  150,
+                  260
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Cremating",
+            "iLvl": 74,
+            "stats": [
+              {
+                "stat": "Adds # to # Fire Damage",
+                "min": [
+                  137,
+                  279
+                ],
+                "max": [
+                  188,
+                  325
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Carbonising",
+            "iLvl": 82,
+            "stats": [
+              {
+                "stat": "Adds # to # Fire Damage",
+                "min": [
+                  165,
+                  335
+                ],
+                "max": [
+                  225,
+                  390
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LightningDamage",
+        "mods": [
+          {
+            "modifier": "Humming",
+            "iLvl": 3,
+            "stats": [
+              {
+                "stat": "Adds # to # Lightning Damage",
+                "min": [
+                  2,
+                  10
+                ],
+                "max": [
+                  2,
+                  11
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Buzzing",
+            "iLvl": 13,
+            "stats": [
+              {
+                "stat": "Adds # to # Lightning Damage",
+                "min": [
+                  3,
+                  46
+                ],
+                "max": [
+                  3,
+                  53
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Snapping",
+            "iLvl": 19,
+            "stats": [
+              {
+                "stat": "Adds # to # Lightning Damage",
+                "min": [
+                  4,
+                  76
+                ],
+                "max": [
+                  5,
+                  88
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Crackling",
+            "iLvl": 31,
+            "stats": [
+              {
+                "stat": "Adds # to # Lightning Damage",
+                "min": [
+                  5,
+                  106
+                ],
+                "max": [
+                  8,
+                  123
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Sparking",
+            "iLvl": 34,
+            "stats": [
+              {
+                "stat": "Adds # to # Lightning Damage",
+                "min": [
+                  8,
+                  148
+                ],
+                "max": [
+                  10,
+                  173
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Arcing",
+            "iLvl": 42,
+            "stats": [
+              {
+                "stat": "Adds # to # Lightning Damage",
+                "min": [
+                  11,
+                  208
+                ],
+                "max": [
+                  14,
+                  242
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Shocking",
+            "iLvl": 51,
+            "stats": [
+              {
+                "stat": "Adds # to # Lightning Damage",
+                "min": [
+                  14,
+                  281
+                ],
+                "max": [
+                  20,
+                  327
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Discharging",
+            "iLvl": 63,
+            "stats": [
+              {
+                "stat": "Adds # to # Lightning Damage",
+                "min": [
+                  19,
+                  366
+                ],
+                "max": [
+                  25,
+                  425
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Electrocuting",
+            "iLvl": 74,
+            "stats": [
+              {
+                "stat": "Adds # to # Lightning Damage",
+                "min": [
+                  23,
+                  458
+                ],
+                "max": [
+                  32,
+                  531
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Vapourising",
+            "iLvl": 82,
+            "stats": [
+              {
+                "stat": "Adds # to # Lightning Damage",
+                "min": [
+                  28,
+                  549
+                ],
+                "max": [
+                  38,
+                  638
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LocalPhysicalDamagePercent",
+        "mods": [
+          {
+            "modifier": "Heavy",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 40,
+                "max": 49
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Serrated",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 50,
+                "max": 64
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Wicked",
+            "iLvl": 23,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 65,
+                "max": 84
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Vicious",
+            "iLvl": 35,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 85,
+                "max": 109
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Bloodthirsty",
+            "iLvl": 46,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 110,
+                "max": 134
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Cruel",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 135,
+                "max": 154
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Tyrannical",
+            "iLvl": 73,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 155,
+                "max": 169
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Merciless",
+            "iLvl": 83,
+            "stats": [
+              {
+                "stat": "% increased Physical Damage",
+                "min": 170,
+                "max": 179
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "PhysicalDamage",
+        "mods": [
+          {
+            "modifier": "Glinting",
+            "iLvl": 2,
+            "stats": [
+              {
+                "stat": "Adds # to # Physical Damage",
+                "min": [
+                  2,
+                  4
+                ],
+                "max": [
+                  2,
+                  5
+                ]
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Burnished",
+            "iLvl": 13,
+            "stats": [
+              {
+                "stat": "Adds # to # Physical Damage",
+                "min": [
+                  6,
+                  12
+                ],
+                "max": [
+                  8,
+                  15
+                ]
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Polished",
+            "iLvl": 21,
+            "stats": [
+              {
+                "stat": "Adds # to # Physical Damage",
+                "min": [
+                  10,
+                  21
+                ],
+                "max": [
+                  13,
+                  25
+                ]
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Honed",
+            "iLvl": 29,
+            "stats": [
+              {
+                "stat": "Adds # to # Physical Damage",
+                "min": [
+                  13,
+                  28
+                ],
+                "max": [
+                  17,
+                  32
+                ]
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Gleaming",
+            "iLvl": 36,
+            "stats": [
+              {
+                "stat": "Adds # to # Physical Damage",
+                "min": [
+                  16,
+                  35
+                ],
+                "max": [
+                  22,
+                  40
+                ]
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Annealed",
+            "iLvl": 46,
+            "stats": [
+              {
+                "stat": "Adds # to # Physical Damage",
+                "min": [
+                  20,
+                  43
+                ],
+                "max": [
+                  28,
+                  51
+                ]
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Razor-sharp",
+            "iLvl": 54,
+            "stats": [
+              {
+                "stat": "Adds # to # Physical Damage",
+                "min": [
+                  25,
+                  52
+                ],
+                "max": [
+                  33,
+                  61
+                ]
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Tempered",
+            "iLvl": 65,
+            "stats": [
+              {
+                "stat": "Adds # to # Physical Damage",
+                "min": [
+                  30,
+                  63
+                ],
+                "max": [
+                  40,
+                  73
+                ]
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Flaring",
+            "iLvl": 77,
+            "stats": [
+              {
+                "stat": "Adds # to # Physical Damage",
+                "min": [
+                  34,
+                  72
+                ],
+                "max": [
+                  47,
+                  84
+                ]
+              }
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreaseSocketedGemLevel",
+        "mods": [
+          {
+            "modifier": "Paragon's",
+            "iLvl": 50,
+            "stats": [
+              {
+                "stat": "+1 to Level of Socketed Gems",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "gem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ColdDamage",
+        "mods": [
+          {
+            "modifier": "Frosted",
+            "iLvl": 2,
+            "stats": [
+              {
+                "stat": "Adds # to # Cold Damage",
+                "min": [
+                  2,
+                  6
+                ],
+                "max": [
+                  3,
+                  7
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Chilled",
+            "iLvl": 12,
+            "stats": [
+              {
+                "stat": "Adds # to # Cold Damage",
+                "min": [
+                  12,
+                  26
+                ],
+                "max": [
+                  17,
+                  30
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Icy",
+            "iLvl": 19,
+            "stats": [
+              {
+                "stat": "Adds # to # Cold Damage",
+                "min": [
+                  21,
+                  42
+                ],
+                "max": [
+                  28,
+                  48
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Frigid",
+            "iLvl": 27,
+            "stats": [
+              {
+                "stat": "Adds # to # Cold Damage",
+                "min": [
+                  29,
+                  58
+                ],
+                "max": [
+                  40,
+                  68
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Freezing",
+            "iLvl": 34,
+            "stats": [
+              {
+                "stat": "Adds # to # Cold Damage",
+                "min": [
+                  41,
+                  81
+                ],
+                "max": [
+                  55,
+                  95
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Frozen",
+            "iLvl": 43,
+            "stats": [
+              {
+                "stat": "Adds # to # Cold Damage",
+                "min": [
+                  57,
+                  114
+                ],
+                "max": [
+                  77,
+                  132
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Glaciated",
+            "iLvl": 52,
+            "stats": [
+              {
+                "stat": "Adds # to # Cold Damage",
+                "min": [
+                  77,
+                  154
+                ],
+                "max": [
+                  104,
+                  178
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Polar",
+            "iLvl": 63,
+            "stats": [
+              {
+                "stat": "Adds # to # Cold Damage",
+                "min": [
+                  99,
+                  200
+                ],
+                "max": [
+                  136,
+                  232
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Entombing",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "Adds # to # Cold Damage",
+                "min": [
+                  124,
+                  250
+                ],
+                "max": [
+                  170,
+                  290
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "Crystalising",
+            "iLvl": 82,
+            "stats": [
+              {
+                "stat": "Adds # to # Cold Damage",
+                "min": [
+                  149,
+                  300
+                ],
+                "max": [
+                  204,
+                  348
+                ]
+              }
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LocalChaosDamage",
+        "mods": [
+          {
+            "modifier": "Malicious",
+            "iLvl": 83,
+            "stats": [
+              {
+                "stat": "Adds # to # Chaos Damage",
+                "min": [
+                  98,
+                  183
+                ],
+                "max": [
+                  149,
+                  280
+                ]
+              }
+            ],
+            "tags": [
+              "chaos_damage",
+              "damage",
+              "chaos",
+              "attack"
+            ]
+          }
+        ]
+      }
+    ],
+    "suffixes": [
+      {
+        "group": "ManaGainedFromEnemyDeath",
+        "mods": [
+          {
+            "modifier": "of Absorption",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "Gain # Mana per Enemy Killed",
+                "min": 4,
+                "max": 6
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "of Osmosis",
+            "iLvl": 24,
+            "stats": [
+              {
+                "stat": "Gain # Mana per Enemy Killed",
+                "min": 7,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "of Consumption",
+            "iLvl": 40,
+            "stats": [
+              {
+                "stat": "Gain # Mana per Enemy Killed",
+                "min": 11,
+                "max": 15
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "of Diffusion",
+            "iLvl": 52,
+            "stats": [
+              {
+                "stat": "Gain # Mana per Enemy Killed",
+                "min": 16,
+                "max": 25
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "of Permeation",
+            "iLvl": 66,
+            "stats": [
+              {
+                "stat": "Gain # Mana per Enemy Killed",
+                "min": 26,
+                "max": 37
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "of Retention",
+            "iLvl": 81,
+            "stats": [
+              {
+                "stat": "Gain # Mana per Enemy Killed",
+                "min": 38,
+                "max": 50
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "StunThresholdReduction",
+        "mods": [
+          {
+            "modifier": "of the Pugilist",
+            "iLvl": 5,
+            "stats": [
+              {
+                "stat": "% reduced Enemy Stun Threshold",
+                "min": 5,
+                "max": 7
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of the Brawler",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "% reduced Enemy Stun Threshold",
+                "min": 8,
+                "max": 9
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of the Boxer",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "% reduced Enemy Stun Threshold",
+                "min": 10,
+                "max": 11
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of the Combatant",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "% reduced Enemy Stun Threshold",
+                "min": 12,
+                "max": 13
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of the Gladiator",
+            "iLvl": 58,
+            "stats": [
+              {
+                "stat": "% reduced Enemy Stun Threshold",
+                "min": 14,
+                "max": 15
+              }
+            ],
+            "tags": []
+          }
+        ]
+      },
+      {
+        "group": "StunDurationIncreasePercent",
+        "mods": [
+          {
+            "modifier": "of Impact",
+            "iLvl": 5,
+            "stats": [
+              {
+                "stat": "% increased Stun Duration on Enemies",
+                "min": 11,
+                "max": 15
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Dazing",
+            "iLvl": 18,
+            "stats": [
+              {
+                "stat": "% increased Stun Duration on Enemies",
+                "min": 16,
+                "max": 20
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Stunning",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "% increased Stun Duration on Enemies",
+                "min": 21,
+                "max": 25
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Slamming",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "% increased Stun Duration on Enemies",
+                "min": 26,
+                "max": 30
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Staggering",
+            "iLvl": 58,
+            "stats": [
+              {
+                "stat": "% increased Stun Duration on Enemies",
+                "min": 31,
+                "max": 35
+              }
+            ],
+            "tags": []
+          }
+        ]
+      },
+      {
+        "group": "IncreasedAttackSpeed",
+        "mods": [
+          {
+            "modifier": "of Skill",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "% increased Attack Speed",
+                "min": 5,
+                "max": 7
+              }
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          },
+          {
+            "modifier": "of Ease",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "% increased Attack Speed",
+                "min": 8,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          },
+          {
+            "modifier": "of Mastery",
+            "iLvl": 22,
+            "stats": [
+              {
+                "stat": "% increased Attack Speed",
+                "min": 11,
+                "max": 13
+              }
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          },
+          {
+            "modifier": "of Renown",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "% increased Attack Speed",
+                "min": 14,
+                "max": 16
+              }
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          },
+          {
+            "modifier": "of Acclaim",
+            "iLvl": 37,
+            "stats": [
+              {
+                "stat": "% increased Attack Speed",
+                "min": 17,
+                "max": 19
+              }
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          },
+          {
+            "modifier": "of Fame",
+            "iLvl": 45,
+            "stats": [
+              {
+                "stat": "% increased Attack Speed",
+                "min": 20,
+                "max": 22
+              }
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          },
+          {
+            "modifier": "of Infamy",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Attack Speed",
+                "min": 23,
+                "max": 25
+              }
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          },
+          {
+            "modifier": "of Celebration",
+            "iLvl": 77,
+            "stats": [
+              {
+                "stat": "% increased Attack Speed",
+                "min": 26,
+                "max": 27
+              }
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "CriticalStrikeChanceIncrease",
+        "mods": [
+          {
+            "modifier": "of Needling",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "% increased Critical Strike Chance",
+                "min": 10,
+                "max": 14
+              }
+            ],
+            "tags": [
+              "attack",
+              "critical"
+            ]
+          },
+          {
+            "modifier": "of Stinging",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "% increased Critical Strike Chance",
+                "min": 15,
+                "max": 19
+              }
+            ],
+            "tags": [
+              "attack",
+              "critical"
+            ]
+          },
+          {
+            "modifier": "of Piercing",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "% increased Critical Strike Chance",
+                "min": 20,
+                "max": 24
+              }
+            ],
+            "tags": [
+              "attack",
+              "critical"
+            ]
+          },
+          {
+            "modifier": "of Puncturing",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "% increased Critical Strike Chance",
+                "min": 25,
+                "max": 29
+              }
+            ],
+            "tags": [
+              "attack",
+              "critical"
+            ]
+          },
+          {
+            "modifier": "of Penetrating",
+            "iLvl": 59,
+            "stats": [
+              {
+                "stat": "% increased Critical Strike Chance",
+                "min": 30,
+                "max": 34
+              }
+            ],
+            "tags": [
+              "attack",
+              "critical"
+            ]
+          },
+          {
+            "modifier": "of Incision",
+            "iLvl": 73,
+            "stats": [
+              {
+                "stat": "% increased Critical Strike Chance",
+                "min": 35,
+                "max": 38
+              }
+            ],
+            "tags": [
+              "attack",
+              "critical"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Strength",
+        "mods": [
+          {
+            "modifier": "of the Brute",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "+# to Strength",
+                "min": 8,
+                "max": 12
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Wrestler",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "+# to Strength",
+                "min": 13,
+                "max": 17
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Bear",
+            "iLvl": 22,
+            "stats": [
+              {
+                "stat": "+# to Strength",
+                "min": 18,
+                "max": 22
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Lion",
+            "iLvl": 33,
+            "stats": [
+              {
+                "stat": "+# to Strength",
+                "min": 23,
+                "max": 27
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Gorilla",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "+# to Strength",
+                "min": 28,
+                "max": 32
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Goliath",
+            "iLvl": 55,
+            "stats": [
+              {
+                "stat": "+# to Strength",
+                "min": 33,
+                "max": 37
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Leviathan",
+            "iLvl": 66,
+            "stats": [
+              {
+                "stat": "+# to Strength",
+                "min": 38,
+                "max": 42
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Titan",
+            "iLvl": 74,
+            "stats": [
+              {
+                "stat": "+# to Strength",
+                "min": 43,
+                "max": 50
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Gods",
+            "iLvl": 82,
+            "stats": [
+              {
+                "stat": "+# to Strength",
+                "min": 51,
+                "max": 55
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "CriticalStrikeMultiplier",
+        "mods": [
+          {
+            "modifier": "of Ire",
+            "iLvl": 8,
+            "stats": [
+              {
+                "stat": "+#% to Global Critical Strike Multiplier",
+                "min": 10,
+                "max": 14
+              }
+            ],
+            "tags": [
+              "damage",
+              "critical"
+            ]
+          },
+          {
+            "modifier": "of Anger",
+            "iLvl": 21,
+            "stats": [
+              {
+                "stat": "+#% to Global Critical Strike Multiplier",
+                "min": 15,
+                "max": 19
+              }
+            ],
+            "tags": [
+              "damage",
+              "critical"
+            ]
+          },
+          {
+            "modifier": "of Rage",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "+#% to Global Critical Strike Multiplier",
+                "min": 20,
+                "max": 24
+              }
+            ],
+            "tags": [
+              "damage",
+              "critical"
+            ]
+          },
+          {
+            "modifier": "of Fury",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "+#% to Global Critical Strike Multiplier",
+                "min": 25,
+                "max": 29
+              }
+            ],
+            "tags": [
+              "damage",
+              "critical"
+            ]
+          },
+          {
+            "modifier": "of Ferocity",
+            "iLvl": 59,
+            "stats": [
+              {
+                "stat": "+#% to Global Critical Strike Multiplier",
+                "min": 30,
+                "max": 34
+              }
+            ],
+            "tags": [
+              "damage",
+              "critical"
+            ]
+          },
+          {
+            "modifier": "of Destruction",
+            "iLvl": 73,
+            "stats": [
+              {
+                "stat": "+#% to Global Critical Strike Multiplier",
+                "min": 35,
+                "max": 38
+              }
+            ],
+            "tags": [
+              "damage",
+              "critical"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LocalAttributeRequirements",
+        "mods": [
+          {
+            "modifier": "of the Worthy",
+            "iLvl": 36,
+            "stats": [
+              {
+                "stat": "% reduced Attribute Requirements",
+                "min": 18,
+                "max": 18
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of the Apt",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% reduced Attribute Requirements",
+                "min": 32,
+                "max": 32
+              }
+            ],
+            "tags": []
+          }
+        ]
+      },
+      {
+        "group": "LifeGainPerTarget",
+        "mods": [
+          {
+            "modifier": "of Rejuvenation",
+            "iLvl": 8,
+            "stats": [
+              {
+                "stat": "Grants # Life per Enemy Hit",
+                "min": 2,
+                "max": 3
+              }
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of Restoration",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "Grants # Life per Enemy Hit",
+                "min": 4,
+                "max": 6
+              }
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of Regrowth",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "Grants # Life per Enemy Hit",
+                "min": 7,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of Nourishment",
+            "iLvl": 40,
+            "stats": [
+              {
+                "stat": "Grants # Life per Enemy Hit",
+                "min": 11,
+                "max": 14
+              }
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of Regenesis",
+            "iLvl": 50,
+            "stats": [
+              {
+                "stat": "Grants # Life per Enemy Hit",
+                "min": 15,
+                "max": 18
+              }
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of Renewal",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "Grants # Life per Enemy Hit",
+                "min": 19,
+                "max": 22
+              }
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of Recuperation",
+            "iLvl": 70,
+            "stats": [
+              {
+                "stat": "Grants # Life per Enemy Hit",
+                "min": 23,
+                "max": 26
+              }
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of Revitalization",
+            "iLvl": 80,
+            "stats": [
+              {
+                "stat": "Grants # Life per Enemy Hit",
+                "min": 27,
+                "max": 30
+              }
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ManaLeech",
+        "mods": [
+          {
+            "modifier": "of Thirst",
+            "iLvl": 50,
+            "stats": [
+              {
+                "stat": "% of Physical Attack Damage Leeched as Mana",
+                "min": 2.6,
+                "max": 3.2
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana",
+              "physical",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LightRadiusAndAccuracy",
+        "mods": [
+          {
+            "modifier": "of Shining",
+            "iLvl": 8,
+            "stats": [
+              {
+                "stat": "% increased Light Radius",
+                "min": 5,
+                "max": 5
+              },
+              {
+                "stat": "% increased Global Accuracy Rating",
+                "min": 9,
+                "max": 11
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of Light",
+            "iLvl": 15,
+            "stats": [
+              {
+                "stat": "% increased Light Radius",
+                "min": 10,
+                "max": 10
+              },
+              {
+                "stat": "% increased Global Accuracy Rating",
+                "min": 12,
+                "max": 15
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of Radiance",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "% increased Light Radius",
+                "min": 15,
+                "max": 15
+              },
+              {
+                "stat": "% increased Global Accuracy Rating",
+                "min": 16,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "GlobalDamageOverTimeMultiplier",
+        "mods": [
+          {
+            "modifier": "of Acrimony",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "+#% to Damage over Time Multiplier",
+                "min": 16,
+                "max": 21
+              }
+            ],
+            "tags": [
+              "dot_multi",
+              "damage"
+            ]
+          },
+          {
+            "modifier": "of Dispersion",
+            "iLvl": 55,
+            "stats": [
+              {
+                "stat": "+#% to Damage over Time Multiplier",
+                "min": 24,
+                "max": 29
+              }
+            ],
+            "tags": [
+              "dot_multi",
+              "damage"
+            ]
+          },
+          {
+            "modifier": "of Liquefaction",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "+#% to Damage over Time Multiplier",
+                "min": 31,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "dot_multi",
+              "damage"
+            ]
+          },
+          {
+            "modifier": "of Melting",
+            "iLvl": 76,
+            "stats": [
+              {
+                "stat": "+#% to Damage over Time Multiplier",
+                "min": 36,
+                "max": 40
+              }
+            ],
+            "tags": [
+              "dot_multi",
+              "damage"
+            ]
+          },
+          {
+            "modifier": "of Dissolution",
+            "iLvl": 82,
+            "stats": [
+              {
+                "stat": "+#% to Damage over Time Multiplier",
+                "min": 41,
+                "max": 45
+              }
+            ],
+            "tags": [
+              "dot_multi",
+              "damage"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Dexterity",
+        "mods": [
+          {
+            "modifier": "of the Mongoose",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 8,
+                "max": 12
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Lynx",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 13,
+                "max": 17
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Fox",
+            "iLvl": 22,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 18,
+                "max": 22
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Falcon",
+            "iLvl": 33,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 23,
+                "max": 27
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Panther",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 28,
+                "max": 32
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Leopard",
+            "iLvl": 55,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 33,
+                "max": 37
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Jaguar",
+            "iLvl": 66,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 38,
+                "max": 42
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Phantom",
+            "iLvl": 74,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 43,
+                "max": 50
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Wind",
+            "iLvl": 82,
+            "stats": [
+              {
+                "stat": "+# to Dexterity",
+                "min": 51,
+                "max": 55
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedAccuracy",
+        "mods": [
+          {
+            "modifier": "of Steadiness",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 80,
+                "max": 130
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of Precision",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 131,
+                "max": 215
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of the Sniper",
+            "iLvl": 40,
+            "stats": [
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 216,
+                "max": 325
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of the Marksman",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 326,
+                "max": 455
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of the Ranger",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "+# to Accuracy Rating",
+                "min": 456,
+                "max": 624
+              }
+            ],
+            "tags": [
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LifeLeech",
+        "mods": [
+          {
+            "modifier": "of the Remora",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "% of Physical Attack Damage Leeched as Life",
+                "min": 2.0,
+                "max": 2.4
+              }
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of the Lamprey",
+            "iLvl": 45,
+            "stats": [
+              {
+                "stat": "% of Physical Attack Damage Leeched as Life",
+                "min": 2.6,
+                "max": 3.2
+              }
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "modifier": "of the Vampire",
+            "iLvl": 70,
+            "stats": [
+              {
+                "stat": "% of Physical Attack Damage Leeched as Life",
+                "min": 3.5,
+                "max": 4.5
+              }
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "physical",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LifeGainedFromEnemyDeath",
+        "mods": [
+          {
+            "modifier": "of Success",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "Gain # Life per Enemy Killed",
+                "min": 7,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of Victory",
+            "iLvl": 23,
+            "stats": [
+              {
+                "stat": "Gain # Life per Enemy Killed",
+                "min": 12,
+                "max": 18
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of Triumph",
+            "iLvl": 40,
+            "stats": [
+              {
+                "stat": "Gain # Life per Enemy Killed",
+                "min": 24,
+                "max": 32
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of Conquest",
+            "iLvl": 52,
+            "stats": [
+              {
+                "stat": "Gain # Life per Enemy Killed",
+                "min": 35,
+                "max": 44
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of Feat",
+            "iLvl": 66,
+            "stats": [
+              {
+                "stat": "Gain # Life per Enemy Killed",
+                "min": 56,
+                "max": 72
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of Masterstroke",
+            "iLvl": 81,
+            "stats": [
+              {
+                "stat": "Gain # Life per Enemy Killed",
+                "min": 84,
+                "max": 110
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

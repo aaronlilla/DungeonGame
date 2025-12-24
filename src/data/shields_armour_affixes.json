@@ -1,0 +1,4573 @@
+{
+  "itemClass": "Shields (Armour)",
+  "affixes": {
+    "prefixes": [
+      {
+        "group": "BaseLocalDefences",
+        "description": "+# to Armour\nModifier iLvl Stats Tags Lacquered 1 +(6-12) to Armour armour defences Studded 11 +(13-35) to Armour armour defences Ribbed 17 +(36-63) to Armour armour defences Fortified 23 +(64-82) to Armour armour defences Plated 29 +(83-101) to Armour armour defences Carapaced 35 +(102-120) to Armour armour defences Encased 43 +(121-150) to Armour armour defences Enveloped 51 +(151-200) to Armour armour defences Abating 60 +(201-300) to Armour armour defences Unmoving 69 +(301-400) to Armour armour defences",
+        "mods": [
+          {
+            "modifier": "Lacquered",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "to Armour",
+                "min": 6,
+                "max": 12
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Studded",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "to Armour",
+                "min": 13,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Ribbed",
+            "iLvl": 17,
+            "stats": [
+              {
+                "stat": "to Armour",
+                "min": 36,
+                "max": 63
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Fortified",
+            "iLvl": 23,
+            "stats": [
+              {
+                "stat": "to Armour",
+                "min": 64,
+                "max": 82
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Plated",
+            "iLvl": 29,
+            "stats": [
+              {
+                "stat": "to Armour",
+                "min": 83,
+                "max": 101
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Carapaced",
+            "iLvl": 35,
+            "stats": [
+              {
+                "stat": "to Armour",
+                "min": 102,
+                "max": 120
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Encased",
+            "iLvl": 43,
+            "stats": [
+              {
+                "stat": "to Armour",
+                "min": 121,
+                "max": 150
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Enveloped",
+            "iLvl": 51,
+            "stats": [
+              {
+                "stat": "to Armour",
+                "min": 151,
+                "max": 200
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Abating",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "to Armour",
+                "min": 201,
+                "max": 300
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Unmoving",
+            "iLvl": 69,
+            "stats": [
+              {
+                "stat": "to Armour",
+                "min": 301,
+                "max": 400
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "BaseLocalDefencesAndLife",
+        "description": "+# to Armour +# to maximum Life\nModifier iLvl Stats Tags Oyster's 30 +(20-32) to Armour +(18-23) to maximum Life armour resource life defences Urchin's 46 +(33-48) to Armour +(24-28) to maximum Life armour resource life defences Nautilus's 62 +(49-96) to Armour +(29-33) to maximum Life armour resource life defences",
+        "mods": [
+          {
+            "modifier": "Oyster's",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "to Armour (18-23) to maximum Life",
+                "min": 20,
+                "max": 32
+              }
+            ],
+            "tags": [
+              "armourresourcelifedefences"
+            ]
+          },
+          {
+            "modifier": "Urchin's",
+            "iLvl": 46,
+            "stats": [
+              {
+                "stat": "to Armour (24-28) to maximum Life",
+                "min": 33,
+                "max": 48
+              }
+            ],
+            "tags": [
+              "armourresourcelifedefences"
+            ]
+          },
+          {
+            "modifier": "Nautilus's",
+            "iLvl": 62,
+            "stats": [
+              {
+                "stat": "to Armour (29-33) to maximum Life",
+                "min": 49,
+                "max": 96
+              }
+            ],
+            "tags": [
+              "armourresourcelifedefences"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AttackerTakesDamageNoRange",
+        "description": "Reflects # Physical Damage to Melee Attackers\nModifier iLvl Stats Tags Thorny 1 Reflects (1-4) Physical Damage to Melee Attackers physical_damage damage physical Spiny 10 Reflects (5-10) Physical Damage to Melee Attackers physical_damage damage physical Barbed 20 Reflects (11-24) Physical Damage to Melee Attackers physical_damage damage physical Jagged 35 Reflects (25-50) Physical Damage to Melee Attackers physical_damage damage physical",
+        "mods": [
+          {
+            "modifier": "Thorny",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "Reflects Physical Damage to Melee Attackers",
+                "min": 1,
+                "max": 4
+              }
+            ],
+            "tags": [
+              "physical_damagedamagephysical"
+            ]
+          },
+          {
+            "modifier": "Spiny",
+            "iLvl": 10,
+            "stats": [
+              {
+                "stat": "Reflects Physical Damage to Melee Attackers",
+                "min": 5,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "physical_damagedamagephysical"
+            ]
+          },
+          {
+            "modifier": "Barbed",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "Reflects Physical Damage to Melee Attackers",
+                "min": 11,
+                "max": 24
+              }
+            ],
+            "tags": [
+              "physical_damagedamagephysical"
+            ]
+          },
+          {
+            "modifier": "Jagged",
+            "iLvl": 35,
+            "stats": [
+              {
+                "stat": "Reflects Physical Damage to Melee Attackers",
+                "min": 25,
+                "max": 50
+              }
+            ],
+            "tags": [
+              "physical_damagedamagephysical"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedShieldBlockPercentage",
+        "description": "#% increased Chance to Block\nModifier iLvl Stats Tags Steadfast 2 (40-45)% increased Chance to Block block Unrelenting 15 (46-51)% increased Chance to Block block Adamant 35 (52-57)% increased Chance to Block block Warded 48 (58-63)% increased Chance to Block block Unwavering 61 (64-69)% increased Chance to Block block Enduring 77 (70-75)% increased Chance to Block block Unyielding 86 (76-81)% increased Chance to Block block",
+        "mods": [
+          {
+            "modifier": "Steadfast",
+            "iLvl": 2,
+            "stats": [
+              {
+                "stat": "% increased Chance to Block",
+                "min": 40,
+                "max": 45
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          },
+          {
+            "modifier": "Unrelenting",
+            "iLvl": 15,
+            "stats": [
+              {
+                "stat": "% increased Chance to Block",
+                "min": 46,
+                "max": 51
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          },
+          {
+            "modifier": "Adamant",
+            "iLvl": 35,
+            "stats": [
+              {
+                "stat": "% increased Chance to Block",
+                "min": 52,
+                "max": 57
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          },
+          {
+            "modifier": "Warded",
+            "iLvl": 48,
+            "stats": [
+              {
+                "stat": "% increased Chance to Block",
+                "min": 58,
+                "max": 63
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          },
+          {
+            "modifier": "Unwavering",
+            "iLvl": 61,
+            "stats": [
+              {
+                "stat": "% increased Chance to Block",
+                "min": 64,
+                "max": 69
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          },
+          {
+            "modifier": "Enduring",
+            "iLvl": 77,
+            "stats": [
+              {
+                "stat": "% increased Chance to Block",
+                "min": 70,
+                "max": 75
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          },
+          {
+            "modifier": "Unyielding",
+            "iLvl": 86,
+            "stats": [
+              {
+                "stat": "% increased Chance to Block",
+                "min": 76,
+                "max": 81
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "SpellBlockPercentage",
+        "description": "#% Chance to Block Spell Damage\nModifier iLvl Stats Tags Mystic 16 (4-5)% Chance to Block Spell Damage block Clairvoyant 28 (6-7)% Chance to Block Spell Damage block Enigmatic 40 (8-9)% Chance to Block Spell Damage block Enlightened 55 (10-11)% Chance to Block Spell Damage block Seer's 66 (12-13)% Chance to Block Spell Damage block Oracle's 77 (14-15)% Chance to Block Spell Damage block",
+        "mods": [
+          {
+            "modifier": "Mystic",
+            "iLvl": 16,
+            "stats": [
+              {
+                "stat": "% Chance to Block Spell Damage",
+                "min": 4,
+                "max": 5
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          },
+          {
+            "modifier": "Clairvoyant",
+            "iLvl": 28,
+            "stats": [
+              {
+                "stat": "% Chance to Block Spell Damage",
+                "min": 6,
+                "max": 7
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          },
+          {
+            "modifier": "Enigmatic",
+            "iLvl": 40,
+            "stats": [
+              {
+                "stat": "% Chance to Block Spell Damage",
+                "min": 8,
+                "max": 9
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          },
+          {
+            "modifier": "Enlightened",
+            "iLvl": 55,
+            "stats": [
+              {
+                "stat": "% Chance to Block Spell Damage",
+                "min": 10,
+                "max": 11
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          },
+          {
+            "modifier": "Seer's",
+            "iLvl": 66,
+            "stats": [
+              {
+                "stat": "% Chance to Block Spell Damage",
+                "min": 12,
+                "max": 13
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          },
+          {
+            "modifier": "Oracle's",
+            "iLvl": 77,
+            "stats": [
+              {
+                "stat": "% Chance to Block Spell Damage",
+                "min": 14,
+                "max": 15
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreaseSpecificSocketedGemLevel",
+        "description": "+# to Level of Socketed Melee Gems\nModifier iLvl Stats Tags Combatant's 8 +1 to Level of Socketed Melee Gems attack gem Weaponmaster's 63 +2 to Level of Socketed Melee Gems attack gem",
+        "mods": [
+          {
+            "modifier": "Combatant's",
+            "iLvl": 8,
+            "stats": [
+              {
+                "stat": "to Level of Socketed Melee Gems",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "attackgem"
+            ]
+          },
+          {
+            "modifier": "Weaponmaster's",
+            "iLvl": 63,
+            "stats": [
+              {
+                "stat": "to Level of Socketed Melee Gems",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "attackgem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "DefencesPercentAndStunRecovery",
+        "description": "#% increased Armour #% increased Stun and Block Recovery\nModifier iLvl Stats Tags Beetle's 1 (6-13)% increased Armour (6-7)% increased Stun and Block Recovery armour defences Crab's 17 (14-20)% increased Armour (8-9)% increased Stun and Block Recovery armour defences Armadillo's 29 (21-26)% increased Armour (10-11)% increased Stun and Block Recovery armour defences Rhino's 42 (27-32)% increased Armour (12-13)% increased Stun and Block Recovery armour defences Elephant's 60 (33-38)% increased Armour (14-15)% increased Stun and Block Recovery armour defences Mammoth's 78 (39-42)% increased Armour (16-17)% increased Stun and Block Recovery armour defences",
+        "mods": [
+          {
+            "modifier": "Beetle's",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "% increased Armour (6-7)% increased Stun and Block Recovery",
+                "min": 6,
+                "max": 13
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Crab's",
+            "iLvl": 17,
+            "stats": [
+              {
+                "stat": "% increased Armour (8-9)% increased Stun and Block Recovery",
+                "min": 14,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Armadillo's",
+            "iLvl": 29,
+            "stats": [
+              {
+                "stat": "% increased Armour (10-11)% increased Stun and Block Recovery",
+                "min": 21,
+                "max": 26
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Rhino's",
+            "iLvl": 42,
+            "stats": [
+              {
+                "stat": "% increased Armour (12-13)% increased Stun and Block Recovery",
+                "min": 27,
+                "max": 32
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Elephant's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Armour (14-15)% increased Stun and Block Recovery",
+                "min": 33,
+                "max": 38
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Mammoth's",
+            "iLvl": 78,
+            "stats": [
+              {
+                "stat": "% increased Armour (16-17)% increased Stun and Block Recovery",
+                "min": 39,
+                "max": 42
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedLife",
+        "description": "+# to maximum Life\nModifier iLvl Stats Tags Hale 1 +(3-9) to maximum Life resource life Healthy 5 +(10-24) to maximum Life resource life Sanguine 11 +(25-39) to maximum Life resource life Stalwart 18 +(40-54) to maximum Life resource life Stout 24 +(55-69) to maximum Life resource life Robust 30 +(70-84) to maximum Life resource life Rotund 36 +(85-99) to maximum Life resource life Virile 44 +(100-114) to maximum Life resource life Athlete's 54 +(115-129) to maximum Life resource life Fecund 64 +(130-144) to maximum Life resource life Vigorous 73 +(145-159) to maximum Life resource life",
+        "mods": [
+          {
+            "modifier": "Hale",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "to maximum Life",
+                "min": 3,
+                "max": 9
+              }
+            ],
+            "tags": [
+              "resourcelife"
+            ]
+          },
+          {
+            "modifier": "Healthy",
+            "iLvl": 5,
+            "stats": [
+              {
+                "stat": "to maximum Life",
+                "min": 10,
+                "max": 24
+              }
+            ],
+            "tags": [
+              "resourcelife"
+            ]
+          },
+          {
+            "modifier": "Sanguine",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "to maximum Life",
+                "min": 25,
+                "max": 39
+              }
+            ],
+            "tags": [
+              "resourcelife"
+            ]
+          },
+          {
+            "modifier": "Stalwart",
+            "iLvl": 18,
+            "stats": [
+              {
+                "stat": "to maximum Life",
+                "min": 40,
+                "max": 54
+              }
+            ],
+            "tags": [
+              "resourcelife"
+            ]
+          },
+          {
+            "modifier": "Stout",
+            "iLvl": 24,
+            "stats": [
+              {
+                "stat": "to maximum Life",
+                "min": 55,
+                "max": 69
+              }
+            ],
+            "tags": [
+              "resourcelife"
+            ]
+          },
+          {
+            "modifier": "Robust",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "to maximum Life",
+                "min": 70,
+                "max": 84
+              }
+            ],
+            "tags": [
+              "resourcelife"
+            ]
+          },
+          {
+            "modifier": "Rotund",
+            "iLvl": 36,
+            "stats": [
+              {
+                "stat": "to maximum Life",
+                "min": 85,
+                "max": 99
+              }
+            ],
+            "tags": [
+              "resourcelife"
+            ]
+          },
+          {
+            "modifier": "Virile",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "to maximum Life",
+                "min": 100,
+                "max": 114
+              }
+            ],
+            "tags": [
+              "resourcelife"
+            ]
+          },
+          {
+            "modifier": "Athlete's",
+            "iLvl": 54,
+            "stats": [
+              {
+                "stat": "to maximum Life",
+                "min": 115,
+                "max": 129
+              }
+            ],
+            "tags": [
+              "resourcelife"
+            ]
+          },
+          {
+            "modifier": "Fecund",
+            "iLvl": 64,
+            "stats": [
+              {
+                "stat": "to maximum Life",
+                "min": 130,
+                "max": 144
+              }
+            ],
+            "tags": [
+              "resourcelife"
+            ]
+          },
+          {
+            "modifier": "Vigorous",
+            "iLvl": 73,
+            "stats": [
+              {
+                "stat": "to maximum Life",
+                "min": 145,
+                "max": 159
+              }
+            ],
+            "tags": [
+              "resourcelife"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "DefencesPercent",
+        "description": "#% increased Armour\nModifier iLvl Stats Tags Reinforced 3 (15-26)% increased Armour armour defences Layered 17 (27-42)% increased Armour armour defences Lobstered 29 (43-55)% increased Armour armour defences Buttressed 42 (56-67)% increased Armour armour defences Thickened 60 (68-79)% increased Armour armour defences Girded 72 (80-91)% increased Armour armour defences Impregnable 84 (92-100)% increased Armour armour defences Impenetrable 86 (101-110)% increased Armour armour defences",
+        "mods": [
+          {
+            "modifier": "Reinforced",
+            "iLvl": 3,
+            "stats": [
+              {
+                "stat": "% increased Armour",
+                "min": 15,
+                "max": 26
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Layered",
+            "iLvl": 17,
+            "stats": [
+              {
+                "stat": "% increased Armour",
+                "min": 27,
+                "max": 42
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Lobstered",
+            "iLvl": 29,
+            "stats": [
+              {
+                "stat": "% increased Armour",
+                "min": 43,
+                "max": 55
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Buttressed",
+            "iLvl": 42,
+            "stats": [
+              {
+                "stat": "% increased Armour",
+                "min": 56,
+                "max": 67
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Thickened",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Armour",
+                "min": 68,
+                "max": 79
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Girded",
+            "iLvl": 72,
+            "stats": [
+              {
+                "stat": "% increased Armour",
+                "min": 80,
+                "max": 91
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Impregnable",
+            "iLvl": 84,
+            "stats": [
+              {
+                "stat": "% increased Armour",
+                "min": 92,
+                "max": 100
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          },
+          {
+            "modifier": "Impenetrable",
+            "iLvl": 86,
+            "stats": [
+              {
+                "stat": "% increased Armour",
+                "min": 101,
+                "max": 110
+              }
+            ],
+            "tags": [
+              "armourdefences"
+            ]
+          }
+        ]
+      }
+    ],
+    "suffixes": [
+      {
+        "group": "ChaosResistance",
+        "description": "+#% to Chaos Resistance\nModifier iLvl Stats Tags of the Lost 16 +(5-10)% to Chaos Resistance chaos resistance of Banishment 30 +(11-15)% to Chaos Resistance chaos resistance of Eviction 44 +(16-20)% to Chaos Resistance chaos resistance of Expulsion 56 +(21-25)% to Chaos Resistance chaos resistance of Exile 65 +(26-30)% to Chaos Resistance chaos resistance of Bameth 81 +(31-35)% to Chaos Resistance chaos resistance",
+        "mods": [
+          {
+            "modifier": "of the Lost",
+            "iLvl": 16,
+            "stats": [
+              {
+                "stat": "% to Chaos Resistance",
+                "min": 5,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "chaosresistance"
+            ]
+          },
+          {
+            "modifier": "of Banishment",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "% to Chaos Resistance",
+                "min": 11,
+                "max": 15
+              }
+            ],
+            "tags": [
+              "chaosresistance"
+            ]
+          },
+          {
+            "modifier": "of Eviction",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "% to Chaos Resistance",
+                "min": 16,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "chaosresistance"
+            ]
+          },
+          {
+            "modifier": "of Expulsion",
+            "iLvl": 56,
+            "stats": [
+              {
+                "stat": "% to Chaos Resistance",
+                "min": 21,
+                "max": 25
+              }
+            ],
+            "tags": [
+              "chaosresistance"
+            ]
+          },
+          {
+            "modifier": "of Exile",
+            "iLvl": 65,
+            "stats": [
+              {
+                "stat": "% to Chaos Resistance",
+                "min": 26,
+                "max": 30
+              }
+            ],
+            "tags": [
+              "chaosresistance"
+            ]
+          },
+          {
+            "modifier": "of Bameth",
+            "iLvl": 81,
+            "stats": [
+              {
+                "stat": "% to Chaos Resistance",
+                "min": 31,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "chaosresistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "StunRecovery",
+        "description": "#% increased Stun and Block Recovery\nModifier iLvl Stats Tags of Thick Skin 1 (11-13)% increased Stun and Block Recovery of Stone Skin 17 (14-16)% increased Stun and Block Recovery of Iron Skin 28 (17-19)% increased Stun and Block Recovery of Steel Skin 42 (20-22)% increased Stun and Block Recovery of Adamantite Skin 56 (23-25)% increased Stun and Block Recovery of Corundum Skin 79 (26-28)% increased Stun and Block Recovery",
+        "mods": [
+          {
+            "modifier": "of Thick Skin",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 11,
+                "max": 13
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Stone Skin",
+            "iLvl": 17,
+            "stats": [
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 14,
+                "max": 16
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Iron Skin",
+            "iLvl": 28,
+            "stats": [
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 17,
+                "max": 19
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Steel Skin",
+            "iLvl": 42,
+            "stats": [
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 20,
+                "max": 22
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Adamantite Skin",
+            "iLvl": 56,
+            "stats": [
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 23,
+                "max": 25
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of Corundum Skin",
+            "iLvl": 79,
+            "stats": [
+              {
+                "stat": "% increased Stun and Block Recovery",
+                "min": 26,
+                "max": 28
+              }
+            ],
+            "tags": []
+          }
+        ]
+      },
+      {
+        "group": "ColdResistance",
+        "description": "+#% to Cold Resistance\nModifier iLvl Stats Tags of the Inuit 1 +(6-11)% to Cold Resistance elemental cold resistance of the Seal 14 +(12-17)% to Cold Resistance elemental cold resistance of the Penguin 26 +(18-23)% to Cold Resistance elemental cold resistance of the Yeti 38 +(24-29)% to Cold Resistance elemental cold resistance of the Walrus 50 +(30-35)% to Cold Resistance elemental cold resistance of the Polar Bear 60 +(36-41)% to Cold Resistance elemental cold resistance of the Ice 72 +(42-45)% to Cold Resistance elemental cold resistance of Haast 84 +(46-48)% to Cold Resistance elemental cold resistance",
+        "mods": [
+          {
+            "modifier": "of the Inuit",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "% to Cold Resistance",
+                "min": 6,
+                "max": 11
+              }
+            ],
+            "tags": [
+              "elementalcoldresistance"
+            ]
+          },
+          {
+            "modifier": "of the Seal",
+            "iLvl": 14,
+            "stats": [
+              {
+                "stat": "% to Cold Resistance",
+                "min": 12,
+                "max": 17
+              }
+            ],
+            "tags": [
+              "elementalcoldresistance"
+            ]
+          },
+          {
+            "modifier": "of the Penguin",
+            "iLvl": 26,
+            "stats": [
+              {
+                "stat": "% to Cold Resistance",
+                "min": 18,
+                "max": 23
+              }
+            ],
+            "tags": [
+              "elementalcoldresistance"
+            ]
+          },
+          {
+            "modifier": "of the Yeti",
+            "iLvl": 38,
+            "stats": [
+              {
+                "stat": "% to Cold Resistance",
+                "min": 24,
+                "max": 29
+              }
+            ],
+            "tags": [
+              "elementalcoldresistance"
+            ]
+          },
+          {
+            "modifier": "of the Walrus",
+            "iLvl": 50,
+            "stats": [
+              {
+                "stat": "% to Cold Resistance",
+                "min": 30,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "elementalcoldresistance"
+            ]
+          },
+          {
+            "modifier": "of the Polar Bear",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% to Cold Resistance",
+                "min": 36,
+                "max": 41
+              }
+            ],
+            "tags": [
+              "elementalcoldresistance"
+            ]
+          },
+          {
+            "modifier": "of the Ice",
+            "iLvl": 72,
+            "stats": [
+              {
+                "stat": "% to Cold Resistance",
+                "min": 42,
+                "max": 45
+              }
+            ],
+            "tags": [
+              "elementalcoldresistance"
+            ]
+          },
+          {
+            "modifier": "of Haast",
+            "iLvl": 84,
+            "stats": [
+              {
+                "stat": "% to Cold Resistance",
+                "min": 46,
+                "max": 48
+              }
+            ],
+            "tags": [
+              "elementalcoldresistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LocalAttributeRequirements",
+        "description": "#% reduced Attribute Requirements\nModifier iLvl Stats Tags of the Worthy 36 18% reduced Attribute Requirements of the Apt 60 32% reduced Attribute Requirements",
+        "mods": [
+          {
+            "modifier": "of the Worthy",
+            "iLvl": 36,
+            "stats": [
+              {
+                "stat": "reduced Attribute Requirements",
+                "min": 18,
+                "max": 18
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of the Apt",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "reduced Attribute Requirements",
+                "min": 32,
+                "max": 32
+              }
+            ],
+            "tags": []
+          }
+        ]
+      },
+      {
+        "group": "ReducedExtraDamageFromCrits",
+        "description": "You take #% reduced Extra Damage from Critical Strikes\nModifier iLvl Stats Tags of Dulling 33 You take (21-30)% reduced Extra Damage from Critical Strikes damage critical of Deadening 45 You take (31-40)% reduced Extra Damage from Critical Strikes damage critical of Interference 67 You take (41-50)% reduced Extra Damage from Critical Strikes damage critical of Obstruction 78 You take (51-60)% reduced Extra Damage from Critical Strikes damage critical",
+        "mods": [
+          {
+            "modifier": "of Dulling",
+            "iLvl": 33,
+            "stats": [
+              {
+                "stat": "You take % reduced Extra Damage from Critical Strikes",
+                "min": 21,
+                "max": 30
+              }
+            ],
+            "tags": [
+              "damagecritical"
+            ]
+          },
+          {
+            "modifier": "of Deadening",
+            "iLvl": 45,
+            "stats": [
+              {
+                "stat": "You take % reduced Extra Damage from Critical Strikes",
+                "min": 31,
+                "max": 40
+              }
+            ],
+            "tags": [
+              "damagecritical"
+            ]
+          },
+          {
+            "modifier": "of Interference",
+            "iLvl": 67,
+            "stats": [
+              {
+                "stat": "You take % reduced Extra Damage from Critical Strikes",
+                "min": 41,
+                "max": 50
+              }
+            ],
+            "tags": [
+              "damagecritical"
+            ]
+          },
+          {
+            "modifier": "of Obstruction",
+            "iLvl": 78,
+            "stats": [
+              {
+                "stat": "You take % reduced Extra Damage from Critical Strikes",
+                "min": 51,
+                "max": 60
+              }
+            ],
+            "tags": [
+              "damagecritical"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MaximumLightningResistance",
+        "description": "+#% to maximum Lightning Resistance\nModifier iLvl Stats Tags of Impedance 68 +1% to maximum Lightning Resistance elemental lightning resistance of Shockproofing 75 +2% to maximum Lightning Resistance elemental lightning resistance of the Lightning Rod 81 +3% to maximum Lightning Resistance elemental lightning resistance",
+        "mods": [
+          {
+            "modifier": "of Impedance",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "to maximum Lightning Resistance",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "elementallightningresistance"
+            ]
+          },
+          {
+            "modifier": "of Shockproofing",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "to maximum Lightning Resistance",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "elementallightningresistance"
+            ]
+          },
+          {
+            "modifier": "of the Lightning Rod",
+            "iLvl": 81,
+            "stats": [
+              {
+                "stat": "to maximum Lightning Resistance",
+                "min": 3,
+                "max": 3
+              }
+            ],
+            "tags": [
+              "elementallightningresistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AvoidElementalStatusAilments",
+        "description": "#% chance to Avoid Elemental Ailments\nModifier iLvl Stats Tags of Stoicism 23 (16-20)% chance to Avoid Elemental Ailments elemental fire cold lightning ailment of Resolve 41 (21-25)% chance to Avoid Elemental Ailments elemental fire cold lightning ailment of Fortitude 57 (26-30)% chance to Avoid Elemental Ailments elemental fire cold lightning ailment of Will 73 (31-35)% chance to Avoid Elemental Ailments elemental fire cold lightning ailment",
+        "mods": [
+          {
+            "modifier": "of Stoicism",
+            "iLvl": 23,
+            "stats": [
+              {
+                "stat": "% chance to Avoid Elemental Ailments",
+                "min": 16,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "elementalfirecoldlightningailment"
+            ]
+          },
+          {
+            "modifier": "of Resolve",
+            "iLvl": 41,
+            "stats": [
+              {
+                "stat": "% chance to Avoid Elemental Ailments",
+                "min": 21,
+                "max": 25
+              }
+            ],
+            "tags": [
+              "elementalfirecoldlightningailment"
+            ]
+          },
+          {
+            "modifier": "of Fortitude",
+            "iLvl": 57,
+            "stats": [
+              {
+                "stat": "% chance to Avoid Elemental Ailments",
+                "min": 26,
+                "max": 30
+              }
+            ],
+            "tags": [
+              "elementalfirecoldlightningailment"
+            ]
+          },
+          {
+            "modifier": "of Will",
+            "iLvl": 73,
+            "stats": [
+              {
+                "stat": "% chance to Avoid Elemental Ailments",
+                "min": 31,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "elementalfirecoldlightningailment"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MaximumColdResist",
+        "description": "+#% to maximum Cold Resistance\nModifier iLvl Stats Tags of Furs 68 +1% to maximum Cold Resistance elemental cold resistance of the Tundra 75 +2% to maximum Cold Resistance elemental cold resistance of the Mammoth 81 +3% to maximum Cold Resistance elemental cold resistance",
+        "mods": [
+          {
+            "modifier": "of Furs",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "to maximum Cold Resistance",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "elementalcoldresistance"
+            ]
+          },
+          {
+            "modifier": "of the Tundra",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "to maximum Cold Resistance",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "elementalcoldresistance"
+            ]
+          },
+          {
+            "modifier": "of the Mammoth",
+            "iLvl": 81,
+            "stats": [
+              {
+                "stat": "to maximum Cold Resistance",
+                "min": 3,
+                "max": 3
+              }
+            ],
+            "tags": [
+              "elementalcoldresistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LifeRegeneration",
+        "description": "Regenerate # Life per second\nModifier iLvl Stats Tags of the Newt 1 Regenerate (1-2) Life per second flat_life_regen resource life of the Lizard 7 Regenerate (2.1-8) Life per second flat_life_regen resource life of the Flatworm 19 Regenerate (8.1-16) Life per second flat_life_regen resource life of the Starfish 31 Regenerate (16.1-24) Life per second flat_life_regen resource life of the Hydra 44 Regenerate (24.1-32) Life per second flat_life_regen resource life of the Troll 55 Regenerate (32.1-48) Life per second flat_life_regen resource life of Ryslatha 68 Regenerate (48.1-64) Life per second flat_life_regen resource life of the Phoenix 74 Regenerate (64.1-96) Life per second flat_life_regen resource life of Recuperation 78 Regenerate (96.1-128) Life per second flat_life_regen resource life of Life-giving 83 Regenerate (128.1-152) Life per second flat_life_regen resource life",
+        "mods": [
+          {
+            "modifier": "of the Newt",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "Regenerate Life per second",
+                "min": 1,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "flat_life_regenresourcelife"
+            ]
+          },
+          {
+            "modifier": "of the Lizard",
+            "iLvl": 7,
+            "stats": [
+              {
+                "stat": "Regenerate Life per second",
+                "min": 2.1,
+                "max": 8
+              }
+            ],
+            "tags": [
+              "flat_life_regenresourcelife"
+            ]
+          },
+          {
+            "modifier": "of the Flatworm",
+            "iLvl": 19,
+            "stats": [
+              {
+                "stat": "Regenerate Life per second",
+                "min": 8.1,
+                "max": 16
+              }
+            ],
+            "tags": [
+              "flat_life_regenresourcelife"
+            ]
+          },
+          {
+            "modifier": "of the Starfish",
+            "iLvl": 31,
+            "stats": [
+              {
+                "stat": "Regenerate Life per second",
+                "min": 16.1,
+                "max": 24
+              }
+            ],
+            "tags": [
+              "flat_life_regenresourcelife"
+            ]
+          },
+          {
+            "modifier": "of the Hydra",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "Regenerate Life per second",
+                "min": 24.1,
+                "max": 32
+              }
+            ],
+            "tags": [
+              "flat_life_regenresourcelife"
+            ]
+          },
+          {
+            "modifier": "of the Troll",
+            "iLvl": 55,
+            "stats": [
+              {
+                "stat": "Regenerate Life per second",
+                "min": 32.1,
+                "max": 48
+              }
+            ],
+            "tags": [
+              "flat_life_regenresourcelife"
+            ]
+          },
+          {
+            "modifier": "of Ryslatha",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "Regenerate Life per second",
+                "min": 48.1,
+                "max": 64
+              }
+            ],
+            "tags": [
+              "flat_life_regenresourcelife"
+            ]
+          },
+          {
+            "modifier": "of the Phoenix",
+            "iLvl": 74,
+            "stats": [
+              {
+                "stat": "Regenerate Life per second",
+                "min": 64.1,
+                "max": 96
+              }
+            ],
+            "tags": [
+              "flat_life_regenresourcelife"
+            ]
+          },
+          {
+            "modifier": "of Recuperation",
+            "iLvl": 78,
+            "stats": [
+              {
+                "stat": "Regenerate Life per second",
+                "min": 96.1,
+                "max": 128
+              }
+            ],
+            "tags": [
+              "flat_life_regenresourcelife"
+            ]
+          },
+          {
+            "modifier": "of Life-giving",
+            "iLvl": 83,
+            "stats": [
+              {
+                "stat": "Regenerate Life per second",
+                "min": 128.1,
+                "max": 152
+              }
+            ],
+            "tags": [
+              "flat_life_regenresourcelife"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "FireResistance",
+        "description": "+#% to Fire Resistance\nModifier iLvl Stats Tags of the Whelpling 1 +(6-11)% to Fire Resistance elemental fire resistance of the Salamander 12 +(12-17)% to Fire Resistance elemental fire resistance of the Drake 24 +(18-23)% to Fire Resistance elemental fire resistance of the Kiln 36 +(24-29)% to Fire Resistance elemental fire resistance of the Furnace 48 +(30-35)% to Fire Resistance elemental fire resistance of the Volcano 60 +(36-41)% to Fire Resistance elemental fire resistance of the Magma 72 +(42-45)% to Fire Resistance elemental fire resistance of Tzteosh 84 +(46-48)% to Fire Resistance elemental fire resistance",
+        "mods": [
+          {
+            "modifier": "of the Whelpling",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "% to Fire Resistance",
+                "min": 6,
+                "max": 11
+              }
+            ],
+            "tags": [
+              "elementalfireresistance"
+            ]
+          },
+          {
+            "modifier": "of the Salamander",
+            "iLvl": 12,
+            "stats": [
+              {
+                "stat": "% to Fire Resistance",
+                "min": 12,
+                "max": 17
+              }
+            ],
+            "tags": [
+              "elementalfireresistance"
+            ]
+          },
+          {
+            "modifier": "of the Drake",
+            "iLvl": 24,
+            "stats": [
+              {
+                "stat": "% to Fire Resistance",
+                "min": 18,
+                "max": 23
+              }
+            ],
+            "tags": [
+              "elementalfireresistance"
+            ]
+          },
+          {
+            "modifier": "of the Kiln",
+            "iLvl": 36,
+            "stats": [
+              {
+                "stat": "% to Fire Resistance",
+                "min": 24,
+                "max": 29
+              }
+            ],
+            "tags": [
+              "elementalfireresistance"
+            ]
+          },
+          {
+            "modifier": "of the Furnace",
+            "iLvl": 48,
+            "stats": [
+              {
+                "stat": "% to Fire Resistance",
+                "min": 30,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "elementalfireresistance"
+            ]
+          },
+          {
+            "modifier": "of the Volcano",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% to Fire Resistance",
+                "min": 36,
+                "max": 41
+              }
+            ],
+            "tags": [
+              "elementalfireresistance"
+            ]
+          },
+          {
+            "modifier": "of the Magma",
+            "iLvl": 72,
+            "stats": [
+              {
+                "stat": "% to Fire Resistance",
+                "min": 42,
+                "max": 45
+              }
+            ],
+            "tags": [
+              "elementalfireresistance"
+            ]
+          },
+          {
+            "modifier": "of Tzteosh",
+            "iLvl": 84,
+            "stats": [
+              {
+                "stat": "% to Fire Resistance",
+                "min": 46,
+                "max": 48
+              }
+            ],
+            "tags": [
+              "elementalfireresistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MaximumFireResist",
+        "description": "+#% to maximum Fire Resistance\nModifier iLvl Stats Tags of the Bushfire 68 +1% to maximum Fire Resistance elemental fire resistance of the Molten Core 75 +2% to maximum Fire Resistance elemental fire resistance of the Solar Storm 81 +3% to maximum Fire Resistance elemental fire resistance",
+        "mods": [
+          {
+            "modifier": "of the Bushfire",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "to maximum Fire Resistance",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "elementalfireresistance"
+            ]
+          },
+          {
+            "modifier": "of the Molten Core",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "to maximum Fire Resistance",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "elementalfireresistance"
+            ]
+          },
+          {
+            "modifier": "of the Solar Storm",
+            "iLvl": 81,
+            "stats": [
+              {
+                "stat": "to maximum Fire Resistance",
+                "min": 3,
+                "max": 3
+              }
+            ],
+            "tags": [
+              "elementalfireresistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Strength",
+        "description": "+# to Strength\nModifier iLvl Stats Tags of the Brute 1 +(8-12) to Strength attribute of the Wrestler 11 +(13-17) to Strength attribute of the Bear 22 +(18-22) to Strength attribute of the Lion 33 +(23-27) to Strength attribute of the Gorilla 44 +(28-32) to Strength attribute of the Goliath 55 +(33-37) to Strength attribute of the Leviathan 66 +(38-42) to Strength attribute of the Titan 74 +(43-50) to Strength attribute of the Gods 82 +(51-55) to Strength attribute",
+        "mods": [
+          {
+            "modifier": "of the Brute",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "to Strength",
+                "min": 8,
+                "max": 12
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Wrestler",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "to Strength",
+                "min": 13,
+                "max": 17
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Bear",
+            "iLvl": 22,
+            "stats": [
+              {
+                "stat": "to Strength",
+                "min": 18,
+                "max": 22
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Lion",
+            "iLvl": 33,
+            "stats": [
+              {
+                "stat": "to Strength",
+                "min": 23,
+                "max": 27
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Gorilla",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "to Strength",
+                "min": 28,
+                "max": 32
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Goliath",
+            "iLvl": 55,
+            "stats": [
+              {
+                "stat": "to Strength",
+                "min": 33,
+                "max": 37
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Leviathan",
+            "iLvl": 66,
+            "stats": [
+              {
+                "stat": "to Strength",
+                "min": 38,
+                "max": 42
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Titan",
+            "iLvl": 74,
+            "stats": [
+              {
+                "stat": "to Strength",
+                "min": 43,
+                "max": 50
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "modifier": "of the Gods",
+            "iLvl": 82,
+            "stats": [
+              {
+                "stat": "to Strength",
+                "min": 51,
+                "max": 55
+              }
+            ],
+            "tags": [
+              "attribute"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AllResistances",
+        "description": "+#% to all Elemental Resistances\nModifier iLvl Stats Tags of the Crystal 12 +(3-5)% to all Elemental Resistances elemental resistance of the Prism 24 +(6-8)% to all Elemental Resistances elemental resistance of the Kaleidoscope 36 +(9-11)% to all Elemental Resistances elemental resistance of Variegation 48 +(12-14)% to all Elemental Resistances elemental resistance of the Rainbow 60 +(15-16)% to all Elemental Resistances elemental resistance of the Span 85 +(17-18)% to all Elemental Resistances elemental resistance",
+        "mods": [
+          {
+            "modifier": "of the Crystal",
+            "iLvl": 12,
+            "stats": [
+              {
+                "stat": "% to all Elemental Resistances",
+                "min": 3,
+                "max": 5
+              }
+            ],
+            "tags": [
+              "elementalresistance"
+            ]
+          },
+          {
+            "modifier": "of the Prism",
+            "iLvl": 24,
+            "stats": [
+              {
+                "stat": "% to all Elemental Resistances",
+                "min": 6,
+                "max": 8
+              }
+            ],
+            "tags": [
+              "elementalresistance"
+            ]
+          },
+          {
+            "modifier": "of the Kaleidoscope",
+            "iLvl": 36,
+            "stats": [
+              {
+                "stat": "% to all Elemental Resistances",
+                "min": 9,
+                "max": 11
+              }
+            ],
+            "tags": [
+              "elementalresistance"
+            ]
+          },
+          {
+            "modifier": "of Variegation",
+            "iLvl": 48,
+            "stats": [
+              {
+                "stat": "% to all Elemental Resistances",
+                "min": 12,
+                "max": 14
+              }
+            ],
+            "tags": [
+              "elementalresistance"
+            ]
+          },
+          {
+            "modifier": "of the Rainbow",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% to all Elemental Resistances",
+                "min": 15,
+                "max": 16
+              }
+            ],
+            "tags": [
+              "elementalresistance"
+            ]
+          },
+          {
+            "modifier": "of the Span",
+            "iLvl": 85,
+            "stats": [
+              {
+                "stat": "% to all Elemental Resistances",
+                "min": 17,
+                "max": 18
+              }
+            ],
+            "tags": [
+              "elementalresistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MaximumChaosResistance",
+        "description": "+#% to maximum Chaos Resistance\nModifier iLvl Stats Tags of Regularity 68 +1% to maximum Chaos Resistance chaos resistance of Concord 75 +2% to maximum Chaos Resistance chaos resistance of Harmony 81 +3% to maximum Chaos Resistance chaos resistance",
+        "mods": [
+          {
+            "modifier": "of Regularity",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "to maximum Chaos Resistance",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "chaosresistance"
+            ]
+          },
+          {
+            "modifier": "of Concord",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "to maximum Chaos Resistance",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "chaosresistance"
+            ]
+          },
+          {
+            "modifier": "of Harmony",
+            "iLvl": 81,
+            "stats": [
+              {
+                "stat": "to maximum Chaos Resistance",
+                "min": 3,
+                "max": 3
+              }
+            ],
+            "tags": [
+              "chaosresistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MaximumResistances",
+        "description": "+#% to all maximum Resistances\nModifier iLvl Stats Tags of the Sempiternal 75 +1% to all maximum Resistances resistance of the Deathless 81 +2% to all maximum Resistances resistance",
+        "mods": [
+          {
+            "modifier": "of the Sempiternal",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "to all maximum Resistances",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "resistance"
+            ]
+          },
+          {
+            "modifier": "of the Deathless",
+            "iLvl": 81,
+            "stats": [
+              {
+                "stat": "to all maximum Resistances",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "resistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ReducedPhysicalDamageTaken",
+        "description": "#% additional Physical Damage Reduction\nModifier iLvl Stats Tags of the Watchman 45 4% additional Physical Damage Reduction physical of the Sentry 58 5% additional Physical Damage Reduction physical of the Keeper 67 6% additional Physical Damage Reduction physical of the Protector 77 7% additional Physical Damage Reduction physical of the Conservator 86 8% additional Physical Damage Reduction physical",
+        "mods": [
+          {
+            "modifier": "of the Watchman",
+            "iLvl": 45,
+            "stats": [
+              {
+                "stat": "additional Physical Damage Reduction",
+                "min": 4,
+                "max": 4
+              }
+            ],
+            "tags": [
+              "physical"
+            ]
+          },
+          {
+            "modifier": "of the Sentry",
+            "iLvl": 58,
+            "stats": [
+              {
+                "stat": "additional Physical Damage Reduction",
+                "min": 5,
+                "max": 5
+              }
+            ],
+            "tags": [
+              "physical"
+            ]
+          },
+          {
+            "modifier": "of the Keeper",
+            "iLvl": 67,
+            "stats": [
+              {
+                "stat": "additional Physical Damage Reduction",
+                "min": 6,
+                "max": 6
+              }
+            ],
+            "tags": [
+              "physical"
+            ]
+          },
+          {
+            "modifier": "of the Protector",
+            "iLvl": 77,
+            "stats": [
+              {
+                "stat": "additional Physical Damage Reduction",
+                "min": 7,
+                "max": 7
+              }
+            ],
+            "tags": [
+              "physical"
+            ]
+          },
+          {
+            "modifier": "of the Conservator",
+            "iLvl": 86,
+            "stats": [
+              {
+                "stat": "additional Physical Damage Reduction",
+                "min": 8,
+                "max": 8
+              }
+            ],
+            "tags": [
+              "physical"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LightningResistance",
+        "description": "+#% to Lightning Resistance\nModifier iLvl Stats Tags of the Cloud 1 +(6-11)% to Lightning Resistance elemental lightning resistance of the Squall 13 +(12-17)% to Lightning Resistance elemental lightning resistance of the Storm 25 +(18-23)% to Lightning Resistance elemental lightning resistance of the Thunderhead 37 +(24-29)% to Lightning Resistance elemental lightning resistance of the Tempest 49 +(30-35)% to Lightning Resistance elemental lightning resistance of the Maelstrom 60 +(36-41)% to Lightning Resistance elemental lightning resistance of the Lightning 72 +(42-45)% to Lightning Resistance elemental lightning resistance of Ephij 84 +(46-48)% to Lightning Resistance elemental lightning resistance",
+        "mods": [
+          {
+            "modifier": "of the Cloud",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "% to Lightning Resistance",
+                "min": 6,
+                "max": 11
+              }
+            ],
+            "tags": [
+              "elementallightningresistance"
+            ]
+          },
+          {
+            "modifier": "of the Squall",
+            "iLvl": 13,
+            "stats": [
+              {
+                "stat": "% to Lightning Resistance",
+                "min": 12,
+                "max": 17
+              }
+            ],
+            "tags": [
+              "elementallightningresistance"
+            ]
+          },
+          {
+            "modifier": "of the Storm",
+            "iLvl": 25,
+            "stats": [
+              {
+                "stat": "% to Lightning Resistance",
+                "min": 18,
+                "max": 23
+              }
+            ],
+            "tags": [
+              "elementallightningresistance"
+            ]
+          },
+          {
+            "modifier": "of the Thunderhead",
+            "iLvl": 37,
+            "stats": [
+              {
+                "stat": "% to Lightning Resistance",
+                "min": 24,
+                "max": 29
+              }
+            ],
+            "tags": [
+              "elementallightningresistance"
+            ]
+          },
+          {
+            "modifier": "of the Tempest",
+            "iLvl": 49,
+            "stats": [
+              {
+                "stat": "% to Lightning Resistance",
+                "min": 30,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "elementallightningresistance"
+            ]
+          },
+          {
+            "modifier": "of the Maelstrom",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% to Lightning Resistance",
+                "min": 36,
+                "max": 41
+              }
+            ],
+            "tags": [
+              "elementallightningresistance"
+            ]
+          },
+          {
+            "modifier": "of the Lightning",
+            "iLvl": 72,
+            "stats": [
+              {
+                "stat": "% to Lightning Resistance",
+                "min": 42,
+                "max": 45
+              }
+            ],
+            "tags": [
+              "elementallightningresistance"
+            ]
+          },
+          {
+            "modifier": "of Ephij",
+            "iLvl": 84,
+            "stats": [
+              {
+                "stat": "% to Lightning Resistance",
+                "min": 46,
+                "max": 48
+              }
+            ],
+            "tags": [
+              "elementallightningresistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AdditionalTotems",
+        "description": "+1 to maximum number of Summoned Totems\nModifier iLvl Stats Tags The Shaper's 70 +1 to maximum number of Summoned Totems influence_mod",
+        "mods": [
+          {
+            "modifier": "The Shaper's",
+            "iLvl": 70,
+            "stats": [
+              {
+                "stat": "to maximum number of Summoned Totems",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "influence_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ChanceToShockAttackersOnBlock",
+        "description": "#% chance to Shock Attackers for # seconds on Block\nModifier iLvl Stats Tags of Shaping 68 (25-40)% chance to Shock Attackers for 4 seconds on Block block influence_mod elemental lightning ailment of Shaping 75 (41-50)% chance to Shock Attackers for 4 seconds on Block block influence_mod elemental lightning ailment",
+        "mods": [
+          {
+            "modifier": "of Shaping",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% chance to Shock Attackers for 4 seconds on Block",
+                "min": 25,
+                "max": 40
+              }
+            ],
+            "tags": [
+              "blockinfluence_modelementallightningailment"
+            ]
+          },
+          {
+            "modifier": "of Shaping",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "% chance to Shock Attackers for 4 seconds on Block",
+                "min": 41,
+                "max": 50
+              }
+            ],
+            "tags": [
+              "blockinfluence_modelementallightningailment"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "GainRandomChargeOnBlock",
+        "description": "Gain an Endurance, Frenzy or Power charge when you Block\nModifier iLvl Stats Tags of Shaping 68 Gain an Endurance, Frenzy or Power charge when you Block block endurance_charge frenzy_charge power_charge influence_mod",
+        "mods": [
+          {
+            "modifier": "of Shaping",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "Gain an Endurance, Frenzy or Power charge when you Block",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "blockendurance_chargefrenzy_chargepower_chargeinfluence_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "RecoverLifePercentOnBlock",
+        "description": "Recover (3-5)% of Life when you Block\nModifier iLvl Stats Tags of Shaping 68 Recover (3-5)% of Life when you Block block resource influence_mod life",
+        "mods": [
+          {
+            "modifier": "of Shaping",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "Recover % of Life when you Block",
+                "min": 3,
+                "max": 5
+              }
+            ],
+            "tags": [
+              "blockresourceinfluence_modlife"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ChanceToChillAttackersOnBlock",
+        "description": "#% chance to Chill Attackers for # seconds on Block\nModifier iLvl Stats Tags of Shaping 68 (25-40)% chance to Chill Attackers for 4 seconds on Block block red_herring influence_mod elemental cold ailment of Shaping 75 (41-50)% chance to Chill Attackers for 4 seconds on Block block red_herring influence_mod elemental cold ailment",
+        "mods": [
+          {
+            "modifier": "of Shaping",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% chance to Chill Attackers for 4 seconds on Block",
+                "min": 25,
+                "max": 40
+              }
+            ],
+            "tags": [
+              "blockred_herringinfluence_modelementalcoldailment"
+            ]
+          },
+          {
+            "modifier": "of Shaping",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "% chance to Chill Attackers for 4 seconds on Block",
+                "min": 41,
+                "max": 50
+              }
+            ],
+            "tags": [
+              "blockred_herringinfluence_modelementalcoldailment"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "RecoverManaPercentOnBlock",
+        "description": "Recover (3-5)% of your maximum Mana when you Block\nModifier iLvl Stats Tags of Shaping 68 Recover (3-5)% of your maximum Mana when you Block block resource influence_mod mana",
+        "mods": [
+          {
+            "modifier": "of Shaping",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "Recover % of your maximum Mana when you Block",
+                "min": 3,
+                "max": 5
+              }
+            ],
+            "tags": [
+              "blockresourceinfluence_modmana"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "DisplaySocketedGemsGetReducedReservation",
+        "description": "Socketed Gems have #% increased Reservation Efficiency\nModifier iLvl Stats Tags of Shaping 68 Socketed Gems have 20% increased Reservation Efficiency skill influence_mod gem of Shaping 80 Socketed Gems have 30% increased Reservation Efficiency skill influence_mod gem",
+        "mods": [
+          {
+            "modifier": "of Shaping",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "Socketed Gems have increased Reservation Efficiency",
+                "min": 20,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "skillinfluence_modgem"
+            ]
+          },
+          {
+            "modifier": "of Shaping",
+            "iLvl": 80,
+            "stats": [
+              {
+                "stat": "Socketed Gems have increased Reservation Efficiency",
+                "min": 30,
+                "max": 30
+              }
+            ],
+            "tags": [
+              "skillinfluence_modgem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "RecoverEnergyShieldPercentOnBlock",
+        "description": "Recover (3-5)% of Energy Shield when you Block\nModifier iLvl Stats Tags of Shaping 68 Recover (3-5)% of Energy Shield when you Block block influence_mod defences energy_shield",
+        "mods": [
+          {
+            "modifier": "of Shaping",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "Recover % of Energy Shield when you Block",
+                "min": 3,
+                "max": 5
+              }
+            ],
+            "tags": [
+              "blockinfluence_moddefencesenergy_shield"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AreaOfEffect",
+        "description": "#% increased Area of Effect\nModifier iLvl Stats Tags The Elder's 68 (7-9)% increased Area of Effect influence_mod The Elder's 75 (10-12)% increased Area of Effect influence_mod The Elder's 82 (13-15)% increased Area of Effect influence_mod",
+        "mods": [
+          {
+            "modifier": "The Elder's",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% increased Area of Effect",
+                "min": 7,
+                "max": 9
+              }
+            ],
+            "tags": [
+              "influence_mod"
+            ]
+          },
+          {
+            "modifier": "The Elder's",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "% increased Area of Effect",
+                "min": 10,
+                "max": 12
+              }
+            ],
+            "tags": [
+              "influence_mod"
+            ]
+          },
+          {
+            "modifier": "The Elder's",
+            "iLvl": 82,
+            "stats": [
+              {
+                "stat": "% increased Area of Effect",
+                "min": 13,
+                "max": 15
+              }
+            ],
+            "tags": [
+              "influence_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MaximumLifeIncreasePercent",
+        "description": "#% increased maximum Life\nModifier iLvl Stats Tags The Elder's 68 (3-6)% increased maximum Life resource influence_mod life The Elder's 84 (7-10)% increased maximum Life resource influence_mod life",
+        "mods": [
+          {
+            "modifier": "The Elder's",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% increased maximum Life",
+                "min": 3,
+                "max": 6
+              }
+            ],
+            "tags": [
+              "resourceinfluence_modlife"
+            ]
+          },
+          {
+            "modifier": "The Elder's",
+            "iLvl": 84,
+            "stats": [
+              {
+                "stat": "% increased maximum Life",
+                "min": 7,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "resourceinfluence_modlife"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "DamagePerBlockChance",
+        "description": "1% increased Damage per 1% Chance to Block Attack Damage\nModifier iLvl Stats Tags The Elder's 68 1% increased Damage per 1% Chance to Block Attack Damage influence_mod damage",
+        "mods": [
+          {
+            "modifier": "The Elder's",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "increased Damage per 1% Chance to Block Attack Damage",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "influence_moddamage"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "GainArmourIfBlockedRecently",
+        "description": "+# Armour if you've Blocked Recently\nModifier iLvl Stats Tags The Elder's 68 +(500-650) Armour if you've Blocked Recently influence_mod defences armour The Elder's 75 +(651-800) Armour if you've Blocked Recently influence_mod defences armour",
+        "mods": [
+          {
+            "modifier": "The Elder's",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "Armour if you've Blocked Recently",
+                "min": 500,
+                "max": 650
+              }
+            ],
+            "tags": [
+              "influence_moddefencesarmour"
+            ]
+          },
+          {
+            "modifier": "The Elder's",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "Armour if you've Blocked Recently",
+                "min": 651,
+                "max": 800
+              }
+            ],
+            "tags": [
+              "influence_moddefencesarmour"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AdditionalBlockWith5NearbyEnemies",
+        "description": "+#% Chance to Block Attack Damage if there are at least # nearby Enemies\nModifier iLvl Stats Tags of the Elder 68 +(2-3)% Chance to Block Attack Damage if there are at least 5 nearby Enemies block influence_mod of the Elder 75 +(4-5)% Chance to Block Attack Damage if there are at least 5 nearby Enemies block influence_mod",
+        "mods": [
+          {
+            "modifier": "of the Elder",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% Chance to Block Attack Damage if there are at least 5 nearby Enemies",
+                "min": 2,
+                "max": 3
+              }
+            ],
+            "tags": [
+              "blockinfluence_mod"
+            ]
+          },
+          {
+            "modifier": "of the Elder",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "% Chance to Block Attack Damage if there are at least 5 nearby Enemies",
+                "min": 4,
+                "max": 5
+              }
+            ],
+            "tags": [
+              "blockinfluence_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "SupportedByTrigger",
+        "description": "Socketed Gems are Supported by Level 5 Cast when Damage Taken\nModifier iLvl Stats Tags of the Elder 68 Socketed Gems are Supported by Level 5 Cast when Damage Taken support influence_mod gem",
+        "mods": [
+          {
+            "modifier": "of the Elder",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "Socketed Gems are Supported by Level Cast when Damage Taken",
+                "min": 5,
+                "max": 5
+              }
+            ],
+            "tags": [
+              "supportinfluence_modgem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "DamagePerBlockChance",
+        "description": "1% increased Damage per 1% Chance to Block Attack Damage\nModifier iLvl Stats Tags Crusader's 68 1% increased Damage per 1% Chance to Block Attack Damage influence_mod damage",
+        "mods": [
+          {
+            "modifier": "Crusader's",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "increased Damage per 1% Chance to Block Attack Damage",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "influence_moddamage"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "RecoverEnergyShieldPercentOnBlock",
+        "description": "Recover (3-5)% of Energy Shield when you Block\nModifier iLvl Stats Tags of the Crusade 68 Recover (3-5)% of Energy Shield when you Block block influence_mod defences energy_shield",
+        "mods": [
+          {
+            "modifier": "of the Crusade",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "Recover % of Energy Shield when you Block",
+                "min": 3,
+                "max": 5
+              }
+            ],
+            "tags": [
+              "blockinfluence_moddefencesenergy_shield"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ChanceToChillAttackersOnBlock",
+        "description": "#% chance to Chill Attackers for # seconds on Block\nModifier iLvl Stats Tags of the Crusade 68 (25-40)% chance to Chill Attackers for 4 seconds on Block block red_herring influence_mod elemental cold ailment of the Crusade 75 (41-50)% chance to Chill Attackers for 4 seconds on Block block red_herring influence_mod elemental cold ailment",
+        "mods": [
+          {
+            "modifier": "of the Crusade",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% chance to Chill Attackers for 4 seconds on Block",
+                "min": 25,
+                "max": 40
+              }
+            ],
+            "tags": [
+              "blockred_herringinfluence_modelementalcoldailment"
+            ]
+          },
+          {
+            "modifier": "of the Crusade",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "% chance to Chill Attackers for 4 seconds on Block",
+                "min": 41,
+                "max": 50
+              }
+            ],
+            "tags": [
+              "blockred_herringinfluence_modelementalcoldailment"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "SpellBlockIfBlockedSpellRecently",
+        "description": "+#% Chance to Block Spell Damage if you have Blocked Spell Damage Recently\nModifier iLvl Stats Tags of the Crusade 68 +(7-9)% Chance to Block Spell Damage if you have Blocked Spell Damage Recently block influence_mod of the Crusade 75 +(10-12)% Chance to Block Spell Damage if you have Blocked Spell Damage Recently block influence_mod",
+        "mods": [
+          {
+            "modifier": "of the Crusade",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% Chance to Block Spell Damage if you have Blocked Spell Damage Recently",
+                "min": 7,
+                "max": 9
+              }
+            ],
+            "tags": [
+              "blockinfluence_mod"
+            ]
+          },
+          {
+            "modifier": "of the Crusade",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "% Chance to Block Spell Damage if you have Blocked Spell Damage Recently",
+                "min": 10,
+                "max": 12
+              }
+            ],
+            "tags": [
+              "blockinfluence_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MinimumPowerCharges",
+        "description": "+# to Minimum Power Charges\nModifier iLvl Stats Tags of the Crusade 68 +1 to Minimum Power Charges power_charge influence_mod of the Crusade 80 +2 to Minimum Power Charges power_charge influence_mod",
+        "mods": [
+          {
+            "modifier": "of the Crusade",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "to Minimum Power Charges",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "power_chargeinfluence_mod"
+            ]
+          },
+          {
+            "modifier": "of the Crusade",
+            "iLvl": 80,
+            "stats": [
+              {
+                "stat": "to Minimum Power Charges",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "power_chargeinfluence_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "WarcryEffect",
+        "description": "#% increased Warcry Buff Effect\nModifier iLvl Stats Tags of the Crusade 68 (18-21)% increased Warcry Buff Effect influence_mod of the Crusade 75 (22-25)% increased Warcry Buff Effect influence_mod",
+        "mods": [
+          {
+            "modifier": "of the Crusade",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% increased Warcry Buff Effect",
+                "min": 18,
+                "max": 21
+              }
+            ],
+            "tags": [
+              "influence_mod"
+            ]
+          },
+          {
+            "modifier": "of the Crusade",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "% increased Warcry Buff Effect",
+                "min": 22,
+                "max": 25
+              }
+            ],
+            "tags": [
+              "influence_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ChanceToShockAttackersOnBlock",
+        "description": "#% chance to Shock Attackers for # seconds on Block\nModifier iLvl Stats Tags of the Crusade 68 (25-40)% chance to Shock Attackers for 4 seconds on Block block influence_mod elemental lightning ailment of the Crusade 75 (41-50)% chance to Shock Attackers for 4 seconds on Block block influence_mod elemental lightning ailment",
+        "mods": [
+          {
+            "modifier": "of the Crusade",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% chance to Shock Attackers for 4 seconds on Block",
+                "min": 25,
+                "max": 40
+              }
+            ],
+            "tags": [
+              "blockinfluence_modelementallightningailment"
+            ]
+          },
+          {
+            "modifier": "of the Crusade",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "% chance to Shock Attackers for 4 seconds on Block",
+                "min": 41,
+                "max": 50
+              }
+            ],
+            "tags": [
+              "blockinfluence_modelementallightningailment"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedWeaponElementalDamagePercent",
+        "description": "#% increased Elemental Damage with Attack Skills\nModifier iLvl Stats Tags Redeemer's 68 (26-30)% increased Elemental Damage with Attack Skills elemental_damage influence_mod damage elemental attack Redeemer's 75 (31-35)% increased Elemental Damage with Attack Skills elemental_damage influence_mod damage elemental attack Redeemer's 80 (36-40)% increased Elemental Damage with Attack Skills elemental_damage influence_mod damage elemental attack",
+        "mods": [
+          {
+            "modifier": "Redeemer's",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% increased Elemental Damage with Attack Skills",
+                "min": 26,
+                "max": 30
+              }
+            ],
+            "tags": [
+              "elemental_damageinfluence_moddamageelementalattack"
+            ]
+          },
+          {
+            "modifier": "Redeemer's",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "% increased Elemental Damage with Attack Skills",
+                "min": 31,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "elemental_damageinfluence_moddamageelementalattack"
+            ]
+          },
+          {
+            "modifier": "Redeemer's",
+            "iLvl": 80,
+            "stats": [
+              {
+                "stat": "% increased Elemental Damage with Attack Skills",
+                "min": 36,
+                "max": 40
+              }
+            ],
+            "tags": [
+              "elemental_damageinfluence_moddamageelementalattack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedAilmentEffectOnEnemies",
+        "description": "#% increased Effect of Non-Damaging Ailments\nModifier iLvl Stats Tags of Redemption 68 (15-20)% increased Effect of Non-Damaging Ailments influence_mod ailment of Redemption 75 (21-25)% increased Effect of Non-Damaging Ailments influence_mod ailment",
+        "mods": [
+          {
+            "modifier": "of Redemption",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% increased Effect of Non-Damaging Ailments",
+                "min": 15,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "influence_modailment"
+            ]
+          },
+          {
+            "modifier": "of Redemption",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "% increased Effect of Non-Damaging Ailments",
+                "min": 21,
+                "max": 25
+              }
+            ],
+            "tags": [
+              "influence_modailment"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MinimumFrenzyCharges",
+        "description": "+# to Minimum Frenzy Charges\nModifier iLvl Stats Tags of Redemption 68 +1 to Minimum Frenzy Charges frenzy_charge influence_mod of Redemption 80 +2 to Minimum Frenzy Charges frenzy_charge influence_mod",
+        "mods": [
+          {
+            "modifier": "of Redemption",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "to Minimum Frenzy Charges",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "frenzy_chargeinfluence_mod"
+            ]
+          },
+          {
+            "modifier": "of Redemption",
+            "iLvl": 80,
+            "stats": [
+              {
+                "stat": "to Minimum Frenzy Charges",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "frenzy_chargeinfluence_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "CurseEffectiveness",
+        "description": "(8-12)% increased Effect of your Curses\nModifier iLvl Stats Tags of Redemption 80 (8-12)% increased Effect of your Curses influence_mod caster curse",
+        "mods": [
+          {
+            "modifier": "of Redemption",
+            "iLvl": 80,
+            "stats": [
+              {
+                "stat": "% increased Effect of your Curses",
+                "min": 8,
+                "max": 12
+              }
+            ],
+            "tags": [
+              "influence_modcastercurse"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "RecoverManaPercentOnBlock",
+        "description": "Recover (3-5)% of your maximum Mana when you Block\nModifier iLvl Stats Tags of Redemption 68 Recover (3-5)% of your maximum Mana when you Block block resource influence_mod mana",
+        "mods": [
+          {
+            "modifier": "of Redemption",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "Recover % of your maximum Mana when you Block",
+                "min": 3,
+                "max": 5
+              }
+            ],
+            "tags": [
+              "blockresourceinfluence_modmana"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "PhysicalDamageAvoidance",
+        "description": "#% chance to Avoid Physical Damage from Hits\nModifier iLvl Stats Tags of Redemption 68 (5-7)% chance to Avoid Physical Damage from Hits influence_mod physical of Redemption 80 (8-10)% chance to Avoid Physical Damage from Hits influence_mod physical",
+        "mods": [
+          {
+            "modifier": "of Redemption",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% chance to Avoid Physical Damage from Hits",
+                "min": 5,
+                "max": 7
+              }
+            ],
+            "tags": [
+              "influence_modphysical"
+            ]
+          },
+          {
+            "modifier": "of Redemption",
+            "iLvl": 80,
+            "stats": [
+              {
+                "stat": "% chance to Avoid Physical Damage from Hits",
+                "min": 8,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "influence_modphysical"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AuraEffect",
+        "description": "#% increased effect of Non-Curse Auras from your Skills\nModifier iLvl Stats Tags of Redemption 73 (5-7)% increased effect of Non-Curse Auras from your Skills influence_mod aura of Redemption 80 (8-10)% increased effect of Non-Curse Auras from your Skills influence_mod aura",
+        "mods": [
+          {
+            "modifier": "of Redemption",
+            "iLvl": 73,
+            "stats": [
+              {
+                "stat": "% increased effect of Non-Curse Auras from your Skills",
+                "min": 5,
+                "max": 7
+              }
+            ],
+            "tags": [
+              "influence_modaura"
+            ]
+          },
+          {
+            "modifier": "of Redemption",
+            "iLvl": 80,
+            "stats": [
+              {
+                "stat": "% increased effect of Non-Curse Auras from your Skills",
+                "min": 8,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "influence_modaura"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MaximumLifeIncreasePercent",
+        "description": "#% increased maximum Life\nModifier iLvl Stats Tags Hunter's 68 (3-6)% increased maximum Life resource life Hunter's 84 (7-10)% increased maximum Life resource life",
+        "mods": [
+          {
+            "modifier": "Hunter's",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% increased maximum Life",
+                "min": 3,
+                "max": 6
+              }
+            ],
+            "tags": [
+              "resourcelife"
+            ]
+          },
+          {
+            "modifier": "Hunter's",
+            "iLvl": 84,
+            "stats": [
+              {
+                "stat": "% increased maximum Life",
+                "min": 7,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "resourcelife"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "WarcryCooldownSpeed",
+        "description": "#% increased Warcry Cooldown Recovery Rate\nModifier iLvl Stats Tags of the Hunt 68 (35-40)% increased Warcry Cooldown Recovery Rate of the Hunt 73 (41-45)% increased Warcry Cooldown Recovery Rate",
+        "mods": [
+          {
+            "modifier": "of the Hunt",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% increased Warcry Cooldown Recovery Rate",
+                "min": 35,
+                "max": 40
+              }
+            ],
+            "tags": []
+          },
+          {
+            "modifier": "of the Hunt",
+            "iLvl": 73,
+            "stats": [
+              {
+                "stat": "% increased Warcry Cooldown Recovery Rate",
+                "min": 41,
+                "max": 45
+              }
+            ],
+            "tags": []
+          }
+        ]
+      },
+      {
+        "group": "GainRandomChargeOnBlock",
+        "description": "Gain an Endurance, Frenzy or Power charge when you Block\nModifier iLvl Stats Tags of the Hunt 68 Gain an Endurance, Frenzy or Power charge when you Block block endurance_charge frenzy_charge power_charge",
+        "mods": [
+          {
+            "modifier": "of the Hunt",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "Gain an Endurance, Frenzy or Power charge when you Block",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "blockendurance_chargefrenzy_chargepower_charge"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "DisplaySocketedGemsGetReducedReservation",
+        "description": "Socketed Gems have #% increased Reservation Efficiency\nModifier iLvl Stats Tags of the Hunt 68 Socketed Gems have 20% increased Reservation Efficiency skill gem of the Hunt 80 Socketed Gems have 30% increased Reservation Efficiency skill gem",
+        "mods": [
+          {
+            "modifier": "of the Hunt",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "Socketed Gems have increased Reservation Efficiency",
+                "min": 20,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "skillgem"
+            ]
+          },
+          {
+            "modifier": "of the Hunt",
+            "iLvl": 80,
+            "stats": [
+              {
+                "stat": "Socketed Gems have increased Reservation Efficiency",
+                "min": 30,
+                "max": 30
+              }
+            ],
+            "tags": [
+              "skillgem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "DegenDamageTaken",
+        "description": "#% reduced Damage taken from Damage Over Time\nModifier iLvl Stats Tags of the Hunt 68 (6-4)% reduced Damage taken from Damage Over Time damage of the Hunt 80 (10-7)% reduced Damage taken from Damage Over Time damage",
+        "mods": [
+          {
+            "modifier": "of the Hunt",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% reduced Damage taken from Damage Over Time",
+                "min": 6,
+                "max": 4
+              }
+            ],
+            "tags": [
+              "damage"
+            ]
+          },
+          {
+            "modifier": "of the Hunt",
+            "iLvl": 80,
+            "stats": [
+              {
+                "stat": "% reduced Damage taken from Damage Over Time",
+                "min": 10,
+                "max": 7
+              }
+            ],
+            "tags": [
+              "damage"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AreaOfEffect",
+        "description": "#% increased Area of Effect\nModifier iLvl Stats Tags Warlord's 68 (7-9)% increased Area of Effect influence_mod Warlord's 75 (10-12)% increased Area of Effect influence_mod Warlord's 80 (13-15)% increased Area of Effect influence_mod",
+        "mods": [
+          {
+            "modifier": "Warlord's",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% increased Area of Effect",
+                "min": 7,
+                "max": 9
+              }
+            ],
+            "tags": [
+              "influence_mod"
+            ]
+          },
+          {
+            "modifier": "Warlord's",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "% increased Area of Effect",
+                "min": 10,
+                "max": 12
+              }
+            ],
+            "tags": [
+              "influence_mod"
+            ]
+          },
+          {
+            "modifier": "Warlord's",
+            "iLvl": 80,
+            "stats": [
+              {
+                "stat": "% increased Area of Effect",
+                "min": 13,
+                "max": 15
+              }
+            ],
+            "tags": [
+              "influence_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AttackBlockIfBlockedAttackRecently",
+        "description": "+#% Chance to Block Attack Damage if you have Blocked Attack Damage Recently\nModifier iLvl Stats Tags of the Conquest 68 +(5-6)% Chance to Block Attack Damage if you have Blocked Attack Damage Recently block influence_mod of the Conquest 75 +(7-8)% Chance to Block Attack Damage if you have Blocked Attack Damage Recently block influence_mod",
+        "mods": [
+          {
+            "modifier": "of the Conquest",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% Chance to Block Attack Damage if you have Blocked Attack Damage Recently",
+                "min": 5,
+                "max": 6
+              }
+            ],
+            "tags": [
+              "blockinfluence_mod"
+            ]
+          },
+          {
+            "modifier": "of the Conquest",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "% Chance to Block Attack Damage if you have Blocked Attack Damage Recently",
+                "min": 7,
+                "max": 8
+              }
+            ],
+            "tags": [
+              "blockinfluence_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "RecoverLifePercentOnBlock",
+        "description": "Recover (3-5)% of Life when you Block\nModifier iLvl Stats Tags of the Conquest 68 Recover (3-5)% of Life when you Block block resource influence_mod life",
+        "mods": [
+          {
+            "modifier": "of the Conquest",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "Recover % of Life when you Block",
+                "min": 3,
+                "max": 5
+              }
+            ],
+            "tags": [
+              "blockresourceinfluence_modlife"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "FireDamageAvoidance",
+        "description": "#% chance to Avoid Fire Damage from Hits\nModifier iLvl Stats Tags of the Conquest 68 (5-7)% chance to Avoid Fire Damage from Hits influence_mod elemental fire of the Conquest 80 (8-10)% chance to Avoid Fire Damage from Hits influence_mod elemental fire",
+        "mods": [
+          {
+            "modifier": "of the Conquest",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% chance to Avoid Fire Damage from Hits",
+                "min": 5,
+                "max": 7
+              }
+            ],
+            "tags": [
+              "influence_modelementalfire"
+            ]
+          },
+          {
+            "modifier": "of the Conquest",
+            "iLvl": 80,
+            "stats": [
+              {
+                "stat": "% chance to Avoid Fire Damage from Hits",
+                "min": 8,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "influence_modelementalfire"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MinimumEnduranceCharges",
+        "description": "+# to Minimum Endurance Charges\nModifier iLvl Stats Tags of the Conquest 68 +1 to Minimum Endurance Charges endurance_charge influence_mod of the Conquest 80 +2 to Minimum Endurance Charges endurance_charge influence_mod",
+        "mods": [
+          {
+            "modifier": "of the Conquest",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "to Minimum Endurance Charges",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "endurance_chargeinfluence_mod"
+            ]
+          },
+          {
+            "modifier": "of the Conquest",
+            "iLvl": 80,
+            "stats": [
+              {
+                "stat": "to Minimum Endurance Charges",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "endurance_chargeinfluence_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LightningDamageAvoidance",
+        "description": "#% chance to Avoid Lightning Damage from Hits\nModifier iLvl Stats Tags of the Conquest 68 (5-7)% chance to Avoid Lightning Damage from Hits influence_mod elemental lightning of the Conquest 80 (8-10)% chance to Avoid Lightning Damage from Hits influence_mod elemental lightning",
+        "mods": [
+          {
+            "modifier": "of the Conquest",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% chance to Avoid Lightning Damage from Hits",
+                "min": 5,
+                "max": 7
+              }
+            ],
+            "tags": [
+              "influence_modelementallightning"
+            ]
+          },
+          {
+            "modifier": "of the Conquest",
+            "iLvl": 80,
+            "stats": [
+              {
+                "stat": "% chance to Avoid Lightning Damage from Hits",
+                "min": 8,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "influence_modelementallightning"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ColdDamageAvoidance",
+        "description": "#% chance to Avoid Cold Damage from Hits\nModifier iLvl Stats Tags of the Conquest 68 (5-7)% chance to Avoid Cold Damage from Hits influence_mod elemental cold of the Conquest 80 (8-10)% chance to Avoid Cold Damage from Hits influence_mod elemental cold",
+        "mods": [
+          {
+            "modifier": "of the Conquest",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "% chance to Avoid Cold Damage from Hits",
+                "min": 5,
+                "max": 7
+              }
+            ],
+            "tags": [
+              "influence_modelementalcold"
+            ]
+          },
+          {
+            "modifier": "of the Conquest",
+            "iLvl": 80,
+            "stats": [
+              {
+                "stat": "% chance to Avoid Cold Damage from Hits",
+                "min": 8,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "influence_modelementalcold"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "DamageWhileLeeching",
+        "description": "(54-60)% increased Damage while Leeching\nModifier iLvl Stats Tags Vorici's 60 (54-60)% increased Damage while Leeching unveiled_mod damage",
+        "mods": [
+          {
+            "modifier": "Vorici's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Damage while Leeching",
+                "min": 54,
+                "max": 60
+              }
+            ],
+            "tags": [
+              "unveiled_moddamage"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MaximumSpectreCount",
+        "description": "+1 to maximum number of Spectres\nModifier iLvl Stats Tags Catarina's 60 +1 to maximum number of Spectres unveiled_mod minion",
+        "mods": [
+          {
+            "modifier": "Catarina's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "to maximum number of Spectres",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "unveiled_modminion"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MinionCriticalStrikeChance",
+        "description": "Raised Spectres have +(3-5)% to Critical Strike Chance\nModifier iLvl Stats Tags Catarina's 60 Raised Spectres have +(3-5)% to Critical Strike Chance unveiled_mod",
+        "mods": [
+          {
+            "modifier": "Catarina's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "Raised Spectres have % to Critical Strike Chance",
+                "min": 3,
+                "max": 5
+              }
+            ],
+            "tags": [
+              "unveiled_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "BaseLocalDefencesAndLife",
+        "description": "(24-28)% increased Armour +(19-22) to maximum Life\nModifier iLvl Stats Tags Chosen 60 (24-28)% increased Armour +(19-22) to maximum Life armour resource unveiled_mod life defences",
+        "mods": [
+          {
+            "modifier": "Chosen",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Armour (19-22) to maximum Life",
+                "min": 24,
+                "max": 28
+              }
+            ],
+            "tags": [
+              "armourresourceunveiled_modlifedefences"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "BannerEffect",
+        "description": "Banner Skills have (26-35)% increased Aura Effect\nModifier iLvl Stats Tags Gravicius' 60 Banner Skills have (26-35)% increased Aura Effect unveiled_mod aura",
+        "mods": [
+          {
+            "modifier": "Gravicius'",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "Banner Skills have % increased Aura Effect",
+                "min": 26,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "unveiled_modaura"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "PhysicalDamage",
+        "description": "Adds # to # Physical Damage #% chance to cause Bleeding on Hit\nModifier iLvl Stats Tags Tora's 60 Adds (12-14) to (18-20) Physical Damage 40% chance to cause Bleeding on Hit physical_damage bleed unveiled_mod damage physical attack ailment Tora's 60 Adds (17-20) to (26-28) Physical Damage 40% chance to cause Bleeding on Hit physical_damage bleed unveiled_mod damage physical attack ailment",
+        "mods": [
+          {
+            "modifier": "Tora's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "Adds to (18-20) Physical Damage 40% chance to cause Bleeding on Hit",
+                "min": 12,
+                "max": 14
+              }
+            ],
+            "tags": [
+              "physical_damagebleedunveiled_moddamagephysicalattackailment"
+            ]
+          },
+          {
+            "modifier": "Tora's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "Adds to (26-28) Physical Damage 40% chance to cause Bleeding on Hit",
+                "min": 17,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "physical_damagebleedunveiled_moddamagephysicalattackailment"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "DamageDuringFlaskEffect",
+        "description": "(36-40)% increased Damage during any Flask Effect\nModifier iLvl Stats Tags Brinerot 60 (36-40)% increased Damage during any Flask Effect flask unveiled_mod damage",
+        "mods": [
+          {
+            "modifier": "Brinerot",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Damage during any Flask Effect",
+                "min": 36,
+                "max": 40
+              }
+            ],
+            "tags": [
+              "flaskunveiled_moddamage"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AddedFireAndColdDamage",
+        "description": "Adds (14-16) to (20-22) Fire Damage Adds (14-16) to (20-22) Cold Damage\nModifier iLvl Stats Tags Chosen 60 Adds (14-16) to (20-22) Fire Damage Adds (14-16) to (20-22) Cold Damage elemental_damage unveiled_mod damage elemental fire cold",
+        "mods": [
+          {
+            "modifier": "Chosen",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "Adds to (20-22) Fire Damage Adds (14-16) to (20-22) Cold Damage",
+                "min": 14,
+                "max": 16
+              }
+            ],
+            "tags": [
+              "elemental_damageunveiled_moddamageelementalfirecold"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MinionBaseMaximumAllResistance",
+        "description": "Raised Spectres have +(5-10)% to all maximum Resistances\nModifier iLvl Stats Tags Catarina's 60 Raised Spectres have +(5-10)% to all maximum Resistances unveiled_mod",
+        "mods": [
+          {
+            "modifier": "Catarina's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "Raised Spectres have % to all maximum Resistances",
+                "min": 5,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "unveiled_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AddedColdAndLightningDamage",
+        "description": "Adds (14-16) to (20-22) Cold Damage Adds (14-16) to (20-22) Lightning Damage\nModifier iLvl Stats Tags Chosen 60 Adds (14-16) to (20-22) Cold Damage Adds (14-16) to (20-22) Lightning Damage elemental_damage unveiled_mod damage elemental cold lightning",
+        "mods": [
+          {
+            "modifier": "Chosen",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "Adds to (20-22) Cold Damage Adds (14-16) to (20-22) Lightning Damage",
+                "min": 14,
+                "max": 16
+              }
+            ],
+            "tags": [
+              "elemental_damageunveiled_moddamageelementalcoldlightning"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AdditionalProjectiles",
+        "description": "Raised Spectres fire 2 additional Projectiles\nModifier iLvl Stats Tags Catarina's 60 Raised Spectres fire 2 additional Projectiles unveiled_mod",
+        "mods": [
+          {
+            "modifier": "Catarina's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "Raised Spectres fire additional Projectiles",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "unveiled_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AllDamage",
+        "description": "(20-23)% increased Damage\nModifier iLvl Stats Tags Leo's 60 (20-23)% increased Damage unveiled_mod damage",
+        "mods": [
+          {
+            "modifier": "Leo's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Damage",
+                "min": 20,
+                "max": 23
+              }
+            ],
+            "tags": [
+              "unveiled_moddamage"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AlwaysHits",
+        "description": "Hits can't be Evaded\nModifier iLvl Stats Tags Vagan's 60 Hits can't be Evaded unveiled_mod attack",
+        "mods": [
+          {
+            "modifier": "Vagan's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "Hits can't be Evaded",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "unveiled_modattack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AreaOfEffect",
+        "description": "Raised Spectres have (30-50)% increased Area of Effect\nModifier iLvl Stats Tags Catarina's 60 Raised Spectres have (30-50)% increased Area of Effect unveiled_mod",
+        "mods": [
+          {
+            "modifier": "Catarina's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "Raised Spectres have % increased Area of Effect",
+                "min": 30,
+                "max": 50
+              }
+            ],
+            "tags": [
+              "unveiled_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "WarcryBuffEffect",
+        "description": "(20-25)% increased Warcry Buff Effect\nModifier iLvl Stats Tags Korell's 60 (20-25)% increased Warcry Buff Effect unveiled_mod",
+        "mods": [
+          {
+            "modifier": "Korell's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Warcry Buff Effect",
+                "min": 20,
+                "max": 25
+              }
+            ],
+            "tags": [
+              "unveiled_mod"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "NonChaosAddedAsChaos",
+        "description": "Gain (9-10)% of Physical Damage as Extra Chaos Damage\nModifier iLvl Stats Tags It's 60 Gain (9-10)% of Physical Damage as Extra Chaos Damage physical_damage chaos_damage unveiled_mod damage physical chaos\nGain (9-10)% of Fire Damage as Extra Chaos Damage\nModifier iLvl Stats Tags It's 60 Gain (9-10)% of Fire Damage as Extra Chaos Damage elemental_damage chaos_damage unveiled_mod damage elemental fire chaos\nGain (9-10)% of Lightning Damage as Extra Chaos Damage\nModifier iLvl Stats Tags It's 60 Gain (9-10)% of Lightning Damage as Extra Chaos Damage elemental_damage chaos_damage unveiled_mod damage elemental lightning chaos\nGain (9-10)% of Cold Damage as Extra Chaos Damage\nModifier iLvl Stats Tags It's 60 Gain (9-10)% of Cold Damage as Extra Chaos Damage elemental_damage chaos_damage unveiled_mod damage elemental cold chaos",
+        "mods": [
+          {
+            "modifier": "It's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "Gain % of Physical Damage as Extra Chaos Damage",
+                "min": 9,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "physical_damagechaos_damageunveiled_moddamagephysicalchaos"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreaseFlatManaCost",
+        "description": "Non-Channelling Skills have -(10-9) to Total Mana Cost\nModifier iLvl Stats Tags Elreon's 60 Non-Channelling Skills have -(10-9) to Total Mana Cost resource unveiled_mod mana\nChannelling Skills have -4 to Total Mana Cost\nModifier iLvl Stats Tags Elreon's 60 Channelling Skills have -4 to Total Mana Cost resource unveiled_mod mana",
+        "mods": [
+          {
+            "modifier": "Elreon's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "Non-Channelling Skills have - to Total Mana Cost",
+                "min": 10,
+                "max": 9
+              }
+            ],
+            "tags": [
+              "resourceunveiled_modmana"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "PhysicalDamageReductionRatingDuringSoulGainPrevention",
+        "description": "+(3201-4000) to Armour during Soul Gain Prevention\nModifier iLvl Stats Tags Chosen 60 +(3201-4000) to Armour during Soul Gain Prevention unveiled_mod physical",
+        "mods": [
+          {
+            "modifier": "Chosen",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "to Armour during Soul Gain Prevention",
+                "min": 3201,
+                "max": 4000
+              }
+            ],
+            "tags": [
+              "unveiled_modphysical"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AddedFireAndLightningDamage",
+        "description": "Adds (14-16) to (20-22) Fire Damage Adds (14-16) to (20-22) Lightning Damage\nModifier iLvl Stats Tags Chosen 60 Adds (14-16) to (20-22) Fire Damage Adds (14-16) to (20-22) Lightning Damage elemental_damage unveiled_mod damage elemental fire lightning",
+        "mods": [
+          {
+            "modifier": "Chosen",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "Adds to (20-22) Fire Damage Adds (14-16) to (20-22) Lightning Damage",
+                "min": 14,
+                "max": 16
+              }
+            ],
+            "tags": [
+              "elemental_damageunveiled_moddamageelementalfirelightning"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "SocketedGemQuality",
+        "description": "+(9-10)% to Quality of Socketed Gems\nModifier iLvl Stats Tags Haku's 60 +(9-10)% to Quality of Socketed Gems unveiled_mod gem",
+        "mods": [
+          {
+            "modifier": "Haku's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% to Quality of Socketed Gems",
+                "min": 9,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "unveiled_modgem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AvoidFreeze",
+        "description": "100% chance to Avoid being Frozen (20-30)% chance to Avoid being Chilled\nModifier iLvl Stats Tags Rin's 60 100% chance to Avoid being Frozen (20-30)% chance to Avoid being Chilled unveiled_mod elemental cold ailment",
+        "mods": [
+          {
+            "modifier": "Rin's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "100% chance to Avoid being Frozen % chance to Avoid being Chilled",
+                "min": 20,
+                "max": 30
+              }
+            ],
+            "tags": [
+              "unveiled_modelementalcoldailment"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "SummonWolfOnKill",
+        "description": "Trigger Level 10 Summon Spectral Wolf on Kill\nModifier iLvl Stats Tags Jorgin's 60 Trigger Level 10 Summon Spectral Wolf on Kill unveiled_mod minion",
+        "mods": [
+          {
+            "modifier": "Jorgin's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "Trigger Level Summon Spectral Wolf on Kill",
+                "min": 10,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "unveiled_modminion"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "CriticalStrikeChanceIncrease",
+        "description": "+(27-30)% to Critical Strike Multiplier if you've Shattered an Enemy Recently (20-22)% increased Global Critical Strike Chance\nModifier iLvl Stats Tags of Cameria 60 +(27-30)% to Critical Strike Multiplier if you've Shattered an Enemy Recently (20-22)% increased Global Critical Strike Chance unveiled_mod damage critical",
+        "mods": [
+          {
+            "modifier": "of Cameria",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% to Critical Strike Multiplier if you've Shattered an Enemy Recently (20-22)% increased Global Critical Strike Chance",
+                "min": 27,
+                "max": 30
+              }
+            ],
+            "tags": [
+              "unveiled_moddamagecritical"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Intelligence",
+        "description": "+(31-35) to Intelligence (21-25)% chance to Avoid being Shocked\nModifier iLvl Stats Tags of the Order 60 +(31-35) to Intelligence (21-25)% chance to Avoid being Shocked unveiled_mod attribute\n+(31-35) to Strength and Intelligence\nModifier iLvl Stats Tags of the Order 60 +(31-35) to Strength and Intelligence unveiled_mod attribute\n+(31-35) to Dexterity and Intelligence\nModifier iLvl Stats Tags of the Order 60 +(31-35) to Dexterity and Intelligence unveiled_mod attribute",
+        "mods": [
+          {
+            "modifier": "of the Order",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "to Intelligence (21-25)% chance to Avoid being Shocked",
+                "min": 31,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "unveiled_modattribute"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AvoidIgnite",
+        "description": "+(31-35) to Strength (21-25)% chance to Avoid being Ignited\nModifier iLvl Stats Tags of the Order 60 +(31-35) to Strength (21-25)% chance to Avoid being Ignited unveiled_mod attribute",
+        "mods": [
+          {
+            "modifier": "of the Order",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "to Strength (21-25)% chance to Avoid being Ignited",
+                "min": 31,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "unveiled_modattribute"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "FireAndChaosDamageResistance",
+        "description": "+(16-20)% to Fire and Chaos Resistances\nModifier iLvl Stats Tags of the Order 60 +(16-20)% to Fire and Chaos Resistances unveiled_mod elemental fire chaos resistance",
+        "mods": [
+          {
+            "modifier": "of the Order",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% to Fire and Chaos Resistances",
+                "min": 16,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "unveiled_modelementalfirechaosresistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LightningAndChaosDamageResistance",
+        "description": "+(16-20)% to Lightning and Chaos Resistances\nModifier iLvl Stats Tags of the Order 60 +(16-20)% to Lightning and Chaos Resistances unveiled_mod elemental lightning chaos resistance",
+        "mods": [
+          {
+            "modifier": "of the Order",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% to Lightning and Chaos Resistances",
+                "min": 16,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "unveiled_modelementallightningchaosresistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AvoidShock",
+        "description": "+(31-35) to Intelligence (21-25)% chance to Avoid being Shocked\nModifier iLvl Stats Tags of the Order 60 +(31-35) to Intelligence (21-25)% chance to Avoid being Shocked unveiled_mod attribute",
+        "mods": [
+          {
+            "modifier": "of the Order",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "to Intelligence (21-25)% chance to Avoid being Shocked",
+                "min": 31,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "unveiled_modattribute"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedChaosAndPhysicalDamage",
+        "description": "(18-20)% increased Chaos Damage (20-22)% increased Global Physical Damage\nModifier iLvl Stats Tags of Aisling 60 (18-20)% increased Chaos Damage (20-22)% increased Global Physical Damage physical_damage chaos_damage unveiled_mod damage physical chaos",
+        "mods": [
+          {
+            "modifier": "of Aisling",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Chaos Damage (20-22)% increased Global Physical Damage",
+                "min": 18,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "physical_damagechaos_damageunveiled_moddamagephysicalchaos"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedFireAndLightningDamage",
+        "description": "(18-20)% increased Fire Damage (20-22)% increased Lightning Damage\nModifier iLvl Stats Tags of Riker 60 (18-20)% increased Fire Damage (20-22)% increased Lightning Damage elemental_damage unveiled_mod damage elemental fire lightning",
+        "mods": [
+          {
+            "modifier": "of Riker",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Fire Damage (20-22)% increased Lightning Damage",
+                "min": 18,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "elemental_damageunveiled_moddamageelementalfirelightning"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Strength",
+        "description": "+(31-35) to Strength and Intelligence\nModifier iLvl Stats Tags of the Order 60 +(31-35) to Strength and Intelligence unveiled_mod attribute\n+(31-35) to Strength and Dexterity\nModifier iLvl Stats Tags of the Order 60 +(31-35) to Strength and Dexterity unveiled_mod attribute\n+(31-35) to Strength (21-25)% chance to Avoid being Ignited\nModifier iLvl Stats Tags of the Order 60 +(31-35) to Strength (21-25)% chance to Avoid being Ignited unveiled_mod attribute",
+        "mods": [
+          {
+            "modifier": "of the Order",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "to Strength and Intelligence",
+                "min": 31,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "unveiled_modattribute"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Dexterity",
+        "description": "+(31-35) to Dexterity and Intelligence\nModifier iLvl Stats Tags of the Order 60 +(31-35) to Dexterity and Intelligence unveiled_mod attribute\n+(31-35) to Dexterity (21-25)% chance to Avoid being Frozen\nModifier iLvl Stats Tags of the Order 60 +(31-35) to Dexterity (21-25)% chance to Avoid being Frozen unveiled_mod attribute\n+(31-35) to Strength and Dexterity\nModifier iLvl Stats Tags of the Order 60 +(31-35) to Strength and Dexterity unveiled_mod attribute",
+        "mods": [
+          {
+            "modifier": "of the Order",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "to Dexterity and Intelligence",
+                "min": 31,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "unveiled_modattribute"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "DoubleDamage",
+        "description": "(6-7)% chance to deal Double Damage\nModifier iLvl Stats Tags of the Order 60 (6-7)% chance to deal Double Damage unveiled_mod damage",
+        "mods": [
+          {
+            "modifier": "of the Order",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% chance to deal Double Damage",
+                "min": 6,
+                "max": 7
+              }
+            ],
+            "tags": [
+              "unveiled_moddamage"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "CurseEffectiveness",
+        "description": "(8-10)% increased Effect of your Curses\nModifier iLvl Stats Tags of the Order 60 (8-10)% increased Effect of your Curses unveiled_mod caster curse",
+        "mods": [
+          {
+            "modifier": "of the Order",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Effect of your Curses",
+                "min": 8,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "unveiled_modcastercurse"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ColdAndChaosDamageResistance",
+        "description": "+(16-20)% to Cold and Chaos Resistances\nModifier iLvl Stats Tags of the Order 60 +(16-20)% to Cold and Chaos Resistances unveiled_mod elemental cold chaos resistance",
+        "mods": [
+          {
+            "modifier": "of the Order",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% to Cold and Chaos Resistances",
+                "min": 16,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "unveiled_modelementalcoldchaosresistance"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "RareOrUniqueMonsterDroppedItemRarity",
+        "description": "(55-60)% increased Rarity of Items Dropped by Slain Rare or Unique Enemies\nModifier iLvl Stats Tags of Janus 60 (55-60)% increased Rarity of Items Dropped by Slain Rare or Unique Enemies unveiled_mod drop",
+        "mods": [
+          {
+            "modifier": "of Janus",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Rarity of Items Dropped by Slain Rare or Unique Enemies",
+                "min": 55,
+                "max": 60
+              }
+            ],
+            "tags": [
+              "unveiled_moddrop"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "AvoidFreeze",
+        "description": "+(31-35) to Dexterity (21-25)% chance to Avoid being Frozen\nModifier iLvl Stats Tags of the Order 60 +(31-35) to Dexterity (21-25)% chance to Avoid being Frozen unveiled_mod attribute",
+        "mods": [
+          {
+            "modifier": "of the Order",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "to Dexterity (21-25)% chance to Avoid being Frozen",
+                "min": 31,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "unveiled_modattribute"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "PercentageAllAttributes",
+        "description": "(7-8)% increased Attributes\nModifier iLvl Stats Tags of Hillock 60 (7-8)% increased Attributes unveiled_mod attribute",
+        "mods": [
+          {
+            "modifier": "of Hillock",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% increased Attributes",
+                "min": 7,
+                "max": 8
+              }
+            ],
+            "tags": [
+              "unveiled_modattribute"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ChanceToDealDoubleDamageWhileFocused",
+        "description": "(18-20)% chance to deal Double Damage while Focused\nModifier iLvl Stats Tags of the Order 60 (18-20)% chance to deal Double Damage while Focused unveiled_mod damage",
+        "mods": [
+          {
+            "modifier": "of the Order",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "% chance to deal Double Damage while Focused",
+                "min": 18,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "unveiled_moddamage"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreaseSocketedProjectileGemLevel",
+        "description": "+2 to Level of Socketed Projectile Gems\nModifier iLvl Stats Tags LocalIncreaseSocketedProjectileLevelCorrupted 20 +2 to Level of Socketed Projectile Gems gem",
+        "mods": [
+          {
+            "modifier": "LocalIncreaseSocketedProjectileLevelCorrupted",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "to Level of Socketed Projectile Gems",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "gem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedSocketedTrapOrMineGemLevel",
+        "description": "+2 to Level of Socketed Trap or Mine Gems\nModifier iLvl Stats Tags IncreasedSocketedTrapOrMineGemLevel 20 +2 to Level of Socketed Trap or Mine Gems gem",
+        "mods": [
+          {
+            "modifier": "IncreasedSocketedTrapOrMineGemLevel",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "to Level of Socketed Trap or Mine Gems",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "gem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MaximumBlockChance",
+        "description": "+1% to maximum Chance to Block Attack Damage\nModifier iLvl Stats Tags MaximumBlockChance 60 +1% to maximum Chance to Block Attack Damage block",
+        "mods": [
+          {
+            "modifier": "MaximumBlockChance",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "to maximum Chance to Block Attack Damage",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreaseSocketedDurationGemLevel",
+        "description": "+2 to Level of Socketed Duration Gems\nModifier iLvl Stats Tags IncreaseSocketedDurationGemLevel 20 +2 to Level of Socketed Duration Gems gem",
+        "mods": [
+          {
+            "modifier": "IncreaseSocketedDurationGemLevel",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "to Level of Socketed Duration Gems",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "gem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ReducedDamageFromAreaOfEffect",
+        "description": "(6-4)% reduced Area Damage taken from Hits\nModifier iLvl Stats Tags AreaOfEffectDamageTaken 20 (6-4)% reduced Area Damage taken from Hits",
+        "mods": [
+          {
+            "modifier": "AreaOfEffectDamageTaken",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "% reduced Area Damage taken from Hits",
+                "min": 6,
+                "max": 4
+              }
+            ],
+            "tags": []
+          }
+        ]
+      },
+      {
+        "group": "IncreasedShieldBlockPercentage",
+        "description": "+(4-5)% Chance to Block\nModifier iLvl Stats Tags IncreasedShieldBlockPercentage 1 +(4-5)% Chance to Block block",
+        "mods": [
+          {
+            "modifier": "IncreasedShieldBlockPercentage",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "% Chance to Block",
+                "min": 4,
+                "max": 5
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreaseSocketedCurseGemLevel",
+        "description": "+2 to Level of Socketed Curse Gems\nModifier iLvl Stats Tags LocalIncreaseSocketedCurseLevelCorrupted 20 +2 to Level of Socketed Curse Gems caster gem curse",
+        "mods": [
+          {
+            "modifier": "LocalIncreaseSocketedCurseLevelCorrupted",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "to Level of Socketed Curse Gems",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "castergemcurse"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedSocketedAoEGemLevel",
+        "description": "+2 to Level of Socketed AoE Gems\nModifier iLvl Stats Tags IncreasedSocketedAoEGemLevel 20 +2 to Level of Socketed AoE Gems gem",
+        "mods": [
+          {
+            "modifier": "IncreasedSocketedAoEGemLevel",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "to Level of Socketed AoE Gems",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "gem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreaseSocketedAuraGemLevel",
+        "description": "+2 to Level of Socketed Aura Gems\nModifier iLvl Stats Tags LocalIncreaseSocketedAuraLevelCorrupted 20 +2 to Level of Socketed Aura Gems aura gem",
+        "mods": [
+          {
+            "modifier": "LocalIncreaseSocketedAuraLevelCorrupted",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "to Level of Socketed Aura Gems",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "auragem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MaximumEnergyShieldPercent",
+        "description": "(4-6)% increased maximum Energy Shield\nModifier iLvl Stats Tags MaximumEnergyShieldPercent 1 (4-6)% increased maximum Energy Shield energy_shield defences",
+        "mods": [
+          {
+            "modifier": "MaximumEnergyShieldPercent",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "% increased maximum Energy Shield",
+                "min": 4,
+                "max": 6
+              }
+            ],
+            "tags": [
+              "energy_shielddefences"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "GrantedSkill",
+        "description": "Grants Level 23 Discipline Skill\nModifier iLvl Stats Tags DisciplineSkill 56 Grants Level 23 Discipline Skill skill\nGrants Level 23 Determination Skill\nModifier iLvl Stats Tags DeterminationSkill 56 Grants Level 23 Determination Skill skill\nGrants Level 23 Grace Skill\nModifier iLvl Stats Tags GraceSkill 56 Grants Level 23 Grace Skill skill",
+        "mods": [
+          {
+            "modifier": "DisciplineSkill",
+            "iLvl": 56,
+            "stats": [
+              {
+                "stat": "Grants Level Discipline Skill",
+                "min": 23,
+                "max": 23
+              }
+            ],
+            "tags": [
+              "skill"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreaseSpecificSocketedGemLevel",
+        "description": "+2 to Level of Socketed Minion Gems\nModifier iLvl Stats Tags LocalIncreaseSocketedMinionGemLevel 20 +2 to Level of Socketed Minion Gems minion gem",
+        "mods": [
+          {
+            "modifier": "LocalIncreaseSocketedMinionGemLevel",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "to Level of Socketed Minion Gems",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "miniongem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "SpellBlockPercentage",
+        "description": "(4-5)% Chance to Block Spell Damage\nModifier iLvl Stats Tags SpellBlockPercentage 1 (4-5)% Chance to Block Spell Damage block",
+        "mods": [
+          {
+            "modifier": "SpellBlockPercentage",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "% Chance to Block Spell Damage",
+                "min": 4,
+                "max": 5
+              }
+            ],
+            "tags": [
+              "block"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LocalSocketedWarcryGemLevel",
+        "description": "+2 to Level of Socketed Warcry Gems\nModifier iLvl Stats Tags LocalSocketedWarcryGemLevel 20 +2 to Level of Socketed Warcry Gems gem",
+        "mods": [
+          {
+            "modifier": "LocalSocketedWarcryGemLevel",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "to Level of Socketed Warcry Gems",
+                "min": 2,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "gem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ReducedExtraDamageFromCrits",
+        "description": "You take (20-30)% reduced Extra Damage from Critical Strikes\nModifier iLvl Stats Tags ReducedExtraDamageFromCrits 20 You take (20-30)% reduced Extra Damage from Critical Strikes damage critical",
+        "mods": [
+          {
+            "modifier": "ReducedExtraDamageFromCrits",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "You take % reduced Extra Damage from Critical Strikes",
+                "min": 20,
+                "max": 30
+              }
+            ],
+            "tags": [
+              "damagecritical"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MaximumLifeIncreasePercent",
+        "description": "(4-6)% increased maximum Life\nModifier iLvl Stats Tags MaximumLifeIncreasePercent 1 (4-6)% increased maximum Life resource life",
+        "mods": [
+          {
+            "modifier": "MaximumLifeIncreasePercent",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "% increased maximum Life",
+                "min": 4,
+                "max": 6
+              }
+            ],
+            "tags": [
+              "resourcelife"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreaseSocketedGemLevel",
+        "description": "+1 to Level of Socketed Gems\nModifier iLvl Stats Tags LocalIncreaseSocketedGemLevel 1 +1 to Level of Socketed Gems gem",
+        "mods": [
+          {
+            "modifier": "LocalIncreaseSocketedGemLevel",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "to Level of Socketed Gems",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "tags": [
+              "gem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ProjectileDamageTaken",
+        "description": "(6-4)% reduced Damage taken from Projectile Hits\nModifier iLvl Stats Tags ProjectileDamageTaken 20 (6-4)% reduced Damage taken from Projectile Hits",
+        "mods": [
+          {
+            "modifier": "ProjectileDamageTaken",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "% reduced Damage taken from Projectile Hits",
+                "min": 6,
+                "max": 4
+              }
+            ],
+            "tags": []
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "name": "Ritual Warden",
+  "color": "#9932cc",
+  "nodes": [
+    {"id": "start", "name": "RITUAL WARDEN", "ring": 0, "angle": 0, "isStart": true, "stats": ["You can allocate Passives starting from here"], "connections": ["travel_n", "travel_e", "travel_s", "travel_w"]},
+
+    {"id": "travel_n", "name": "Ritual Path", "ring": 1.5, "angle": 90, "stats": ["+15% Buff Effect"], "connections": ["start", "travel_n2"]},
+    {"id": "travel_n2", "name": "Ceremony Road", "ring": 3, "angle": 90, "stats": ["+18% Buff Effect"], "connections": ["travel_n", "travel_n3", "buff_cluster1"]},
+    {"id": "travel_n3", "name": "Rite Way", "ring": 4.5, "angle": 90, "stats": ["+22% Buff Effect"], "connections": ["travel_n2", "buff_notable", "duration_cluster1"]},
+    {"id": "buff_notable", "name": "Master of Rituals", "ring": 6, "angle": 90, "isNotable": true, "stats": ["+50% Buff Effect", "+40% Buff Duration", "Buffs stack"], "connections": ["travel_n3", "travel_n4"]},
+    {"id": "travel_n4", "name": "Divine Path", "ring": 7.5, "angle": 90, "stats": ["+25% Buff Effect"], "connections": ["buff_notable", "buff_key"]},
+    {"id": "buff_key", "name": "RITUAL MASTER", "ring": 9, "angle": 90, "isKeystone": true, "stats": ["+100% Buff Effect", "+80% Buff Duration", "Buffs affect entire team", "Buffs are permanent while in combat"], "connections": ["travel_n4"]},
+
+    {"id": "buff_cluster1", "name": "Blessing", "ring": 3.5, "angle": 115, "stats": ["+18% Buff Effect"], "connections": ["travel_n2", "buff_cluster2"]},
+    {"id": "buff_cluster2", "name": "Empowerment", "ring": 4, "angle": 125, "stats": ["+20% Buff Effect"], "connections": ["buff_cluster1", "buff_cluster_notable"]},
+    {"id": "buff_cluster_notable", "name": "Divine Blessing", "ring": 4.5, "angle": 120, "isNotable": true, "stats": ["+45% Buff Effect", "Buffs also heal"], "connections": ["buff_cluster2"]},
+
+    {"id": "duration_cluster1", "name": "Extend", "ring": 5, "angle": 70, "stats": ["+20% Buff Duration"], "connections": ["travel_n3", "duration_cluster2"]},
+    {"id": "duration_cluster2", "name": "Prolong", "ring": 5.5, "angle": 60, "stats": ["+25% Buff Duration"], "connections": ["duration_cluster1", "duration_cluster_notable"]},
+    {"id": "duration_cluster_notable", "name": "Eternal Buff", "ring": 6, "angle": 65, "isNotable": true, "stats": ["+50% Buff Duration", "Buffs never expire early"], "connections": ["duration_cluster2"]},
+
+    {"id": "travel_e", "name": "Debuff Path", "ring": 1.5, "angle": 0, "stats": ["+15% Debuff Effect"], "connections": ["start", "travel_e2"]},
+    {"id": "travel_e2", "name": "Curse Road", "ring": 3, "angle": 0, "stats": ["+18% Debuff Effect"], "connections": ["travel_e", "travel_e3", "debuff_cluster1"]},
+    {"id": "travel_e3", "name": "Hex Way", "ring": 4.5, "angle": 0, "stats": ["+22% Debuff Effect"], "connections": ["travel_e2", "debuff_notable", "curse_cluster1"]},
+    {"id": "debuff_notable", "name": "Curse Master", "ring": 6, "angle": 0, "isNotable": true, "stats": ["+50% Debuff Effect", "Debuffs spread to nearby enemies", "Debuffs stack"], "connections": ["travel_e3", "travel_e4"]},
+    {"id": "travel_e4", "name": "Doom Path", "ring": 7.5, "angle": 0, "stats": ["+25% Debuff Effect"], "connections": ["debuff_notable", "debuff_key"]},
+    {"id": "debuff_key", "name": "CURSE LORD", "ring": 9, "angle": 0, "isKeystone": true, "stats": ["+100% Debuff Effect", "Debuffs are permanent", "Debuffs cannot be cleansed", "Cursed enemies take 50% more damage"], "connections": ["travel_e4"]},
+
+    {"id": "debuff_cluster1", "name": "Weaken", "ring": 3.5, "angle": 335, "stats": ["+18% Debuff Effect"], "connections": ["travel_e2", "debuff_cluster2"]},
+    {"id": "debuff_cluster2", "name": "Cripple", "ring": 4, "angle": 325, "stats": ["+20% Debuff Effect"], "connections": ["debuff_cluster1", "debuff_cluster_notable"]},
+    {"id": "debuff_cluster_notable", "name": "Devastating Curse", "ring": 4.5, "angle": 330, "isNotable": true, "stats": ["+45% Debuff Effect", "Debuffs reduce enemy damage"], "connections": ["debuff_cluster2"]},
+
+    {"id": "curse_cluster1", "name": "Doom", "ring": 5, "angle": 25, "stats": ["+15% Curse Effect"], "connections": ["travel_e3", "curse_cluster2"]},
+    {"id": "curse_cluster2", "name": "Bane", "ring": 5.5, "angle": 35, "stats": ["+20% Curse Effect"], "connections": ["curse_cluster1", "curse_cluster_notable"]},
+    {"id": "curse_cluster_notable", "name": "Eternal Curse", "ring": 6, "angle": 30, "isNotable": true, "stats": ["+50% Curse Effect", "Curses deal damage over time"], "connections": ["curse_cluster2"]},
+
+    {"id": "travel_s", "name": "Life Path", "ring": 1.5, "angle": 270, "stats": ["+45 Life"], "connections": ["start", "travel_s2"]},
+    {"id": "travel_s2", "name": "Vital Road", "ring": 3, "angle": 270, "stats": ["+60 Life"], "connections": ["travel_s", "travel_s3", "life_cluster1"]},
+    {"id": "travel_s3", "name": "Heart Way", "ring": 4.5, "angle": 270, "stats": ["+75 Life"], "connections": ["travel_s2", "life_notable", "regen_cluster1"]},
+    {"id": "life_notable", "name": "Ritual Vitality", "ring": 6, "angle": 270, "isNotable": true, "stats": ["+200 Life", "+15% Max Life", "Rituals restore Life"], "connections": ["travel_s3", "travel_s4"]},
+    {"id": "travel_s4", "name": "Immortal Path", "ring": 7.5, "angle": 270, "stats": ["+95 Life"], "connections": ["life_notable", "life_key"]},
+    {"id": "life_key", "name": "RITUAL IMMORTAL", "ring": 9, "angle": 270, "isKeystone": true, "stats": ["+500 Life", "+30% Max Life", "+3% Life Regen", "Rituals prevent death"], "connections": ["travel_s4"]},
+
+    {"id": "life_cluster1", "name": "Vitality", "ring": 3.5, "angle": 245, "stats": ["+60 Life"], "connections": ["travel_s2", "life_cluster2"]},
+    {"id": "life_cluster2", "name": "Constitution", "ring": 4, "angle": 235, "stats": ["+75 Life"], "connections": ["life_cluster1", "life_cluster_notable"]},
+    {"id": "life_cluster_notable", "name": "Robust", "ring": 4.5, "angle": 240, "isNotable": true, "stats": ["+180 Life", "+12% Max Life"], "connections": ["life_cluster2"]},
+
+    {"id": "regen_cluster1", "name": "Recovery", "ring": 5, "angle": 290, "stats": ["+0.5% Life Regen"], "connections": ["travel_s3", "regen_cluster2"]},
+    {"id": "regen_cluster2", "name": "Renewal", "ring": 5.5, "angle": 300, "stats": ["+0.6% Life Regen"], "connections": ["regen_cluster1", "regen_cluster_notable"]},
+    {"id": "regen_cluster_notable", "name": "Ritual Renewal", "ring": 6, "angle": 295, "isNotable": true, "stats": ["+2% Life Regen", "Rituals grant bonus Regen"], "connections": ["regen_cluster2"]},
+
+    {"id": "travel_w", "name": "Mana Path", "ring": 1.5, "angle": 180, "stats": ["+35 Mana"], "connections": ["start", "travel_w2"]},
+    {"id": "travel_w2", "name": "Flow Road", "ring": 3, "angle": 180, "stats": ["+50 Mana"], "connections": ["travel_w", "travel_w3", "mana_cluster1"]},
+    {"id": "travel_w3", "name": "Current Way", "ring": 4.5, "angle": 180, "stats": ["+65 Mana"], "connections": ["travel_w2", "mana_notable", "mana_regen_cluster1"]},
+    {"id": "mana_notable", "name": "Ritual Power", "ring": 6, "angle": 180, "isNotable": true, "stats": ["+180 Mana", "+20% Max Mana", "Rituals cost less Mana"], "connections": ["travel_w3", "travel_w4"]},
+    {"id": "travel_w4", "name": "Infinity Path", "ring": 7.5, "angle": 180, "stats": ["+80 Mana"], "connections": ["mana_notable", "mana_key"]},
+    {"id": "mana_key", "name": "INFINITE RITUAL", "ring": 9, "angle": 180, "isKeystone": true, "stats": ["+400 Mana", "+40% Max Mana", "+2% Mana Regen", "Rituals are free", "Mana regenerates during rituals"], "connections": ["travel_w4"]},
+
+    {"id": "mana_cluster1", "name": "Pool", "ring": 3.5, "angle": 155, "stats": ["+50 Mana"], "connections": ["travel_w2", "mana_cluster2"]},
+    {"id": "mana_cluster2", "name": "Reservoir", "ring": 4, "angle": 145, "stats": ["+65 Mana"], "connections": ["mana_cluster1", "mana_cluster_notable"]},
+    {"id": "mana_cluster_notable", "name": "Ocean", "ring": 4.5, "angle": 150, "isNotable": true, "stats": ["+150 Mana", "+15% Max Mana"], "connections": ["mana_cluster2"]},
+
+    {"id": "mana_regen_cluster1", "name": "Flow", "ring": 5, "angle": 200, "stats": ["+0.4% Mana Regen"], "connections": ["travel_w3", "mana_regen_cluster2"]},
+    {"id": "mana_regen_cluster2", "name": "Stream", "ring": 5.5, "angle": 210, "stats": ["+0.5% Mana Regen"], "connections": ["mana_regen_cluster1", "mana_regen_cluster_notable"]},
+    {"id": "mana_regen_cluster_notable", "name": "River", "ring": 6, "angle": 205, "isNotable": true, "stats": ["+1.5% Mana Regen", "Rituals grant Mana"], "connections": ["mana_regen_cluster2"]},
+
+    {"id": "travel_ne", "name": "NE Path", "ring": 2, "angle": 45, "stats": ["+12% Buff Effect", "+12% Debuff Effect"], "connections": ["travel_n", "travel_ne2"]},
+    {"id": "travel_ne2", "name": "NE Road", "ring": 3.5, "angle": 45, "stats": ["+15% Buff Effect", "+15% Debuff Effect"], "connections": ["travel_ne", "hybrid_bd_notable"]},
+    {"id": "hybrid_bd_notable", "name": "Balance Warden", "ring": 5, "angle": 45, "isNotable": true, "stats": ["+35% Buff Effect", "+35% Debuff Effect", "Buffs and Debuffs synergize"], "connections": ["travel_ne2"]},
+
+    {"id": "travel_se", "name": "SE Path", "ring": 2, "angle": 315, "stats": ["+12% Debuff Effect", "+40 Life"], "connections": ["travel_e", "travel_se2"]},
+    {"id": "travel_se2", "name": "SE Road", "ring": 3.5, "angle": 315, "stats": ["+15% Debuff Effect", "+55 Life"], "connections": ["travel_se", "hybrid_dl_notable"]},
+    {"id": "hybrid_dl_notable", "name": "Vital Curser", "ring": 5, "angle": 315, "isNotable": true, "stats": ["+35% Debuff Effect", "+140 Life", "Curses heal you"], "connections": ["travel_se2"]},
+
+    {"id": "travel_sw", "name": "SW Path", "ring": 2, "angle": 225, "stats": ["+40 Life", "+30 Mana"], "connections": ["travel_s", "travel_sw2"]},
+    {"id": "travel_sw2", "name": "SW Road", "ring": 3.5, "angle": 225, "stats": ["+55 Life", "+45 Mana"], "connections": ["travel_sw", "hybrid_lm_notable"]},
+    {"id": "hybrid_lm_notable", "name": "Vital Ritual", "ring": 5, "angle": 225, "isNotable": true, "stats": ["+140 Life", "+120 Mana", "Life and Mana synergize"], "connections": ["travel_sw2"]},
+
+    {"id": "travel_nw", "name": "NW Path", "ring": 2, "angle": 135, "stats": ["+30 Mana", "+12% Buff Effect"], "connections": ["travel_w", "travel_nw2"]},
+    {"id": "travel_nw2", "name": "NW Road", "ring": 3.5, "angle": 135, "stats": ["+45 Mana", "+15% Buff Effect"], "connections": ["travel_nw", "hybrid_mb_notable"]},
+    {"id": "hybrid_mb_notable", "name": "Mana Blessing", "ring": 5, "angle": 135, "isNotable": true, "stats": ["+120 Mana", "+35% Buff Effect", "Buffs restore Mana"], "connections": ["travel_nw2"]},
+
+    {"id": "aura1", "name": "Aura 1", "ring": 7, "angle": 45, "stats": ["+15% Aura Effect"], "connections": ["buff_notable", "aura2"]},
+    {"id": "aura2", "name": "Aura 2", "ring": 7.5, "angle": 50, "stats": ["+20% Aura Effect"], "connections": ["aura1", "aura_notable"]},
+    {"id": "aura_notable", "name": "Ritual Aura", "ring": 8, "angle": 45, "isNotable": true, "stats": ["+50% Aura Effect", "Auras count as Rituals", "Auras are permanent"], "connections": ["aura2"]},
+
+    {"id": "dot1", "name": "DoT 1", "ring": 7, "angle": 315, "stats": ["+20% DoT Damage"], "connections": ["debuff_notable", "dot2"]},
+    {"id": "dot2", "name": "DoT 2", "ring": 7.5, "angle": 310, "stats": ["+25% DoT Damage"], "connections": ["dot1", "dot_notable"]},
+    {"id": "dot_notable", "name": "Ritual Decay", "ring": 8, "angle": 315, "isNotable": true, "stats": ["+50% DoT Damage", "Curses deal DoT", "DoT cannot be cleansed"], "connections": ["dot2"]},
+
+    {"id": "cleanse1", "name": "Cleanse 1", "ring": 7, "angle": 225, "stats": ["+20% Cleanse Effect"], "connections": ["life_notable", "cleanse2"]},
+    {"id": "cleanse2", "name": "Cleanse 2", "ring": 7.5, "angle": 220, "stats": ["+25% Cleanse Effect"], "connections": ["cleanse1", "cleanse_notable"]},
+    {"id": "cleanse_notable", "name": "Ritual Cleanse", "ring": 8, "angle": 225, "isNotable": true, "stats": ["Remove all debuffs from allies", "Cleanse heals", "Cleansed allies are immune for 3s"], "connections": ["cleanse2"]},
+
+    {"id": "cooldown1", "name": "Cooldown 1", "ring": 7, "angle": 135, "stats": ["+12% Cooldown Recovery"], "connections": ["mana_notable", "cooldown2"]},
+    {"id": "cooldown2", "name": "Cooldown 2", "ring": 7.5, "angle": 130, "stats": ["+15% Cooldown Recovery"], "connections": ["cooldown1", "cooldown_notable"]},
+    {"id": "cooldown_notable", "name": "Ritual Speed", "ring": 8, "angle": 135, "isNotable": true, "stats": ["+35% Cooldown Recovery", "Rituals have no cooldown", "Cast rituals instantly"], "connections": ["cooldown2"]},
+
+    {"id": "apex_key", "name": "RITUAL GRANDMASTER", "ring": 10.5, "angle": 0, "isKeystone": true, "stats": ["Master of all rituals", "+150% Buff Effect", "+150% Debuff Effect", "+500 Life", "+400 Mana", "All abilities are rituals", "Rituals affect entire battlefield", "Enemies cannot resist your rituals"], "connections": ["buff_key", "debuff_key", "life_key", "mana_key"]}
+  ]
+}

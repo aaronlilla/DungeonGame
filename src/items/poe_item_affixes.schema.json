@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/poe-item-affixes.schema.json",
+  "title": "Path of Exile Item Affix Data",
+  "type": "object",
+  "required": [
+    "itemClass",
+    "affixes"
+  ],
+  "properties": {
+    "itemClass": {
+      "type": "string",
+      "description": "The weapon or item class (e.g. Two Handed Axe)"
+    },
+    "affixes": {
+      "type": "object",
+      "required": [
+        "prefixes",
+        "suffixes"
+      ],
+      "properties": {
+        "prefixes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/affixGroup"
+          }
+        },
+        "suffixes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/affixGroup"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "affixGroup": {
+      "type": "object",
+      "required": [
+        "group",
+        "mods"
+      ],
+      "properties": {
+        "group": {
+          "type": "string",
+          "description": "Official mod group name"
+        },
+        "mods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/modifier"
+          }
+        }
+      }
+    },
+    "modifier": {
+      "type": "object",
+      "required": [
+        "modifier",
+        "iLvl",
+        "stats",
+        "tags"
+      ],
+      "properties": {
+        "modifier": {
+          "type": "string",
+          "description": "Modifier name (e.g. Tyrannical, of the Titan)"
+        },
+        "iLvl": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Required item level"
+        },
+        "stats": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/statLine"
+          },
+          "minItems": 1
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "statLine": {
+      "type": "object",
+      "required": [
+        "stat",
+        "min",
+        "max"
+      ],
+      "properties": {
+        "stat": {
+          "type": "string",
+          "description": "Human-readable stat text"
+        },
+        "min": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          ]
+        },
+        "max": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

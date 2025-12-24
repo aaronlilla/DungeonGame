@@ -1,0 +1,101 @@
+{
+  "name": "Shadow Warden",
+  "color": "#2f4f4f",
+  "nodes": [
+    {"id": "start", "name": "SHADOW WARDEN", "ring": 0, "angle": 0, "isStart": true, "stats": ["You can allocate Passives starting from here"], "connections": ["travel_n", "travel_e", "travel_s", "travel_w"]},
+
+    {"id": "travel_n", "name": "Shadow Path", "ring": 1.5, "angle": 90, "stats": ["+10% Evasion"], "connections": ["start", "travel_n2"]},
+    {"id": "travel_n2", "name": "Dark Road", "ring": 3, "angle": 90, "stats": ["+12% Evasion"], "connections": ["travel_n", "travel_n3", "evasion_cluster1"]},
+    {"id": "travel_n3", "name": "Shade Way", "ring": 4.5, "angle": 90, "stats": ["+15% Evasion"], "connections": ["travel_n2", "evasion_notable", "dodge_cluster1"]},
+    {"id": "evasion_notable", "name": "Shadow Form", "ring": 6, "angle": 90, "isNotable": true, "stats": ["+35% Evasion", "+15% Dodge", "20% chance to phase through attacks"], "connections": ["travel_n3", "travel_n4"]},
+    {"id": "travel_n4", "name": "Void Path", "ring": 7.5, "angle": 90, "stats": ["+18% Evasion"], "connections": ["evasion_notable", "evasion_key"]},
+    {"id": "evasion_key", "name": "LIVING SHADOW", "ring": 9, "angle": 90, "isKeystone": true, "stats": ["+60% Evasion", "+30% Dodge", "Cannot be targeted while in shadows", "Phase through all attacks 25% of time"], "connections": ["travel_n4"]},
+
+    {"id": "evasion_cluster1", "name": "Quick Step", "ring": 3.5, "angle": 115, "stats": ["+12% Evasion"], "connections": ["travel_n2", "evasion_cluster2"]},
+    {"id": "evasion_cluster2", "name": "Fleet Foot", "ring": 4, "angle": 125, "stats": ["+15% Evasion"], "connections": ["evasion_cluster1", "evasion_cluster_notable"]},
+    {"id": "evasion_cluster_notable", "name": "Wind Walker", "ring": 4.5, "angle": 120, "isNotable": true, "stats": ["+30% Evasion", "+10% Move Speed"], "connections": ["evasion_cluster2"]},
+
+    {"id": "dodge_cluster1", "name": "Sidestep", "ring": 5, "angle": 70, "stats": ["+6% Dodge"], "connections": ["travel_n3", "dodge_cluster2"]},
+    {"id": "dodge_cluster2", "name": "Duck", "ring": 5.5, "angle": 60, "stats": ["+8% Dodge"], "connections": ["dodge_cluster1", "dodge_cluster_notable"]},
+    {"id": "dodge_cluster_notable", "name": "Untouchable", "ring": 6, "angle": 65, "isNotable": true, "stats": ["+18% Dodge", "Dodge grants Phasing"], "connections": ["dodge_cluster2"]},
+
+    {"id": "travel_e", "name": "Dagger Path", "ring": 1.5, "angle": 0, "stats": ["+15% Physical Damage"], "connections": ["start", "travel_e2"]},
+    {"id": "travel_e2", "name": "Blade Road", "ring": 3, "angle": 0, "stats": ["+18% Physical Damage"], "connections": ["travel_e", "travel_e3", "phys_cluster1"]},
+    {"id": "travel_e3", "name": "Edge Way", "ring": 4.5, "angle": 0, "stats": ["+22% Physical Damage"], "connections": ["travel_e2", "phys_notable", "crit_cluster1"]},
+    {"id": "phys_notable", "name": "Shadow Strike", "ring": 6, "angle": 0, "isNotable": true, "stats": ["+50% Physical Damage", "+25% Attack Speed", "Attacks from stealth deal double"], "connections": ["travel_e3", "travel_e4"]},
+    {"id": "travel_e4", "name": "Assassination Path", "ring": 7.5, "angle": 0, "stats": ["+25% Physical Damage"], "connections": ["phys_notable", "phys_key"]},
+    {"id": "phys_key", "name": "DEATH'S SHADOW", "ring": 9, "angle": 0, "isKeystone": true, "stats": ["+100% Physical Damage", "+50% Attack Speed", "First strike always crits", "Kills reset stealth"], "connections": ["travel_e4"]},
+
+    {"id": "phys_cluster1", "name": "Sharp Edge", "ring": 3.5, "angle": 335, "stats": ["+18% Physical Damage"], "connections": ["travel_e2", "phys_cluster2"]},
+    {"id": "phys_cluster2", "name": "Keen Blade", "ring": 4, "angle": 325, "stats": ["+20% Physical Damage"], "connections": ["phys_cluster1", "phys_cluster_notable"]},
+    {"id": "phys_cluster_notable", "name": "Razor", "ring": 4.5, "angle": 330, "isNotable": true, "stats": ["+45% Physical Damage", "Bleed on hit"], "connections": ["phys_cluster2"]},
+
+    {"id": "crit_cluster1", "name": "Precision", "ring": 5, "angle": 25, "stats": ["+15% Crit Chance"], "connections": ["travel_e3", "crit_cluster2"]},
+    {"id": "crit_cluster2", "name": "Deadly Aim", "ring": 5.5, "angle": 35, "stats": ["+20% Crit Chance"], "connections": ["crit_cluster1", "crit_cluster_notable"]},
+    {"id": "crit_cluster_notable", "name": "Assassin's Mark", "ring": 6, "angle": 30, "isNotable": true, "stats": ["+45% Crit Chance", "+40% Crit Multi", "Guaranteed crit from stealth"], "connections": ["crit_cluster2"]},
+
+    {"id": "travel_s", "name": "Life Path", "ring": 1.5, "angle": 270, "stats": ["+35 Life"], "connections": ["start", "travel_s2"]},
+    {"id": "travel_s2", "name": "Vital Road", "ring": 3, "angle": 270, "stats": ["+45 Life"], "connections": ["travel_s", "travel_s3", "life_cluster1"]},
+    {"id": "travel_s3", "name": "Heart Way", "ring": 4.5, "angle": 270, "stats": ["+55 Life"], "connections": ["travel_s2", "life_notable", "leech_cluster1"]},
+    {"id": "life_notable", "name": "Shadow's Endurance", "ring": 6, "angle": 270, "isNotable": true, "stats": ["+150 Life", "+10% Max Life", "Life Leech is instant"], "connections": ["travel_s3", "travel_s4"]},
+    {"id": "travel_s4", "name": "Immortal Path", "ring": 7.5, "angle": 270, "stats": ["+70 Life"], "connections": ["life_notable", "life_key"]},
+    {"id": "life_key", "name": "IMMORTAL SHADOW", "ring": 9, "angle": 270, "isKeystone": true, "stats": ["+350 Life", "+20% Max Life", "Invulnerable 1s at low Life (60s cd)", "Kills restore Life"], "connections": ["travel_s4"]},
+
+    {"id": "life_cluster1", "name": "Vitality", "ring": 3.5, "angle": 245, "stats": ["+45 Life"], "connections": ["travel_s2", "life_cluster2"]},
+    {"id": "life_cluster2", "name": "Constitution", "ring": 4, "angle": 235, "stats": ["+55 Life"], "connections": ["life_cluster1", "life_cluster_notable"]},
+    {"id": "life_cluster_notable", "name": "Tenacity", "ring": 4.5, "angle": 240, "isNotable": true, "stats": ["+120 Life", "+8% Max Life"], "connections": ["life_cluster2"]},
+
+    {"id": "leech_cluster1", "name": "Life Tap", "ring": 5, "angle": 290, "stats": ["0.6% Damage Leeched as Life"], "connections": ["travel_s3", "leech_cluster2"]},
+    {"id": "leech_cluster2", "name": "Vampirism", "ring": 5.5, "angle": 300, "stats": ["0.8% Damage Leeched as Life"], "connections": ["leech_cluster1", "leech_cluster_notable"]},
+    {"id": "leech_cluster_notable", "name": "Blood Drinker", "ring": 6, "angle": 295, "isNotable": true, "stats": ["2% Damage Leeched as Life", "+50% Leech Rate"], "connections": ["leech_cluster2"]},
+
+    {"id": "travel_w", "name": "Energy Path", "ring": 1.5, "angle": 180, "stats": ["+25 Energy Shield"], "connections": ["start", "travel_w2"]},
+    {"id": "travel_w2", "name": "Spirit Road", "ring": 3, "angle": 180, "stats": ["+35 Energy Shield"], "connections": ["travel_w", "travel_w3", "es_cluster1"]},
+    {"id": "travel_w3", "name": "Ghost Way", "ring": 4.5, "angle": 180, "stats": ["+45 Energy Shield"], "connections": ["travel_w2", "es_notable", "spell_dodge_cluster1"]},
+    {"id": "es_notable", "name": "Ghost Shield", "ring": 6, "angle": 180, "isNotable": true, "stats": ["+130 ES", "+15% Max ES", "ES recharges on dodge"], "connections": ["travel_w3", "travel_w4"]},
+    {"id": "travel_w4", "name": "Specter Path", "ring": 7.5, "angle": 180, "stats": ["+55 Energy Shield"], "connections": ["es_notable", "es_key"]},
+    {"id": "es_key", "name": "PHANTOM AEGIS", "ring": 9, "angle": 180, "isKeystone": true, "stats": ["+280 ES", "+25% Max ES", "ES recharge not interrupted", "ES protects against one-shots"], "connections": ["travel_w4"]},
+
+    {"id": "es_cluster1", "name": "Spirit Pool", "ring": 3.5, "angle": 155, "stats": ["+35 ES"], "connections": ["travel_w2", "es_cluster2"]},
+    {"id": "es_cluster2", "name": "Spirit Flow", "ring": 4, "angle": 145, "stats": ["+45 ES"], "connections": ["es_cluster1", "es_cluster_notable"]},
+    {"id": "es_cluster_notable", "name": "Spirit Barrier", "ring": 4.5, "angle": 150, "isNotable": true, "stats": ["+100 ES", "+10% Max ES"], "connections": ["es_cluster2"]},
+
+    {"id": "spell_dodge_cluster1", "name": "Spell Sidestep", "ring": 5, "angle": 200, "stats": ["+6% Spell Dodge"], "connections": ["travel_w3", "spell_dodge_cluster2"]},
+    {"id": "spell_dodge_cluster2", "name": "Magic Dodge", "ring": 5.5, "angle": 210, "stats": ["+8% Spell Dodge"], "connections": ["spell_dodge_cluster1", "spell_dodge_cluster_notable"]},
+    {"id": "spell_dodge_cluster_notable", "name": "Spell Ghost", "ring": 6, "angle": 205, "isNotable": true, "stats": ["+18% Spell Dodge", "Dodged spells restore ES"], "connections": ["spell_dodge_cluster2"]},
+
+    {"id": "travel_ne", "name": "NE Path", "ring": 2, "angle": 45, "stats": ["+8% Evasion", "+12% Physical Damage"], "connections": ["travel_n", "travel_ne2"]},
+    {"id": "travel_ne2", "name": "NE Road", "ring": 3.5, "angle": 45, "stats": ["+10% Evasion", "+15% Physical Damage"], "connections": ["travel_ne", "hybrid_ep_notable"]},
+    {"id": "hybrid_ep_notable", "name": "Elusive Striker", "ring": 5, "angle": 45, "isNotable": true, "stats": ["+25% Evasion", "+35% Physical Damage", "Evasion grants damage"], "connections": ["travel_ne2"]},
+
+    {"id": "travel_se", "name": "SE Path", "ring": 2, "angle": 315, "stats": ["+12% Physical Damage", "+30 Life"], "connections": ["travel_e", "travel_se2"]},
+    {"id": "travel_se2", "name": "SE Road", "ring": 3.5, "angle": 315, "stats": ["+15% Physical Damage", "+40 Life"], "connections": ["travel_se", "hybrid_pl_notable"]},
+    {"id": "hybrid_pl_notable", "name": "Vital Striker", "ring": 5, "angle": 315, "isNotable": true, "stats": ["+35% Physical Damage", "+100 Life", "Kills restore Life"], "connections": ["travel_se2"]},
+
+    {"id": "travel_sw", "name": "SW Path", "ring": 2, "angle": 225, "stats": ["+30 Life", "+20 ES"], "connections": ["travel_s", "travel_sw2"]},
+    {"id": "travel_sw2", "name": "SW Road", "ring": 3.5, "angle": 225, "stats": ["+40 Life", "+30 ES"], "connections": ["travel_sw", "hybrid_le_notable"]},
+    {"id": "hybrid_le_notable", "name": "Dual Defense", "ring": 5, "angle": 225, "isNotable": true, "stats": ["+100 Life", "+80 ES", "Life and ES synergize"], "connections": ["travel_sw2"]},
+
+    {"id": "travel_nw", "name": "NW Path", "ring": 2, "angle": 135, "stats": ["+20 ES", "+8% Evasion"], "connections": ["travel_w", "travel_nw2"]},
+    {"id": "travel_nw2", "name": "NW Road", "ring": 3.5, "angle": 135, "stats": ["+30 ES", "+10% Evasion"], "connections": ["travel_nw", "hybrid_ee_notable"]},
+    {"id": "hybrid_ee_notable", "name": "Ghost Evasion", "ring": 5, "angle": 135, "isNotable": true, "stats": ["+80 ES", "+25% Evasion", "Evade restores ES"], "connections": ["travel_nw2"]},
+
+    {"id": "stealth1", "name": "Stealth 1", "ring": 7, "angle": 45, "stats": ["+15% Stealth Effect"], "connections": ["evasion_notable", "stealth2"]},
+    {"id": "stealth2", "name": "Stealth 2", "ring": 7.5, "angle": 50, "stats": ["+20% Stealth Effect"], "connections": ["stealth1", "stealth_notable"]},
+    {"id": "stealth_notable", "name": "Perfect Stealth", "ring": 8, "angle": 45, "isNotable": true, "stats": ["+40% Stealth Effect", "Stealth lasts longer", "First attack from stealth always crits"], "connections": ["stealth2"]},
+
+    {"id": "poison1", "name": "Poison 1", "ring": 7, "angle": 315, "stats": ["+20% Poison Damage"], "connections": ["phys_notable", "poison2"]},
+    {"id": "poison2", "name": "Poison 2", "ring": 7.5, "angle": 310, "stats": ["+25% Poison Damage"], "connections": ["poison1", "poison_notable"]},
+    {"id": "poison_notable", "name": "Deadly Venom", "ring": 8, "angle": 315, "isNotable": true, "stats": ["+50% Poison Damage", "Poison stacks", "100% chance to poison"], "connections": ["poison2"]},
+
+    {"id": "frenzy1", "name": "Frenzy 1", "ring": 7, "angle": 225, "stats": ["+1 Frenzy Charge"], "connections": ["life_notable", "frenzy2"]},
+    {"id": "frenzy2", "name": "Frenzy 2", "ring": 7.5, "angle": 220, "stats": ["+20% Frenzy Duration"], "connections": ["frenzy1", "frenzy_notable"]},
+    {"id": "frenzy_notable", "name": "Shadow Frenzy", "ring": 8, "angle": 225, "isNotable": true, "stats": ["+2 Max Frenzy", "Frenzy grants Evasion"], "connections": ["frenzy2"]},
+
+    {"id": "phase1", "name": "Phase 1", "ring": 7, "angle": 135, "stats": ["+15% Phasing Effect"], "connections": ["es_notable", "phase2"]},
+    {"id": "phase2", "name": "Phase 2", "ring": 7.5, "angle": 130, "stats": ["+20% Phasing Effect"], "connections": ["phase1", "phase_notable"]},
+    {"id": "phase_notable", "name": "Permanent Phase", "ring": 8, "angle": 135, "isNotable": true, "stats": ["Permanent Phasing", "Phasing grants damage", "Walk through enemies"], "connections": ["phase2"]},
+
+    {"id": "apex_key", "name": "SHADOW MASTER", "ring": 10.5, "angle": 0, "isKeystone": true, "stats": ["One with the shadows", "+50% Evasion", "+100% Physical Damage", "+250 Life", "+150 ES", "Permanent Stealth and Phasing", "Cannot be targeted while moving", "All strikes from shadow deal triple damage"], "connections": ["evasion_key", "phys_key", "life_key", "es_key"]}
+  ]
+}

@@ -1,0 +1,425 @@
+{
+  "itemClass": "Boots (Energy Shield)",
+  "affixes": {
+    "prefixes": [
+      {
+        "group": "IncreasedMana",
+        "mods": [
+          {
+            "modifier": "Beryl",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 15,
+                "max": 19
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Cobalt",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 20,
+                "max": 24
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Azure",
+            "iLvl": 17,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 25,
+                "max": 29
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Sapphire",
+            "iLvl": 23,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 30,
+                "max": 34
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Cerulean",
+            "iLvl": 29,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 35,
+                "max": 39
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Aqua",
+            "iLvl": 35,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 40,
+                "max": 44
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Opalescent",
+            "iLvl": 42,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 45,
+                "max": 49
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Gentian",
+            "iLvl": 51,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 50,
+                "max": 54
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Chalybeous",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 55,
+                "max": 59
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Mazarine",
+            "iLvl": 69,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 60,
+                "max": 64
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Blue",
+            "iLvl": 75,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 65,
+                "max": 68
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "modifier": "Zaffre",
+            "iLvl": 81,
+            "stats": [
+              {
+                "stat": "+# to maximum Mana",
+                "min": 69,
+                "max": 73
+              }
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ItemFoundRarityIncreasePrefix",
+        "mods": [
+          {
+            "modifier": "Magpie's",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "#% increased Rarity of Items found",
+                "min": 8,
+                "max": 12
+              }
+            ],
+            "tags": [
+              "drop"
+            ]
+          },
+          {
+            "modifier": "Pirate's",
+            "iLvl": 39,
+            "stats": [
+              {
+                "stat": "#% increased Rarity of Items found",
+                "min": 13,
+                "max": 18
+              }
+            ],
+            "tags": [
+              "drop"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MovementVelocity",
+        "mods": [
+          {
+            "modifier": "Runner's",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "#% increased Movement Speed",
+                "min": 10,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "speed"
+            ]
+          },
+          {
+            "modifier": "Sprinter's",
+            "iLvl": 15,
+            "stats": [
+              {
+                "stat": "#% increased Movement Speed",
+                "min": 15,
+                "max": 15
+              }
+            ],
+            "tags": [
+              "speed"
+            ]
+          },
+          {
+            "modifier": "Stallion's",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "#% increased Movement Speed",
+                "min": 20,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "speed"
+            ]
+          },
+          {
+            "modifier": "Gazelle's",
+            "iLvl": 40,
+            "stats": [
+              {
+                "stat": "#% increased Movement Speed",
+                "min": 25,
+                "max": 25
+              }
+            ],
+            "tags": [
+              "speed"
+            ]
+          },
+          {
+            "modifier": "Cheetah's",
+            "iLvl": 55,
+            "stats": [
+              {
+                "stat": "#% increased Movement Speed",
+                "min": 30,
+                "max": 30
+              }
+            ],
+            "tags": [
+              "speed"
+            ]
+          },
+          {
+            "modifier": "Hellion's",
+            "iLvl": 86,
+            "stats": [
+              {
+                "stat": "#% increased Movement Speed",
+                "min": 35,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "speed"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "BaseLocalDefences",
+        "mods": [
+          {
+            "modifier": "Shining",
+            "iLvl": 3,
+            "stats": [
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 3,
+                "max": 5
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Glimmering",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 6,
+                "max": 11
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Glittering",
+            "iLvl": 17,
+            "stats": [
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 12,
+                "max": 16
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Glowing",
+            "iLvl": 23,
+            "stats": [
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 17,
+                "max": 23
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Radiating",
+            "iLvl": 29,
+            "stats": [
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 24,
+                "max": 30
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Pulsing",
+            "iLvl": 35,
+            "stats": [
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 31,
+                "max": 38
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Seething",
+            "iLvl": 43,
+            "stats": [
+              {
+                "stat": "+# to maximum Energy Shield",
+                "min": 39,
+                "max": 49
+              }
+            ],
+            "tags": [
+              "energy_shield",
+              "defences"
+            ]
+          }
+        ]
+      }
+    ],
+    "suffixes": []
+  }
+}

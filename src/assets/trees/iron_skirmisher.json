@@ -1,0 +1,101 @@
+{
+  "name": "Iron Skirmisher",
+  "color": "#708090",
+  "nodes": [
+    {"id": "start", "name": "IRON SKIRMISHER", "ring": 0, "angle": 0, "isStart": true, "stats": ["You can allocate Passives starting from here"], "connections": ["travel_n", "travel_e", "travel_s", "travel_w"]},
+
+    {"id": "travel_n", "name": "Attack Path", "ring": 1.5, "angle": 90, "stats": ["+15% Physical Damage"], "connections": ["start", "travel_n2"]},
+    {"id": "travel_n2", "name": "Strike Road", "ring": 3, "angle": 90, "stats": ["+18% Physical Damage"], "connections": ["travel_n", "travel_n3", "phys_cluster1"]},
+    {"id": "travel_n3", "name": "Assault Way", "ring": 4.5, "angle": 90, "stats": ["+22% Physical Damage"], "connections": ["travel_n2", "phys_notable", "attack_speed_cluster1"]},
+    {"id": "phys_notable", "name": "Iron Strike", "ring": 6, "angle": 90, "isNotable": true, "stats": ["+50% Physical Damage", "+25% Attack Speed", "Attacks penetrate Armour"], "connections": ["travel_n3", "travel_n4"]},
+    {"id": "travel_n4", "name": "Devastation Path", "ring": 7.5, "angle": 90, "stats": ["+25% Physical Damage"], "connections": ["phys_notable", "phys_key"]},
+    {"id": "phys_key", "name": "IRON DEVASTATION", "ring": 9, "angle": 90, "isKeystone": true, "stats": ["+100% Physical Damage", "+50% Attack Speed", "Attacks cannot be blocked or evaded", "Critical hits deal triple damage"], "connections": ["travel_n4"]},
+
+    {"id": "phys_cluster1", "name": "Heavy Strike", "ring": 3.5, "angle": 115, "stats": ["+18% Physical Damage"], "connections": ["travel_n2", "phys_cluster2"]},
+    {"id": "phys_cluster2", "name": "Crushing Blow", "ring": 4, "angle": 125, "stats": ["+20% Physical Damage"], "connections": ["phys_cluster1", "phys_cluster_notable"]},
+    {"id": "phys_cluster_notable", "name": "Devastating Strike", "ring": 4.5, "angle": 120, "isNotable": true, "stats": ["+45% Physical Damage", "+50 Accuracy"], "connections": ["phys_cluster2"]},
+
+    {"id": "attack_speed_cluster1", "name": "Quick Attack", "ring": 5, "angle": 70, "stats": ["+10% Attack Speed"], "connections": ["travel_n3", "attack_speed_cluster2"]},
+    {"id": "attack_speed_cluster2", "name": "Rapid Attack", "ring": 5.5, "angle": 60, "stats": ["+12% Attack Speed"], "connections": ["attack_speed_cluster1", "attack_speed_cluster_notable"]},
+    {"id": "attack_speed_cluster_notable", "name": "Lightning Attack", "ring": 6, "angle": 65, "isNotable": true, "stats": ["+30% Attack Speed", "+10% Move Speed"], "connections": ["attack_speed_cluster2"]},
+
+    {"id": "travel_e", "name": "Armor Path", "ring": 1.5, "angle": 0, "stats": ["+60 Armour"], "connections": ["start", "travel_e2"]},
+    {"id": "travel_e2", "name": "Steel Road", "ring": 3, "angle": 0, "stats": ["+80 Armour"], "connections": ["travel_e", "travel_e3", "armor_cluster1"]},
+    {"id": "travel_e3", "name": "Iron Way", "ring": 4.5, "angle": 0, "stats": ["+100 Armour"], "connections": ["travel_e2", "armor_notable", "phys_reduction_cluster1"]},
+    {"id": "armor_notable", "name": "Iron Fortress", "ring": 6, "angle": 0, "isNotable": true, "stats": ["+300 Armour", "+15% Armour", "+8% Phys Reduction"], "connections": ["travel_e3", "travel_e4"]},
+    {"id": "travel_e4", "name": "Bastion Path", "ring": 7.5, "angle": 0, "stats": ["+120 Armour"], "connections": ["armor_notable", "armor_key"]},
+    {"id": "armor_key", "name": "IRON TITAN", "ring": 9, "angle": 0, "isKeystone": true, "stats": ["+800 Armour", "+30% Armour", "+15% Phys Reduction", "Armour reduces Elemental by 30%"], "connections": ["travel_e4"]},
+
+    {"id": "armor_cluster1", "name": "Plate Mail", "ring": 3.5, "angle": 335, "stats": ["+80 Armour"], "connections": ["travel_e2", "armor_cluster2"]},
+    {"id": "armor_cluster2", "name": "Heavy Plate", "ring": 4, "angle": 325, "stats": ["+100 Armour"], "connections": ["armor_cluster1", "armor_cluster_notable"]},
+    {"id": "armor_cluster_notable", "name": "Adamantine", "ring": 4.5, "angle": 330, "isNotable": true, "stats": ["+250 Armour", "+50 Life"], "connections": ["armor_cluster2"]},
+
+    {"id": "phys_reduction_cluster1", "name": "Thick Skin", "ring": 5, "angle": 25, "stats": ["3% Phys Reduction"], "connections": ["travel_e3", "phys_reduction_cluster2"]},
+    {"id": "phys_reduction_cluster2", "name": "Stone Skin", "ring": 5.5, "angle": 35, "stats": ["4% Phys Reduction"], "connections": ["phys_reduction_cluster1", "phys_reduction_cluster_notable"]},
+    {"id": "phys_reduction_cluster_notable", "name": "Iron Skin", "ring": 6, "angle": 30, "isNotable": true, "stats": ["10% Phys Reduction", "Cannot be Stunned"], "connections": ["phys_reduction_cluster2"]},
+
+    {"id": "travel_s", "name": "Life Path", "ring": 1.5, "angle": 270, "stats": ["+45 Life"], "connections": ["start", "travel_s2"]},
+    {"id": "travel_s2", "name": "Vital Road", "ring": 3, "angle": 270, "stats": ["+60 Life"], "connections": ["travel_s", "travel_s3", "life_cluster1"]},
+    {"id": "travel_s3", "name": "Heart Way", "ring": 4.5, "angle": 270, "stats": ["+75 Life"], "connections": ["travel_s2", "life_notable", "regen_cluster1"]},
+    {"id": "life_notable", "name": "Iron Vitality", "ring": 6, "angle": 270, "isNotable": true, "stats": ["+200 Life", "+15% Max Life", "+0.8% Life Regen"], "connections": ["travel_s3", "travel_s4"]},
+    {"id": "travel_s4", "name": "Immortal Path", "ring": 7.5, "angle": 270, "stats": ["+95 Life"], "connections": ["life_notable", "life_key"]},
+    {"id": "life_key", "name": "IRON IMMORTAL", "ring": 9, "angle": 270, "isKeystone": true, "stats": ["+500 Life", "+30% Max Life", "+2% Life Regen", "Cannot be reduced below 1 Life"], "connections": ["travel_s4"]},
+
+    {"id": "life_cluster1", "name": "Vitality", "ring": 3.5, "angle": 245, "stats": ["+60 Life"], "connections": ["travel_s2", "life_cluster2"]},
+    {"id": "life_cluster2", "name": "Constitution", "ring": 4, "angle": 235, "stats": ["+75 Life"], "connections": ["life_cluster1", "life_cluster_notable"]},
+    {"id": "life_cluster_notable", "name": "Robust", "ring": 4.5, "angle": 240, "isNotable": true, "stats": ["+180 Life", "+12% Max Life"], "connections": ["life_cluster2"]},
+
+    {"id": "regen_cluster1", "name": "Recovery", "ring": 5, "angle": 290, "stats": ["+0.4% Life Regen"], "connections": ["travel_s3", "regen_cluster2"]},
+    {"id": "regen_cluster2", "name": "Renewal", "ring": 5.5, "angle": 300, "stats": ["+0.5% Life Regen"], "connections": ["regen_cluster1", "regen_cluster_notable"]},
+    {"id": "regen_cluster_notable", "name": "Iron Renewal", "ring": 6, "angle": 295, "isNotable": true, "stats": ["+1.5% Life Regen", "Regen not interrupted"], "connections": ["regen_cluster2"]},
+
+    {"id": "travel_w", "name": "Mobility Path", "ring": 1.5, "angle": 180, "stats": ["+8% Movement Speed"], "connections": ["start", "travel_w2"]},
+    {"id": "travel_w2", "name": "Speed Road", "ring": 3, "angle": 180, "stats": ["+10% Movement Speed"], "connections": ["travel_w", "travel_w3", "speed_cluster1"]},
+    {"id": "travel_w3", "name": "Agility Way", "ring": 4.5, "angle": 180, "stats": ["+12% Movement Speed"], "connections": ["travel_w2", "speed_notable", "evasion_cluster1"]},
+    {"id": "speed_notable", "name": "Iron Agility", "ring": 6, "angle": 180, "isNotable": true, "stats": ["+25% Movement Speed", "+15% Evasion", "Armour does not slow you"], "connections": ["travel_w3", "travel_w4"]},
+    {"id": "travel_w4", "name": "Flash Path", "ring": 7.5, "angle": 180, "stats": ["+15% Movement Speed"], "connections": ["speed_notable", "speed_key"]},
+    {"id": "speed_key", "name": "IRON WIND", "ring": 9, "angle": 180, "isKeystone": true, "stats": ["+50% Movement Speed", "+30% Evasion", "Cannot be slowed", "Move through enemies"], "connections": ["travel_w4"]},
+
+    {"id": "speed_cluster1", "name": "Fleet Foot", "ring": 3.5, "angle": 155, "stats": ["+10% Move Speed"], "connections": ["travel_w2", "speed_cluster2"]},
+    {"id": "speed_cluster2", "name": "Quick Step", "ring": 4, "angle": 145, "stats": ["+12% Move Speed"], "connections": ["speed_cluster1", "speed_cluster_notable"]},
+    {"id": "speed_cluster_notable", "name": "Lightning Step", "ring": 4.5, "angle": 150, "isNotable": true, "stats": ["+25% Move Speed", "+10% Attack Speed"], "connections": ["speed_cluster2"]},
+
+    {"id": "evasion_cluster1", "name": "Dodge", "ring": 5, "angle": 200, "stats": ["+8% Evasion"], "connections": ["travel_w3", "evasion_cluster2"]},
+    {"id": "evasion_cluster2", "name": "Sidestep", "ring": 5.5, "angle": 210, "stats": ["+10% Evasion"], "connections": ["evasion_cluster1", "evasion_cluster_notable"]},
+    {"id": "evasion_cluster_notable", "name": "Iron Evasion", "ring": 6, "angle": 205, "isNotable": true, "stats": ["+25% Evasion", "Evasion grants Armour"], "connections": ["evasion_cluster2"]},
+
+    {"id": "travel_ne", "name": "NE Path", "ring": 2, "angle": 45, "stats": ["+12% Physical Damage", "+50 Armour"], "connections": ["travel_n", "travel_ne2"]},
+    {"id": "travel_ne2", "name": "NE Road", "ring": 3.5, "angle": 45, "stats": ["+15% Physical Damage", "+70 Armour"], "connections": ["travel_ne", "hybrid_pa_notable"]},
+    {"id": "hybrid_pa_notable", "name": "Armored Striker", "ring": 5, "angle": 45, "isNotable": true, "stats": ["+35% Physical Damage", "+180 Armour", "Armour boosts damage"], "connections": ["travel_ne2"]},
+
+    {"id": "travel_se", "name": "SE Path", "ring": 2, "angle": 315, "stats": ["+50 Armour", "+40 Life"], "connections": ["travel_e", "travel_se2"]},
+    {"id": "travel_se2", "name": "SE Road", "ring": 3.5, "angle": 315, "stats": ["+70 Armour", "+55 Life"], "connections": ["travel_se", "hybrid_al_notable"]},
+    {"id": "hybrid_al_notable", "name": "Iron Defense", "ring": 5, "angle": 315, "isNotable": true, "stats": ["+180 Armour", "+140 Life", "Life and Armour synergize"], "connections": ["travel_se2"]},
+
+    {"id": "travel_sw", "name": "SW Path", "ring": 2, "angle": 225, "stats": ["+40 Life", "+8% Move Speed"], "connections": ["travel_s", "travel_sw2"]},
+    {"id": "travel_sw2", "name": "SW Road", "ring": 3.5, "angle": 225, "stats": ["+55 Life", "+10% Move Speed"], "connections": ["travel_sw", "hybrid_ls_notable"]},
+    {"id": "hybrid_ls_notable", "name": "Swift Warrior", "ring": 5, "angle": 225, "isNotable": true, "stats": ["+140 Life", "+25% Move Speed", "Move Speed grants Life"], "connections": ["travel_sw2"]},
+
+    {"id": "travel_nw", "name": "NW Path", "ring": 2, "angle": 135, "stats": ["+8% Move Speed", "+12% Physical Damage"], "connections": ["travel_w", "travel_nw2"]},
+    {"id": "travel_nw2", "name": "NW Road", "ring": 3.5, "angle": 135, "stats": ["+10% Move Speed", "+15% Physical Damage"], "connections": ["travel_nw", "hybrid_sp_notable"]},
+    {"id": "hybrid_sp_notable", "name": "Swift Striker", "ring": 5, "angle": 135, "isNotable": true, "stats": ["+25% Move Speed", "+35% Physical Damage", "Speed boosts damage"], "connections": ["travel_nw2"]},
+
+    {"id": "crit1", "name": "Crit 1", "ring": 7, "angle": 45, "stats": ["+15% Crit Chance"], "connections": ["phys_notable", "crit2"]},
+    {"id": "crit2", "name": "Crit 2", "ring": 7.5, "angle": 50, "stats": ["+20% Crit Chance"], "connections": ["crit1", "crit_notable"]},
+    {"id": "crit_notable", "name": "Iron Precision", "ring": 8, "angle": 45, "isNotable": true, "stats": ["+45% Crit Chance", "+50% Crit Multi"], "connections": ["crit2"]},
+
+    {"id": "block1", "name": "Block 1", "ring": 7, "angle": 315, "stats": ["+5% Block Chance"], "connections": ["armor_notable", "block2"]},
+    {"id": "block2", "name": "Block 2", "ring": 7.5, "angle": 310, "stats": ["+6% Block Chance"], "connections": ["block1", "block_notable"]},
+    {"id": "block_notable", "name": "Iron Block", "ring": 8, "angle": 315, "isNotable": true, "stats": ["+12% Block Chance", "Block grants Armour"], "connections": ["block2"]},
+
+    {"id": "leech1", "name": "Leech 1", "ring": 7, "angle": 225, "stats": ["0.5% Damage Leeched as Life"], "connections": ["life_notable", "leech2"]},
+    {"id": "leech2", "name": "Leech 2", "ring": 7.5, "angle": 220, "stats": ["0.7% Damage Leeched as Life"], "connections": ["leech1", "leech_notable"]},
+    {"id": "leech_notable", "name": "Iron Leech", "ring": 8, "angle": 225, "isNotable": true, "stats": ["2% Damage Leeched as Life", "Leech is instant at low Life"], "connections": ["leech2"]},
+
+    {"id": "stun1", "name": "Stun 1", "ring": 7, "angle": 135, "stats": ["+20% Stun Chance"], "connections": ["speed_notable", "stun2"]},
+    {"id": "stun2", "name": "Stun 2", "ring": 7.5, "angle": 130, "stats": ["+25% Stun Chance"], "connections": ["stun1", "stun_notable"]},
+    {"id": "stun_notable", "name": "Iron Stun", "ring": 8, "angle": 135, "isNotable": true, "stats": ["+50% Stun Chance", "Stuns last longer", "Stunned enemies take more damage"], "connections": ["stun2"]},
+
+    {"id": "apex_key", "name": "IRON WARLORD", "ring": 10.5, "angle": 0, "isKeystone": true, "stats": ["The ultimate iron warrior", "+150% Physical Damage", "+1000 Armour", "+500 Life", "+40% Move Speed", "Attacks devastate all defenses", "Cannot be stopped or slowed", "Immune to physical damage below threshold"], "connections": ["phys_key", "armor_key", "life_key", "speed_key"]}
+  ]
+}

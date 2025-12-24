@@ -1,0 +1,101 @@
+{
+  "name": "Martyr",
+  "color": "#ff6347",
+  "nodes": [
+    {"id": "start", "name": "MARTYR", "ring": 0, "angle": 0, "isStart": true, "stats": ["You can allocate Passives starting from here"], "connections": ["travel_n", "travel_e", "travel_s", "travel_w"]},
+
+    {"id": "travel_n", "name": "Sacrifice Path", "ring": 1.5, "angle": 90, "stats": ["+15% Healing Effect"], "connections": ["start", "travel_n2"]},
+    {"id": "travel_n2", "name": "Offering Road", "ring": 3, "angle": 90, "stats": ["+18% Healing Effect"], "connections": ["travel_n", "travel_n3", "heal_cluster1"]},
+    {"id": "travel_n3", "name": "Gift Way", "ring": 4.5, "angle": 90, "stats": ["+22% Healing Effect"], "connections": ["travel_n2", "heal_notable", "absorb_cluster1"]},
+    {"id": "heal_notable", "name": "Self-Sacrifice", "ring": 6, "angle": 90, "isNotable": true, "stats": ["+50% Healing Effect", "Spend Life to heal others", "Healing is 100% more effective"], "connections": ["travel_n3", "travel_n4"]},
+    {"id": "travel_n4", "name": "Martyr Path", "ring": 7.5, "angle": 90, "stats": ["+25% Healing Effect"], "connections": ["heal_notable", "heal_key"]},
+    {"id": "heal_key", "name": "ULTIMATE SACRIFICE", "ring": 9, "angle": 90, "isKeystone": true, "stats": ["+150% Healing Effect", "Your Life heals allies", "Die to fully heal team (revive in 5s)", "Allies cannot die while you live"], "connections": ["travel_n4"]},
+
+    {"id": "heal_cluster1", "name": "Gentle Touch", "ring": 3.5, "angle": 115, "stats": ["+18% Healing"], "connections": ["travel_n2", "heal_cluster2"]},
+    {"id": "heal_cluster2", "name": "Caring Hands", "ring": 4, "angle": 125, "stats": ["+20% Healing"], "connections": ["heal_cluster1", "heal_cluster_notable"]},
+    {"id": "heal_cluster_notable", "name": "Divine Touch", "ring": 4.5, "angle": 120, "isNotable": true, "stats": ["+45% Healing", "Healing removes debuffs"], "connections": ["heal_cluster2"]},
+
+    {"id": "absorb_cluster1", "name": "Absorb Pain", "ring": 5, "angle": 70, "stats": ["+10% Damage Absorption"], "connections": ["travel_n3", "absorb_cluster2"]},
+    {"id": "absorb_cluster2", "name": "Take Suffering", "ring": 5.5, "angle": 60, "stats": ["+12% Damage Absorption"], "connections": ["absorb_cluster1", "absorb_cluster_notable"]},
+    {"id": "absorb_cluster_notable", "name": "Martyr's Burden", "ring": 6, "angle": 65, "isNotable": true, "stats": ["+30% Damage Absorption", "Absorb ally damage", "Absorbed damage heals you"], "connections": ["absorb_cluster2"]},
+
+    {"id": "travel_e", "name": "Life Path", "ring": 1.5, "angle": 0, "stats": ["+50 Life"], "connections": ["start", "travel_e2"]},
+    {"id": "travel_e2", "name": "Vital Road", "ring": 3, "angle": 0, "stats": ["+70 Life"], "connections": ["travel_e", "travel_e3", "life_cluster1"]},
+    {"id": "travel_e3", "name": "Heart Way", "ring": 4.5, "angle": 0, "stats": ["+90 Life"], "connections": ["travel_e2", "life_notable", "regen_cluster1"]},
+    {"id": "life_notable", "name": "Endless Life", "ring": 6, "angle": 0, "isNotable": true, "stats": ["+220 Life", "+20% Max Life", "+2% Life Regen"], "connections": ["travel_e3", "travel_e4"]},
+    {"id": "travel_e4", "name": "Immortal Path", "ring": 7.5, "angle": 0, "stats": ["+110 Life"], "connections": ["life_notable", "life_key"]},
+    {"id": "life_key", "name": "INFINITE LIFE", "ring": 9, "angle": 0, "isKeystone": true, "stats": ["+600 Life", "+40% Max Life", "+5% Life Regen", "Life regenerates even when dead", "Revive with full Life"], "connections": ["travel_e4"]},
+
+    {"id": "life_cluster1", "name": "Vitality", "ring": 3.5, "angle": 335, "stats": ["+70 Life"], "connections": ["travel_e2", "life_cluster2"]},
+    {"id": "life_cluster2", "name": "Constitution", "ring": 4, "angle": 325, "stats": ["+90 Life"], "connections": ["life_cluster1", "life_cluster_notable"]},
+    {"id": "life_cluster_notable", "name": "Robust", "ring": 4.5, "angle": 330, "isNotable": true, "stats": ["+200 Life", "+15% Max Life"], "connections": ["life_cluster2"]},
+
+    {"id": "regen_cluster1", "name": "Recovery", "ring": 5, "angle": 25, "stats": ["+0.6% Life Regen"], "connections": ["travel_e3", "regen_cluster2"]},
+    {"id": "regen_cluster2", "name": "Renewal", "ring": 5.5, "angle": 35, "stats": ["+0.8% Life Regen"], "connections": ["regen_cluster1", "regen_cluster_notable"]},
+    {"id": "regen_cluster_notable", "name": "Endless Renewal", "ring": 6, "angle": 30, "isNotable": true, "stats": ["+2.5% Life Regen", "Regen not interrupted"], "connections": ["regen_cluster2"]},
+
+    {"id": "travel_s", "name": "Shield Path", "ring": 1.5, "angle": 270, "stats": ["+15% Shield Effect"], "connections": ["start", "travel_s2"]},
+    {"id": "travel_s2", "name": "Barrier Road", "ring": 3, "angle": 270, "stats": ["+18% Shield Effect"], "connections": ["travel_s", "travel_s3", "shield_cluster1"]},
+    {"id": "travel_s3", "name": "Ward Way", "ring": 4.5, "angle": 270, "stats": ["+22% Shield Effect"], "connections": ["travel_s2", "shield_notable", "ally_shield_cluster1"]},
+    {"id": "shield_notable", "name": "Living Shield", "ring": 6, "angle": 270, "isNotable": true, "stats": ["+50% Shield Effect", "Create shields from your Life", "Shields absorb damage for allies"], "connections": ["travel_s3", "travel_s4"]},
+    {"id": "travel_s4", "name": "Aegis Path", "ring": 7.5, "angle": 270, "stats": ["+25% Shield Effect"], "connections": ["shield_notable", "shield_key"]},
+    {"id": "shield_key", "name": "MARTYR'S AEGIS", "ring": 9, "angle": 270, "isKeystone": true, "stats": ["+100% Shield Effect", "Permanent shield on allies", "Your Life becomes team shield", "Shields regenerate from your Regen"], "connections": ["travel_s4"]},
+
+    {"id": "shield_cluster1", "name": "Barrier", "ring": 3.5, "angle": 245, "stats": ["+18% Shield Effect"], "connections": ["travel_s2", "shield_cluster2"]},
+    {"id": "shield_cluster2", "name": "Bulwark", "ring": 4, "angle": 235, "stats": ["+20% Shield Effect"], "connections": ["shield_cluster1", "shield_cluster_notable"]},
+    {"id": "shield_cluster_notable", "name": "Fortress", "ring": 4.5, "angle": 240, "isNotable": true, "stats": ["+45% Shield Effect", "Shields grant Life Regen"], "connections": ["shield_cluster2"]},
+
+    {"id": "ally_shield_cluster1", "name": "Ally Shield", "ring": 5, "angle": 290, "stats": ["+15% Ally Shield"], "connections": ["travel_s3", "ally_shield_cluster2"]},
+    {"id": "ally_shield_cluster2", "name": "Team Shield", "ring": 5.5, "angle": 300, "stats": ["+20% Ally Shield"], "connections": ["ally_shield_cluster1", "ally_shield_cluster_notable"]},
+    {"id": "ally_shield_cluster_notable", "name": "Mass Shield", "ring": 6, "angle": 295, "isNotable": true, "stats": ["+50% Ally Shield", "Shield entire team"], "connections": ["ally_shield_cluster2"]},
+
+    {"id": "travel_w", "name": "Resistance Path", "ring": 1.5, "angle": 180, "stats": ["+10% All Resistances"], "connections": ["start", "travel_w2"]},
+    {"id": "travel_w2", "name": "Endurance Road", "ring": 3, "angle": 180, "stats": ["+12% All Resistances"], "connections": ["travel_w", "travel_w3", "resist_cluster1"]},
+    {"id": "travel_w3", "name": "Immunity Way", "ring": 4.5, "angle": 180, "stats": ["+15% All Resistances"], "connections": ["travel_w2", "resist_notable", "armor_cluster1"]},
+    {"id": "resist_notable", "name": "Martyr's Resistance", "ring": 6, "angle": 180, "isNotable": true, "stats": ["+35% All Resistances", "+3% Max Resistances", "Share resistances with allies"], "connections": ["travel_w3", "travel_w4"]},
+    {"id": "travel_w4", "name": "Immunity Path", "ring": 7.5, "angle": 180, "stats": ["+18% All Resistances"], "connections": ["resist_notable", "resist_key"]},
+    {"id": "resist_key", "name": "DIVINE IMMUNITY", "ring": 9, "angle": 180, "isKeystone": true, "stats": ["+60% All Resistances", "+8% Max Resistances", "Cannot be reduced below 75% Res", "Allies share your Resistances"], "connections": ["travel_w4"]},
+
+    {"id": "resist_cluster1", "name": "Fire Ward", "ring": 3.5, "angle": 155, "stats": ["+15% Fire Res"], "connections": ["travel_w2", "resist_cluster2"]},
+    {"id": "resist_cluster2", "name": "Cold Ward", "ring": 4, "angle": 145, "stats": ["+15% Cold Res"], "connections": ["resist_cluster1", "resist_cluster_notable"]},
+    {"id": "resist_cluster_notable", "name": "Lightning Ward", "ring": 4.5, "angle": 150, "isNotable": true, "stats": ["+15% Lightning Res", "+25% All Elemental Res"], "connections": ["resist_cluster2"]},
+
+    {"id": "armor_cluster1", "name": "Plate", "ring": 5, "angle": 200, "stats": ["+60 Armour"], "connections": ["travel_w3", "armor_cluster2"]},
+    {"id": "armor_cluster2", "name": "Mail", "ring": 5.5, "angle": 210, "stats": ["+80 Armour"], "connections": ["armor_cluster1", "armor_cluster_notable"]},
+    {"id": "armor_cluster_notable", "name": "Divine Armor", "ring": 6, "angle": 205, "isNotable": true, "stats": ["+200 Armour", "+8% Phys Reduction"], "connections": ["armor_cluster2"]},
+
+    {"id": "travel_ne", "name": "NE Path", "ring": 2, "angle": 45, "stats": ["+12% Healing", "+40 Life"], "connections": ["travel_n", "travel_ne2"]},
+    {"id": "travel_ne2", "name": "NE Road", "ring": 3.5, "angle": 45, "stats": ["+15% Healing", "+55 Life"], "connections": ["travel_ne", "hybrid_hl_notable"]},
+    {"id": "hybrid_hl_notable", "name": "Vital Sacrifice", "ring": 5, "angle": 45, "isNotable": true, "stats": ["+35% Healing", "+140 Life", "Life spent heals more"], "connections": ["travel_ne2"]},
+
+    {"id": "travel_se", "name": "SE Path", "ring": 2, "angle": 315, "stats": ["+40 Life", "+12% Shield"], "connections": ["travel_e", "travel_se2"]},
+    {"id": "travel_se2", "name": "SE Road", "ring": 3.5, "angle": 315, "stats": ["+55 Life", "+15% Shield"], "connections": ["travel_se", "hybrid_ls_notable"]},
+    {"id": "hybrid_ls_notable", "name": "Life Shield", "ring": 5, "angle": 315, "isNotable": true, "stats": ["+140 Life", "+35% Shield", "Life converts to Shield"], "connections": ["travel_se2"]},
+
+    {"id": "travel_sw", "name": "SW Path", "ring": 2, "angle": 225, "stats": ["+12% Shield", "+8% Res"], "connections": ["travel_s", "travel_sw2"]},
+    {"id": "travel_sw2", "name": "SW Road", "ring": 3.5, "angle": 225, "stats": ["+15% Shield", "+10% Res"], "connections": ["travel_sw", "hybrid_sr_notable"]},
+    {"id": "hybrid_sr_notable", "name": "Resistant Shield", "ring": 5, "angle": 225, "isNotable": true, "stats": ["+35% Shield", "+25% All Res", "Shields grant Resistances"], "connections": ["travel_sw2"]},
+
+    {"id": "travel_nw", "name": "NW Path", "ring": 2, "angle": 135, "stats": ["+8% Res", "+12% Healing"], "connections": ["travel_w", "travel_nw2"]},
+    {"id": "travel_nw2", "name": "NW Road", "ring": 3.5, "angle": 135, "stats": ["+10% Res", "+15% Healing"], "connections": ["travel_nw", "hybrid_rh_notable"]},
+    {"id": "hybrid_rh_notable", "name": "Resistant Healer", "ring": 5, "angle": 135, "isNotable": true, "stats": ["+25% All Res", "+35% Healing", "Healing grants Resistances"], "connections": ["travel_nw2"]},
+
+    {"id": "revive1", "name": "Revive 1", "ring": 7, "angle": 45, "stats": ["+15% Revive Speed"], "connections": ["heal_notable", "revive2"]},
+    {"id": "revive2", "name": "Revive 2", "ring": 7.5, "angle": 50, "stats": ["+20% Revive Speed"], "connections": ["revive1", "revive_notable"]},
+    {"id": "revive_notable", "name": "Instant Revive", "ring": 8, "angle": 45, "isNotable": true, "stats": ["+50% Revive Speed", "Revive allies instantly", "Revived allies have immunity"], "connections": ["revive2"]},
+
+    {"id": "recoup1", "name": "Recoup 1", "ring": 7, "angle": 315, "stats": ["8% Damage Recouped as Life"], "connections": ["life_notable", "recoup2"]},
+    {"id": "recoup2", "name": "Recoup 2", "ring": 7.5, "angle": 310, "stats": ["10% Damage Recouped as Life"], "connections": ["recoup1", "recoup_notable"]},
+    {"id": "recoup_notable", "name": "Martyr's Recoup", "ring": 8, "angle": 315, "isNotable": true, "stats": ["20% Damage Recouped as Life", "Recoup heals allies too"], "connections": ["recoup2"]},
+
+    {"id": "taunt1", "name": "Taunt 1", "ring": 7, "angle": 225, "stats": ["+20% Taunt Effect"], "connections": ["shield_notable", "taunt2"]},
+    {"id": "taunt2", "name": "Taunt 2", "ring": 7.5, "angle": 220, "stats": ["+25% Taunt Effect"], "connections": ["taunt1", "taunt_notable"]},
+    {"id": "taunt_notable", "name": "Martyr's Taunt", "ring": 8, "angle": 225, "isNotable": true, "stats": ["+50% Taunt Effect", "Force all enemies to attack you", "Reduce taunted enemy damage"], "connections": ["taunt2"]},
+
+    {"id": "aura1", "name": "Aura 1", "ring": 7, "angle": 135, "stats": ["+15% Aura Effect"], "connections": ["resist_notable", "aura2"]},
+    {"id": "aura2", "name": "Aura 2", "ring": 7.5, "angle": 130, "stats": ["+20% Aura Effect"], "connections": ["aura1", "aura_notable"]},
+    {"id": "aura_notable", "name": "Martyr's Aura", "ring": 8, "angle": 135, "isNotable": true, "stats": ["+50% Aura Effect", "Auras heal allies", "Auras grant damage reduction"], "connections": ["aura2"]},
+
+    {"id": "apex_key", "name": "DIVINE MARTYR", "ring": 10.5, "angle": 0, "isKeystone": true, "stats": ["Your sacrifice is absolute", "+200% Healing Effect", "+800 Life", "+100% Shield Effect", "+80% All Resistances", "Allies cannot die while you have Life", "When you die, fully heal and protect team", "Revive in 3 seconds with full Life"], "connections": ["heal_key", "life_key", "shield_key", "resist_key"]}
+  ]
+}

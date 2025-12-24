@@ -1,0 +1,101 @@
+{
+  "name": "Wardbreaker",
+  "color": "#b8860b",
+  "nodes": [
+    {"id": "start", "name": "WARDBREAKER", "ring": 0, "angle": 0, "isStart": true, "stats": ["You can allocate Passives starting from here"], "connections": ["travel_n", "travel_e", "travel_s", "travel_w"]},
+
+    {"id": "travel_n", "name": "Hammer Path", "ring": 1.5, "angle": 90, "stats": ["+15% Physical Damage"], "connections": ["start", "travel_n2"]},
+    {"id": "travel_n2", "name": "Smash Road", "ring": 3, "angle": 90, "stats": ["+18% Physical Damage"], "connections": ["travel_n", "travel_n3", "phys_cluster1"]},
+    {"id": "travel_n3", "name": "Crush Way", "ring": 4.5, "angle": 90, "stats": ["+22% Physical Damage"], "connections": ["travel_n2", "phys_notable", "stun_cluster1"]},
+    {"id": "phys_notable", "name": "Shield Smasher", "ring": 6, "angle": 90, "isNotable": true, "stats": ["+50% Physical Damage", "+40% Stun Chance", "Ignore 30% of Block"], "connections": ["travel_n3", "travel_n4"]},
+    {"id": "travel_n4", "name": "Devastation Path", "ring": 7.5, "angle": 90, "stats": ["+25% Physical Damage"], "connections": ["phys_notable", "phys_key"]},
+    {"id": "phys_key", "name": "SHIELDBREAKER", "ring": 9, "angle": 90, "isKeystone": true, "stats": ["+100% Physical Damage", "+100% Stun Chance", "Attacks cannot be Blocked", "Stunned enemies take double damage"], "connections": ["travel_n4"]},
+
+    {"id": "phys_cluster1", "name": "Heavy Hit", "ring": 3.5, "angle": 115, "stats": ["+18% Physical Damage"], "connections": ["travel_n2", "phys_cluster2"]},
+    {"id": "phys_cluster2", "name": "Crushing Blow", "ring": 4, "angle": 125, "stats": ["+20% Physical Damage"], "connections": ["phys_cluster1", "phys_cluster_notable"]},
+    {"id": "phys_cluster_notable", "name": "Devastation", "ring": 4.5, "angle": 120, "isNotable": true, "stats": ["+45% Physical Damage", "+20% Attack Speed"], "connections": ["phys_cluster2"]},
+
+    {"id": "stun_cluster1", "name": "Daze", "ring": 5, "angle": 70, "stats": ["+15% Stun Chance"], "connections": ["travel_n3", "stun_cluster2"]},
+    {"id": "stun_cluster2", "name": "Concuss", "ring": 5.5, "angle": 60, "stats": ["+20% Stun Chance"], "connections": ["stun_cluster1", "stun_cluster_notable"]},
+    {"id": "stun_cluster_notable", "name": "Eternal Stun", "ring": 6, "angle": 65, "isNotable": true, "stats": ["+50% Stun Chance", "+80% Stun Duration", "Stun cannot be resisted"], "connections": ["stun_cluster2"]},
+
+    {"id": "travel_e", "name": "Armor Break Path", "ring": 1.5, "angle": 0, "stats": ["+10% Armour Penetration"], "connections": ["start", "travel_e2"]},
+    {"id": "travel_e2", "name": "Crack Road", "ring": 3, "angle": 0, "stats": ["+12% Armour Penetration"], "connections": ["travel_e", "travel_e3", "pen_cluster1"]},
+    {"id": "travel_e3", "name": "Shatter Way", "ring": 4.5, "angle": 0, "stats": ["+15% Armour Penetration"], "connections": ["travel_e2", "pen_notable", "reduce_cluster1"]},
+    {"id": "pen_notable", "name": "Armour Breaker", "ring": 6, "angle": 0, "isNotable": true, "stats": ["+35% Armour Penetration", "Attacks reduce enemy Armour by 15%", "Armour break stacks"], "connections": ["travel_e3", "travel_e4"]},
+    {"id": "travel_e4", "name": "Annihilation Path", "ring": 7.5, "angle": 0, "stats": ["+18% Armour Penetration"], "connections": ["pen_notable", "pen_key"]},
+    {"id": "pen_key", "name": "ARMOUR ANNIHILATION", "ring": 9, "angle": 0, "isKeystone": true, "stats": ["+100% Armour Penetration", "Ignore all Armour", "First hit destroys enemy Armour permanently", "Bonus damage equal to Armour destroyed"], "connections": ["travel_e4"]},
+
+    {"id": "pen_cluster1", "name": "Pierce", "ring": 3.5, "angle": 335, "stats": ["+12% Armour Pen"], "connections": ["travel_e2", "pen_cluster2"]},
+    {"id": "pen_cluster2", "name": "Puncture", "ring": 4, "angle": 325, "stats": ["+15% Armour Pen"], "connections": ["pen_cluster1", "pen_cluster_notable"]},
+    {"id": "pen_cluster_notable", "name": "Deep Pierce", "ring": 4.5, "angle": 330, "isNotable": true, "stats": ["+35% Armour Pen", "+20% Damage"], "connections": ["pen_cluster2"]},
+
+    {"id": "reduce_cluster1", "name": "Weaken", "ring": 5, "angle": 25, "stats": ["+10% Armour Reduction"], "connections": ["travel_e3", "reduce_cluster2"]},
+    {"id": "reduce_cluster2", "name": "Corrode", "ring": 5.5, "angle": 35, "stats": ["+15% Armour Reduction"], "connections": ["reduce_cluster1", "reduce_cluster_notable"]},
+    {"id": "reduce_cluster_notable", "name": "Complete Break", "ring": 6, "angle": 30, "isNotable": true, "stats": ["+40% Armour Reduction", "Reduction is permanent", "Broken armour enemies take DoT"], "connections": ["reduce_cluster2"]},
+
+    {"id": "travel_s", "name": "Strength Path", "ring": 1.5, "angle": 270, "stats": ["+15 Strength"], "connections": ["start", "travel_s2"]},
+    {"id": "travel_s2", "name": "Power Road", "ring": 3, "angle": 270, "stats": ["+18 Strength"], "connections": ["travel_s", "travel_s3", "str_cluster1"]},
+    {"id": "travel_s3", "name": "Might Way", "ring": 4.5, "angle": 270, "stats": ["+22 Strength"], "connections": ["travel_s2", "str_notable", "life_cluster1"]},
+    {"id": "str_notable", "name": "Overwhelming Strength", "ring": 6, "angle": 270, "isNotable": true, "stats": ["+60 Strength", "+30% Physical Damage", "Strength adds Armour Pen"], "connections": ["travel_s3", "travel_s4"]},
+    {"id": "travel_s4", "name": "Titan Path", "ring": 7.5, "angle": 270, "stats": ["+25 Strength"], "connections": ["str_notable", "str_key"]},
+    {"id": "str_key", "name": "UNSTOPPABLE FORCE", "ring": 9, "angle": 270, "isKeystone": true, "stats": ["+100 Strength", "+80% Attack Speed", "Cannot be Evaded or Dodged", "Cannot be Stunned or Slowed", "Charge through enemies"], "connections": ["travel_s4"]},
+
+    {"id": "str_cluster1", "name": "Muscle", "ring": 3.5, "angle": 245, "stats": ["+18 Strength"], "connections": ["travel_s2", "str_cluster2"]},
+    {"id": "str_cluster2", "name": "Bulk", "ring": 4, "angle": 235, "stats": ["+22 Strength"], "connections": ["str_cluster1", "str_cluster_notable"]},
+    {"id": "str_cluster_notable", "name": "Titanic", "ring": 4.5, "angle": 240, "isNotable": true, "stats": ["+50 Strength", "+20% Physical Damage"], "connections": ["str_cluster2"]},
+
+    {"id": "life_cluster1", "name": "Vitality", "ring": 5, "angle": 290, "stats": ["+50 Life"], "connections": ["travel_s3", "life_cluster2"]},
+    {"id": "life_cluster2", "name": "Constitution", "ring": 5.5, "angle": 300, "stats": ["+65 Life"], "connections": ["life_cluster1", "life_cluster_notable"]},
+    {"id": "life_cluster_notable", "name": "Breaker's Vitality", "ring": 6, "angle": 295, "isNotable": true, "stats": ["+150 Life", "+10% Max Life", "Gain Life on break"], "connections": ["life_cluster2"]},
+
+    {"id": "travel_w", "name": "Magic Break Path", "ring": 1.5, "angle": 180, "stats": ["+10% Magic Penetration"], "connections": ["start", "travel_w2"]},
+    {"id": "travel_w2", "name": "Ward Crack Road", "ring": 3, "angle": 180, "stats": ["+12% Magic Penetration"], "connections": ["travel_w", "travel_w3", "magic_pen_cluster1"]},
+    {"id": "travel_w3", "name": "Ward Shatter Way", "ring": 4.5, "angle": 180, "stats": ["+15% Magic Penetration"], "connections": ["travel_w2", "magic_notable", "dispel_cluster1"]},
+    {"id": "magic_notable", "name": "Ward Breaker", "ring": 6, "angle": 180, "isNotable": true, "stats": ["+35% Magic Penetration", "Attacks reduce enemy Resistance by 15%", "Resistance break stacks"], "connections": ["travel_w3", "travel_w4"]},
+    {"id": "travel_w4", "name": "Ward Annihilation Path", "ring": 7.5, "angle": 180, "stats": ["+18% Magic Penetration"], "connections": ["magic_notable", "magic_key"]},
+    {"id": "magic_key", "name": "MAGIC ANNIHILATION", "ring": 9, "angle": 180, "isKeystone": true, "stats": ["+100% Magic Penetration", "Ignore all Magic Resistance", "First hit destroys enemy Wards permanently", "Bonus damage equal to Resistance destroyed"], "connections": ["travel_w4"]},
+
+    {"id": "magic_pen_cluster1", "name": "Ward Pierce", "ring": 3.5, "angle": 155, "stats": ["+12% Magic Pen"], "connections": ["travel_w2", "magic_pen_cluster2"]},
+    {"id": "magic_pen_cluster2", "name": "Ward Crack", "ring": 4, "angle": 145, "stats": ["+15% Magic Pen"], "connections": ["magic_pen_cluster1", "magic_pen_cluster_notable"]},
+    {"id": "magic_pen_cluster_notable", "name": "Deep Ward Break", "ring": 4.5, "angle": 150, "isNotable": true, "stats": ["+35% Magic Pen", "+20% Spell Damage"], "connections": ["magic_pen_cluster2"]},
+
+    {"id": "dispel_cluster1", "name": "Strip", "ring": 5, "angle": 200, "stats": ["+10% Buff Removal"], "connections": ["travel_w3", "dispel_cluster2"]},
+    {"id": "dispel_cluster2", "name": "Purge", "ring": 5.5, "angle": 210, "stats": ["+15% Buff Removal"], "connections": ["dispel_cluster1", "dispel_cluster_notable"]},
+    {"id": "dispel_cluster_notable", "name": "Shattering Dispel", "ring": 6, "angle": 205, "isNotable": true, "stats": ["Attacks dispel buffs", "Dispelled buffs explode", "+25% Damage after dispel"], "connections": ["dispel_cluster2"]},
+
+    {"id": "travel_ne", "name": "NE Path", "ring": 2, "angle": 45, "stats": ["+12% Physical Damage", "+8% Armour Pen"], "connections": ["travel_n", "travel_ne2"]},
+    {"id": "travel_ne2", "name": "NE Road", "ring": 3.5, "angle": 45, "stats": ["+15% Physical Damage", "+10% Armour Pen"], "connections": ["travel_ne", "hybrid_pp_notable"]},
+    {"id": "hybrid_pp_notable", "name": "Piercing Blow", "ring": 5, "angle": 45, "isNotable": true, "stats": ["+35% Physical Damage", "+25% Armour Pen", "Physical ignores Armour"], "connections": ["travel_ne2"]},
+
+    {"id": "travel_se", "name": "SE Path", "ring": 2, "angle": 315, "stats": ["+8% Armour Pen", "+12 Strength"], "connections": ["travel_e", "travel_se2"]},
+    {"id": "travel_se2", "name": "SE Road", "ring": 3.5, "angle": 315, "stats": ["+10% Armour Pen", "+15 Strength"], "connections": ["travel_se", "hybrid_ps_notable"]},
+    {"id": "hybrid_ps_notable", "name": "Powerful Break", "ring": 5, "angle": 315, "isNotable": true, "stats": ["+25% Armour Pen", "+40 Strength", "Strength adds Penetration"], "connections": ["travel_se2"]},
+
+    {"id": "travel_sw", "name": "SW Path", "ring": 2, "angle": 225, "stats": ["+12 Strength", "+8% Magic Pen"], "connections": ["travel_s", "travel_sw2"]},
+    {"id": "travel_sw2", "name": "SW Road", "ring": 3.5, "angle": 225, "stats": ["+15 Strength", "+10% Magic Pen"], "connections": ["travel_sw", "hybrid_sm_notable"]},
+    {"id": "hybrid_sm_notable", "name": "Magic Crusher", "ring": 5, "angle": 225, "isNotable": true, "stats": ["+40 Strength", "+25% Magic Pen", "Physical attacks break wards"], "connections": ["travel_sw2"]},
+
+    {"id": "travel_nw", "name": "NW Path", "ring": 2, "angle": 135, "stats": ["+8% Magic Pen", "+12% Physical Damage"], "connections": ["travel_w", "travel_nw2"]},
+    {"id": "travel_nw2", "name": "NW Road", "ring": 3.5, "angle": 135, "stats": ["+10% Magic Pen", "+15% Physical Damage"], "connections": ["travel_nw", "hybrid_mp_notable"]},
+    {"id": "hybrid_mp_notable", "name": "Total Break", "ring": 5, "angle": 135, "isNotable": true, "stats": ["+25% Magic Pen", "+35% Physical Damage", "Break all defenses equally"], "connections": ["travel_nw2"]},
+
+    {"id": "attack_speed1", "name": "Speed 1", "ring": 7, "angle": 45, "stats": ["+10% Attack Speed"], "connections": ["phys_notable", "attack_speed2"]},
+    {"id": "attack_speed2", "name": "Speed 2", "ring": 7.5, "angle": 50, "stats": ["+12% Attack Speed"], "connections": ["attack_speed1", "attack_speed_notable"]},
+    {"id": "attack_speed_notable", "name": "Rapid Strikes", "ring": 8, "angle": 45, "isNotable": true, "stats": ["+30% Attack Speed", "Attack speed increases with breaks"], "connections": ["attack_speed2"]},
+
+    {"id": "crit1", "name": "Crit 1", "ring": 7, "angle": 315, "stats": ["+15% Crit Chance"], "connections": ["pen_notable", "crit2"]},
+    {"id": "crit2", "name": "Crit 2", "ring": 7.5, "angle": 310, "stats": ["+20% Crit Chance"], "connections": ["crit1", "crit_notable"]},
+    {"id": "crit_notable", "name": "Breaking Crit", "ring": 8, "angle": 315, "isNotable": true, "stats": ["+40% Crit Chance", "+50% Crit Multi", "Crits fully break defenses"], "connections": ["crit2"]},
+
+    {"id": "armor1", "name": "Armor 1", "ring": 7, "angle": 225, "stats": ["+80 Armour"], "connections": ["str_notable", "armor2"]},
+    {"id": "armor2", "name": "Armor 2", "ring": 7.5, "angle": 220, "stats": ["+100 Armour"], "connections": ["armor1", "armor_notable"]},
+    {"id": "armor_notable", "name": "Breaker's Armor", "ring": 8, "angle": 225, "isNotable": true, "stats": ["+250 Armour", "+100 Life", "Gain Armour when you break"], "connections": ["armor2"]},
+
+    {"id": "resist1", "name": "Resist 1", "ring": 7, "angle": 135, "stats": ["+12% Elemental Res"], "connections": ["magic_notable", "resist2"]},
+    {"id": "resist2", "name": "Resist 2", "ring": 7.5, "angle": 130, "stats": ["+15% Elemental Res"], "connections": ["resist1", "resist_notable"]},
+    {"id": "resist_notable", "name": "Breaker's Ward", "ring": 8, "angle": 135, "isNotable": true, "stats": ["+35% Elemental Res", "+15% Chaos Res", "Gain Resistance when you break wards"], "connections": ["resist2"]},
+
+    {"id": "apex_key", "name": "SUPREME BREAKER", "ring": 10.5, "angle": 0, "isKeystone": true, "stats": ["No defense stands against you", "+150% Physical Damage", "+100% All Penetration", "+80 Strength", "+400 Life", "Attacks ignore ALL defenses", "Break effects are permanent", "Enemies with broken defenses are instantly killed"], "connections": ["phys_key", "pen_key", "str_key", "magic_key"]}
+  ]
+}

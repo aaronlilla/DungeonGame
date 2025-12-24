@@ -1,0 +1,3774 @@
+{
+  "itemClass": "Sceptre",
+  "affixes": {
+    "prefixes": [
+      {
+        "group": "IncreaseSocketedGemLevel",
+        "mods": [
+          {
+            "name": "Magister's",
+            "ilvl": 55,
+            "stats_text": [
+              "+1 to Level of all Spell Skill Gems"
+            ],
+            "tags": [
+              "caster",
+              "gem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "SpellDamageAndMana",
+        "mods": [
+          {
+            "name": "Caster's",
+            "ilvl": 2,
+            "stats_text": [
+              "(5-9)% increased Spell Damage"
+            ],
+            "tags": [
+              "caster_damage",
+              "resource",
+              "mana",
+              "damage",
+              "caster"
+            ]
+          },
+          {
+            "name": "Conjuror's",
+            "ilvl": 11,
+            "stats_text": [
+              "(10-14)% increased Spell Damage"
+            ],
+            "tags": [
+              "caster_damage",
+              "resource",
+              "mana",
+              "damage",
+              "caster"
+            ]
+          },
+          {
+            "name": "Wizard's",
+            "ilvl": 23,
+            "stats_text": [
+              "(15-19)% increased Spell Damage"
+            ],
+            "tags": [
+              "caster_damage",
+              "resource",
+              "mana",
+              "damage",
+              "caster"
+            ]
+          },
+          {
+            "name": "Warlock's",
+            "ilvl": 35,
+            "stats_text": [
+              "(20-24)% increased Spell Damage"
+            ],
+            "tags": [
+              "caster_damage",
+              "resource",
+              "mana",
+              "damage",
+              "caster"
+            ]
+          },
+          {
+            "name": "Mage's",
+            "ilvl": 46,
+            "stats_text": [
+              "(25-29)% increased Spell Damage"
+            ],
+            "tags": [
+              "caster_damage",
+              "resource",
+              "mana",
+              "damage",
+              "caster"
+            ]
+          },
+          {
+            "name": "Archmage's",
+            "ilvl": 58,
+            "stats_text": [
+              "(30-34)% increased Spell Damage"
+            ],
+            "tags": [
+              "caster_damage",
+              "resource",
+              "mana",
+              "damage",
+              "caster"
+            ]
+          },
+          {
+            "name": "Lich's",
+            "ilvl": 80,
+            "stats_text": [
+              "(35-39)% increased Spell Damage"
+            ],
+            "tags": [
+              "caster_damage",
+              "resource",
+              "mana",
+              "damage",
+              "caster"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedWeaponElementalDamagePercent",
+        "mods": [
+          {
+            "name": "Catalysing",
+            "ilvl": 4,
+            "stats_text": [
+              "(11-20)% increased Elemental Damage with Attack Skills"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          },
+          {
+            "name": "Infusing",
+            "ilvl": 15,
+            "stats_text": [
+              "(21-30)% increased Elemental Damage with Attack Skills"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          },
+          {
+            "name": "Empowering",
+            "ilvl": 30,
+            "stats_text": [
+              "(31-36)% increased Elemental Damage with Attack Skills"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          },
+          {
+            "name": "Unleashed",
+            "ilvl": 60,
+            "stats_text": [
+              "(37-42)% increased Elemental Damage with Attack Skills"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          },
+          {
+            "name": "Overpowering",
+            "ilvl": 81,
+            "stats_text": [
+              "(43-50)% increased Elemental Damage with Attack Skills"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          },
+          {
+            "name": "Devastating",
+            "ilvl": 86,
+            "stats_text": [
+              "(51-59)% increased Elemental Damage with Attack Skills"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreaseSpecificSocketedGemLevel",
+        "mods": [
+          {
+            "name": "Frost Singer's",
+            "ilvl": 2,
+            "stats_text": [
+              "+1 to Level of all Cold Spell Skill Gems"
+            ],
+            "tags": [
+              "elemental",
+              "cold",
+              "caster",
+              "gem"
+            ]
+          },
+          {
+            "name": "Thunderhand's",
+            "ilvl": 2,
+            "stats_text": [
+              "+1 to Level of all Lightning Spell Skill Gems"
+            ],
+            "tags": [
+              "elemental",
+              "lightning",
+              "caster",
+              "gem"
+            ]
+          },
+          {
+            "name": "Combatant's",
+            "ilvl": 8,
+            "stats_text": [
+              "+1 to Level of Socketed Melee Gems"
+            ],
+            "tags": [
+              "attack",
+              "gem"
+            ]
+          },
+          {
+            "name": "Weaponmaster's",
+            "ilvl": 63,
+            "stats_text": [
+              "+2 to Level of Socketed Melee Gems"
+            ],
+            "tags": [
+              "attack",
+              "gem"
+            ]
+          },
+          {
+            "name": "Flame Shaper's",
+            "ilvl": 2,
+            "stats_text": [
+              "+1 to Level of all Fire Spell Skill Gems"
+            ],
+            "tags": [
+              "elemental",
+              "fire",
+              "caster",
+              "gem"
+            ]
+          },
+          {
+            "name": "Lithomancer's",
+            "ilvl": 2,
+            "stats_text": [
+              "+1 to Level of all Physical Spell Skill Gems"
+            ],
+            "tags": [
+              "physical",
+              "caster",
+              "gem"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "FireDamage",
+        "mods": [
+          {
+            "name": "Heated",
+            "ilvl": 1,
+            "stats_text": [
+              "Adds (1-2) to (3-4) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Smouldering",
+            "ilvl": 11,
+            "stats_text": [
+              "Adds (8-10) to (15-18) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Smoking",
+            "ilvl": 18,
+            "stats_text": [
+              "Adds (12-17) to (25-29) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Burning",
+            "ilvl": 26,
+            "stats_text": [
+              "Adds (17-24) to (35-41) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Flaming",
+            "ilvl": 33,
+            "stats_text": [
+              "Adds (24-33) to (49-57) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Scorching",
+            "ilvl": 42,
+            "stats_text": [
+              "Adds (34-46) to (68-80) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Incinerating",
+            "ilvl": 51,
+            "stats_text": [
+              "Adds (46-62) to (93-107) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Blasting",
+            "ilvl": 62,
+            "stats_text": [
+              "Adds (59-81) to (120-140) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Cremating",
+            "ilvl": 74,
+            "stats_text": [
+              "Adds (74-101) to (150-175) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Carbonising",
+            "ilvl": 82,
+            "stats_text": [
+              "Adds (89-121) to (180-210) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "WeaponCasterDamagePrefix",
+        "mods": [
+          {
+            "name": "Searing",
+            "ilvl": 2,
+            "stats_text": [
+              "(10-19)% increased Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "Sizzling",
+            "ilvl": 11,
+            "stats_text": [
+              "(20-29)% increased Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "Blistering",
+            "ilvl": 23,
+            "stats_text": [
+              "(30-39)% increased Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "Cauterising",
+            "ilvl": 35,
+            "stats_text": [
+              "(40-54)% increased Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "Volcanic",
+            "ilvl": 46,
+            "stats_text": [
+              "(55-69)% increased Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "Magmatic",
+            "ilvl": 58,
+            "stats_text": [
+              "(70-84)% increased Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "Pyroclastic",
+            "ilvl": 64,
+            "stats_text": [
+              "(85-99)% increased Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "Xoph's",
+            "ilvl": 84,
+            "stats_text": [
+              "(100-109)% increased Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "Charged",
+            "ilvl": 2,
+            "stats_text": [
+              "(10-19)% increased Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning"
+            ]
+          },
+          {
+            "name": "Hissing",
+            "ilvl": 11,
+            "stats_text": [
+              "(20-29)% increased Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning"
+            ]
+          },
+          {
+            "name": "Bolting",
+            "ilvl": 23,
+            "stats_text": [
+              "(30-39)% increased Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning"
+            ]
+          },
+          {
+            "name": "Coursing",
+            "ilvl": 35,
+            "stats_text": [
+              "(40-54)% increased Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning"
+            ]
+          },
+          {
+            "name": "Striking",
+            "ilvl": 46,
+            "stats_text": [
+              "(55-69)% increased Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning"
+            ]
+          },
+          {
+            "name": "Smiting",
+            "ilvl": 58,
+            "stats_text": [
+              "(70-84)% increased Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning"
+            ]
+          },
+          {
+            "name": "Ionising",
+            "ilvl": 64,
+            "stats_text": [
+              "(85-99)% increased Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning"
+            ]
+          },
+          {
+            "name": "Esh's",
+            "ilvl": 84,
+            "stats_text": [
+              "(100-109)% increased Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning"
+            ]
+          },
+          {
+            "name": "Bitter",
+            "ilvl": 2,
+            "stats_text": [
+              "(10-19)% increased Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "Biting",
+            "ilvl": 11,
+            "stats_text": [
+              "(20-29)% increased Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "Alpine",
+            "ilvl": 23,
+            "stats_text": [
+              "(30-39)% increased Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "Snowy",
+            "ilvl": 35,
+            "stats_text": [
+              "(40-54)% increased Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "Hailing",
+            "ilvl": 46,
+            "stats_text": [
+              "(55-69)% increased Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "Crystalline",
+            "ilvl": 58,
+            "stats_text": [
+              "(70-84)% increased Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "Cryomancer's",
+            "ilvl": 64,
+            "stats_text": [
+              "(85-99)% increased Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "Tul's",
+            "ilvl": 84,
+            "stats_text": [
+              "(100-109)% increased Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "Apprentice's",
+            "ilvl": 2,
+            "stats_text": [
+              "(10-19)% increased Spell Damage"
+            ],
+            "tags": [
+              "caster_damage",
+              "damage",
+              "caster"
+            ]
+          },
+          {
+            "name": "Adept's",
+            "ilvl": 11,
+            "stats_text": [
+              "(20-29)% increased Spell Damage"
+            ],
+            "tags": [
+              "caster_damage",
+              "damage",
+              "caster"
+            ]
+          },
+          {
+            "name": "Scholar's",
+            "ilvl": 23,
+            "stats_text": [
+              "(30-39)% increased Spell Damage"
+            ],
+            "tags": [
+              "caster_damage",
+              "damage",
+              "caster"
+            ]
+          },
+          {
+            "name": "Professor's",
+            "ilvl": 35,
+            "stats_text": [
+              "(40-54)% increased Spell Damage"
+            ],
+            "tags": [
+              "caster_damage",
+              "damage",
+              "caster"
+            ]
+          },
+          {
+            "name": "Occultist's",
+            "ilvl": 46,
+            "stats_text": [
+              "(55-69)% increased Spell Damage"
+            ],
+            "tags": [
+              "caster_damage",
+              "damage",
+              "caster"
+            ]
+          },
+          {
+            "name": "Incanter's",
+            "ilvl": 58,
+            "stats_text": [
+              "(70-84)% increased Spell Damage"
+            ],
+            "tags": [
+              "caster_damage",
+              "damage",
+              "caster"
+            ]
+          },
+          {
+            "name": "Glyphic",
+            "ilvl": 64,
+            "stats_text": [
+              "(85-99)% increased Spell Damage"
+            ],
+            "tags": [
+              "caster_damage",
+              "damage",
+              "caster"
+            ]
+          },
+          {
+            "name": "Runic",
+            "ilvl": 84,
+            "stats_text": [
+              "(100-109)% increased Spell Damage"
+            ],
+            "tags": [
+              "caster_damage",
+              "damage",
+              "caster"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LightningDamage",
+        "mods": [
+          {
+            "name": "Humming",
+            "ilvl": 3,
+            "stats_text": [
+              "Adds 1 to (5-6) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Buzzing",
+            "ilvl": 13,
+            "stats_text": [
+              "Adds 2 to (25-29) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Snapping",
+            "ilvl": 19,
+            "stats_text": [
+              "Adds 2 to (41-48) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Crackling",
+            "ilvl": 31,
+            "stats_text": [
+              "Adds 3 to (57-67) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Sparking",
+            "ilvl": 34,
+            "stats_text": [
+              "Adds (4-5) to (80-94) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Arcing",
+            "ilvl": 42,
+            "stats_text": [
+              "Adds (5-8) to (112-131) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Shocking",
+            "ilvl": 51,
+            "stats_text": [
+              "Adds (8-10) to (152-176) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Discharging",
+            "ilvl": 63,
+            "stats_text": [
+              "Adds (10-14) to (197-229) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Electrocuting",
+            "ilvl": 74,
+            "stats_text": [
+              "Adds (13-17) to (247-286) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Vapourising",
+            "ilvl": 82,
+            "stats_text": [
+              "Adds (15-21) to (296-344) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "PhysicalDamage",
+        "mods": [
+          {
+            "name": "Glinting",
+            "ilvl": 2,
+            "stats_text": [
+              "Adds 1 to (2-3) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Burnished",
+            "ilvl": 13,
+            "stats_text": [
+              "Adds (4-5) to (8-9) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Polished",
+            "ilvl": 21,
+            "stats_text": [
+              "Adds (6-9) to (13-15) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Honed",
+            "ilvl": 29,
+            "stats_text": [
+              "Adds (8-12) to (17-20) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Gleaming",
+            "ilvl": 36,
+            "stats_text": [
+              "Adds (11-14) to (21-25) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Annealed",
+            "ilvl": 46,
+            "stats_text": [
+              "Adds (13-18) to (27-31) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Razor-sharp",
+            "ilvl": 54,
+            "stats_text": [
+              "Adds (16-21) to (32-38) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Tempered",
+            "ilvl": 65,
+            "stats_text": [
+              "Adds (19-25) to (39-45) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Flaring",
+            "ilvl": 77,
+            "stats_text": [
+              "Adds (22-29) to (45-52) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "SpellAddedElementalDamage",
+        "mods": [
+          {
+            "name": "Humming",
+            "ilvl": 1,
+            "stats_text": [
+              "Adds 1 to (4-5) Lightning Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "caster"
+            ]
+          },
+          {
+            "name": "Buzzing",
+            "ilvl": 11,
+            "stats_text": [
+              "Adds (1-2) to (21-22) Lightning Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "caster"
+            ]
+          },
+          {
+            "name": "Snapping",
+            "ilvl": 18,
+            "stats_text": [
+              "Adds (1-2) to (33-35) Lightning Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "caster"
+            ]
+          },
+          {
+            "name": "Crackling",
+            "ilvl": 26,
+            "stats_text": [
+              "Adds (1-4) to (46-48) Lightning Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "caster"
+            ]
+          },
+          {
+            "name": "Sparking",
+            "ilvl": 33,
+            "stats_text": [
+              "Adds (2-5) to (64-68) Lightning Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "caster"
+            ]
+          },
+          {
+            "name": "Arcing",
+            "ilvl": 42,
+            "stats_text": [
+              "Adds (2-7) to (84-88) Lightning Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "caster"
+            ]
+          },
+          {
+            "name": "Shocking",
+            "ilvl": 51,
+            "stats_text": [
+              "Adds (2-9) to (109-115) Lightning Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "caster"
+            ]
+          },
+          {
+            "name": "Discharging",
+            "ilvl": 62,
+            "stats_text": [
+              "Adds (4-11) to (136-144) Lightning Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "caster"
+            ]
+          },
+          {
+            "name": "Electrocuting",
+            "ilvl": 74,
+            "stats_text": [
+              "Adds (4-14) to (170-179) Lightning Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "caster"
+            ]
+          },
+          {
+            "name": "Heated",
+            "ilvl": 1,
+            "stats_text": [
+              "Adds (1-2) to (3-4) Fire Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "caster"
+            ]
+          },
+          {
+            "name": "Smouldering",
+            "ilvl": 11,
+            "stats_text": [
+              "Adds (6-8) to (12-14) Fire Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "caster"
+            ]
+          },
+          {
+            "name": "Smoking",
+            "ilvl": 18,
+            "stats_text": [
+              "Adds (10-12) to (19-23) Fire Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "caster"
+            ]
+          },
+          {
+            "name": "Burning",
+            "ilvl": 26,
+            "stats_text": [
+              "Adds (13-18) to (27-31) Fire Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "caster"
+            ]
+          },
+          {
+            "name": "Flaming",
+            "ilvl": 33,
+            "stats_text": [
+              "Adds (19-25) to (37-44) Fire Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "caster"
+            ]
+          },
+          {
+            "name": "Scorching",
+            "ilvl": 42,
+            "stats_text": [
+              "Adds (24-33) to (48-57) Fire Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "caster"
+            ]
+          },
+          {
+            "name": "Incinerating",
+            "ilvl": 51,
+            "stats_text": [
+              "Adds (31-42) to (64-73) Fire Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "caster"
+            ]
+          },
+          {
+            "name": "Blasting",
+            "ilvl": 62,
+            "stats_text": [
+              "Adds (40-52) to (79-91) Fire Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "caster"
+            ]
+          },
+          {
+            "name": "Cremating",
+            "ilvl": 74,
+            "stats_text": [
+              "Adds (49-66) to (98-115) Fire Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "caster"
+            ]
+          },
+          {
+            "name": "Frosted",
+            "ilvl": 1,
+            "stats_text": [
+              "Adds 1 to (2-3) Cold Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "caster"
+            ]
+          },
+          {
+            "name": "Chilled",
+            "ilvl": 11,
+            "stats_text": [
+              "Adds (5-7) to (10-12) Cold Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "caster"
+            ]
+          },
+          {
+            "name": "Icy",
+            "ilvl": 18,
+            "stats_text": [
+              "Adds (8-10) to (16-18) Cold Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "caster"
+            ]
+          },
+          {
+            "name": "Frigid",
+            "ilvl": 26,
+            "stats_text": [
+              "Adds (11-15) to (22-25) Cold Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "caster"
+            ]
+          },
+          {
+            "name": "Freezing",
+            "ilvl": 33,
+            "stats_text": [
+              "Adds (16-20) to (30-36) Cold Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "caster"
+            ]
+          },
+          {
+            "name": "Frozen",
+            "ilvl": 42,
+            "stats_text": [
+              "Adds (20-26) to (40-46) Cold Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "caster"
+            ]
+          },
+          {
+            "name": "Glaciated",
+            "ilvl": 51,
+            "stats_text": [
+              "Adds (26-35) to (51-60) Cold Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "caster"
+            ]
+          },
+          {
+            "name": "Polar",
+            "ilvl": 62,
+            "stats_text": [
+              "Adds (33-43) to (64-75) Cold Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "caster"
+            ]
+          },
+          {
+            "name": "Entombing",
+            "ilvl": 74,
+            "stats_text": [
+              "Adds (41-54) to (81-93) Cold Damage to Spells"
+            ],
+            "tags": [
+              "elemental_damage",
+              "caster_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "caster"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LocalPhysicalDamagePercent",
+        "mods": [
+          {
+            "name": "Heavy",
+            "ilvl": 1,
+            "stats_text": [
+              "(40-49)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Serrated",
+            "ilvl": 11,
+            "stats_text": [
+              "(50-64)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Wicked",
+            "ilvl": 23,
+            "stats_text": [
+              "(65-84)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Vicious",
+            "ilvl": 35,
+            "stats_text": [
+              "(85-109)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Bloodthirsty",
+            "ilvl": 46,
+            "stats_text": [
+              "(110-134)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Cruel",
+            "ilvl": 60,
+            "stats_text": [
+              "(135-154)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Tyrannical",
+            "ilvl": 73,
+            "stats_text": [
+              "(155-169)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Merciless",
+            "ilvl": 83,
+            "stats_text": [
+              "(170-179)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LocalIncreasedPhysicalDamagePercentAndAccuracyRating",
+        "mods": [
+          {
+            "name": "Squire's",
+            "ilvl": 1,
+            "stats_text": [
+              "(15-19)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Journeyman's",
+            "ilvl": 11,
+            "stats_text": [
+              "(20-24)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Reaver's",
+            "ilvl": 23,
+            "stats_text": [
+              "(25-34)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Mercenary's",
+            "ilvl": 35,
+            "stats_text": [
+              "(35-44)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Champion's",
+            "ilvl": 46,
+            "stats_text": [
+              "(45-54)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Conqueror's",
+            "ilvl": 60,
+            "stats_text": [
+              "(55-64)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Emperor's",
+            "ilvl": 73,
+            "stats_text": [
+              "(65-74)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Dictator's",
+            "ilvl": 83,
+            "stats_text": [
+              "(75-79)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedMana",
+        "mods": [
+          {
+            "name": "Beryl",
+            "ilvl": 1,
+            "stats_text": [
+              "+(30-39) to maximum Mana"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "Cobalt",
+            "ilvl": 11,
+            "stats_text": [
+              "+(40-49) to maximum Mana"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "Azure",
+            "ilvl": 17,
+            "stats_text": [
+              "+(50-59) to maximum Mana"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "Sapphire",
+            "ilvl": 23,
+            "stats_text": [
+              "+(60-69) to maximum Mana"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "Cerulean",
+            "ilvl": 29,
+            "stats_text": [
+              "+(70-79) to maximum Mana"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "Aqua",
+            "ilvl": 35,
+            "stats_text": [
+              "+(80-89) to maximum Mana"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "Opalescent",
+            "ilvl": 42,
+            "stats_text": [
+              "+(90-99) to maximum Mana"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "Gentian",
+            "ilvl": 51,
+            "stats_text": [
+              "+(100-109) to maximum Mana"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "Chalybeous",
+            "ilvl": 60,
+            "stats_text": [
+              "+(110-119) to maximum Mana"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "Mazarine",
+            "ilvl": 69,
+            "stats_text": [
+              "+(120-129) to maximum Mana"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "Blue",
+            "ilvl": 75,
+            "stats_text": [
+              "+(130-139) to maximum Mana"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "Zaffre",
+            "ilvl": 81,
+            "stats_text": [
+              "+(140-159) to maximum Mana"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ColdDamage",
+        "mods": [
+          {
+            "name": "Frosted",
+            "ilvl": 2,
+            "stats_text": [
+              "Adds (1-2) to (3-4) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Chilled",
+            "ilvl": 12,
+            "stats_text": [
+              "Adds (7-9) to (14-16) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Icy",
+            "ilvl": 19,
+            "stats_text": [
+              "Adds (11-15) to (23-26) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Frigid",
+            "ilvl": 27,
+            "stats_text": [
+              "Adds (16-21) to (31-37) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Freezing",
+            "ilvl": 34,
+            "stats_text": [
+              "Adds (22-30) to (44-51) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Frozen",
+            "ilvl": 43,
+            "stats_text": [
+              "Adds (31-42) to (62-71) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Glaciated",
+            "ilvl": 52,
+            "stats_text": [
+              "Adds (41-57) to (83-97) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Polar",
+            "ilvl": 63,
+            "stats_text": [
+              "Adds (54-74) to (108-126) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Entombing",
+            "ilvl": 75,
+            "stats_text": [
+              "Adds (68-92) to (136-157) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Crystalising",
+            "ilvl": 82,
+            "stats_text": [
+              "Adds (81-111) to (163-189) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LocalChaosDamage",
+        "mods": [
+          {
+            "name": "Malicious",
+            "ilvl": 83,
+            "stats_text": [
+              "Adds (56-87) to (105-160) Chaos Damage"
+            ],
+            "tags": [
+              "chaos_damage",
+              "damage",
+              "chaos",
+              "attack"
+            ]
+          }
+        ]
+      }
+    ],
+    "suffixes": [
+      {
+        "group": "IncreasedCastSpeed",
+        "mods": [
+          {
+            "name": "of Talent",
+            "ilvl": 2,
+            "stats_text": [
+              "(5-8)% increased Cast Speed"
+            ],
+            "tags": [
+              "caster",
+              "speed"
+            ]
+          },
+          {
+            "name": "of Nimbleness",
+            "ilvl": 15,
+            "stats_text": [
+              "(9-12)% increased Cast Speed"
+            ],
+            "tags": [
+              "caster",
+              "speed"
+            ]
+          },
+          {
+            "name": "of Expertise",
+            "ilvl": 30,
+            "stats_text": [
+              "(13-16)% increased Cast Speed"
+            ],
+            "tags": [
+              "caster",
+              "speed"
+            ]
+          },
+          {
+            "name": "of Legerdemain",
+            "ilvl": 40,
+            "stats_text": [
+              "(17-20)% increased Cast Speed"
+            ],
+            "tags": [
+              "caster",
+              "speed"
+            ]
+          },
+          {
+            "name": "of Prestidigitation",
+            "ilvl": 55,
+            "stats_text": [
+              "(21-24)% increased Cast Speed"
+            ],
+            "tags": [
+              "caster",
+              "speed"
+            ]
+          },
+          {
+            "name": "of Sortilege",
+            "ilvl": 72,
+            "stats_text": [
+              "(25-28)% increased Cast Speed"
+            ],
+            "tags": [
+              "caster",
+              "speed"
+            ]
+          },
+          {
+            "name": "of Finesse",
+            "ilvl": 83,
+            "stats_text": [
+              "(29-32)% increased Cast Speed"
+            ],
+            "tags": [
+              "caster",
+              "speed"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "StunDurationIncreasePercent",
+        "mods": [
+          {
+            "name": "of Impact",
+            "ilvl": 5,
+            "stats_text": [
+              "(11-15)% increased Stun Duration on Enemies"
+            ],
+            "tags": []
+          },
+          {
+            "name": "of Dazing",
+            "ilvl": 18,
+            "stats_text": [
+              "(16-20)% increased Stun Duration on Enemies"
+            ],
+            "tags": []
+          },
+          {
+            "name": "of Stunning",
+            "ilvl": 30,
+            "stats_text": [
+              "(21-25)% increased Stun Duration on Enemies"
+            ],
+            "tags": []
+          },
+          {
+            "name": "of Slamming",
+            "ilvl": 44,
+            "stats_text": [
+              "(26-30)% increased Stun Duration on Enemies"
+            ],
+            "tags": []
+          },
+          {
+            "name": "of Staggering",
+            "ilvl": 58,
+            "stats_text": [
+              "(31-35)% increased Stun Duration on Enemies"
+            ],
+            "tags": []
+          }
+        ]
+      },
+      {
+        "group": "ManaLeech",
+        "mods": [
+          {
+            "name": "of Thirst",
+            "ilvl": 50,
+            "stats_text": [
+              "(2.6-3.2)% of Physical Attack Damage Leeched as Mana"
+            ],
+            "tags": [
+              "resource",
+              "mana",
+              "physical",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "CriticalStrikeChanceIncrease",
+        "mods": [
+          {
+            "name": "of Needling",
+            "ilvl": 1,
+            "stats_text": [
+              "(10-14)% increased Critical Strike Chance"
+            ],
+            "tags": [
+              "attack",
+              "critical"
+            ]
+          },
+          {
+            "name": "of Stinging",
+            "ilvl": 20,
+            "stats_text": [
+              "(15-19)% increased Critical Strike Chance"
+            ],
+            "tags": [
+              "attack",
+              "critical"
+            ]
+          },
+          {
+            "name": "of Piercing",
+            "ilvl": 30,
+            "stats_text": [
+              "(20-24)% increased Critical Strike Chance"
+            ],
+            "tags": [
+              "attack",
+              "critical"
+            ]
+          },
+          {
+            "name": "of Puncturing",
+            "ilvl": 44,
+            "stats_text": [
+              "(25-29)% increased Critical Strike Chance"
+            ],
+            "tags": [
+              "attack",
+              "critical"
+            ]
+          },
+          {
+            "name": "of Penetrating",
+            "ilvl": 59,
+            "stats_text": [
+              "(30-34)% increased Critical Strike Chance"
+            ],
+            "tags": [
+              "attack",
+              "critical"
+            ]
+          },
+          {
+            "name": "of Incision",
+            "ilvl": 73,
+            "stats_text": [
+              "(35-38)% increased Critical Strike Chance"
+            ],
+            "tags": [
+              "attack",
+              "critical"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "Intelligence",
+        "mods": [
+          {
+            "name": "of the Pupil",
+            "ilvl": 1,
+            "stats_text": [
+              "+(8-12) to Intelligence"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Student",
+            "ilvl": 11,
+            "stats_text": [
+              "+(13-17) to Intelligence"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Prodigy",
+            "ilvl": 22,
+            "stats_text": [
+              "+(18-22) to Intelligence"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Augur",
+            "ilvl": 33,
+            "stats_text": [
+              "+(23-27) to Intelligence"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Philosopher",
+            "ilvl": 44,
+            "stats_text": [
+              "+(28-32) to Intelligence"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Sage",
+            "ilvl": 55,
+            "stats_text": [
+              "+(33-37) to Intelligence"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Savant",
+            "ilvl": 66,
+            "stats_text": [
+              "+(38-42) to Intelligence"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Virtuoso",
+            "ilvl": 74,
+            "stats_text": [
+              "+(43-50) to Intelligence"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Genius",
+            "ilvl": 82,
+            "stats_text": [
+              "+(51-55) to Intelligence"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LocalAttributeRequirements",
+        "mods": [
+          {
+            "name": "of the Worthy",
+            "ilvl": 36,
+            "stats_text": [
+              "18% reduced Attribute Requirements"
+            ],
+            "tags": []
+          },
+          {
+            "name": "of the Apt",
+            "ilvl": 60,
+            "stats_text": [
+              "32% reduced Attribute Requirements"
+            ],
+            "tags": []
+          }
+        ]
+      },
+      {
+        "group": "LifeGainPerTarget",
+        "mods": [
+          {
+            "name": "of Rejuvenation",
+            "ilvl": 8,
+            "stats_text": [
+              "Grants (2-3) Life per Enemy Hit"
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          },
+          {
+            "name": "of Restoration",
+            "ilvl": 20,
+            "stats_text": [
+              "Grants (4-6) Life per Enemy Hit"
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          },
+          {
+            "name": "of Regrowth",
+            "ilvl": 30,
+            "stats_text": [
+              "Grants (7-10) Life per Enemy Hit"
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          },
+          {
+            "name": "of Nourishment",
+            "ilvl": 40,
+            "stats_text": [
+              "Grants (11-14) Life per Enemy Hit"
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          },
+          {
+            "name": "of Regenesis",
+            "ilvl": 50,
+            "stats_text": [
+              "Grants (15-18) Life per Enemy Hit"
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          },
+          {
+            "name": "of Renewal",
+            "ilvl": 60,
+            "stats_text": [
+              "Grants (19-22) Life per Enemy Hit"
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          },
+          {
+            "name": "of Recuperation",
+            "ilvl": 70,
+            "stats_text": [
+              "Grants (23-26) Life per Enemy Hit"
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          },
+          {
+            "name": "of Revitalization",
+            "ilvl": 80,
+            "stats_text": [
+              "Grants (27-30) Life per Enemy Hit"
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ChanceToFreeze",
+        "mods": [
+          {
+            "name": "of Freezing",
+            "ilvl": 15,
+            "stats_text": [
+              "(18-24)% chance to Freeze"
+            ],
+            "tags": [
+              "elemental",
+              "cold",
+              "ailment"
+            ]
+          },
+          {
+            "name": "of Bleakness",
+            "ilvl": 45,
+            "stats_text": [
+              "(25-30)% chance to Freeze"
+            ],
+            "tags": [
+              "elemental",
+              "cold",
+              "ailment"
+            ]
+          },
+          {
+            "name": "of the Hyperboreal",
+            "ilvl": 75,
+            "stats_text": [
+              "(31-40)% chance to Freeze"
+            ],
+            "tags": [
+              "elemental",
+              "cold",
+              "ailment"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "StunThresholdReduction",
+        "mods": [
+          {
+            "name": "of the Pugilist",
+            "ilvl": 5,
+            "stats_text": [
+              "(5-7)% reduced Enemy Stun Threshold"
+            ],
+            "tags": []
+          },
+          {
+            "name": "of the Brawler",
+            "ilvl": 20,
+            "stats_text": [
+              "(8-9)% reduced Enemy Stun Threshold"
+            ],
+            "tags": []
+          },
+          {
+            "name": "of the Boxer",
+            "ilvl": 30,
+            "stats_text": [
+              "(10-11)% reduced Enemy Stun Threshold"
+            ],
+            "tags": []
+          },
+          {
+            "name": "of the Combatant",
+            "ilvl": 44,
+            "stats_text": [
+              "(12-13)% reduced Enemy Stun Threshold"
+            ],
+            "tags": []
+          },
+          {
+            "name": "of the Gladiator",
+            "ilvl": 58,
+            "stats_text": [
+              "(14-15)% reduced Enemy Stun Threshold"
+            ],
+            "tags": []
+          }
+        ]
+      },
+      {
+        "group": "Strength",
+        "mods": [
+          {
+            "name": "of the Brute",
+            "ilvl": 1,
+            "stats_text": [
+              "+(8-12) to Strength"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Wrestler",
+            "ilvl": 11,
+            "stats_text": [
+              "+(13-17) to Strength"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Bear",
+            "ilvl": 22,
+            "stats_text": [
+              "+(18-22) to Strength"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Lion",
+            "ilvl": 33,
+            "stats_text": [
+              "+(23-27) to Strength"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Gorilla",
+            "ilvl": 44,
+            "stats_text": [
+              "+(28-32) to Strength"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Goliath",
+            "ilvl": 55,
+            "stats_text": [
+              "+(33-37) to Strength"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Leviathan",
+            "ilvl": 66,
+            "stats_text": [
+              "+(38-42) to Strength"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Titan",
+            "ilvl": 74,
+            "stats_text": [
+              "+(43-50) to Strength"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          },
+          {
+            "name": "of the Gods",
+            "ilvl": 82,
+            "stats_text": [
+              "+(51-55) to Strength"
+            ],
+            "tags": [
+              "attribute"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "SpellCriticalStrikeChanceIncrease",
+        "mods": [
+          {
+            "name": "of Menace",
+            "ilvl": 11,
+            "stats_text": [
+              "(10-19)% increased Spell Critical Strike Chance"
+            ],
+            "tags": [
+              "caster",
+              "critical"
+            ]
+          },
+          {
+            "name": "of Havoc",
+            "ilvl": 21,
+            "stats_text": [
+              "(20-39)% increased Spell Critical Strike Chance"
+            ],
+            "tags": [
+              "caster",
+              "critical"
+            ]
+          },
+          {
+            "name": "of Disaster",
+            "ilvl": 28,
+            "stats_text": [
+              "(40-59)% increased Spell Critical Strike Chance"
+            ],
+            "tags": [
+              "caster",
+              "critical"
+            ]
+          },
+          {
+            "name": "of Calamity",
+            "ilvl": 41,
+            "stats_text": [
+              "(60-79)% increased Spell Critical Strike Chance"
+            ],
+            "tags": [
+              "caster",
+              "critical"
+            ]
+          },
+          {
+            "name": "of Ruin",
+            "ilvl": 59,
+            "stats_text": [
+              "(80-99)% increased Spell Critical Strike Chance"
+            ],
+            "tags": [
+              "caster",
+              "critical"
+            ]
+          },
+          {
+            "name": "of Unmaking",
+            "ilvl": 76,
+            "stats_text": [
+              "(100-109)% increased Spell Critical Strike Chance"
+            ],
+            "tags": [
+              "caster",
+              "critical"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "CriticalStrikeMultiplier",
+        "mods": [
+          {
+            "name": "of Ire",
+            "ilvl": 8,
+            "stats_text": [
+              "+(10-14)% to Global Critical Strike Multiplier"
+            ],
+            "tags": [
+              "damage",
+              "critical"
+            ]
+          },
+          {
+            "name": "of Anger",
+            "ilvl": 21,
+            "stats_text": [
+              "+(15-19)% to Global Critical Strike Multiplier"
+            ],
+            "tags": [
+              "damage",
+              "critical"
+            ]
+          },
+          {
+            "name": "of Rage",
+            "ilvl": 30,
+            "stats_text": [
+              "+(20-24)% to Global Critical Strike Multiplier"
+            ],
+            "tags": [
+              "damage",
+              "critical"
+            ]
+          },
+          {
+            "name": "of Fury",
+            "ilvl": 44,
+            "stats_text": [
+              "+(25-29)% to Global Critical Strike Multiplier"
+            ],
+            "tags": [
+              "damage",
+              "critical"
+            ]
+          },
+          {
+            "name": "of Ferocity",
+            "ilvl": 59,
+            "stats_text": [
+              "+(30-34)% to Global Critical Strike Multiplier"
+            ],
+            "tags": [
+              "damage",
+              "critical"
+            ]
+          },
+          {
+            "name": "of Destruction",
+            "ilvl": 73,
+            "stats_text": [
+              "+(35-38)% to Global Critical Strike Multiplier"
+            ],
+            "tags": [
+              "damage",
+              "critical"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ManaGainedFromEnemyDeath",
+        "mods": [
+          {
+            "name": "of Absorption",
+            "ilvl": 1,
+            "stats_text": [
+              "Gain (4-6) Mana per Enemy Killed"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "of Osmosis",
+            "ilvl": 24,
+            "stats_text": [
+              "Gain (7-10) Mana per Enemy Killed"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "of Consumption",
+            "ilvl": 40,
+            "stats_text": [
+              "Gain (11-15) Mana per Enemy Killed"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "of Diffusion",
+            "ilvl": 52,
+            "stats_text": [
+              "Gain (16-25) Mana per Enemy Killed"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "of Permeation",
+            "ilvl": 66,
+            "stats_text": [
+              "Gain (26-37) Mana per Enemy Killed"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "of Retention",
+            "ilvl": 81,
+            "stats_text": [
+              "Gain (38-50) Mana per Enemy Killed"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedAttackSpeed",
+        "mods": [
+          {
+            "name": "of Skill",
+            "ilvl": 1,
+            "stats_text": [
+              "(5-7)% increased Attack Speed"
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          },
+          {
+            "name": "of Ease",
+            "ilvl": 11,
+            "stats_text": [
+              "(8-10)% increased Attack Speed"
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          },
+          {
+            "name": "of Mastery",
+            "ilvl": 22,
+            "stats_text": [
+              "(11-13)% increased Attack Speed"
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          },
+          {
+            "name": "of Renown",
+            "ilvl": 30,
+            "stats_text": [
+              "(14-16)% increased Attack Speed"
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          },
+          {
+            "name": "of Acclaim",
+            "ilvl": 37,
+            "stats_text": [
+              "(17-19)% increased Attack Speed"
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          },
+          {
+            "name": "of Fame",
+            "ilvl": 45,
+            "stats_text": [
+              "(20-22)% increased Attack Speed"
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          },
+          {
+            "name": "of Infamy",
+            "ilvl": 60,
+            "stats_text": [
+              "(23-25)% increased Attack Speed"
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          },
+          {
+            "name": "of Celebration",
+            "ilvl": 77,
+            "stats_text": [
+              "(26-27)% increased Attack Speed"
+            ],
+            "tags": [
+              "attack",
+              "speed"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "DamageOverTimeMultiplier",
+        "mods": [
+          {
+            "name": "of the Inclement",
+            "ilvl": 4,
+            "stats_text": [
+              "+(14-18)% to Cold Damage over Time Multiplier"
+            ],
+            "tags": [
+              "dot_multi",
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "of the Bleak",
+            "ilvl": 12,
+            "stats_text": [
+              "+(19-23)% to Cold Damage over Time Multiplier"
+            ],
+            "tags": [
+              "dot_multi",
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "of the Boreal",
+            "ilvl": 36,
+            "stats_text": [
+              "+(24-28)% to Cold Damage over Time Multiplier"
+            ],
+            "tags": [
+              "dot_multi",
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "of the Gelid",
+            "ilvl": 64,
+            "stats_text": [
+              "+(29-33)% to Cold Damage over Time Multiplier"
+            ],
+            "tags": [
+              "dot_multi",
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "of Heartstopping",
+            "ilvl": 78,
+            "stats_text": [
+              "+(34-38)% to Cold Damage over Time Multiplier"
+            ],
+            "tags": [
+              "dot_multi",
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "of the Earnest",
+            "ilvl": 4,
+            "stats_text": [
+              "+(14-18)% to Fire Damage over Time Multiplier"
+            ],
+            "tags": [
+              "dot_multi",
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "of the Fervid",
+            "ilvl": 12,
+            "stats_text": [
+              "+(19-23)% to Fire Damage over Time Multiplier"
+            ],
+            "tags": [
+              "dot_multi",
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "of the Ardent",
+            "ilvl": 36,
+            "stats_text": [
+              "+(24-28)% to Fire Damage over Time Multiplier"
+            ],
+            "tags": [
+              "dot_multi",
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "of the Zealous",
+            "ilvl": 64,
+            "stats_text": [
+              "+(29-33)% to Fire Damage over Time Multiplier"
+            ],
+            "tags": [
+              "dot_multi",
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "of the Fanatical",
+            "ilvl": 78,
+            "stats_text": [
+              "+(34-38)% to Fire Damage over Time Multiplier"
+            ],
+            "tags": [
+              "dot_multi",
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ColdDamagePercentage",
+        "mods": [
+          {
+            "name": "of Snow",
+            "ilvl": 12,
+            "stats_text": [
+              "(10-12)% increased Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "of Sleet",
+            "ilvl": 24,
+            "stats_text": [
+              "(13-15)% increased Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "of Ice",
+            "ilvl": 36,
+            "stats_text": [
+              "(16-18)% increased Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "of Rime",
+            "ilvl": 50,
+            "stats_text": [
+              "(19-22)% increased Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "of Floe",
+            "ilvl": 64,
+            "stats_text": [
+              "(23-26)% increased Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          },
+          {
+            "name": "of Glaciation",
+            "ilvl": 76,
+            "stats_text": [
+              "(27-30)% increased Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "GlobalDamageOverTimeMultiplier",
+        "mods": [
+          {
+            "name": "of Acrimony",
+            "ilvl": 44,
+            "stats_text": [
+              "+(7-11)% to Damage over Time Multiplier"
+            ],
+            "tags": [
+              "dot_multi",
+              "damage"
+            ]
+          },
+          {
+            "name": "of Dispersion",
+            "ilvl": 55,
+            "stats_text": [
+              "+(12-15)% to Damage over Time Multiplier"
+            ],
+            "tags": [
+              "dot_multi",
+              "damage"
+            ]
+          },
+          {
+            "name": "of Liquefaction",
+            "ilvl": 68,
+            "stats_text": [
+              "+(16-19)% to Damage over Time Multiplier"
+            ],
+            "tags": [
+              "dot_multi",
+              "damage"
+            ]
+          },
+          {
+            "name": "of Melting",
+            "ilvl": 76,
+            "stats_text": [
+              "+(20-23)% to Damage over Time Multiplier"
+            ],
+            "tags": [
+              "dot_multi",
+              "damage"
+            ]
+          },
+          {
+            "name": "of Dissolution",
+            "ilvl": 82,
+            "stats_text": [
+              "+(24-26)% to Damage over Time Multiplier"
+            ],
+            "tags": [
+              "dot_multi",
+              "damage"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LightRadiusAndAccuracy",
+        "mods": [
+          {
+            "name": "of Shining",
+            "ilvl": 8,
+            "stats_text": [
+              "5% increased Light Radius"
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "name": "of Light",
+            "ilvl": 15,
+            "stats_text": [
+              "10% increased Light Radius"
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "name": "of Radiance",
+            "ilvl": 30,
+            "stats_text": [
+              "15% increased Light Radius"
+            ],
+            "tags": [
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ManaRegeneration",
+        "mods": [
+          {
+            "name": "of Excitement",
+            "ilvl": 2,
+            "stats_text": [
+              "(10-19)% increased Mana Regeneration Rate"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "of Joy",
+            "ilvl": 18,
+            "stats_text": [
+              "(20-29)% increased Mana Regeneration Rate"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "of Elation",
+            "ilvl": 29,
+            "stats_text": [
+              "(30-39)% increased Mana Regeneration Rate"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "of Bliss",
+            "ilvl": 42,
+            "stats_text": [
+              "(40-49)% increased Mana Regeneration Rate"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "of Euphoria",
+            "ilvl": 55,
+            "stats_text": [
+              "(50-59)% increased Mana Regeneration Rate"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          },
+          {
+            "name": "of Nirvana",
+            "ilvl": 79,
+            "stats_text": [
+              "(60-69)% increased Mana Regeneration Rate"
+            ],
+            "tags": [
+              "resource",
+              "mana"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "FireDamagePercentage",
+        "mods": [
+          {
+            "name": "of Embers",
+            "ilvl": 8,
+            "stats_text": [
+              "(10-12)% increased Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "of Coals",
+            "ilvl": 22,
+            "stats_text": [
+              "(13-15)% increased Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "of Cinders",
+            "ilvl": 36,
+            "stats_text": [
+              "(16-18)% increased Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "of Flames",
+            "ilvl": 50,
+            "stats_text": [
+              "(19-22)% increased Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "of Immolation",
+            "ilvl": 64,
+            "stats_text": [
+              "(23-26)% increased Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          },
+          {
+            "name": "of Ashes",
+            "ilvl": 76,
+            "stats_text": [
+              "(27-30)% increased Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LightningDamagePercentage",
+        "mods": [
+          {
+            "name": "of Sparks",
+            "ilvl": 10,
+            "stats_text": [
+              "(10-12)% increased Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning"
+            ]
+          },
+          {
+            "name": "of Static",
+            "ilvl": 23,
+            "stats_text": [
+              "(13-15)% increased Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning"
+            ]
+          },
+          {
+            "name": "of Electricity",
+            "ilvl": 36,
+            "stats_text": [
+              "(16-18)% increased Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning"
+            ]
+          },
+          {
+            "name": "of Voltage",
+            "ilvl": 50,
+            "stats_text": [
+              "(19-22)% increased Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning"
+            ]
+          },
+          {
+            "name": "of Discharge",
+            "ilvl": 64,
+            "stats_text": [
+              "(23-26)% increased Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning"
+            ]
+          },
+          {
+            "name": "of Arcing",
+            "ilvl": 76,
+            "stats_text": [
+              "(27-30)% increased Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ChanceToIgnite",
+        "mods": [
+          {
+            "name": "of Ignition",
+            "ilvl": 15,
+            "stats_text": [
+              "(18-24)% chance to Ignite"
+            ],
+            "tags": [
+              "elemental",
+              "fire",
+              "ailment"
+            ]
+          },
+          {
+            "name": "of Combustion",
+            "ilvl": 45,
+            "stats_text": [
+              "(25-30)% chance to Ignite"
+            ],
+            "tags": [
+              "elemental",
+              "fire",
+              "ailment"
+            ]
+          },
+          {
+            "name": "of Conflagration",
+            "ilvl": 75,
+            "stats_text": [
+              "(31-40)% chance to Ignite"
+            ],
+            "tags": [
+              "elemental",
+              "fire",
+              "ailment"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LifeGainedFromEnemyDeath",
+        "mods": [
+          {
+            "name": "of Success",
+            "ilvl": 1,
+            "stats_text": [
+              "Gain (7-10) Life per Enemy Killed"
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "name": "of Victory",
+            "ilvl": 23,
+            "stats_text": [
+              "Gain (12-18) Life per Enemy Killed"
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "name": "of Triumph",
+            "ilvl": 40,
+            "stats_text": [
+              "Gain (24-32) Life per Enemy Killed"
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "name": "of Conquest",
+            "ilvl": 52,
+            "stats_text": [
+              "Gain (35-44) Life per Enemy Killed"
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "name": "of Feat",
+            "ilvl": 66,
+            "stats_text": [
+              "Gain (56-72) Life per Enemy Killed"
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "name": "of Masterstroke",
+            "ilvl": 81,
+            "stats_text": [
+              "Gain (84-110) Life per Enemy Killed"
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedAccuracy",
+        "mods": [
+          {
+            "name": "of Steadiness",
+            "ilvl": 1,
+            "stats_text": [
+              "+(80-130) to Accuracy Rating"
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "name": "of Precision",
+            "ilvl": 20,
+            "stats_text": [
+              "+(131-215) to Accuracy Rating"
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "name": "of the Sniper",
+            "ilvl": 40,
+            "stats_text": [
+              "+(216-325) to Accuracy Rating"
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "name": "of the Marksman",
+            "ilvl": 60,
+            "stats_text": [
+              "+(326-455) to Accuracy Rating"
+            ],
+            "tags": [
+              "attack"
+            ]
+          },
+          {
+            "name": "of the Ranger",
+            "ilvl": 75,
+            "stats_text": [
+              "+(456-624) to Accuracy Rating"
+            ],
+            "tags": [
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "LifeLeech",
+        "mods": [
+          {
+            "name": "of the Remora",
+            "ilvl": 20,
+            "stats_text": [
+              "(2-2.4)% of Physical Attack Damage Leeched as Life"
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "of the Lamprey",
+            "ilvl": 45,
+            "stats_text": [
+              "(2.6-3.2)% of Physical Attack Damage Leeched as Life"
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "of the Vampire",
+            "ilvl": 70,
+            "stats_text": [
+              "(3.5-4.5)% of Physical Attack Damage Leeched as Life"
+            ],
+            "tags": [
+              "resource",
+              "life",
+              "physical",
+              "attack"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "ChanceToShock",
+        "mods": [
+          {
+            "name": "of Shocking",
+            "ilvl": 15,
+            "stats_text": [
+              "(18-24)% chance to Shock"
+            ],
+            "tags": [
+              "elemental",
+              "lightning",
+              "ailment"
+            ]
+          },
+          {
+            "name": "of Zapping",
+            "ilvl": 45,
+            "stats_text": [
+              "(25-30)% chance to Shock"
+            ],
+            "tags": [
+              "elemental",
+              "lightning",
+              "ailment"
+            ]
+          },
+          {
+            "name": "of Electrocution",
+            "ilvl": 75,
+            "stats_text": [
+              "(31-40)% chance to Shock"
+            ],
+            "tags": [
+              "elemental",
+              "lightning",
+              "ailment"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

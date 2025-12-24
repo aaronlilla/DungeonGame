@@ -1,0 +1,798 @@
+{
+  "itemClass": "Boots (Evasion)",
+  "affixes": {
+    "prefixes": [
+      {
+        "group": "ItemFoundRarityIncreasePrefix",
+        "mods": [
+          {
+            "modifier": "Magpie's",
+            "iLvl": 20,
+            "stats": [
+              {
+                "stat": "#% increased Rarity of Items found",
+                "min": 8,
+                "max": 12
+              }
+            ],
+            "tags": [
+              "drop"
+            ]
+          },
+          {
+            "modifier": "Pirate's",
+            "iLvl": 39,
+            "stats": [
+              {
+                "stat": "#% increased Rarity of Items found",
+                "min": 13,
+                "max": 18
+              }
+            ],
+            "tags": [
+              "drop"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "MovementVelocity",
+        "mods": [
+          {
+            "modifier": "Runner's",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "#% increased Movement Speed",
+                "min": 10,
+                "max": 10
+              }
+            ],
+            "tags": [
+              "speed"
+            ]
+          },
+          {
+            "modifier": "Sprinter's",
+            "iLvl": 15,
+            "stats": [
+              {
+                "stat": "#% increased Movement Speed",
+                "min": 15,
+                "max": 15
+              }
+            ],
+            "tags": [
+              "speed"
+            ]
+          },
+          {
+            "modifier": "Stallion's",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "#% increased Movement Speed",
+                "min": 20,
+                "max": 20
+              }
+            ],
+            "tags": [
+              "speed"
+            ]
+          },
+          {
+            "modifier": "Gazelle's",
+            "iLvl": 40,
+            "stats": [
+              {
+                "stat": "#% increased Movement Speed",
+                "min": 25,
+                "max": 25
+              }
+            ],
+            "tags": [
+              "speed"
+            ]
+          },
+          {
+            "modifier": "Cheetah's",
+            "iLvl": 55,
+            "stats": [
+              {
+                "stat": "#% increased Movement Speed",
+                "min": 30,
+                "max": 30
+              }
+            ],
+            "tags": [
+              "speed"
+            ]
+          },
+          {
+            "modifier": "Hellion's",
+            "iLvl": 86,
+            "stats": [
+              {
+                "stat": "#% increased Movement Speed",
+                "min": 35,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "speed"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "BaseLocalDefences",
+        "mods": [
+          {
+            "modifier": "Agile",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 6,
+                "max": 12
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Dancer's",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 13,
+                "max": 35
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Acrobat's",
+            "iLvl": 17,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 36,
+                "max": 63
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Fleet",
+            "iLvl": 23,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 64,
+                "max": 82
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Blurred",
+            "iLvl": 29,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 83,
+                "max": 101
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Phased",
+            "iLvl": 35,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 102,
+                "max": 120
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Vaporous",
+            "iLvl": 43,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 121,
+                "max": 150
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "DefencesPercent",
+        "mods": [
+          {
+            "modifier": "Shade's",
+            "iLvl": 3,
+            "stats": [
+              {
+                "stat": "#% increased Evasion Rating",
+                "min": 15,
+                "max": 26
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Ghost's",
+            "iLvl": 19,
+            "stats": [
+              {
+                "stat": "#% increased Evasion Rating",
+                "min": 27,
+                "max": 42
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Spectre's",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "#% increased Evasion Rating",
+                "min": 43,
+                "max": 55
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Wraith's",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "#% increased Evasion Rating",
+                "min": 56,
+                "max": 67
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Phantasm's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "#% increased Evasion Rating",
+                "min": 68,
+                "max": 79
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Nightmare's",
+            "iLvl": 72,
+            "stats": [
+              {
+                "stat": "#% increased Evasion Rating",
+                "min": 80,
+                "max": 91
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Mirage's",
+            "iLvl": 84,
+            "stats": [
+              {
+                "stat": "#% increased Evasion Rating",
+                "min": 92,
+                "max": 100
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "DefencesPercentAndStunRecovery",
+        "mods": [
+          {
+            "modifier": "Mosquito's",
+            "iLvl": 2,
+            "stats": [
+              {
+                "stat": "#% increased Evasion Rating",
+                "min": 6,
+                "max": 13
+              },
+              {
+                "stat": "#% increased Stun and Block Recovery",
+                "min": 6,
+                "max": 7
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Moth's",
+            "iLvl": 19,
+            "stats": [
+              {
+                "stat": "#% increased Evasion Rating",
+                "min": 14,
+                "max": 20
+              },
+              {
+                "stat": "#% increased Stun and Block Recovery",
+                "min": 8,
+                "max": 9
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Butterfly's",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "#% increased Evasion Rating",
+                "min": 21,
+                "max": 26
+              },
+              {
+                "stat": "#% increased Stun and Block Recovery",
+                "min": 10,
+                "max": 11
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Wasp's",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "#% increased Evasion Rating",
+                "min": 27,
+                "max": 32
+              },
+              {
+                "stat": "#% increased Stun and Block Recovery",
+                "min": 12,
+                "max": 13
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Dragonfly's",
+            "iLvl": 60,
+            "stats": [
+              {
+                "stat": "#% increased Evasion Rating",
+                "min": 33,
+                "max": 38
+              },
+              {
+                "stat": "#% increased Stun and Block Recovery",
+                "min": 14,
+                "max": 15
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Hummingbird's",
+            "iLvl": 78,
+            "stats": [
+              {
+                "stat": "#% increased Evasion Rating",
+                "min": 39,
+                "max": 42
+              },
+              {
+                "stat": "#% increased Stun and Block Recovery",
+                "min": 16,
+                "max": 17
+              }
+            ],
+            "tags": [
+              "evasion",
+              "defences"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "IncreasedLife",
+        "mods": [
+          {
+            "modifier": "Hale",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 3,
+                "max": 9
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Healthy",
+            "iLvl": 5,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 10,
+                "max": 24
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Sanguine",
+            "iLvl": 11,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 25,
+                "max": 39
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Stalwart",
+            "iLvl": 18,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 40,
+                "max": 54
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Stout",
+            "iLvl": 24,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 55,
+                "max": 69
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Robust",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 70,
+                "max": 84
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Rotund",
+            "iLvl": 36,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 85,
+                "max": 99
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Virile",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 100,
+                "max": 114
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "Athlete's",
+            "iLvl": 54,
+            "stats": [
+              {
+                "stat": "+# to maximum Life",
+                "min": 115,
+                "max": 129
+              }
+            ],
+            "tags": [
+              "resource",
+              "life"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "BaseLocalDefencesAndLife",
+        "mods": [
+          {
+            "modifier": "Flea's",
+            "iLvl": 30,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 14,
+                "max": 20
+              },
+              {
+                "stat": "+# to maximum Life",
+                "min": 18,
+                "max": 23
+              }
+            ],
+            "tags": [
+              "evasion",
+              "resource",
+              "life",
+              "defences"
+            ]
+          },
+          {
+            "modifier": "Fawn's",
+            "iLvl": 46,
+            "stats": [
+              {
+                "stat": "+# to Evasion Rating",
+                "min": 21,
+                "max": 42
+              },
+              {
+                "stat": "+# to maximum Life",
+                "min": 24,
+                "max": 28
+              }
+            ],
+            "tags": [
+              "evasion",
+              "resource",
+              "life",
+              "defences"
+            ]
+          }
+        ]
+      }
+    ],
+    "suffixes": [
+      {
+        "group": "LifeRegeneration",
+        "mods": [
+          {
+            "modifier": "of the Newt",
+            "iLvl": 1,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 1,
+                "max": 2
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of the Lizard",
+            "iLvl": 7,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 2.1,
+                "max": 8
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of the Flatworm",
+            "iLvl": 19,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 8.1,
+                "max": 16
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of the Starfish",
+            "iLvl": 31,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 16.1,
+                "max": 24
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of the Hydra",
+            "iLvl": 44,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 24.1,
+                "max": 32
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of the Troll",
+            "iLvl": 55,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 32.1,
+                "max": 48
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of Ryslatha",
+            "iLvl": 68,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 48.1,
+                "max": 64
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          },
+          {
+            "modifier": "of the Phoenix",
+            "iLvl": 74,
+            "stats": [
+              {
+                "stat": "Regenerate # Life per second",
+                "min": 64.1,
+                "max": 96
+              }
+            ],
+            "tags": [
+              "flat_life_regen",
+              "resource",
+              "life"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

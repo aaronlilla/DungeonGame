@@ -1,0 +1,965 @@
+{
+  "item_class": "Bow",
+  "sections": {
+    "prefixes": [
+      {
+        "group": "LocalIncreasedPhysicalDamagePercentAndAccuracyRating",
+        "mods": [
+          {
+            "name": "Squire's",
+            "ilvl": 1,
+            "stats": [
+              "(15-19)% increased Physical Damage",
+              "+(16-20) to Accuracy Rating"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Journeyman's",
+            "ilvl": 11,
+            "stats": [
+              "(20-24)% increased Physical Damage",
+              "+(21-46) to Accuracy Rating"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Reaver's",
+            "ilvl": 23,
+            "stats": [
+              "(25-34)% increased Physical Damage",
+              "+(47-72) to Accuracy Rating"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Mercenary's",
+            "ilvl": 35,
+            "stats": [
+              "(35-44)% increased Physical Damage",
+              "+(73-97) to Accuracy Rating"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Champion's",
+            "ilvl": 46,
+            "stats": [
+              "(45-54)% increased Physical Damage",
+              "+(98-123) to Accuracy Rating"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Conqueror's",
+            "ilvl": 60,
+            "stats": [
+              "(55-64)% increased Physical Damage",
+              "+(124-149) to Accuracy Rating"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Emperor's",
+            "ilvl": 73,
+            "stats": [
+              "(65-74)% increased Physical Damage",
+              "+(150-174) to Accuracy Rating"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Dictator's",
+            "ilvl": 83,
+            "stats": [
+              "(75-79)% increased Physical Damage",
+              "+(175-200) to Accuracy Rating"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          }
+        ],
+        "description": [
+          "#% increased Physical Damage",
+          "+# to Accuracy Rating"
+        ]
+      },
+      {
+        "group": "IncreasedWeaponElementalDamagePercent",
+        "mods": [
+          {
+            "name": "Catalysing",
+            "ilvl": 4,
+            "stats": [
+              "(19-34)% increased Elemental Damage with Attack Skills"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          },
+          {
+            "name": "Infusing",
+            "ilvl": 15,
+            "stats": [
+              "(36-51)% increased Elemental Damage with Attack Skills"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          },
+          {
+            "name": "Empowering",
+            "ilvl": 30,
+            "stats": [
+              "(53-61)% increased Elemental Damage with Attack Skills"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          },
+          {
+            "name": "Unleashed",
+            "ilvl": 60,
+            "stats": [
+              "(63-71)% increased Elemental Damage with Attack Skills"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          },
+          {
+            "name": "Overpowering",
+            "ilvl": 81,
+            "stats": [
+              "(73-85)% increased Elemental Damage with Attack Skills"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          },
+          {
+            "name": "Devastating",
+            "ilvl": 86,
+            "stats": [
+              "(87-100)% increased Elemental Damage with Attack Skills"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "attack"
+            ]
+          }
+        ],
+        "description": [
+          "#% increased Elemental Damage with Attack Skills"
+        ]
+      },
+      {
+        "group": "IncreaseSpecificSocketedGemLevel",
+        "mods": [
+          {
+            "name": "Fletcher's",
+            "ilvl": 9,
+            "stats": [
+              "+1 to Level of Socketed Bow Gems"
+            ],
+            "tags": [
+              "attack",
+              "gem"
+            ]
+          },
+          {
+            "name": "Sharpshooter's",
+            "ilvl": 64,
+            "stats": [
+              "+2 to Level of Socketed Bow Gems"
+            ],
+            "tags": [
+              "attack",
+              "gem"
+            ]
+          }
+        ],
+        "description": [
+          "+# to Level of Socketed Bow Gems"
+        ]
+      },
+      {
+        "group": "FireDamage",
+        "mods": [
+          {
+            "name": "Heated",
+            "ilvl": 1,
+            "stats": [
+              "Adds (3-5) to (6-7) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Smouldering",
+            "ilvl": 11,
+            "stats": [
+              "Adds (14-20) to (29-33) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Smoking",
+            "ilvl": 18,
+            "stats": [
+              "Adds (23-31) to (47-54) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Burning",
+            "ilvl": 26,
+            "stats": [
+              "Adds (32-44) to (65-76) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Flaming",
+            "ilvl": 33,
+            "stats": [
+              "Adds (45-61) to (91-106) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Scorching",
+            "ilvl": 42,
+            "stats": [
+              "Adds (63-85) to (128-148) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Incinerating",
+            "ilvl": 51,
+            "stats": [
+              "Adds (85-115) to (172-200) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Blasting",
+            "ilvl": 62,
+            "stats": [
+              "Adds (110-150) to (223-260) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Cremating",
+            "ilvl": 74,
+            "stats": [
+              "Adds (137-188) to (279-325) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          },
+          {
+            "name": "Carbonising",
+            "ilvl": 82,
+            "stats": [
+              "Adds (165-225) to (335-390) Fire Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "fire",
+              "attack"
+            ]
+          }
+        ],
+        "description": [
+          "Adds # to # Fire Damage"
+        ]
+      },
+      {
+        "group": "LightningDamage",
+        "mods": [
+          {
+            "name": "Humming",
+            "ilvl": 3,
+            "stats": [
+              "Adds 2 to (10-11) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Buzzing",
+            "ilvl": 13,
+            "stats": [
+              "Adds 3 to (46-53) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Snapping",
+            "ilvl": 19,
+            "stats": [
+              "Adds (4-5) to (76-88) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Crackling",
+            "ilvl": 31,
+            "stats": [
+              "Adds (5-8) to (106-123) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Sparking",
+            "ilvl": 34,
+            "stats": [
+              "Adds (8-10) to (148-173) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Arcing",
+            "ilvl": 42,
+            "stats": [
+              "Adds (11-14) to (208-242) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Shocking",
+            "ilvl": 51,
+            "stats": [
+              "Adds (14-20) to (281-327) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Discharging",
+            "ilvl": 63,
+            "stats": [
+              "Adds (19-25) to (366-425) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Electrocuting",
+            "ilvl": 74,
+            "stats": [
+              "Adds (23-32) to (458-531) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          },
+          {
+            "name": "Vapourising",
+            "ilvl": 82,
+            "stats": [
+              "Adds (28-38) to (549-638) Lightning Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "lightning",
+              "attack"
+            ]
+          }
+        ],
+        "description": [
+          "Adds # to # Lightning Damage"
+        ]
+      },
+      {
+        "group": "LocalPhysicalDamagePercent",
+        "mods": [
+          {
+            "name": "Heavy",
+            "ilvl": 1,
+            "stats": [
+              "(40-49)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Serrated",
+            "ilvl": 11,
+            "stats": [
+              "(50-64)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Wicked",
+            "ilvl": 23,
+            "stats": [
+              "(65-84)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Vicious",
+            "ilvl": 35,
+            "stats": [
+              "(85-109)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Bloodthirsty",
+            "ilvl": 46,
+            "stats": [
+              "(110-134)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Cruel",
+            "ilvl": 60,
+            "stats": [
+              "(135-154)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Tyrannical",
+            "ilvl": 73,
+            "stats": [
+              "(155-169)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Merciless",
+            "ilvl": 83,
+            "stats": [
+              "(170-179)% increased Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          }
+        ],
+        "description": [
+          "#% increased Physical Damage"
+        ]
+      },
+      {
+        "group": "PhysicalDamage",
+        "mods": [
+          {
+            "name": "Glinting",
+            "ilvl": 2,
+            "stats": [
+              "Adds 2 to (4-5) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Burnished",
+            "ilvl": 13,
+            "stats": [
+              "Adds (6-8) to (12-15) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Polished",
+            "ilvl": 21,
+            "stats": [
+              "Adds (10-13) to (21-25) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Honed",
+            "ilvl": 29,
+            "stats": [
+              "Adds (13-17) to (28-32) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Gleaming",
+            "ilvl": 36,
+            "stats": [
+              "Adds (16-22) to (35-40) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Annealed",
+            "ilvl": 46,
+            "stats": [
+              "Adds (20-28) to (43-51) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Razor-sharp",
+            "ilvl": 54,
+            "stats": [
+              "Adds (25-33) to (52-61) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Tempered",
+            "ilvl": 65,
+            "stats": [
+              "Adds (30-40) to (63-73) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          },
+          {
+            "name": "Flaring",
+            "ilvl": 77,
+            "stats": [
+              "Adds (34-47) to (72-84) Physical Damage"
+            ],
+            "tags": [
+              "physical_damage",
+              "damage",
+              "physical",
+              "attack"
+            ]
+          }
+        ],
+        "description": [
+          "Adds # to # Physical Damage"
+        ]
+      },
+      {
+        "group": "IncreaseSocketedGemLevel",
+        "mods": [
+          {
+            "name": "Paragon's",
+            "ilvl": 50,
+            "stats": [
+              "+1 to Level of Socketed Gems"
+            ],
+            "tags": [
+              "gem"
+            ]
+          }
+        ],
+        "description": [
+          "+1 to Level of Socketed Gems"
+        ]
+      },
+      {
+        "group": "ColdDamage",
+        "mods": [
+          {
+            "name": "Frosted",
+            "ilvl": 2,
+            "stats": [
+              "Adds (2-3) to (6-7) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Chilled",
+            "ilvl": 12,
+            "stats": [
+              "Adds (12-17) to (26-30) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Icy",
+            "ilvl": 19,
+            "stats": [
+              "Adds (21-28) to (42-48) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Frigid",
+            "ilvl": 27,
+            "stats": [
+              "Adds (29-40) to (58-68) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Freezing",
+            "ilvl": 34,
+            "stats": [
+              "Adds (41-55) to (81-95) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Frozen",
+            "ilvl": 43,
+            "stats": [
+              "Adds (57-77) to (114-132) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Glaciated",
+            "ilvl": 52,
+            "stats": [
+              "Adds (77-104) to (154-178) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Polar",
+            "ilvl": 63,
+            "stats": [
+              "Adds (99-136) to (200-232) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Entombing",
+            "ilvl": 75,
+            "stats": [
+              "Adds (124-170) to (250-290) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          },
+          {
+            "name": "Crystalising",
+            "ilvl": 82,
+            "stats": [
+              "Adds (149-204) to (300-348) Cold Damage"
+            ],
+            "tags": [
+              "elemental_damage",
+              "damage",
+              "elemental",
+              "cold",
+              "attack"
+            ]
+          }
+        ],
+        "description": [
+          "Adds # to # Cold Damage"
+        ]
+      },
+      {
+        "group": "LocalChaosDamage",
+        "mods": [
+          {
+            "name": "Malicious",
+            "ilvl": 83,
+            "stats": [
+              "Adds (98-149) to (183-280) Chaos Damage"
+            ],
+            "tags": [
+              "chaos_damage",
+              "damage",
+              "chaos",
+              "attack"
+            ]
+          }
+        ],
+        "description": [
+          "Adds (98-149) to (183-280) Chaos Damage"
+        ]
+      }
+    ],
+    "suffixes": []
+  }
+}

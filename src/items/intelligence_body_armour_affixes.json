@@ -1,0 +1,1527 @@
+{
+  "item": {
+    "class": "Body Armour",
+    "attribute": "Intelligence"
+  },
+  "subtype": "intelligence_body_armour",
+  "source_note": "Affix data copied from user-provided list (PoE).",
+  "prefixes": [
+    {
+      "group": "IncreasedMana",
+      "stat_line": "+# to maximum Mana",
+      "modifiers": [
+        {
+          "name": "Beryl",
+          "ilvl": 1,
+          "stats": [
+            "+(15-19) to maximum Mana"
+          ],
+          "tags": [
+            "resource",
+            "mana"
+          ]
+        },
+        {
+          "name": "Cobalt",
+          "ilvl": 11,
+          "stats": [
+            "+(20-24) to maximum Mana"
+          ],
+          "tags": [
+            "resource",
+            "mana"
+          ]
+        },
+        {
+          "name": "Azure",
+          "ilvl": 17,
+          "stats": [
+            "+(25-29) to maximum Mana"
+          ],
+          "tags": [
+            "resource",
+            "mana"
+          ]
+        },
+        {
+          "name": "Sapphire",
+          "ilvl": 23,
+          "stats": [
+            "+(30-34) to maximum Mana"
+          ],
+          "tags": [
+            "resource",
+            "mana"
+          ]
+        },
+        {
+          "name": "Cerulean",
+          "ilvl": 29,
+          "stats": [
+            "+(35-39) to maximum Mana"
+          ],
+          "tags": [
+            "resource",
+            "mana"
+          ]
+        },
+        {
+          "name": "Aqua",
+          "ilvl": 35,
+          "stats": [
+            "+(40-44) to maximum Mana"
+          ],
+          "tags": [
+            "resource",
+            "mana"
+          ]
+        },
+        {
+          "name": "Opalescent",
+          "ilvl": 42,
+          "stats": [
+            "+(45-49) to maximum Mana"
+          ],
+          "tags": [
+            "resource",
+            "mana"
+          ]
+        },
+        {
+          "name": "Gentian",
+          "ilvl": 51,
+          "stats": [
+            "+(50-54) to maximum Mana"
+          ],
+          "tags": [
+            "resource",
+            "mana"
+          ]
+        },
+        {
+          "name": "Chalybeous",
+          "ilvl": 60,
+          "stats": [
+            "+(55-59) to maximum Mana"
+          ],
+          "tags": [
+            "resource",
+            "mana"
+          ]
+        },
+        {
+          "name": "Mazarine",
+          "ilvl": 69,
+          "stats": [
+            "+(60-64) to maximum Mana"
+          ],
+          "tags": [
+            "resource",
+            "mana"
+          ]
+        },
+        {
+          "name": "Blue",
+          "ilvl": 75,
+          "stats": [
+            "+(65-68) to maximum Mana"
+          ],
+          "tags": [
+            "resource",
+            "mana"
+          ]
+        },
+        {
+          "name": "Zaffre",
+          "ilvl": 81,
+          "stats": [
+            "+(69-73) to maximum Mana"
+          ],
+          "tags": [
+            "resource",
+            "mana"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "IncreasedLife",
+      "stat_line": "+# to maximum Life",
+      "modifiers": [
+        {
+          "name": "Hale",
+          "ilvl": 1,
+          "stats": [
+            "+(3-9) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Healthy",
+          "ilvl": 5,
+          "stats": [
+            "+(10-24) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Sanguine",
+          "ilvl": 11,
+          "stats": [
+            "+(25-39) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Stalwart",
+          "ilvl": 18,
+          "stats": [
+            "+(40-54) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Stout",
+          "ilvl": 24,
+          "stats": [
+            "+(55-69) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Robust",
+          "ilvl": 30,
+          "stats": [
+            "+(70-84) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Rotund",
+          "ilvl": 36,
+          "stats": [
+            "+(85-99) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Virile",
+          "ilvl": 44,
+          "stats": [
+            "+(100-114) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Athlete's",
+          "ilvl": 54,
+          "stats": [
+            "+(115-129) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Fecund",
+          "ilvl": 64,
+          "stats": [
+            "+(130-144) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Vigorous",
+          "ilvl": 73,
+          "stats": [
+            "+(145-159) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Rapturous",
+          "ilvl": 81,
+          "stats": [
+            "+(160-174) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Prime",
+          "ilvl": 86,
+          "stats": [
+            "+(175-189) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "BaseLocalDefences",
+      "stat_line": "+# to maximum Energy Shield",
+      "modifiers": [
+        {
+          "name": "Shining",
+          "ilvl": 3,
+          "stats": [
+            "+(3-5) to maximum Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Glimmering",
+          "ilvl": 11,
+          "stats": [
+            "+(6-11) to maximum Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Glittering",
+          "ilvl": 17,
+          "stats": [
+            "+(12-16) to maximum Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Glowing",
+          "ilvl": 23,
+          "stats": [
+            "+(17-23) to maximum Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Radiating",
+          "ilvl": 29,
+          "stats": [
+            "+(24-30) to maximum Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Pulsing",
+          "ilvl": 35,
+          "stats": [
+            "+(31-38) to maximum Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Seething",
+          "ilvl": 43,
+          "stats": [
+            "+(39-49) to maximum Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Blazing",
+          "ilvl": 51,
+          "stats": [
+            "+(50-61) to maximum Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Scintillating",
+          "ilvl": 60,
+          "stats": [
+            "+(62-76) to maximum Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Incandescent",
+          "ilvl": 69,
+          "stats": [
+            "+(77-90) to maximum Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Resplendent",
+          "ilvl": 75,
+          "stats": [
+            "+(91-100) to maximum Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "DefencesPercent",
+      "stat_line": "#% increased Energy Shield",
+      "modifiers": [
+        {
+          "name": "Protective",
+          "ilvl": 3,
+          "stats": [
+            "(11-28)% increased Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Strong-Willed",
+          "ilvl": 18,
+          "stats": [
+            "(27-42)% increased Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Resolute",
+          "ilvl": 30,
+          "stats": [
+            "(43-55)% increased Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Fearless",
+          "ilvl": 44,
+          "stats": [
+            "(56-67)% increased Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Dauntless",
+          "ilvl": 60,
+          "stats": [
+            "(68-79)% increased Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Indomitable",
+          "ilvl": 72,
+          "stats": [
+            "(80-91)% increased Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Unassailable",
+          "ilvl": 84,
+          "stats": [
+            "(92-100)% increased Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Unfaltering",
+          "ilvl": 86,
+          "stats": [
+            "(101-110)% increased Energy Shield"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "AttackerTakesDamageNoRange",
+      "stat_line": "Reflects # Physical Damage to Melee Attackers",
+      "modifiers": [
+        {
+          "name": "Thorny",
+          "ilvl": 1,
+          "stats": [
+            "Reflects (1-4) Physical Damage to Melee Attackers"
+          ],
+          "tags": [
+            "physical_damage",
+            "damage",
+            "physical"
+          ]
+        },
+        {
+          "name": "Spiny",
+          "ilvl": 10,
+          "stats": [
+            "Reflects (5-10) Physical Damage to Melee Attackers"
+          ],
+          "tags": [
+            "physical_damage",
+            "damage",
+            "physical"
+          ]
+        },
+        {
+          "name": "Barbed",
+          "ilvl": 20,
+          "stats": [
+            "Reflects (11-24) Physical Damage to Melee Attackers"
+          ],
+          "tags": [
+            "physical_damage",
+            "damage",
+            "physical"
+          ]
+        },
+        {
+          "name": "Jagged",
+          "ilvl": 35,
+          "stats": [
+            "Reflects (25-50) Physical Damage to Melee Attackers"
+          ],
+          "tags": [
+            "physical_damage",
+            "damage",
+            "physical"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "DefencesPercentAndStunRecovery",
+      "stat_line": "#% increased Energy Shield\n#% increased Stun and Block Recovery",
+      "modifiers": [
+        {
+          "name": "Pixie's",
+          "ilvl": 3,
+          "stats": [
+            "(6-13)% increased Energy Shield",
+            "(6-7)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Gremlin's",
+          "ilvl": 18,
+          "stats": [
+            "(14-20)% increased Energy Shield",
+            "(8-9)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Boggart's",
+          "ilvl": 30,
+          "stats": [
+            "(21-26)% increased Energy Shield",
+            "(10-11)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Naga's",
+          "ilvl": 44,
+          "stats": [
+            "(27-32)% increased Energy Shield",
+            "(12-13)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Djinn's",
+          "ilvl": 60,
+          "stats": [
+            "(33-38)% increased Energy Shield",
+            "(14-15)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "Seraphim's",
+          "ilvl": 78,
+          "stats": [
+            "(39-42)% increased Energy Shield",
+            "(16-17)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "BaseLocalDefencesAndLife",
+      "stat_line": "+# to maximum Energy Shield\n+# to maximum Life",
+      "modifiers": [
+        {
+          "name": "Monk's",
+          "ilvl": 30,
+          "stats": [
+            "+(8-10) to maximum Energy Shield",
+            "+(18-23) to maximum Life"
+          ],
+          "tags": [
+            "energy_shield",
+            "resource",
+            "life",
+            "defences"
+          ]
+        },
+        {
+          "name": "Prior's",
+          "ilvl": 46,
+          "stats": [
+            "+(11-15) to maximum Energy Shield",
+            "+(24-28) to maximum Life"
+          ],
+          "tags": [
+            "energy_shield",
+            "resource",
+            "life",
+            "defences"
+          ]
+        },
+        {
+          "name": "Abbot's",
+          "ilvl": 62,
+          "stats": [
+            "+(16-25) to maximum Energy Shield",
+            "+(29-33) to maximum Life"
+          ],
+          "tags": [
+            "energy_shield",
+            "resource",
+            "life",
+            "defences"
+          ]
+        },
+        {
+          "name": "Exarch's",
+          "ilvl": 78,
+          "stats": [
+            "+(26-30) to maximum Energy Shield",
+            "+(34-38) to maximum Life",
+            "+# to maximum Energy Shield",
+            "+# to maximum Mana"
+          ],
+          "tags": [
+            "energy_shield",
+            "resource",
+            "life",
+            "defences"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "BaseLocalDefencesAndMana",
+      "stat_line": "+# to maximum Energy Shield\n+# to maximum Mana",
+      "modifiers": [
+        {
+          "name": "Acolyte's",
+          "ilvl": 30,
+          "stats": [
+            "+(8-10) to maximum Energy Shield",
+            "+(11-15) to maximum Mana"
+          ],
+          "tags": [
+            "energy_shield",
+            "resource",
+            "mana",
+            "defences"
+          ]
+        },
+        {
+          "name": "Deacon's",
+          "ilvl": 46,
+          "stats": [
+            "+(11-15) to maximum Energy Shield",
+            "+(16-19) to maximum Mana"
+          ],
+          "tags": [
+            "energy_shield",
+            "resource",
+            "mana",
+            "defences"
+          ]
+        },
+        {
+          "name": "Priest's",
+          "ilvl": 62,
+          "stats": [
+            "+(16-25) to maximum Energy Shield",
+            "+(20-22) to maximum Mana"
+          ],
+          "tags": [
+            "energy_shield",
+            "resource",
+            "mana",
+            "defences"
+          ]
+        },
+        {
+          "name": "Bishop's",
+          "ilvl": 78,
+          "stats": [
+            "+(26-30) to maximum Energy Shield",
+            "+(23-25) to maximum Mana"
+          ],
+          "tags": [
+            "energy_shield",
+            "resource",
+            "mana",
+            "defences"
+          ]
+        }
+      ]
+    }
+  ],
+  "suffixes": [
+    {
+      "group": "LifeRegeneration",
+      "stat_line": "Regenerate # Life per second",
+      "modifiers": [
+        {
+          "name": "of the Newt",
+          "ilvl": 1,
+          "stats": [
+            "Regenerate (1-2) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of the Lizard",
+          "ilvl": 7,
+          "stats": [
+            "Regenerate (2.1-8) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of the Flatworm",
+          "ilvl": 19,
+          "stats": [
+            "Regenerate (8.1-16) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of the Starfish",
+          "ilvl": 31,
+          "stats": [
+            "Regenerate (16.1-24) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of the Hydra",
+          "ilvl": 44,
+          "stats": [
+            "Regenerate (24.1-32) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of the Troll",
+          "ilvl": 55,
+          "stats": [
+            "Regenerate (32.1-48) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of Ryslatha",
+          "ilvl": 68,
+          "stats": [
+            "Regenerate (48.1-64) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of the Phoenix",
+          "ilvl": 74,
+          "stats": [
+            "Regenerate (64.1-96) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of Recuperation",
+          "ilvl": 78,
+          "stats": [
+            "Regenerate (96.1-128) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of Life-giving",
+          "ilvl": 83,
+          "stats": [
+            "Regenerate (128.1-152) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of Convalescence",
+          "ilvl": 86,
+          "stats": [
+            "Regenerate (152.1-176) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "FireResistance",
+      "stat_line": "+#% to Fire Resistance",
+      "modifiers": [
+        {
+          "name": "of the Whelpling",
+          "ilvl": 1,
+          "stats": [
+            "+(6-11)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Salamander",
+          "ilvl": 12,
+          "stats": [
+            "+(12-17)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Drake",
+          "ilvl": 24,
+          "stats": [
+            "+(18-23)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Kiln",
+          "ilvl": 36,
+          "stats": [
+            "+(24-29)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Furnace",
+          "ilvl": 48,
+          "stats": [
+            "+(30-35)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Volcano",
+          "ilvl": 60,
+          "stats": [
+            "+(36-41)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Magma",
+          "ilvl": 72,
+          "stats": [
+            "+(42-45)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Tzteosh",
+          "ilvl": 84,
+          "stats": [
+            "+(46-48)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "LightningResistance",
+      "stat_line": "+#% to Lightning Resistance",
+      "modifiers": [
+        {
+          "name": "of the Cloud",
+          "ilvl": 1,
+          "stats": [
+            "+(6-11)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Squall",
+          "ilvl": 13,
+          "stats": [
+            "+(12-17)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Storm",
+          "ilvl": 25,
+          "stats": [
+            "+(18-23)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Thunderhead",
+          "ilvl": 37,
+          "stats": [
+            "+(24-29)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Tempest",
+          "ilvl": 49,
+          "stats": [
+            "+(30-35)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Maelstrom",
+          "ilvl": 60,
+          "stats": [
+            "+(36-41)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Lightning",
+          "ilvl": 72,
+          "stats": [
+            "+(42-45)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Ephij",
+          "ilvl": 84,
+          "stats": [
+            "+(46-48)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "ColdResistance",
+      "stat_line": "+#% to Cold Resistance",
+      "modifiers": [
+        {
+          "name": "of the Inuit",
+          "ilvl": 1,
+          "stats": [
+            "+(6-11)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Seal",
+          "ilvl": 14,
+          "stats": [
+            "+(12-17)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Penguin",
+          "ilvl": 26,
+          "stats": [
+            "+(18-23)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Yeti",
+          "ilvl": 38,
+          "stats": [
+            "+(24-29)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Walrus",
+          "ilvl": 50,
+          "stats": [
+            "+(30-35)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Polar Bear",
+          "ilvl": 60,
+          "stats": [
+            "+(36-41)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Ice",
+          "ilvl": 72,
+          "stats": [
+            "+(42-45)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Haast",
+          "ilvl": 84,
+          "stats": [
+            "+(46-48)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Intelligence",
+      "stat_line": "+# to Intelligence",
+      "modifiers": [
+        {
+          "name": "of the Pupil",
+          "ilvl": 1,
+          "stats": [
+            "+(8-12) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Student",
+          "ilvl": 11,
+          "stats": [
+            "+(13-17) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Prodigy",
+          "ilvl": 22,
+          "stats": [
+            "+(18-22) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Augur",
+          "ilvl": 33,
+          "stats": [
+            "+(23-27) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Philosopher",
+          "ilvl": 44,
+          "stats": [
+            "+(28-32) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Sage",
+          "ilvl": 55,
+          "stats": [
+            "+(33-37) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Savant",
+          "ilvl": 66,
+          "stats": [
+            "+(38-42) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Virtuoso",
+          "ilvl": 74,
+          "stats": [
+            "+(43-50) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Genius",
+          "ilvl": 82,
+          "stats": [
+            "+(51-55) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "LocalAttributeRequirements",
+      "stat_line": "#% reduced Attribute Requirements",
+      "modifiers": [
+        {
+          "name": "of the Worthy",
+          "ilvl": 36,
+          "stats": [
+            "18% reduced Attribute Requirements"
+          ],
+          "tags": []
+        },
+        {
+          "name": "of the Apt",
+          "ilvl": 60,
+          "stats": [
+            "32% reduced Attribute Requirements"
+          ],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "group": "EnergyShieldDelay",
+      "stat_line": "#% faster start of Energy Shield Recharge",
+      "modifiers": [
+        {
+          "name": "of Enlivening",
+          "ilvl": 45,
+          "stats": [
+            "(27-34)% faster start of Energy Shield Recharge"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "of Zest",
+          "ilvl": 58,
+          "stats": [
+            "(35-42)% faster start of Energy Shield Recharge"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "of Galvanising",
+          "ilvl": 67,
+          "stats": [
+            "(43-50)% faster start of Energy Shield Recharge"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "of Vigour",
+          "ilvl": 77,
+          "stats": [
+            "(51-58)% faster start of Energy Shield Recharge"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        },
+        {
+          "name": "of Second Wind",
+          "ilvl": 86,
+          "stats": [
+            "(59-66)% faster start of Energy Shield Recharge"
+          ],
+          "tags": [
+            "energy_shield",
+            "defences"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "StunRecovery",
+      "stat_line": "#% increased Stun and Block Recovery",
+      "modifiers": [
+        {
+          "name": "of Thick Skin",
+          "ilvl": 1,
+          "stats": [
+            "(11-13)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        },
+        {
+          "name": "of Stone Skin",
+          "ilvl": 17,
+          "stats": [
+            "(14-16)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        },
+        {
+          "name": "of Iron Skin",
+          "ilvl": 28,
+          "stats": [
+            "(17-19)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        },
+        {
+          "name": "of Steel Skin",
+          "ilvl": 42,
+          "stats": [
+            "(20-22)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        },
+        {
+          "name": "of Adamantite Skin",
+          "ilvl": 56,
+          "stats": [
+            "(23-25)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        },
+        {
+          "name": "of Corundum Skin",
+          "ilvl": 79,
+          "stats": [
+            "(26-28)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "group": "ChaosResistance",
+      "stat_line": "+#% to Chaos Resistance",
+      "modifiers": [
+        {
+          "name": "of the Lost",
+          "ilvl": 16,
+          "stats": [
+            "+(5-10)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Banishment",
+          "ilvl": 30,
+          "stats": [
+            "+(11-15)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Eviction",
+          "ilvl": 44,
+          "stats": [
+            "+(16-20)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Expulsion",
+          "ilvl": 56,
+          "stats": [
+            "+(21-25)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Exile",
+          "ilvl": 65,
+          "stats": [
+            "+(26-30)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Bameth",
+          "ilvl": 81,
+          "stats": [
+            "+(31-35)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        }
+      ]
+    }
+  ]
+}

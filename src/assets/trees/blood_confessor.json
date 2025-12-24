@@ -1,0 +1,101 @@
+{
+  "name": "Blood Confessor",
+  "color": "#8b0000",
+  "nodes": [
+    {"id": "start", "name": "BLOOD CONFESSOR", "ring": 0, "angle": 0, "isStart": true, "stats": ["You can allocate Passives starting from here"], "connections": ["travel_n", "travel_e", "travel_s", "travel_w"]},
+
+    {"id": "travel_n", "name": "Sacrifice Path", "ring": 1.5, "angle": 90, "stats": ["+15% Healing Effect"], "connections": ["start", "travel_n2"]},
+    {"id": "travel_n2", "name": "Blood Road", "ring": 3, "angle": 90, "stats": ["+18% Healing Effect"], "connections": ["travel_n", "travel_n3", "heal_cluster1"]},
+    {"id": "travel_n3", "name": "Crimson Way", "ring": 4.5, "angle": 90, "stats": ["+22% Healing Effect"], "connections": ["travel_n2", "heal_notable", "blood_heal_cluster1"]},
+    {"id": "heal_notable", "name": "Blood Blessing", "ring": 6, "angle": 90, "isNotable": true, "stats": ["+50% Healing Effect", "Healing costs Life instead of Mana", "Healing is 50% more effective"], "connections": ["travel_n3", "travel_n4"]},
+    {"id": "travel_n4", "name": "Martyr Path", "ring": 7.5, "angle": 90, "stats": ["+25% Healing Effect"], "connections": ["heal_notable", "heal_key"]},
+    {"id": "heal_key", "name": "BLOOD SAVIOR", "ring": 9, "angle": 90, "isKeystone": true, "stats": ["+100% Healing Effect", "Spend Life to heal allies", "Healing cannot fail", "Gain Life when allies are healed"], "connections": ["travel_n4"]},
+
+    {"id": "heal_cluster1", "name": "Gentle Touch", "ring": 3.5, "angle": 115, "stats": ["+15% Healing"], "connections": ["travel_n2", "heal_cluster2"]},
+    {"id": "heal_cluster2", "name": "Caring Hands", "ring": 4, "angle": 125, "stats": ["+18% Healing"], "connections": ["heal_cluster1", "heal_cluster_notable"]},
+    {"id": "heal_cluster_notable", "name": "Master Healer", "ring": 4.5, "angle": 120, "isNotable": true, "stats": ["+40% Healing", "Healing removes debuffs"], "connections": ["heal_cluster2"]},
+
+    {"id": "blood_heal_cluster1", "name": "Blood Gift", "ring": 5, "angle": 70, "stats": ["+20% Blood Healing"], "connections": ["travel_n3", "blood_heal_cluster2"]},
+    {"id": "blood_heal_cluster2", "name": "Vital Gift", "ring": 5.5, "angle": 60, "stats": ["+25% Blood Healing"], "connections": ["blood_heal_cluster1", "blood_heal_cluster_notable"]},
+    {"id": "blood_heal_cluster_notable", "name": "Sacrifice", "ring": 6, "angle": 65, "isNotable": true, "stats": ["+50% Blood Healing", "Blood heals heal for double"], "connections": ["blood_heal_cluster2"]},
+
+    {"id": "travel_e", "name": "Vitae Path", "ring": 1.5, "angle": 0, "stats": ["+50 Life"], "connections": ["start", "travel_e2"]},
+    {"id": "travel_e2", "name": "Heart Road", "ring": 3, "angle": 0, "stats": ["+65 Life"], "connections": ["travel_e", "travel_e3", "life_cluster1"]},
+    {"id": "travel_e3", "name": "Pulse Way", "ring": 4.5, "angle": 0, "stats": ["+80 Life"], "connections": ["travel_e2", "life_notable", "regen_cluster1"]},
+    {"id": "life_notable", "name": "Heart of Blood", "ring": 6, "angle": 0, "isNotable": true, "stats": ["+200 Life", "+15% Max Life", "+1% Life Regen"], "connections": ["travel_e3", "travel_e4"]},
+    {"id": "travel_e4", "name": "Immortal Path", "ring": 7.5, "angle": 0, "stats": ["+100 Life"], "connections": ["life_notable", "life_key"]},
+    {"id": "life_key", "name": "BLOOD IMMORTAL", "ring": 9, "angle": 0, "isKeystone": true, "stats": ["+500 Life", "+30% Max Life", "+3% Life Regen", "Cannot die while you have Life to spend"], "connections": ["travel_e4"]},
+
+    {"id": "life_cluster1", "name": "Vitality", "ring": 3.5, "angle": 335, "stats": ["+55 Life"], "connections": ["travel_e2", "life_cluster2"]},
+    {"id": "life_cluster2", "name": "Constitution", "ring": 4, "angle": 325, "stats": ["+70 Life"], "connections": ["life_cluster1", "life_cluster_notable"]},
+    {"id": "life_cluster_notable", "name": "Robust Blood", "ring": 4.5, "angle": 330, "isNotable": true, "stats": ["+160 Life", "+10% Max Life"], "connections": ["life_cluster2"]},
+
+    {"id": "regen_cluster1", "name": "Recovery", "ring": 5, "angle": 25, "stats": ["+0.5% Life Regen"], "connections": ["travel_e3", "regen_cluster2"]},
+    {"id": "regen_cluster2", "name": "Renewal", "ring": 5.5, "angle": 35, "stats": ["+0.7% Life Regen"], "connections": ["regen_cluster1", "regen_cluster_notable"]},
+    {"id": "regen_cluster_notable", "name": "Blood Renewal", "ring": 6, "angle": 30, "isNotable": true, "stats": ["+2% Life Regen", "Regen tripled at low Life"], "connections": ["regen_cluster2"]},
+
+    {"id": "travel_s", "name": "Pain Path", "ring": 1.5, "angle": 270, "stats": ["+12% Damage"], "connections": ["start", "travel_s2"]},
+    {"id": "travel_s2", "name": "Suffering Road", "ring": 3, "angle": 270, "stats": ["+15% Damage"], "connections": ["travel_s", "travel_s3", "damage_cluster1"]},
+    {"id": "travel_s3", "name": "Agony Way", "ring": 4.5, "angle": 270, "stats": ["+18% Damage"], "connections": ["travel_s2", "damage_notable", "dot_cluster1"]},
+    {"id": "damage_notable", "name": "Blood Fury", "ring": 6, "angle": 270, "isNotable": true, "stats": ["+45% Damage", "Damage increased by missing Life %", "Bleed enemies you damage"], "connections": ["travel_s3", "travel_s4"]},
+    {"id": "travel_s4", "name": "Wrath Path", "ring": 7.5, "angle": 270, "stats": ["+22% Damage"], "connections": ["damage_notable", "damage_key"]},
+    {"id": "damage_key", "name": "BLOOD WRATH", "ring": 9, "angle": 270, "isKeystone": true, "stats": ["+100% Damage", "Damage scales with Life spent", "Enemies killed explode in blood", "Blood explosions heal allies"], "connections": ["travel_s4"]},
+
+    {"id": "damage_cluster1", "name": "Pain", "ring": 3.5, "angle": 245, "stats": ["+15% Damage"], "connections": ["travel_s2", "damage_cluster2"]},
+    {"id": "damage_cluster2", "name": "Suffering", "ring": 4, "angle": 235, "stats": ["+18% Damage"], "connections": ["damage_cluster1", "damage_cluster_notable"]},
+    {"id": "damage_cluster_notable", "name": "Agony", "ring": 4.5, "angle": 240, "isNotable": true, "stats": ["+40% Damage", "Deal more damage at low Life"], "connections": ["damage_cluster2"]},
+
+    {"id": "dot_cluster1", "name": "Bleed", "ring": 5, "angle": 290, "stats": ["+20% Bleed Damage"], "connections": ["travel_s3", "dot_cluster2"]},
+    {"id": "dot_cluster2", "name": "Hemorrhage", "ring": 5.5, "angle": 300, "stats": ["+25% Bleed Damage"], "connections": ["dot_cluster1", "dot_cluster_notable"]},
+    {"id": "dot_cluster_notable", "name": "Exsanguinate", "ring": 6, "angle": 295, "isNotable": true, "stats": ["+50% Bleed Damage", "Bleeds deal damage faster"], "connections": ["dot_cluster2"]},
+
+    {"id": "travel_w", "name": "Shield Path", "ring": 1.5, "angle": 180, "stats": ["+40 Armour"], "connections": ["start", "travel_w2"]},
+    {"id": "travel_w2", "name": "Guard Road", "ring": 3, "angle": 180, "stats": ["+55 Armour"], "connections": ["travel_w", "travel_w3", "armor_cluster1"]},
+    {"id": "travel_w3", "name": "Ward Way", "ring": 4.5, "angle": 180, "stats": ["+70 Armour"], "connections": ["travel_w2", "armor_notable", "resist_cluster1"]},
+    {"id": "armor_notable", "name": "Blood Armor", "ring": 6, "angle": 180, "isNotable": true, "stats": ["+200 Armour", "+10% Phys Reduction", "Armour scales with Life"], "connections": ["travel_w3", "travel_w4"]},
+    {"id": "travel_w4", "name": "Fortress Path", "ring": 7.5, "angle": 180, "stats": ["+90 Armour"], "connections": ["armor_notable", "armor_key"]},
+    {"id": "armor_key", "name": "BLOOD FORTRESS", "ring": 9, "angle": 180, "isKeystone": true, "stats": ["+500 Armour", "+15% Phys Reduction", "Armour regenerates with Life", "Cannot be Stunned"], "connections": ["travel_w4"]},
+
+    {"id": "armor_cluster1", "name": "Iron Skin", "ring": 3.5, "angle": 155, "stats": ["+50 Armour"], "connections": ["travel_w2", "armor_cluster2"]},
+    {"id": "armor_cluster2", "name": "Steel Skin", "ring": 4, "angle": 145, "stats": ["+65 Armour"], "connections": ["armor_cluster1", "armor_cluster_notable"]},
+    {"id": "armor_cluster_notable", "name": "Adamantine", "ring": 4.5, "angle": 150, "isNotable": true, "stats": ["+150 Armour", "+50 Life"], "connections": ["armor_cluster2"]},
+
+    {"id": "resist_cluster1", "name": "Ward", "ring": 5, "angle": 200, "stats": ["+10% Elemental Res"], "connections": ["travel_w3", "resist_cluster2"]},
+    {"id": "resist_cluster2", "name": "Protection", "ring": 5.5, "angle": 210, "stats": ["+12% Elemental Res"], "connections": ["resist_cluster1", "resist_cluster_notable"]},
+    {"id": "resist_cluster_notable", "name": "Blood Ward", "ring": 6, "angle": 205, "isNotable": true, "stats": ["+30% Elemental Res", "Resistance scales with Life spent"], "connections": ["resist_cluster2"]},
+
+    {"id": "travel_ne", "name": "NE Path", "ring": 2, "angle": 45, "stats": ["+12% Healing", "+40 Life"], "connections": ["travel_n", "travel_ne2"]},
+    {"id": "travel_ne2", "name": "NE Road", "ring": 3.5, "angle": 45, "stats": ["+15% Healing", "+50 Life"], "connections": ["travel_ne", "hybrid_hl_notable"]},
+    {"id": "hybrid_hl_notable", "name": "Vital Healer", "ring": 5, "angle": 45, "isNotable": true, "stats": ["+35% Healing", "+120 Life", "Healing restores your Life too"], "connections": ["travel_ne2"]},
+
+    {"id": "travel_se", "name": "SE Path", "ring": 2, "angle": 315, "stats": ["+40 Life", "+10% Damage"], "connections": ["travel_e", "travel_se2"]},
+    {"id": "travel_se2", "name": "SE Road", "ring": 3.5, "angle": 315, "stats": ["+50 Life", "+12% Damage"], "connections": ["travel_se", "hybrid_ld_notable"]},
+    {"id": "hybrid_ld_notable", "name": "Blood Rage", "ring": 5, "angle": 315, "isNotable": true, "stats": ["+100 Life", "+30% Damage", "Gain damage when you lose Life"], "connections": ["travel_se2"]},
+
+    {"id": "travel_sw", "name": "SW Path", "ring": 2, "angle": 225, "stats": ["+10% Damage", "+35 Armour"], "connections": ["travel_s", "travel_sw2"]},
+    {"id": "travel_sw2", "name": "SW Road", "ring": 3.5, "angle": 225, "stats": ["+12% Damage", "+50 Armour"], "connections": ["travel_sw", "hybrid_da_notable"]},
+    {"id": "hybrid_da_notable", "name": "Armored Fury", "ring": 5, "angle": 225, "isNotable": true, "stats": ["+30% Damage", "+120 Armour", "Damage grants Armour"], "connections": ["travel_sw2"]},
+
+    {"id": "travel_nw", "name": "NW Path", "ring": 2, "angle": 135, "stats": ["+35 Armour", "+12% Healing"], "connections": ["travel_w", "travel_nw2"]},
+    {"id": "travel_nw2", "name": "NW Road", "ring": 3.5, "angle": 135, "stats": ["+50 Armour", "+15% Healing"], "connections": ["travel_nw", "hybrid_ah_notable"]},
+    {"id": "hybrid_ah_notable", "name": "Healing Defense", "ring": 5, "angle": 135, "isNotable": true, "stats": ["+120 Armour", "+35% Healing", "Healing grants Armour to targets"], "connections": ["travel_nw2"]},
+
+    {"id": "leech1", "name": "Leech 1", "ring": 7, "angle": 45, "stats": ["0.5% Damage Leeched as Life"], "connections": ["heal_notable", "leech2"]},
+    {"id": "leech2", "name": "Leech 2", "ring": 7.5, "angle": 50, "stats": ["0.7% Damage Leeched as Life"], "connections": ["leech1", "leech_notable"]},
+    {"id": "leech_notable", "name": "Blood Drinker", "ring": 8, "angle": 45, "isNotable": true, "stats": ["2% Damage Leeched as Life", "Leech heals allies too"], "connections": ["leech2"]},
+
+    {"id": "recoup1", "name": "Recoup 1", "ring": 7, "angle": 315, "stats": ["5% Damage Recouped as Life"], "connections": ["life_notable", "recoup2"]},
+    {"id": "recoup2", "name": "Recoup 2", "ring": 7.5, "angle": 310, "stats": ["8% Damage Recouped as Life"], "connections": ["recoup1", "recoup_notable"]},
+    {"id": "recoup_notable", "name": "Blood Recoup", "ring": 8, "angle": 315, "isNotable": true, "stats": ["15% Damage Recouped as Life", "Recoup is instant at low Life"], "connections": ["recoup2"]},
+
+    {"id": "sacrifice1", "name": "Sacrifice 1", "ring": 7, "angle": 225, "stats": ["+15% Sacrifice Effect"], "connections": ["damage_notable", "sacrifice2"]},
+    {"id": "sacrifice2", "name": "Sacrifice 2", "ring": 7.5, "angle": 220, "stats": ["+20% Sacrifice Effect"], "connections": ["sacrifice1", "sacrifice_notable"]},
+    {"id": "sacrifice_notable", "name": "Ultimate Sacrifice", "ring": 8, "angle": 225, "isNotable": true, "stats": ["+50% Sacrifice Effect", "Sacrifice costs reduced", "Sacrifices heal allies"], "connections": ["sacrifice2"]},
+
+    {"id": "endurance1", "name": "Endurance 1", "ring": 7, "angle": 135, "stats": ["+1 Endurance Charge"], "connections": ["armor_notable", "endurance2"]},
+    {"id": "endurance2", "name": "Endurance 2", "ring": 7.5, "angle": 130, "stats": ["+25% Endurance Duration"], "connections": ["endurance1", "endurance_notable"]},
+    {"id": "endurance_notable", "name": "Blood Endurance", "ring": 8, "angle": 135, "isNotable": true, "stats": ["+2 Max Endurance", "Endurance heals you over time"], "connections": ["endurance2"]},
+
+    {"id": "apex_key", "name": "BLOOD SAINT", "ring": 10.5, "angle": 0, "isKeystone": true, "stats": ["Your blood is sacred", "+150% Healing Effect", "+80% Damage", "+600 Life", "+3% Life Regen", "Spend Life for all abilities", "Life spent heals nearby allies", "Cannot die while allies live"], "connections": ["heal_key", "life_key", "damage_key", "armor_key"]}
+  ]
+}

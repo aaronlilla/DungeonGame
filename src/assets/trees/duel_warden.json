@@ -1,0 +1,101 @@
+{
+  "name": "Duel Warden",
+  "color": "#c0c0c0",
+  "nodes": [
+    {"id": "start", "name": "DUEL WARDEN", "ring": 0, "angle": 0, "isStart": true, "stats": ["You can allocate Passives starting from here"], "connections": ["travel_n", "travel_e", "travel_s", "travel_w"]},
+
+    {"id": "travel_n", "name": "Sword Path", "ring": 1.5, "angle": 90, "stats": ["+15% Attack Damage"], "connections": ["start", "travel_n2"]},
+    {"id": "travel_n2", "name": "Steel Road", "ring": 3, "angle": 90, "stats": ["+18% Attack Damage"], "connections": ["travel_n", "travel_n3", "attack_cluster1"]},
+    {"id": "travel_n3", "name": "Blade Way", "ring": 4.5, "angle": 90, "stats": ["+22% Attack Damage"], "connections": ["travel_n2", "attack_notable", "parry_cluster1"]},
+    {"id": "attack_notable", "name": "Sword Master", "ring": 6, "angle": 90, "isNotable": true, "stats": ["+50% Attack Damage", "+25% Attack Speed", "Attacks cannot be blocked"], "connections": ["travel_n3", "travel_n4"]},
+    {"id": "travel_n4", "name": "Champion Path", "ring": 7.5, "angle": 90, "stats": ["+25% Attack Damage"], "connections": ["attack_notable", "attack_key"]},
+    {"id": "attack_key", "name": "BLADE DANCER", "ring": 9, "angle": 90, "isKeystone": true, "stats": ["+100% Attack Damage", "+50% Attack Speed", "Cannot miss", "Every 5th attack deals triple damage"], "connections": ["travel_n4"]},
+
+    {"id": "attack_cluster1", "name": "Strike", "ring": 3.5, "angle": 115, "stats": ["+18% Attack Damage"], "connections": ["travel_n2", "attack_cluster2"]},
+    {"id": "attack_cluster2", "name": "Slash", "ring": 4, "angle": 125, "stats": ["+20% Attack Damage"], "connections": ["attack_cluster1", "attack_cluster_notable"]},
+    {"id": "attack_cluster_notable", "name": "Devastation", "ring": 4.5, "angle": 120, "isNotable": true, "stats": ["+45% Attack Damage", "+15% Accuracy"], "connections": ["attack_cluster2"]},
+
+    {"id": "parry_cluster1", "name": "Parry", "ring": 5, "angle": 70, "stats": ["+10% Parry Chance"], "connections": ["travel_n3", "parry_cluster2"]},
+    {"id": "parry_cluster2", "name": "Deflect", "ring": 5.5, "angle": 60, "stats": ["+12% Parry Chance"], "connections": ["parry_cluster1", "parry_cluster_notable"]},
+    {"id": "parry_cluster_notable", "name": "Perfect Parry", "ring": 6, "angle": 65, "isNotable": true, "stats": ["+25% Parry Chance", "Parry counters for 50% damage"], "connections": ["parry_cluster2"]},
+
+    {"id": "travel_e", "name": "Shield Path", "ring": 1.5, "angle": 0, "stats": ["+5% Block Chance"], "connections": ["start", "travel_e2"]},
+    {"id": "travel_e2", "name": "Guard Road", "ring": 3, "angle": 0, "stats": ["+6% Block Chance"], "connections": ["travel_e", "travel_e3", "block_cluster1"]},
+    {"id": "travel_e3", "name": "Defense Way", "ring": 4.5, "angle": 0, "stats": ["+7% Block Chance"], "connections": ["travel_e2", "block_notable", "counter_cluster1"]},
+    {"id": "block_notable", "name": "Shield Master", "ring": 6, "angle": 0, "isNotable": true, "stats": ["+15% Block", "+10% Spell Block", "Block has no recovery time"], "connections": ["travel_e3", "travel_e4"]},
+    {"id": "travel_e4", "name": "Bastion Path", "ring": 7.5, "angle": 0, "stats": ["+8% Block Chance"], "connections": ["block_notable", "block_key"]},
+    {"id": "block_key", "name": "IMPENETRABLE", "ring": 9, "angle": 0, "isKeystone": true, "stats": ["+25% Block", "+20% Spell Block", "Max Block 85%", "Recover 3% Life on Block"], "connections": ["travel_e4"]},
+
+    {"id": "block_cluster1", "name": "Shield Wall", "ring": 3.5, "angle": 335, "stats": ["+6% Block"], "connections": ["travel_e2", "block_cluster2"]},
+    {"id": "block_cluster2", "name": "Iron Guard", "ring": 4, "angle": 325, "stats": ["+7% Block"], "connections": ["block_cluster1", "block_cluster_notable"]},
+    {"id": "block_cluster_notable", "name": "Unbreakable", "ring": 4.5, "angle": 330, "isNotable": true, "stats": ["+12% Block", "+80 Armour"], "connections": ["block_cluster2"]},
+
+    {"id": "counter_cluster1", "name": "Retaliate", "ring": 5, "angle": 25, "stats": ["+20% Counter Damage"], "connections": ["travel_e3", "counter_cluster2"]},
+    {"id": "counter_cluster2", "name": "Revenge", "ring": 5.5, "angle": 35, "stats": ["+25% Counter Damage"], "connections": ["counter_cluster1", "counter_cluster_notable"]},
+    {"id": "counter_cluster_notable", "name": "Righteous Fury", "ring": 6, "angle": 30, "isNotable": true, "stats": ["+50% Counter Damage", "Counter on Block or Parry"], "connections": ["counter_cluster2"]},
+
+    {"id": "travel_s", "name": "Life Path", "ring": 1.5, "angle": 270, "stats": ["+40 Life"], "connections": ["start", "travel_s2"]},
+    {"id": "travel_s2", "name": "Vital Road", "ring": 3, "angle": 270, "stats": ["+55 Life"], "connections": ["travel_s", "travel_s3", "life_cluster1"]},
+    {"id": "travel_s3", "name": "Heart Way", "ring": 4.5, "angle": 270, "stats": ["+70 Life"], "connections": ["travel_s2", "life_notable", "armor_cluster1"]},
+    {"id": "life_notable", "name": "Duelist's Vitality", "ring": 6, "angle": 270, "isNotable": true, "stats": ["+180 Life", "+12% Max Life", "Gain Life on parry"], "connections": ["travel_s3", "travel_s4"]},
+    {"id": "travel_s4", "name": "Immortal Path", "ring": 7.5, "angle": 270, "stats": ["+90 Life"], "connections": ["life_notable", "life_key"]},
+    {"id": "life_key", "name": "UNDYING CHAMPION", "ring": 9, "angle": 270, "isKeystone": true, "stats": ["+400 Life", "+25% Max Life", "Cannot die to single hit", "Parry restores 5% Life"], "connections": ["travel_s4"]},
+
+    {"id": "life_cluster1", "name": "Vitality", "ring": 3.5, "angle": 245, "stats": ["+50 Life"], "connections": ["travel_s2", "life_cluster2"]},
+    {"id": "life_cluster2", "name": "Constitution", "ring": 4, "angle": 235, "stats": ["+65 Life"], "connections": ["life_cluster1", "life_cluster_notable"]},
+    {"id": "life_cluster_notable", "name": "Robust", "ring": 4.5, "angle": 240, "isNotable": true, "stats": ["+140 Life", "+10% Max Life"], "connections": ["life_cluster2"]},
+
+    {"id": "armor_cluster1", "name": "Plate", "ring": 5, "angle": 290, "stats": ["+60 Armour"], "connections": ["travel_s3", "armor_cluster2"]},
+    {"id": "armor_cluster2", "name": "Mail", "ring": 5.5, "angle": 300, "stats": ["+80 Armour"], "connections": ["armor_cluster1", "armor_cluster_notable"]},
+    {"id": "armor_cluster_notable", "name": "Full Plate", "ring": 6, "angle": 295, "isNotable": true, "stats": ["+200 Armour", "+5% Phys Reduction"], "connections": ["armor_cluster2"]},
+
+    {"id": "travel_w", "name": "Speed Path", "ring": 1.5, "angle": 180, "stats": ["+8% Attack Speed"], "connections": ["start", "travel_w2"]},
+    {"id": "travel_w2", "name": "Quick Road", "ring": 3, "angle": 180, "stats": ["+10% Attack Speed"], "connections": ["travel_w", "travel_w3", "speed_cluster1"]},
+    {"id": "travel_w3", "name": "Swift Way", "ring": 4.5, "angle": 180, "stats": ["+12% Attack Speed"], "connections": ["travel_w2", "speed_notable", "crit_cluster1"]},
+    {"id": "speed_notable", "name": "Lightning Reflexes", "ring": 6, "angle": 180, "isNotable": true, "stats": ["+30% Attack Speed", "+15% Dodge", "Attacks grant speed boost"], "connections": ["travel_w3", "travel_w4"]},
+    {"id": "travel_w4", "name": "Flash Path", "ring": 7.5, "angle": 180, "stats": ["+15% Attack Speed"], "connections": ["speed_notable", "speed_key"]},
+    {"id": "speed_key", "name": "FLASH STRIKE", "ring": 9, "angle": 180, "isKeystone": true, "stats": ["+60% Attack Speed", "+30% Dodge", "Attacks cannot be reacted to", "10% chance to strike twice"], "connections": ["travel_w4"]},
+
+    {"id": "speed_cluster1", "name": "Haste", "ring": 3.5, "angle": 155, "stats": ["+10% Attack Speed"], "connections": ["travel_w2", "speed_cluster2"]},
+    {"id": "speed_cluster2", "name": "Alacrity", "ring": 4, "angle": 145, "stats": ["+12% Attack Speed"], "connections": ["speed_cluster1", "speed_cluster_notable"]},
+    {"id": "speed_cluster_notable", "name": "Quicksilver", "ring": 4.5, "angle": 150, "isNotable": true, "stats": ["+25% Attack Speed", "+8% Move Speed"], "connections": ["speed_cluster2"]},
+
+    {"id": "crit_cluster1", "name": "Precision", "ring": 5, "angle": 200, "stats": ["+15% Crit Chance"], "connections": ["travel_w3", "crit_cluster2"]},
+    {"id": "crit_cluster2", "name": "Deadly Aim", "ring": 5.5, "angle": 210, "stats": ["+20% Crit Chance"], "connections": ["crit_cluster1", "crit_cluster_notable"]},
+    {"id": "crit_cluster_notable", "name": "Executioner", "ring": 6, "angle": 205, "isNotable": true, "stats": ["+40% Crit Chance", "+40% Crit Multi"], "connections": ["crit_cluster2"]},
+
+    {"id": "travel_ne", "name": "NE Path", "ring": 2, "angle": 45, "stats": ["+12% Attack Damage", "+4% Block"], "connections": ["travel_n", "travel_ne2"]},
+    {"id": "travel_ne2", "name": "NE Road", "ring": 3.5, "angle": 45, "stats": ["+15% Attack Damage", "+5% Block"], "connections": ["travel_ne", "hybrid_ab_notable"]},
+    {"id": "hybrid_ab_notable", "name": "Sword and Shield", "ring": 5, "angle": 45, "isNotable": true, "stats": ["+35% Attack Damage", "+12% Block", "Attack after Block"], "connections": ["travel_ne2"]},
+
+    {"id": "travel_se", "name": "SE Path", "ring": 2, "angle": 315, "stats": ["+4% Block", "+35 Life"], "connections": ["travel_e", "travel_se2"]},
+    {"id": "travel_se2", "name": "SE Road", "ring": 3.5, "angle": 315, "stats": ["+5% Block", "+45 Life"], "connections": ["travel_se", "hybrid_bl_notable"]},
+    {"id": "hybrid_bl_notable", "name": "Vital Block", "ring": 5, "angle": 315, "isNotable": true, "stats": ["+12% Block", "+120 Life", "Block heals"], "connections": ["travel_se2"]},
+
+    {"id": "travel_sw", "name": "SW Path", "ring": 2, "angle": 225, "stats": ["+35 Life", "+8% Attack Speed"], "connections": ["travel_s", "travel_sw2"]},
+    {"id": "travel_sw2", "name": "SW Road", "ring": 3.5, "angle": 225, "stats": ["+45 Life", "+10% Attack Speed"], "connections": ["travel_sw", "hybrid_ls_notable"]},
+    {"id": "hybrid_ls_notable", "name": "Swift Warrior", "ring": 5, "angle": 225, "isNotable": true, "stats": ["+120 Life", "+25% Attack Speed", "Life grants speed"], "connections": ["travel_sw2"]},
+
+    {"id": "travel_nw", "name": "NW Path", "ring": 2, "angle": 135, "stats": ["+8% Attack Speed", "+12% Attack Damage"], "connections": ["travel_w", "travel_nw2"]},
+    {"id": "travel_nw2", "name": "NW Road", "ring": 3.5, "angle": 135, "stats": ["+10% Attack Speed", "+15% Attack Damage"], "connections": ["travel_nw", "hybrid_sd_notable"]},
+    {"id": "hybrid_sd_notable", "name": "Speed and Power", "ring": 5, "angle": 135, "isNotable": true, "stats": ["+25% Attack Speed", "+35% Attack Damage", "Speed boosts damage"], "connections": ["travel_nw2"]},
+
+    {"id": "riposte1", "name": "Riposte 1", "ring": 7, "angle": 45, "stats": ["+20% Riposte Damage"], "connections": ["attack_notable", "riposte2"]},
+    {"id": "riposte2", "name": "Riposte 2", "ring": 7.5, "angle": 50, "stats": ["+25% Riposte Damage"], "connections": ["riposte1", "riposte_notable"]},
+    {"id": "riposte_notable", "name": "Perfect Riposte", "ring": 8, "angle": 45, "isNotable": true, "stats": ["+50% Riposte Damage", "Riposte always crits", "Riposte cannot miss"], "connections": ["riposte2"]},
+
+    {"id": "taunt1", "name": "Taunt 1", "ring": 7, "angle": 315, "stats": ["+20% Taunt Effect"], "connections": ["block_notable", "taunt2"]},
+    {"id": "taunt2", "name": "Taunt 2", "ring": 7.5, "angle": 310, "stats": ["+25% Taunt Effect"], "connections": ["taunt1", "taunt_notable"]},
+    {"id": "taunt_notable", "name": "Duelist's Challenge", "ring": 8, "angle": 315, "isNotable": true, "stats": ["+50% Taunt Effect", "Taunted enemies only attack you", "Deal more damage to taunted enemies"], "connections": ["taunt2"]},
+
+    {"id": "fortify1", "name": "Fortify 1", "ring": 7, "angle": 225, "stats": ["+15% Fortify Effect"], "connections": ["life_notable", "fortify2"]},
+    {"id": "fortify2", "name": "Fortify 2", "ring": 7.5, "angle": 220, "stats": ["+20% Fortify Effect"], "connections": ["fortify1", "fortify_notable"]},
+    {"id": "fortify_notable", "name": "Eternal Fortify", "ring": 8, "angle": 225, "isNotable": true, "stats": ["+50% Fortify Effect", "Fortify on attack", "Fortify never expires"], "connections": ["fortify2"]},
+
+    {"id": "bleed1", "name": "Bleed 1", "ring": 7, "angle": 135, "stats": ["+20% Bleed Damage"], "connections": ["speed_notable", "bleed2"]},
+    {"id": "bleed2", "name": "Bleed 2", "ring": 7.5, "angle": 130, "stats": ["+25% Bleed Damage"], "connections": ["bleed1", "bleed_notable"]},
+    {"id": "bleed_notable", "name": "Deep Wounds", "ring": 8, "angle": 135, "isNotable": true, "stats": ["+50% Bleed Damage", "Bleeds stack", "100% chance to bleed"], "connections": ["bleed2"]},
+
+    {"id": "apex_key", "name": "DUEL MASTER", "ring": 10.5, "angle": 0, "isKeystone": true, "stats": ["The perfect duelist", "+100% Attack Damage", "+25% Block", "+50% Attack Speed", "+350 Life", "Parry all attacks in front", "Counter every blocked attack", "Cannot be defeated in single combat"], "connections": ["attack_key", "block_key", "life_key", "speed_key"]}
+  ]
+}

@@ -1,0 +1,1549 @@
+{
+  "item_class": "helmet",
+  "base_attribute": "strength",
+  "prefixes": [
+    {
+      "group": "ItemFoundRarityIncreasePrefix",
+      "description": [
+        "#% increased Rarity of Items found"
+      ],
+      "tiers": [
+        {
+          "modifier": "Magpie's",
+          "ilvl": 20,
+          "stats": [
+            "(8-12)% increased Rarity of Items found"
+          ],
+          "tags": [
+            "drop"
+          ]
+        },
+        {
+          "modifier": "Pirate's",
+          "ilvl": 39,
+          "stats": [
+            "(13-18)% increased Rarity of Items found"
+          ],
+          "tags": [
+            "drop"
+          ]
+        },
+        {
+          "modifier": "Dragon's",
+          "ilvl": 62,
+          "stats": [
+            "(19-24)% increased Rarity of Items found"
+          ],
+          "tags": [
+            "drop"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "IncreaseSpecificSocketedGemLevel",
+      "description": [
+        "+# to Level of all Minion Skill Gems"
+      ],
+      "tiers": [
+        {
+          "modifier": "Taskmaster's",
+          "ilvl": 14,
+          "stats": [
+            "+1 to Level of all Minion Skill Gems"
+          ],
+          "tags": [
+            "minion",
+            "gem"
+          ]
+        },
+        {
+          "modifier": "Overseer's",
+          "ilvl": 75,
+          "stats": [
+            "+2 to Level of all Minion Skill Gems"
+          ],
+          "tags": [
+            "minion",
+            "gem"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "IncreasedLife",
+      "description": [
+        "+# to maximum Life"
+      ],
+      "tiers": [
+        {
+          "modifier": "Hale",
+          "ilvl": 1,
+          "stats": [
+            "+(3-9) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "Healthy",
+          "ilvl": 5,
+          "stats": [
+            "+(10-24) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "Sanguine",
+          "ilvl": 11,
+          "stats": [
+            "+(25-39) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "Stalwart",
+          "ilvl": 18,
+          "stats": [
+            "+(40-54) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "Stout",
+          "ilvl": 24,
+          "stats": [
+            "+(55-69) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "Robust",
+          "ilvl": 30,
+          "stats": [
+            "+(70-84) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "Rotund",
+          "ilvl": 36,
+          "stats": [
+            "+(85-99) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "Virile",
+          "ilvl": 44,
+          "stats": [
+            "+(100-114) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "Athlete's",
+          "ilvl": 54,
+          "stats": [
+            "+(115-129) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "Fecund",
+          "ilvl": 64,
+          "stats": [
+            "+(130-144) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "BaseLocalDefences",
+      "description": [
+        "+# to Armour"
+      ],
+      "tiers": [
+        {
+          "modifier": "Lacquered",
+          "ilvl": 1,
+          "stats": [
+            "+(6-12) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Studded",
+          "ilvl": 11,
+          "stats": [
+            "+(13-35) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Ribbed",
+          "ilvl": 17,
+          "stats": [
+            "+(36-63) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Fortified",
+          "ilvl": 23,
+          "stats": [
+            "+(64-82) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Plated",
+          "ilvl": 29,
+          "stats": [
+            "+(83-101) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Carapaced",
+          "ilvl": 35,
+          "stats": [
+            "+(102-120) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Encased",
+          "ilvl": 43,
+          "stats": [
+            "+(121-150) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Enveloped",
+          "ilvl": 51,
+          "stats": [
+            "+(151-200) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "DefencesPercent",
+      "description": [
+        "#% increased Armour"
+      ],
+      "tiers": [
+        {
+          "modifier": "Reinforced",
+          "ilvl": 3,
+          "stats": [
+            "(15-26)% increased Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Layered",
+          "ilvl": 17,
+          "stats": [
+            "(27-42)% increased Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Lobstered",
+          "ilvl": 29,
+          "stats": [
+            "(43-55)% increased Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Buttressed",
+          "ilvl": 42,
+          "stats": [
+            "(56-67)% increased Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Thickened",
+          "ilvl": 60,
+          "stats": [
+            "(68-79)% increased Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Girded",
+          "ilvl": 72,
+          "stats": [
+            "(80-91)% increased Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Impregnable",
+          "ilvl": 84,
+          "stats": [
+            "(92-100)% increased Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "AttackerTakesDamageNoRange",
+      "description": [
+        "Reflects # Physical Damage to Melee Attackers"
+      ],
+      "tiers": [
+        {
+          "modifier": "Thorny",
+          "ilvl": 1,
+          "stats": [
+            "Reflects (1-4) Physical Damage to Melee Attackers"
+          ],
+          "tags": [
+            "physical_damage",
+            "damage",
+            "physical"
+          ]
+        },
+        {
+          "modifier": "Spiny",
+          "ilvl": 10,
+          "stats": [
+            "Reflects (5-10) Physical Damage to Melee Attackers"
+          ],
+          "tags": [
+            "physical_damage",
+            "damage",
+            "physical"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "DefencesPercentAndStunRecovery",
+      "description": [
+        "#% increased Armour",
+        "#% increased Stun and Block Recovery"
+      ],
+      "tiers": [
+        {
+          "modifier": "Beetle's",
+          "ilvl": 1,
+          "stats": [
+            "(6-13)% increased Armour",
+            "(6-7)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Crab's",
+          "ilvl": 17,
+          "stats": [
+            "(14-20)% increased Armour",
+            "(8-9)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Armadillo's",
+          "ilvl": 29,
+          "stats": [
+            "(21-26)% increased Armour",
+            "(10-11)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Rhino's",
+          "ilvl": 42,
+          "stats": [
+            "(27-32)% increased Armour",
+            "(12-13)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Elephant's",
+          "ilvl": 60,
+          "stats": [
+            "(33-38)% increased Armour",
+            "(14-15)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Mammoth's",
+          "ilvl": 78,
+          "stats": [
+            "(39-42)% increased Armour",
+            "(16-17)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        }
+      ]
+    }
+  ],
+  "suffixes": [
+    {
+      "group": "BaseLocalDefencesAndLife",
+      "description": [
+        "+# to Armour",
+        "+# to maximum Life"
+      ],
+      "tiers": [
+        {
+          "modifier": "Oyster's",
+          "ilvl": 30,
+          "stats": [
+            "+(20-32) to Armour",
+            "+(18-23) to maximum Life"
+          ],
+          "tags": [
+            "armour",
+            "resource",
+            "life",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Urchin's",
+          "ilvl": 46,
+          "stats": [
+            "+(33-48) to Armour",
+            "+(24-28) to maximum Life"
+          ],
+          "tags": [
+            "armour",
+            "resource",
+            "life",
+            "defences"
+          ]
+        },
+        {
+          "modifier": "Nautilus's",
+          "ilvl": 62,
+          "stats": [
+            "+(49-96) to Armour",
+            "+(29-33) to maximum Life"
+          ],
+          "tags": [
+            "armour",
+            "resource",
+            "life",
+            "defences"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "LifeRegeneration",
+      "description": [
+        "Regenerate # Life per second"
+      ],
+      "tiers": [
+        {
+          "modifier": "of the Newt",
+          "ilvl": 1,
+          "stats": [
+            "Regenerate (1-2) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "of the Lizard",
+          "ilvl": 7,
+          "stats": [
+            "Regenerate (2.1-8) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "of the Flatworm",
+          "ilvl": 19,
+          "stats": [
+            "Regenerate (8.1-16) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "of the Starfish",
+          "ilvl": 31,
+          "stats": [
+            "Regenerate (16.1-24) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "of the Hydra",
+          "ilvl": 44,
+          "stats": [
+            "Regenerate (24.1-32) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "of the Troll",
+          "ilvl": 55,
+          "stats": [
+            "Regenerate (32.1-48) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "of Ryslatha",
+          "ilvl": 68,
+          "stats": [
+            "Regenerate (48.1-64) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "of the Phoenix",
+          "ilvl": 74,
+          "stats": [
+            "Regenerate (64.1-96) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "of Recuperation",
+          "ilvl": 78,
+          "stats": [
+            "Regenerate (96.1-128) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "ChaosResistance",
+      "description": [
+        "+#% to Chaos Resistance"
+      ],
+      "tiers": [
+        {
+          "modifier": "of the Lost",
+          "ilvl": 16,
+          "stats": [
+            "+(5-10)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of Banishment",
+          "ilvl": 30,
+          "stats": [
+            "+(11-15)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of Eviction",
+          "ilvl": 44,
+          "stats": [
+            "+(16-20)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of Expulsion",
+          "ilvl": 56,
+          "stats": [
+            "+(21-25)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of Exile",
+          "ilvl": 65,
+          "stats": [
+            "+(26-30)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of Bameth",
+          "ilvl": 81,
+          "stats": [
+            "+(31-35)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "LightningResistance",
+      "description": [
+        "+#% to Lightning Resistance"
+      ],
+      "tiers": [
+        {
+          "modifier": "of the Cloud",
+          "ilvl": 1,
+          "stats": [
+            "+(6-11)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Squall",
+          "ilvl": 13,
+          "stats": [
+            "+(12-17)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Storm",
+          "ilvl": 25,
+          "stats": [
+            "+(18-23)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Thunderhead",
+          "ilvl": 37,
+          "stats": [
+            "+(24-29)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Tempest",
+          "ilvl": 49,
+          "stats": [
+            "+(30-35)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Maelstrom",
+          "ilvl": 60,
+          "stats": [
+            "+(36-41)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Lightning",
+          "ilvl": 72,
+          "stats": [
+            "+(42-45)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of Ephij",
+          "ilvl": 84,
+          "stats": [
+            "+(46-48)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "ColdResistance",
+      "description": [
+        "+#% to Cold Resistance"
+      ],
+      "tiers": [
+        {
+          "modifier": "of the Inuit",
+          "ilvl": 1,
+          "stats": [
+            "+(6-11)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Seal",
+          "ilvl": 14,
+          "stats": [
+            "+(12-17)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Penguin",
+          "ilvl": 26,
+          "stats": [
+            "+(18-23)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Yeti",
+          "ilvl": 38,
+          "stats": [
+            "+(24-29)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Walrus",
+          "ilvl": 50,
+          "stats": [
+            "+(30-35)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Polar Bear",
+          "ilvl": 60,
+          "stats": [
+            "+(36-41)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Ice",
+          "ilvl": 72,
+          "stats": [
+            "+(42-45)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of Haast",
+          "ilvl": 84,
+          "stats": [
+            "+(46-48)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Intelligence",
+      "description": [
+        "+# to Intelligence"
+      ],
+      "tiers": [
+        {
+          "modifier": "of the Pupil",
+          "ilvl": 1,
+          "stats": [
+            "+(8-12) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Student",
+          "ilvl": 11,
+          "stats": [
+            "+(13-17) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Prodigy",
+          "ilvl": 22,
+          "stats": [
+            "+(18-22) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Augur",
+          "ilvl": 33,
+          "stats": [
+            "+(23-27) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Philosopher",
+          "ilvl": 44,
+          "stats": [
+            "+(28-32) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Sage",
+          "ilvl": 55,
+          "stats": [
+            "+(33-37) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Savant",
+          "ilvl": 66,
+          "stats": [
+            "+(38-42) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Virtuoso",
+          "ilvl": 74,
+          "stats": [
+            "+(43-50) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Genius",
+          "ilvl": 82,
+          "stats": [
+            "+(51-55) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Polymath",
+          "ilvl": 85,
+          "stats": [
+            "+(56-60) to Intelligence"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "LocalAttributeRequirements",
+      "description": [
+        "#% reduced Attribute Requirements"
+      ],
+      "tiers": [
+        {
+          "modifier": "of the Worthy",
+          "ilvl": 36,
+          "stats": [
+            "18% reduced Attribute Requirements"
+          ],
+          "tags": []
+        },
+        {
+          "modifier": "of the Apt",
+          "ilvl": 60,
+          "stats": [
+            "32% reduced Attribute Requirements"
+          ],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "group": "StunRecovery",
+      "description": [
+        "#% increased Stun and Block Recovery"
+      ],
+      "tiers": [
+        {
+          "modifier": "of Thick Skin",
+          "ilvl": 1,
+          "stats": [
+            "(11-13)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        },
+        {
+          "modifier": "of Stone Skin",
+          "ilvl": 17,
+          "stats": [
+            "(14-16)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        },
+        {
+          "modifier": "of Iron Skin",
+          "ilvl": 28,
+          "stats": [
+            "(17-19)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        },
+        {
+          "modifier": "of Steel Skin",
+          "ilvl": 42,
+          "stats": [
+            "(20-22)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        },
+        {
+          "modifier": "of Adamantite Skin",
+          "ilvl": 56,
+          "stats": [
+            "(23-25)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        },
+        {
+          "modifier": "of Corundum Skin",
+          "ilvl": 79,
+          "stats": [
+            "(26-28)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "group": "LifeRegenerationRate",
+      "description": [
+        "#% increased Life Regeneration rate"
+      ],
+      "tiers": [
+        {
+          "modifier": "of Esprit",
+          "ilvl": 46,
+          "stats": [
+            "(9-11)% increased Life Regeneration rate"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "of Perpetuity",
+          "ilvl": 57,
+          "stats": [
+            "(12-14)% increased Life Regeneration rate"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "of Vivification",
+          "ilvl": 68,
+          "stats": [
+            "(15-17)% increased Life Regeneration rate"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "of Youth",
+          "ilvl": 76,
+          "stats": [
+            "(18-19)% increased Life Regeneration rate"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "modifier": "of Everlasting",
+          "ilvl": 85,
+          "stats": [
+            "(20-21)% increased Life Regeneration rate"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Strength",
+      "description": [
+        "+# to Strength"
+      ],
+      "tiers": [
+        {
+          "modifier": "of the Brute",
+          "ilvl": 1,
+          "stats": [
+            "+(8-12) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Wrestler",
+          "ilvl": 11,
+          "stats": [
+            "+(13-17) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Bear",
+          "ilvl": 22,
+          "stats": [
+            "+(18-22) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Lion",
+          "ilvl": 33,
+          "stats": [
+            "+(23-27) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Gorilla",
+          "ilvl": 44,
+          "stats": [
+            "+(28-32) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Goliath",
+          "ilvl": 55,
+          "stats": [
+            "+(33-37) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Leviathan",
+          "ilvl": 66,
+          "stats": [
+            "+(38-42) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Titan",
+          "ilvl": 74,
+          "stats": [
+            "+(43-50) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "modifier": "of the Gods",
+          "ilvl": 82,
+          "stats": [
+            "+(51-55) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "LightRadiusAndAccuracy",
+      "description": [
+        "#% increased Light Radius",
+        "#% increased Global Accuracy Rating"
+      ],
+      "tiers": [
+        {
+          "modifier": "of Shining",
+          "ilvl": 8,
+          "stats": [
+            "5% increased Light Radius",
+            "(9-11)% increased Global Accuracy Rating"
+          ],
+          "tags": [
+            "attack"
+          ]
+        },
+        {
+          "modifier": "of Light",
+          "ilvl": 15,
+          "stats": [
+            "10% increased Light Radius",
+            "(12-15)% increased Global Accuracy Rating"
+          ],
+          "tags": [
+            "attack"
+          ]
+        },
+        {
+          "modifier": "of Radiance",
+          "ilvl": 30,
+          "stats": [
+            "15% increased Light Radius",
+            "(16-20)% increased Global Accuracy Rating"
+          ],
+          "tags": [
+            "attack"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "IncreasedAccuracy",
+      "description": [
+        "+# to Accuracy Rating"
+      ],
+      "tiers": [
+        {
+          "modifier": "of Steadiness",
+          "ilvl": 1,
+          "stats": [
+            "+(50-100) to Accuracy Rating"
+          ],
+          "tags": [
+            "attack"
+          ]
+        },
+        {
+          "modifier": "of Precision",
+          "ilvl": 20,
+          "stats": [
+            "+(100-165) to Accuracy Rating"
+          ],
+          "tags": [
+            "attack"
+          ]
+        },
+        {
+          "modifier": "of the Sniper",
+          "ilvl": 40,
+          "stats": [
+            "+(166-250) to Accuracy Rating"
+          ],
+          "tags": [
+            "attack"
+          ]
+        },
+        {
+          "modifier": "of the Marksman",
+          "ilvl": 60,
+          "stats": [
+            "+(251-350) to Accuracy Rating"
+          ],
+          "tags": [
+            "attack"
+          ]
+        },
+        {
+          "modifier": "of the Ranger",
+          "ilvl": 75,
+          "stats": [
+            "+(351-480) to Accuracy Rating"
+          ],
+          "tags": [
+            "attack"
+          ]
+        },
+        {
+          "modifier": "of Lioneye",
+          "ilvl": 85,
+          "stats": [
+            "+(481-600) to Accuracy Rating"
+          ],
+          "tags": [
+            "attack"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "FireResistance",
+      "description": [
+        "+#% to Fire Resistance"
+      ],
+      "tiers": [
+        {
+          "modifier": "of the Whelpling",
+          "ilvl": 1,
+          "stats": [
+            "+(6-11)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Salamander",
+          "ilvl": 12,
+          "stats": [
+            "+(12-17)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Drake",
+          "ilvl": 24,
+          "stats": [
+            "+(18-23)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Kiln",
+          "ilvl": 36,
+          "stats": [
+            "+(24-29)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Furnace",
+          "ilvl": 48,
+          "stats": [
+            "+(30-35)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Volcano",
+          "ilvl": 60,
+          "stats": [
+            "+(36-41)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of the Magma",
+          "ilvl": 72,
+          "stats": [
+            "+(42-45)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "modifier": "of Tzteosh",
+          "ilvl": 84,
+          "stats": [
+            "+(46-48)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "ItemFoundRarityIncrease",
+      "description": [
+        "#% increased Rarity of Items found"
+      ],
+      "tiers": [
+        {
+          "modifier": "of Plunder",
+          "ilvl": 3,
+          "stats": [
+            "(6-10)% increased Rarity of Items found"
+          ],
+          "tags": [
+            "drop"
+          ]
+        },
+        {
+          "modifier": "of Raiding",
+          "ilvl": 30,
+          "stats": [
+            "(11-14)% increased Rarity of Items found"
+          ],
+          "tags": [
+            "drop"
+          ]
+        },
+        {
+          "modifier": "of Archaeology",
+          "ilvl": 53,
+          "stats": [
+            "(15-20)% increased Rarity of Items found"
+          ],
+          "tags": [
+            "drop"
+          ]
+        },
+        {
+          "modifier": "of Excavation",
+          "ilvl": 75,
+          "stats": [
+            "(21-26)% increased Rarity of Items found"
+          ],
+          "tags": [
+            "drop"
+          ]
+        }
+      ]
+    }
+  ],
+  "source": "user_provided"
+}

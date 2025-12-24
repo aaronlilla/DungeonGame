@@ -1,0 +1,955 @@
+import React, { useEffect, useState, RefObject, memo } from 'react';
+import { getEnemyById } from '../../types/dungeon';
+import { getPackDominantType, getPackMobCount } from '../../utils/combat';
+import type { Dungeon, EnemyPack, EnemyType, RoutePull } from '../../types/dungeon';
+import type { CombatState } from '../../types/combat';
+import type { Character } from '../../types/character';
+import dungeonBackground from '../../assets/background.png';
+import { GiShieldBash, GiHealthPotion, GiBroadsword, GiSkullCrossedBones } from 'react-icons/gi';
+import { FloatingNumbers } from './FloatingNumbers';
+import { LootDrops } from './LootDrops';
+import { LeagueEncounters } from './LeagueEncounters';
+import { getEnemyImage } from '../../utils/enemyImages';
+import { getClassById } from '../../types/classes';
+
+// Memoized role icons to prevent recreation
+const ROLE_ICONS_MEMO = {
+  tank: <GiShieldBash />,
+  healer: <GiHealthPotion />,
+  dps: <GiBroadsword />
+};
+
+// Use memoized icons
+const ROLE_ICONS_COMPONENTS = ROLE_ICONS_MEMO;
+
+interface DungeonMapProps {
+  dungeon: Dungeon;
+  isRunning: boolean;
+  isDragging: boolean;
+  screenShake: number;
+  teamFightAnim: number;
+  combatState: CombatState;
+  team: Character[];
+  routePulls: RoutePull[];
+  currentPullPacks: string[];
+  selectedPack: string | null;
+  availablePacks: string[];
+  packsInRoute: string[];
+  unlockedGates: Record<1 | 2 | 3, boolean>;
+  currentTeamGate: 1 | 2 | 3;
+  gateForces: Record<1 | 2 | 3, number>;
+  previewGateForces: Record<1 | 2 | 3, number>;
+  gateBossKilled: Record<1 | 2 | 3, boolean>;
+  previewGateBossKilled: Record<1 | 2 | 3, boolean>;
+  isCreatingPull: boolean;
+  onPackClick: (packId: string) => void;
+  onBossClick?: (boss: import('../../types/dungeon').DungeonBoss) => void;
+  onGateBossClick?: (pack: import('../../types/dungeon').EnemyPack) => void;
+  onMouseDown: (e: React.MouseEvent) => void;
+  onMouseMove: (e: React.MouseEvent) => void;
+  onMouseUp: () => void;
+  onMouseLeave: () => void;
+  getCombinedRadius: (packs: EnemyPack[]) => number;
+  mapContainerRef: RefObject<HTMLDivElement>;
+  mapScrollRef: RefObject<HTMLDivElement>;
+  onCollectLoot?: (lootId: string) => void;
+  onEngageEncounter?: (encounterId: string) => void;
+}
+
+export const DungeonMap = memo(function DungeonMap({
+  dungeon,
+  isRunning,
+  isDragging,
+  screenShake,
+  teamFightAnim: _teamFightAnim,
+  combatState,
+  team,
+  routePulls,
+  currentPullPacks,
+  selectedPack,
+  availablePacks,
+  packsInRoute,
+  unlockedGates,
+  currentTeamGate,
+  gateForces,
+  previewGateForces,
+  gateBossKilled,
+  previewGateBossKilled,
+  isCreatingPull,
+  onPackClick,
+  onBossClick,
+  onGateBossClick,
+  onMouseDown,
+  onMouseMove,
+  onMouseUp,
+  onMouseLeave,
+  getCombinedRadius,
+  mapContainerRef,
+  mapScrollRef,
+  onCollectLoot,
+  onEngageEncounter
+}: DungeonMapProps) {
+  // Track scroll position and viewport size for off-screen loot detection
+  // PERFORMANCE: Use throttled scroll updates to prevent excessive re-renders
+  const [scrollState, setScrollState] = useState({
+    scrollLeft: 0,
+    scrollTop: 0,
+    viewportWidth: 800,
+    viewportHeight: 600
+  });
+  
+  // Update scroll state when scroll changes - THROTTLED for performance
+  useEffect(() => {
+    const scrollEl = mapScrollRef.current;
+    const containerEl = mapContainerRef.current;
+    
+    if (!scrollEl || !containerEl) return;
+    
+    let rafId: number | null = null;
+    let lastUpdateTime = 0;
+    const THROTTLE_MS = 50; // Update at most every 50ms (20fps for scroll updates)
+    
+    const updateScrollState = () => {
+      const now = Date.now();
+      if (now - lastUpdateTime < THROTTLE_MS) {
+        if (rafId === null) {
+          rafId = requestAnimationFrame(() => {
+            rafId = null;
+            updateScrollState();
+          });
+        }
+        return;
+      }
+      lastUpdateTime = now;
+      
+      if (scrollEl && containerEl) {
+        setScrollState({
+          scrollLeft: scrollEl.scrollLeft,
+          scrollTop: scrollEl.scrollTop,
+          viewportWidth: containerEl.clientWidth,
+          viewportHeight: containerEl.clientHeight
+        });
+      }
+    };
+    
+    // Initial update
+    updateScrollState();
+    
+    // Listen for scroll events with throttling
+    scrollEl.addEventListener('scroll', updateScrollState, { passive: true });
+    window.addEventListener('resize', updateScrollState, { passive: true });
+    
+    return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      scrollEl.removeEventListener('scroll', updateScrollState);
+      window.removeEventListener('resize', updateScrollState);
+    };
+  }, [mapScrollRef, mapContainerRef]);
+  
+  // REMOVED: Auto-scroll logic - handled in DungeonTab.tsx to avoid duplicate/conflicting scroll updates
+
+  // Memoize viewport bounds for culling calculations
+  const viewportBounds = React.useMemo(() => {
+    const margin = 200; // Render margin to prevent pop-in
+    return {
+      left: scrollState.scrollLeft - margin,
+      right: scrollState.scrollLeft + scrollState.viewportWidth + margin,
+      top: scrollState.scrollTop - margin,
+      bottom: scrollState.scrollTop + scrollState.viewportHeight + margin
+    };
+  }, [scrollState.scrollLeft, scrollState.scrollTop, scrollState.viewportWidth, scrollState.viewportHeight]);
+
+  // Memoize orbiting icons calculation
+  const getOrbitingIcons = React.useCallback((pack: EnemyPack): { image: string | null; name: string; type: EnemyType }[] => {
+    const icons: { image: string | null; name: string; type: EnemyType }[] = [];
+    pack.enemies.forEach(({ enemyId, count }) => {
+      const enemy = getEnemyById(enemyId);
+      if (!enemy) return;
+      // Use display name if available (for gate bosses), otherwise use enemy name
+      const displayName = pack.displayName || enemy.name;
+      const imagePath = getEnemyImage(displayName);
+      for (let i = 0; i < count; i++) icons.push({ image: imagePath, name: displayName, type: enemy.type });
+    });
+    return icons.slice(0, 10);
+  }, []);
+
+  // Check if pack is visible in viewport (viewport culling)
+  const isPackVisible = React.useCallback((pack: EnemyPack): boolean => {
+    const packSize = pack.isGateBoss ? 180 : 100; // Max pack size
+    return pack.position.x + packSize >= viewportBounds.left &&
+           pack.position.x - packSize <= viewportBounds.right &&
+           pack.position.y + packSize >= viewportBounds.top &&
+           pack.position.y - packSize <= viewportBounds.bottom;
+  }, [viewportBounds]);
+
+  // Memoize visible packs list to prevent recalculating on every render
+  const visiblePacks = React.useMemo(() => {
+    return dungeon.enemyPacks.filter(pack => isPackVisible(pack));
+  }, [dungeon.enemyPacks, isPackVisible]);
+
+  const renderPack = (pack: EnemyPack) => {
+    const inRoute = packsInRoute.includes(pack.id);
+    const inCurrentPull = currentPullPacks.includes(pack.id);
+    const isAvailable = availablePacks.includes(pack.id);
+    const isSelected = selectedPack === pack.id;
+    const unlocked = unlockedGates[pack.gate];
+    const isCurrentTarget = isRunning && combatState.currentPullIndex >= 0 && routePulls[combatState.currentPullIndex]?.packIds.includes(pack.id);
+    const dominantType = getPackDominantType(pack);
+    const mobCount = getPackMobCount(pack);
+    const isGateBoss = pack.isGateBoss;
+    
+    const baseSize = isGateBoss ? 180 : dominantType === 'elite' ? 62 : dominantType === 'miniboss' ? 100 : 54;
+    const orbitRadius = baseSize * 0.75;
+    
+    // Get main image - prefer miniboss/elite, fallback to first enemy
+    let mainImage: string | null = null;
+    let mainEnemyName: string = '';
+    for (const { enemyId } of pack.enemies) {
+      const enemy = getEnemyById(enemyId);
+      if (enemy && (enemy.type === 'miniboss' || enemy.type === 'elite')) {
+        const displayName = pack.displayName || enemy.name;
+        mainImage = getEnemyImage(displayName);
+        mainEnemyName = displayName;
+        break;
+      }
+    }
+    if (!mainImage) {
+      const firstEnemy = getEnemyById(pack.enemies[0]?.enemyId);
+      if (firstEnemy) {
+        const displayName = pack.displayName || firstEnemy.name;
+        mainImage = getEnemyImage(displayName);
+        mainEnemyName = displayName;
+      }
+    }
+    
+    const orbitingIcons = getOrbitingIcons(pack);
+
+    const pullIndex = routePulls.findIndex(p => p.packIds.includes(pack.id));
+    const isDefeated = isRunning && inRoute && pullIndex !== -1 && pullIndex < combatState.currentPullIndex;
+    const isInCurrentGate = pack.gate === currentTeamGate;
+    const packOpacity = !unlocked ? 0.25 : isDefeated ? 0.35 : (isRunning && !isInCurrentGate) ? 0.3 : 1;
+    
+    return (
+      <div key={pack.id} style={{ position: 'absolute', left: `${pack.position.x}px`, top: `${pack.position.y}px`, transform: 'translate(-50%, -50%)', opacity: packOpacity, transition: 'opacity 0.3s ease' }}>
+        {!isGateBoss && orbitingIcons.map((orb, i) => {
+          const arcSpan = 240;
+          const startAngle = -90 - (arcSpan / 2);
+          const angleStep = orbitingIcons.length > 1 ? arcSpan / (orbitingIcons.length - 1) : 0;
+          const angle = (startAngle + angleStep * i) * (Math.PI / 180);
+          const x = Math.cos(angle) * orbitRadius;
+          const y = Math.sin(angle) * orbitRadius;
+          const iconSize = orb.type === 'miniboss' ? 26 : orb.type === 'elite' ? 22 : 18;
+          const orbColor = orb.type === 'miniboss' ? '#9b59b6' : orb.type === 'elite' ? '#e67e22' : '#6c7a89';
+          const orbGlow = orb.type === 'miniboss' ? 'rgba(155,89,182,0.6)' : orb.type === 'elite' ? 'rgba(230,126,34,0.5)' : 'rgba(108,122,137,0.3)';
+          return (
+            <div 
+              key={i} 
+              style={{ 
+                position: 'absolute', 
+                left: `${baseSize / 2 + x - iconSize / 2}px`, 
+                top: `${baseSize / 2 + y - iconSize / 2}px`, 
+                width: `${iconSize}px`, 
+                height: `${iconSize}px`, 
+                borderRadius: '6px', 
+                background: orb.image ? 'transparent' : `linear-gradient(135deg, ${orbColor}40 0%, ${orbColor}20 100%)`,
+                border: orb.image ? 'none' : `2px solid ${orbColor}`,
+                boxShadow: orb.image ? 'none' : `0 0 8px ${orbGlow}, inset 0 0 4px rgba(0,0,0,0.4)`,
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                fontSize: orb.image ? '0' : `${iconSize * 0.65}px`, 
+                pointerEvents: 'none',
+                // PERFORMANCE: Only transition transform and opacity (GPU-accelerated properties)
+                transition: 'transform 0.2s ease, opacity 0.2s ease',
+                overflow: 'hidden',
+                willChange: 'transform, opacity'
+              }}
+            >
+              {orb.image ? (
+                <img 
+                  src={orb.image} 
+                  alt={orb.name}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    imageRendering: 'crisp-edges'
+                  }}
+                />
+              ) : (
+                <span>💀</span>
+              )}
+            </div>
+          );
+        })}
+        
+        <div 
+          style={{ 
+            width: `${baseSize}px`, 
+            height: `${baseSize}px`, 
+            borderRadius: isGateBoss ? '0' : '12px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            fontSize: `${baseSize * 0.5}px`, 
+            background: isGateBoss 
+              ? 'transparent' 
+              : isCurrentTarget 
+                ? 'linear-gradient(135deg, rgba(239,68,68,0.95) 0%, rgba(185,28,28,1) 100%)' 
+                : inCurrentPull 
+                  ? 'linear-gradient(135deg, rgba(34,197,94,0.95) 0%, rgba(22,163,74,1) 100%)' 
+                  : inRoute 
+                    ? 'linear-gradient(135deg, rgba(34,197,94,0.7) 0%, rgba(22,101,52,0.8) 100%)' 
+                    : isAvailable && isCreatingPull 
+                      ? 'linear-gradient(135deg, rgba(250,204,21,0.6) 0%, rgba(202,138,4,0.7) 100%)' 
+                      : isSelected 
+                        ? 'linear-gradient(135deg, rgba(250,204,21,0.8) 0%, rgba(202,138,4,0.9) 100%)' 
+                        : dominantType === 'elite'
+                          ? 'linear-gradient(135deg, rgba(249,115,22,0.8) 0%, rgba(194,65,12,0.9) 100%)'
+                          : 'linear-gradient(135deg, rgba(55,65,81,0.9) 0%, rgba(31,41,55,1) 100%)', 
+            border: isGateBoss ? 'none' : `3px solid ${isCurrentTarget ? '#ef4444' : inCurrentPull ? '#22c55e' : inRoute ? '#16a34a' : isAvailable && isCreatingPull ? '#fbbf24' : dominantType === 'elite' ? '#f97316' : '#4b5563'}`, 
+            boxShadow: isGateBoss 
+              ? 'none'
+              : isCurrentTarget 
+                ? '0 0 20px rgba(239,68,68,0.7), 0 0 40px rgba(239,68,68,0.3), inset 0 0 10px rgba(0,0,0,0.3)' 
+                : inCurrentPull 
+                  ? '0 0 16px rgba(34,197,94,0.6), 0 0 32px rgba(34,197,94,0.25), inset 0 0 8px rgba(0,0,0,0.3)'
+                  : dominantType === 'elite'
+                    ? '0 0 12px rgba(249,115,22,0.5), inset 0 0 6px rgba(0,0,0,0.3)'
+                    : '0 4px 12px rgba(0,0,0,0.5), inset 0 0 6px rgba(0,0,0,0.2)', 
+            animation: isCurrentTarget ? 'pulse 0.6s ease-in-out infinite' : 'none', 
+            position: 'relative', 
+            zIndex: inCurrentPull || isCurrentTarget || isGateBoss ? 15 : 10,
+            overflow: 'hidden',
+            // PERFORMANCE: Only transition transform and opacity (GPU-accelerated)
+            transition: 'transform 0.2s ease, opacity 0.3s ease, box-shadow 0.2s ease',
+            cursor: isGateBoss && onGateBossClick && !isRunning ? 'pointer' : (!unlocked || inRoute || isRunning ? 'default' : 'pointer'),
+            willChange: 'transform, opacity'
+          }} 
+          onClick={(e) => {
+            e.stopPropagation();
+            if (isGateBoss && onGateBossClick && !isRunning) {
+              onGateBossClick(pack);
+            } else {
+              onPackClick(pack.id);
+            }
+          }}
+          onMouseEnter={(e) => {
+            if (isGateBoss && onGateBossClick && !isRunning) {
+              e.currentTarget.style.transform = 'scale(1.05)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (isGateBoss && onGateBossClick && !isRunning) {
+              e.currentTarget.style.transform = 'scale(1)';
+            }
+          }}
+          title={isGateBoss ? `${pack.displayName || 'Gate Boss'} (${pack.totalForces} forces)` : `${pack.enemies.map(e => `${e.count}x ${getEnemyById(e.enemyId)?.name}`).join(', ')} (${pack.totalForces} forces)`}
+        >
+          {/* Inner glow effect */}
+          {!isGateBoss && (
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15) 0%, transparent 50%)',
+              pointerEvents: 'none'
+            }} />
+          )}
+          {/* Main image/icon */}
+          {mainImage ? (
+            <img 
+              src={mainImage} 
+              alt={mainEnemyName}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                imageRendering: 'crisp-edges',
+                filter: (isCurrentTarget || inCurrentPull) && !isGateBoss ? 'drop-shadow(0 0 4px rgba(255,255,255,0.5))' : 'none',
+                position: 'relative',
+                zIndex: 1
+              }}
+            />
+          ) : (
+            <span style={{
+              filter: (isCurrentTarget || inCurrentPull) && !isGateBoss ? 'drop-shadow(0 0 4px rgba(255,255,255,0.5))' : 'none',
+              position: 'relative',
+              zIndex: 1,
+              fontSize: `${baseSize * 0.5}px`
+            }}>
+              💀
+            </span>
+          )}
+          {/* Animated ring for current target */}
+          {isCurrentTarget && (
+            <div style={{
+              position: 'absolute',
+              inset: -4,
+              border: '2px solid rgba(239,68,68,0.6)',
+              borderRadius: '14px',
+              animation: 'pulse 1s ease-in-out infinite'
+            }} />
+          )}
+        </div>
+        
+        {/* Pack info label */}
+        <div style={{ 
+          position: 'absolute', 
+          top: `${baseSize + 8}px`, 
+          left: '50%', 
+          transform: 'translateX(-50%)', 
+          background: 'linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(20,20,30,0.9) 100%)', 
+          padding: '4px 10px', 
+          borderRadius: '6px', 
+          fontSize: '0.7rem', 
+          fontWeight: '600', 
+          color: '#fff', 
+          border: `1px solid ${dominantType === 'elite' ? '#f9731650' : '#4b556350'}`, 
+          boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+          whiteSpace: 'nowrap', 
+          pointerEvents: 'none',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px'
+        }}>
+          <span style={{ opacity: 0.8 }}>{mobCount}</span>
+          <span style={{ color: '#9ca3af' }}>👤</span>
+          <span style={{ 
+            color: pack.totalForces >= 4 ? '#fbbf24' : pack.totalForces >= 2 ? '#22c55e' : '#60a5fa',
+            fontWeight: 700
+          }}>
+            +{pack.totalForces}
+          </span>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="panel" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', flex: 1, minHeight: 0 }}>
+      <div className="panel-header" style={{ padding: '0.5rem 1rem', flexShrink: 0 }}>
+        <h3 style={{ fontSize: '1rem' }}>🏰 {dungeon.name}</h3>
+        {isRunning && <span style={{ padding: '0.2rem 0.6rem', background: combatState.healerCasting ? '#9b59b6' : combatState.phase === 'combat' ? 'var(--accent-red)' : combatState.phase === 'defeat' ? '#8e44ad' : 'var(--accent-blue)', borderRadius: '10px', fontSize: '0.8rem' }}>
+          {combatState.healerCasting ? '🙏 Resurrecting' : combatState.phase === 'traveling' ? '🚶 Moving' : combatState.phase === 'combat' ? '⚔️ Combat' : combatState.phase === 'defeat' ? '💀 Defeated' : '🏆 Victory'}
+        </span>}
+      </div>
+      
+      <div ref={mapContainerRef} className={`${screenShake > 0 ? 'screen-shake' : ''} ${isRunning && combatState.phase === 'combat' ? 'combat-glow' : ''}`} style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+        <div 
+          ref={mapScrollRef} 
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseLeave}
+          style={{ 
+            width: '100%', 
+            height: '100%', 
+            overflowX: 'auto', 
+            overflowY: 'auto', 
+            scrollBehavior: 'smooth',
+            cursor: isDragging ? 'grabbing' : 'grab',
+            userSelect: 'none',
+            // PERFORMANCE: GPU-accelerated scrolling
+            willChange: 'scroll-position',
+            // Enable hardware acceleration for smoother scrolling
+            transform: 'translateZ(0)',
+            WebkitOverflowScrolling: 'touch' // Smooth scrolling on iOS
+          }}
+        >
+          <div style={{ width: `${dungeon.mapWidth}px`, height: `${dungeon.mapHeight}px`, position: 'relative', background: 'linear-gradient(135deg, #0a0908 0%, #1e1a16 50%, #0a0908 100%)' }}>
+            {/* Dungeon background image overlay */}
+            <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${dungeonBackground})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.25, pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '50px 50px', pointerEvents: 'none' }} />
+
+            {/* Gate Progress - Sleek 2-line design */}
+            {dungeon.gates.map((gate, i) => {
+              const gateNum = (i + 1) as 1 | 2 | 3;
+              const forces = gateForces[gateNum];
+              const previewForces = previewGateForces[gateNum];
+              const bossKilled = gateBossKilled[gateNum];
+              const previewBossKilled = previewGateBossKilled[gateNum];
+              const percent = Math.min(100, (forces / gate.requiredForces) * 100);
+              const previewPercent = Math.min(100, (previewForces / gate.requiredForces) * 100);
+              const hasPreview = isCreatingPull && previewForces > forces;
+              const previewBossChange = isCreatingPull && previewBossKilled && !bossKilled;
+              const hasGateBoss = gate.bossPackId !== '';
+              const isComplete = percent >= 100 && (hasGateBoss ? bossKilled : true);
+              const wouldBeComplete = previewPercent >= 100 && (hasGateBoss ? previewBossKilled : true);
+              const unlocked = unlockedGates[gateNum];
+              
+              const isCurrentGate = gateNum === currentTeamGate;
+              const panelOpacity = !unlocked ? 0.25 : (isRunning && !isCurrentGate) ? 0.3 : 1;
+              const accentColor = isComplete ? '#22c55e' : hasPreview ? '#60a5fa' : unlocked ? '#fbbf24' : '#4b5563';
+              
+              return (
+                <div 
+                  key={gate.id} 
+                  style={{ 
+                    position: 'absolute', 
+                    left: `${gate.xStart + 20}px`, 
+                    top: '12px', 
+                    width: `${gate.xEnd - gate.xStart - 40}px`, 
+                    background: 'linear-gradient(180deg, rgba(15,15,20,0.95) 0%, rgba(10,10,15,0.9) 100%)', 
+                    borderRadius: '8px', 
+                    padding: '8px 12px', 
+                    border: `1px solid ${accentColor}50`,
+                    boxShadow: `0 0 12px ${accentColor}20, inset 0 1px 0 rgba(255,255,255,0.05)`,
+                    opacity: panelOpacity, 
+                    zIndex: 20, 
+                    transition: 'all 0.3s ease',
+                    backdropFilter: 'blur(8px)'
+                  }}
+                >
+                  {/* Line 1: Gate name + Progress bar + Forces count */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                    <span style={{ 
+                      fontWeight: 700, 
+                      color: accentColor, 
+                      fontSize: '0.75rem',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      whiteSpace: 'nowrap',
+                      textShadow: `0 0 8px ${accentColor}40`
+                    }}>
+                      {unlocked ? '' : '🔒 '}{gate.name}
+                    </span>
+                    <div style={{ 
+                      flex: 1, 
+                      height: '6px', 
+                      background: 'rgba(0,0,0,0.5)', 
+                      borderRadius: '3px', 
+                      overflow: 'hidden', 
+                      position: 'relative',
+                      border: '1px solid rgba(255,255,255,0.1)'
+                    }}>
+                      <div style={{ 
+                        position: 'absolute', 
+                        height: '100%', 
+                        width: `${percent}%`, 
+                        background: percent >= 100 
+                          ? 'linear-gradient(90deg, #22c55e 0%, #16a34a 100%)' 
+                          : 'linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%)', 
+                        transition: 'width 0.3s ease',
+                        boxShadow: `0 0 6px ${percent >= 100 ? '#22c55e' : '#fbbf24'}50`
+                      }} />
+                      {hasPreview && (
+                        <div style={{ 
+                          position: 'absolute', 
+                          height: '100%', 
+                          left: `${percent}%`,
+                          width: `${previewPercent - percent}%`, 
+                          background: 'repeating-linear-gradient(90deg, #60a5fa 0px, #60a5fa 3px, transparent 3px, transparent 6px)',
+                          transition: 'width 0.2s',
+                          animation: 'pulse 1s ease-in-out infinite'
+                        }} />
+                      )}
+                    </div>
+                    <span style={{ 
+                      fontSize: '0.7rem', 
+                      fontWeight: 600,
+                      fontFamily: 'monospace',
+                      color: hasPreview ? '#60a5fa' : percent >= 100 ? '#22c55e' : '#fff',
+                      minWidth: '55px', 
+                      textAlign: 'right',
+                      textShadow: hasPreview || percent >= 100 ? `0 0 6px currentColor` : 'none'
+                    }}>
+                      {hasPreview ? `${forces}→${previewForces}` : `${forces}/${gate.requiredForces}`}
+                    </span>
+                  </div>
+                  
+                  {/* Line 2: Boss status + Gate status indicator */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      {hasGateBoss ? (
+                        <>
+                          <span style={{ fontSize: '0.65rem', color: '#6b7280' }}>BOSS:</span>
+                          <span style={{ 
+                            fontSize: '0.7rem', 
+                            fontWeight: 600,
+                            color: previewBossChange ? '#60a5fa' : bossKilled ? '#22c55e' : '#ef4444',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '3px'
+                          }}>
+                            {bossKilled ? '✓ Defeated' : previewBossChange ? '⚔️ Targeted' : '✗ Alive'}
+                          </span>
+                        </>
+                      ) : (
+                        <span style={{ fontSize: '0.65rem', color: '#9ca3af', fontStyle: 'italic' }}>
+                          👑 Final Boss Zone
+                        </span>
+                      )}
+                    </div>
+                    <span style={{ 
+                      fontSize: '0.6rem', 
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      fontWeight: 600,
+                      background: isComplete 
+                        ? 'rgba(34,197,94,0.2)' 
+                        : wouldBeComplete 
+                          ? 'rgba(96,165,250,0.2)' 
+                          : 'rgba(255,255,255,0.05)',
+                      color: isComplete ? '#22c55e' : wouldBeComplete ? '#60a5fa' : '#6b7280',
+                      border: `1px solid ${isComplete ? '#22c55e30' : wouldBeComplete ? '#60a5fa30' : 'transparent'}`
+                    }}>
+                      {isComplete ? '✓ CLEAR' : wouldBeComplete ? '✨ READY' : `GATE ${gateNum}`}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Floating damage / healing numbers */}
+            <FloatingNumbers 
+              floatingNumbers={combatState.floatingNumbers} 
+              teamPosition={combatState.teamPosition} 
+            />
+            
+            {/* Loot drops on the map */}
+            {combatState.lootDrops && combatState.lootDrops.length > 0 && onCollectLoot && (
+              <LootDrops
+                lootDrops={combatState.lootDrops}
+                teamPosition={combatState.teamPosition}
+                onCollectLoot={onCollectLoot}
+                mapWidth={dungeon.mapWidth}
+                mapHeight={dungeon.mapHeight}
+                scrollLeft={scrollState.scrollLeft}
+                scrollTop={scrollState.scrollTop}
+                viewportWidth={scrollState.viewportWidth}
+                viewportHeight={scrollState.viewportHeight}
+              />
+            )}
+            
+            {/* League encounters on the map */}
+            {combatState.leagueEncounters && combatState.leagueEncounters.length > 0 && onEngageEncounter && (
+              <LeagueEncounters
+                encounters={combatState.leagueEncounters}
+                teamPosition={combatState.teamPosition}
+                onEngageEncounter={onEngageEncounter}
+                isRunning={isRunning}
+              />
+            )}
+
+            {/* Gate Dividers */}
+            {[1200, 2400].map((x, i) => (<div key={i} style={{ position: 'absolute', left: `${x}px`, top: 0, bottom: 0, width: '4px', background: `linear-gradient(180deg, transparent 0%, ${unlockedGates[(i + 2) as 2 | 3] ? '#d4a84b' : '#333'} 10%, ${unlockedGates[(i + 2) as 2 | 3] ? '#d4a84b' : '#333'} 90%, transparent 100%)`, zIndex: 5 }} />))}
+
+            {/* Route Lines */}
+            <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }}>
+              {routePulls.map((pull, idx) => {
+                const packs = pull.packIds.map(id => dungeon.enemyPacks.find(p => p.id === id)).filter(Boolean) as EnemyPack[];
+                if (packs.length === 0) return null;
+                const currX = packs.reduce((s, p) => s + p.position.x, 0) / packs.length;
+                const currY = packs.reduce((s, p) => s + p.position.y, 0) / packs.length;
+                let prevX = 100, prevY = 400;
+                if (idx > 0) { const prevPacks = routePulls[idx - 1].packIds.map(id => dungeon.enemyPacks.find(p => p.id === id)).filter(Boolean) as EnemyPack[]; if (prevPacks.length > 0) { prevX = prevPacks.reduce((s, p) => s + p.position.x, 0) / prevPacks.length; prevY = prevPacks.reduce((s, p) => s + p.position.y, 0) / prevPacks.length; } }
+                const teamX = combatState.teamPosition.x;
+                const teamY = combatState.teamPosition.y;
+                const isTraveling = isRunning && combatState.phase === 'traveling';
+                const isNearLine = isTraveling && (() => {
+                  const A = teamX - prevX;
+                  const B = teamY - prevY;
+                  const C = currX - prevX;
+                  const D = currY - prevY;
+                  const dot = A * C + B * D;
+                  const lenSq = C * C + D * D;
+                  let param = lenSq !== 0 ? dot / lenSq : -1;
+                  if (param < 0) param = 0;
+                  if (param > 1) param = 1;
+                  const xx = prevX + param * C;
+                  const yy = prevY + param * D;
+                  const dx = teamX - xx;
+                  const dy = teamY - yy;
+                  const distance = Math.sqrt(dx * dx + dy * dy);
+                  return distance < 80 && teamX >= Math.min(prevX, currX) - 50 && teamX <= Math.max(prevX, currX) + 50;
+                })();
+                
+                return (
+                  <line 
+                    key={idx} 
+                    x1={prevX} 
+                    y1={prevY} 
+                    x2={currX} 
+                    y2={currY} 
+                    stroke={isNearLine ? "#ffd700" : "#d4a84b"} 
+                    strokeWidth={isNearLine ? "4" : "3"} 
+                    strokeDasharray="8,6" 
+                    opacity={isNearLine ? "1" : "0.7"}
+                    style={{ 
+                      transition: 'stroke 0.3s ease, stroke-width 0.3s ease, opacity 0.3s ease',
+                      filter: isNearLine ? 'drop-shadow(0 0 8px rgba(255, 215, 0, 0.8))' : 'none'
+                    }}
+                  />
+                );
+              })}
+            </svg>
+
+            {/* Radius Preview */}
+            {(() => {
+              const packIds = currentPullPacks.length > 0 ? currentPullPacks : (selectedPack ? [selectedPack] : []);
+              if (packIds.length === 0) return null;
+              
+              const packs = packIds.map(id => dungeon.enemyPacks.find(p => p.id === id)).filter(Boolean) as EnemyPack[];
+              if (packs.length === 0) return null;
+              
+              const centerX = packs.reduce((sum, p) => sum + p.position.x, 0) / packs.length;
+              const centerY = packs.reduce((sum, p) => sum + p.position.y, 0) / packs.length;
+              const combinedRadius = getCombinedRadius(packs);
+              
+              return (
+                <div style={{ 
+                  position: 'absolute', 
+                  left: `${centerX}px`, 
+                  top: `${centerY}px`, 
+                  width: `${combinedRadius * 2}px`, 
+                  height: `${combinedRadius * 2}px`, 
+                  transform: 'translate(-50%, -50%)', 
+                  borderRadius: '50%', 
+                  background: `radial-gradient(circle, rgba(212,168,75,${0.15 + packs.length * 0.03}) 0%, rgba(212,168,75,0.05) 60%, transparent 100%)`, 
+                  border: `2px dashed rgba(212,168,75,${0.4 + packs.length * 0.1})`, 
+                  pointerEvents: 'none', 
+                  zIndex: 4,
+                  transition: 'all 0.2s ease-out'
+                }} />
+              );
+            })()}
+
+            {/* PERFORMANCE: Only render packs visible in viewport */}
+            {visiblePacks.map(pack => renderPack(pack))}
+
+            {/* Final Boss - Simplified icon only */}
+            {dungeon.bosses.map(boss => {
+              const bossInCurrentGate = boss.gate === currentTeamGate;
+              const bossOpacity = !unlockedGates[boss.gate] ? 0.25 : (isRunning && !bossInCurrentGate) ? 0.3 : 1;
+              // Use displayName if available, otherwise fall back to enemy.name
+              // Final boss should always have a displayName assigned
+              // If not, it means initializeBossNames hasn't run yet
+              const bossDisplayName = boss.displayName || boss.enemy.name;
+              const bossImage = getEnemyImage(bossDisplayName);
+              
+              // Debug: log if image not found or displayName not set
+              if (import.meta.env.DEV) {
+                if (!boss.displayName) {
+                  console.warn('[DungeonMap] Final boss missing displayName, using enemy.name:', boss.enemy.name);
+                }
+                if (!bossImage && bossDisplayName) {
+                  console.warn('[DungeonMap] Final boss image not found for:', bossDisplayName);
+                }
+              }
+              return (
+                <div 
+                  key={boss.id} 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onBossClick && !isRunning) {
+                      onBossClick(boss);
+                    }
+                  }}
+                  style={{ 
+                    position: 'absolute', 
+                    left: `${boss.position.x}px`, 
+                    top: `${boss.position.y}px`, 
+                    transform: 'translate(-50%, -50%)', 
+                    zIndex: 15, 
+                    opacity: bossOpacity, 
+                    transition: 'opacity 0.3s ease',
+                    cursor: !isRunning && onBossClick ? 'pointer' : 'default'
+                  }}
+                >
+                  {bossImage ? (
+                    <img 
+                      src={bossImage} 
+                      alt={bossDisplayName}
+                      style={{
+                        width: '140px',
+                        height: '140px',
+                        objectFit: 'contain',
+                        imageRendering: 'crisp-edges',
+                        filter: 'none',
+                        transition: 'transform 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isRunning && onBossClick) {
+                          e.currentTarget.style.transform = 'scale(1.1)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                      }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        fontSize: '9rem',
+                        filter: 'none',
+                        transition: 'transform 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isRunning && onBossClick) {
+                          e.currentTarget.style.transform = 'scale(1.1)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                      }}
+                    >
+                      {boss.enemy.icon}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {/* Team Marker - uses CSS transform for GPU acceleration */}
+            <div 
+              className={isRunning && combatState.phase === 'combat' ? 'team-fighting' : ''}
+              style={{ 
+                position: 'absolute', 
+                left: 0,
+                top: 0,
+                transform: `translate(${combatState.teamPosition.x - 30}px, ${combatState.teamPosition.y - 30}px)`,
+                zIndex: 25,
+                willChange: 'transform',
+                // CSS transition for smooth animation during travel (reduces need for frequent state updates)
+                transition: combatState.phase === 'traveling' ? 'transform 0.1s linear' : 'none',
+                // GPU acceleration for smooth movement
+                backfaceVisibility: 'hidden',
+                perspective: 1000
+              }}
+            >
+              {/* Outer glow ring */}
+              <div style={{ 
+                position: 'absolute', 
+                width: '85px', 
+                height: '85px', 
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%)',
+                borderRadius: '50%', 
+                background: isRunning && combatState.phase === 'combat' 
+                  ? 'radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(239,68,68,0.05) 50%, transparent 70%)'
+                  : 'radial-gradient(circle, rgba(0,212,170,0.2) 0%, rgba(0,212,170,0.05) 50%, transparent 70%)',
+                boxShadow: isRunning && combatState.phase === 'combat' 
+                  ? '0 0 30px rgba(239,68,68,0.4), 0 0 60px rgba(239,68,68,0.15)'
+                  : '0 0 25px rgba(0,212,170,0.3), 0 0 50px rgba(0,212,170,0.1)',
+                animation: isRunning && combatState.phase === 'combat' ? 'pulse 0.8s infinite' : 'none'
+              }} />
+              
+              <div style={{ position: 'relative', width: '60px', height: '60px' }}>
+                {team.length > 0 ? team.map((member, idx) => {
+                  const angle = (idx / team.length) * 2 * Math.PI - Math.PI / 2;
+                  const radius = team.length === 1 ? 0 : 20;
+                  const x = 30 + Math.cos(angle) * radius;
+                  const y = 30 + Math.sin(angle) * radius;
+                  const memberState = combatState.teamStates.find(m => m.id === member.id);
+                  const isDead = memberState?.isDead || false;
+                  const healthPercent = memberState ? (memberState.health / memberState.maxHealth) : 1;
+                  
+                  const roleColors = {
+                    tank: { bg: '#3498db', border: '#60a5fa', glow: 'rgba(52,152,219,0.7)', gradient: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' },
+                    healer: { bg: '#22c55e', border: '#4ade80', glow: 'rgba(34,197,94,0.7)', gradient: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)' },
+                    dps: { bg: '#f97316', border: '#fb923c', glow: 'rgba(249,115,22,0.7)', gradient: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' }
+                  };
+                  const colors = roleColors[member.role];
+                  
+                  return (
+                    <div 
+                      key={member.id}
+                      style={{ 
+                        position: 'absolute',
+                        left: `${x}px`,
+                        top: `${y}px`,
+                        transform: 'translate(-50%, -50%)',
+                        width: '28px', 
+                        height: '28px', 
+                        borderRadius: '6px', 
+                        background: isDead ? 'linear-gradient(135deg, #374151 0%, #1f2937 100%)' : colors.gradient,
+                        border: `2px solid ${isDead ? '#4b5563' : colors.border}`,
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        fontSize: '1rem',
+                        color: isDead ? '#6b7280' : '#fff',
+                        boxShadow: isDead ? 'none' : `0 0 12px ${colors.glow}, inset 0 0 6px rgba(255,255,255,0.15)`,
+                        opacity: isDead ? 0.6 : 1,
+                        filter: isDead ? 'grayscale(0.5)' : 'none'
+                      }}
+                      title={`${(() => {
+                        const classData = member.classId ? getClassById(member.classId) : null;
+                        return classData?.name || member.role.toUpperCase();
+                      })()} - ${Math.floor(healthPercent * 100)}% HP`}
+                    >
+                      {/* Icon glow */}
+                      <span style={{ filter: isDead ? 'none' : 'drop-shadow(0 0 2px rgba(255,255,255,0.5))' }}>
+                        {isDead ? <GiSkullCrossedBones /> : ROLE_ICONS_COMPONENTS[member.role]}
+                      </span>
+                      {/* Health ring indicator */}
+                      {!isDead && memberState && healthPercent < 1 && (
+                        <div style={{
+                          position: 'absolute',
+                          inset: '-4px',
+                          borderRadius: '8px',
+                          background: `conic-gradient(${healthPercent > 0.5 ? '#22c55e' : healthPercent > 0.25 ? '#fbbf24' : '#ef4444'} ${healthPercent * 360}deg, transparent 0deg)`,
+                          opacity: 0.8,
+                          zIndex: -1,
+                          mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                          maskComposite: 'exclude',
+                          WebkitMaskComposite: 'xor',
+                          padding: '2px'
+                        }} />
+                      )}
+                      {/* Low health warning pulse */}
+                      {!isDead && healthPercent < 0.3 && (
+                        <div style={{
+                          position: 'absolute',
+                          inset: -2,
+                          borderRadius: '8px',
+                          border: '2px solid #ef4444',
+                          animation: 'pulse 0.5s ease-in-out infinite',
+                          boxShadow: '0 0 8px rgba(239,68,68,0.6)'
+                        }} />
+                      )}
+                    </div>
+                  );
+                }) : (
+                  <div style={{ 
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '30px', 
+                    height: '30px', 
+                    borderRadius: '50%', 
+                    background: 'radial-gradient(circle, rgba(52,152,219,0.95) 0%, rgba(41,128,185,1) 100%)',
+                    border: '2px solid #5dade2',
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    fontSize: '1rem',
+                    boxShadow: '0 0 10px rgba(52,152,219,0.7)'
+                  }}>👥</div>
+                )}
+              </div>
+              
+              <div style={{ 
+                position: 'absolute', 
+                bottom: '-20px', 
+                left: '50%', 
+                transform: 'translateX(-50%)', 
+                fontSize: '0.65rem', 
+                color: '#5dade2', 
+                fontWeight: 'bold', 
+                background: 'rgba(0,0,0,0.8)', 
+                padding: '2px 8px', 
+                borderRadius: '4px',
+                whiteSpace: 'nowrap'
+              }}>
+                {team.length > 0 ? `${team.length} MEMBERS` : 'NO TEAM'}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});

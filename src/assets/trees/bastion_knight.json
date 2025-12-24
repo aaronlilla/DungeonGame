@@ -1,0 +1,101 @@
+{
+  "name": "Bastion Knight",
+  "color": "#4a90d9",
+  "nodes": [
+    {"id": "start", "name": "BASTION KNIGHT", "ring": 0, "angle": 0, "isStart": true, "stats": ["You can allocate Passives starting from here"], "connections": ["travel_n", "travel_e", "travel_s", "travel_w"]},
+    
+    {"id": "travel_n", "name": "Northern Path", "ring": 1.5, "angle": 0, "stats": ["+60 Armour"], "connections": ["start", "travel_n2"]},
+    {"id": "travel_n2", "name": "Steel Road", "ring": 3, "angle": 0, "stats": ["+80 Armour"], "connections": ["travel_n", "travel_n3", "armor_cluster1"]},
+    {"id": "travel_n3", "name": "Iron Way", "ring": 4.5, "angle": 0, "stats": ["+100 Armour"], "connections": ["travel_n2", "armor_notable", "phys_cluster1"]},
+    {"id": "armor_notable", "name": "Fortress Plate", "ring": 6, "angle": 0, "isNotable": true, "stats": ["+400 Armour", "+15% increased Armour", "10% Physical Damage Reduction"], "connections": ["travel_n3", "travel_n4"]},
+    {"id": "travel_n4", "name": "Bastion Road", "ring": 7.5, "angle": 0, "stats": ["+120 Armour"], "connections": ["armor_notable", "armor_key"]},
+    {"id": "armor_key", "name": "IRON TITAN", "ring": 9, "angle": 0, "isKeystone": true, "stats": ["Armour applies to Elemental Damage", "+1500 Armour", "Cannot be Critically Hit"], "connections": ["travel_n4"]},
+
+    {"id": "armor_cluster1", "name": "Thick Plate", "ring": 3.5, "angle": 25, "stats": ["+100 Armour"], "connections": ["travel_n2", "armor_cluster2"]},
+    {"id": "armor_cluster2", "name": "Heavy Plate", "ring": 4, "angle": 35, "stats": ["+120 Armour"], "connections": ["armor_cluster1", "armor_cluster_notable"]},
+    {"id": "armor_cluster_notable", "name": "Living Steel", "ring": 4.5, "angle": 30, "isNotable": true, "stats": ["+300 Armour", "+50 Life", "Armour recharges 5% per second"], "connections": ["armor_cluster2"]},
+
+    {"id": "phys_cluster1", "name": "Hardened Skin", "ring": 5, "angle": 340, "stats": ["2% Phys Reduction"], "connections": ["travel_n3", "phys_cluster2"]},
+    {"id": "phys_cluster2", "name": "Stone Flesh", "ring": 5.5, "angle": 330, "stats": ["3% Phys Reduction"], "connections": ["phys_cluster1", "phys_cluster_notable"]},
+    {"id": "phys_cluster_notable", "name": "Immovable Object", "ring": 6, "angle": 335, "isNotable": true, "stats": ["8% Phys Reduction", "Cannot be Knocked Back"], "connections": ["phys_cluster2"]},
+
+    {"id": "travel_e", "name": "Eastern Path", "ring": 1.5, "angle": 90, "stats": ["+3% Block"], "connections": ["start", "travel_e2"]},
+    {"id": "travel_e2", "name": "Shield Road", "ring": 3, "angle": 90, "stats": ["+4% Block"], "connections": ["travel_e", "travel_e3", "block_cluster1"]},
+    {"id": "travel_e3", "name": "Guard Way", "ring": 4.5, "angle": 90, "stats": ["+5% Block"], "connections": ["travel_e2", "block_notable", "spell_block_cluster1"]},
+    {"id": "block_notable", "name": "Perfect Defense", "ring": 6, "angle": 90, "isNotable": true, "stats": ["+12% Block", "+8% Spell Block", "Recover 2% Life on Block"], "connections": ["travel_e3", "travel_e4"]},
+    {"id": "travel_e4", "name": "Fortress Gate", "ring": 7.5, "angle": 90, "stats": ["+6% Block"], "connections": ["block_notable", "block_key"]},
+    {"id": "block_key", "name": "UNBREAKABLE WALL", "ring": 9, "angle": 90, "isKeystone": true, "stats": ["Max Block Chance is 85%", "+20% Block Chance", "Block Recovery is instant"], "connections": ["travel_e4"]},
+
+    {"id": "block_cluster1", "name": "Shield Stance", "ring": 3.5, "angle": 115, "stats": ["+4% Block"], "connections": ["travel_e2", "block_cluster2"]},
+    {"id": "block_cluster2", "name": "Guard Position", "ring": 4, "angle": 125, "stats": ["+5% Block"], "connections": ["block_cluster1", "block_cluster_notable"]},
+    {"id": "block_cluster_notable", "name": "Shield Wall", "ring": 4.5, "angle": 120, "isNotable": true, "stats": ["+10% Block", "Counterattack on Block"], "connections": ["block_cluster2"]},
+
+    {"id": "spell_block_cluster1", "name": "Arcane Ward", "ring": 5, "angle": 70, "stats": ["+3% Spell Block"], "connections": ["travel_e3", "spell_block_cluster2"]},
+    {"id": "spell_block_cluster2", "name": "Magic Guard", "ring": 5.5, "angle": 60, "stats": ["+4% Spell Block"], "connections": ["spell_block_cluster1", "spell_block_cluster_notable"]},
+    {"id": "spell_block_cluster_notable", "name": "Spell Deflection", "ring": 6, "angle": 65, "isNotable": true, "stats": ["+10% Spell Block", "Blocked spells restore 3% Mana"], "connections": ["spell_block_cluster2"]},
+
+    {"id": "travel_s", "name": "Southern Path", "ring": 1.5, "angle": 180, "stats": ["+40 Life"], "connections": ["start", "travel_s2"]},
+    {"id": "travel_s2", "name": "Vital Road", "ring": 3, "angle": 180, "stats": ["+50 Life"], "connections": ["travel_s", "travel_s3", "life_cluster1"]},
+    {"id": "travel_s3", "name": "Heart Way", "ring": 4.5, "angle": 180, "stats": ["+60 Life"], "connections": ["travel_s2", "life_notable", "regen_cluster1"]},
+    {"id": "life_notable", "name": "Robust Health", "ring": 6, "angle": 180, "isNotable": true, "stats": ["+150 Life", "+12% Max Life", "+0.5% Life Regen"], "connections": ["travel_s3", "travel_s4"]},
+    {"id": "travel_s4", "name": "Immortal Road", "ring": 7.5, "angle": 180, "stats": ["+80 Life"], "connections": ["life_notable", "life_key"]},
+    {"id": "life_key", "name": "UNDYING TITAN", "ring": 9, "angle": 180, "isKeystone": true, "stats": ["+400 Life", "+25% Max Life", "Cannot die to hits while above 20% Life"], "connections": ["travel_s4"]},
+
+    {"id": "life_cluster1", "name": "Vitality", "ring": 3.5, "angle": 205, "stats": ["+45 Life"], "connections": ["travel_s2", "life_cluster2"]},
+    {"id": "life_cluster2", "name": "Constitution", "ring": 4, "angle": 215, "stats": ["+55 Life"], "connections": ["life_cluster1", "life_cluster_notable"]},
+    {"id": "life_cluster_notable", "name": "Tenacity", "ring": 4.5, "angle": 210, "isNotable": true, "stats": ["+120 Life", "+8% Max Life"], "connections": ["life_cluster2"]},
+
+    {"id": "regen_cluster1", "name": "Recovery", "ring": 5, "angle": 160, "stats": ["+0.3% Life Regen"], "connections": ["travel_s3", "regen_cluster2"]},
+    {"id": "regen_cluster2", "name": "Healing", "ring": 5.5, "angle": 150, "stats": ["+0.4% Life Regen"], "connections": ["regen_cluster1", "regen_cluster_notable"]},
+    {"id": "regen_cluster_notable", "name": "Rapid Regeneration", "ring": 6, "angle": 155, "isNotable": true, "stats": ["+1.5% Life Regen", "Regen not interrupted by damage"], "connections": ["regen_cluster2"]},
+
+    {"id": "travel_w", "name": "Western Path", "ring": 1.5, "angle": 270, "stats": ["+8% Elemental Res"], "connections": ["start", "travel_w2"]},
+    {"id": "travel_w2", "name": "Warding Road", "ring": 3, "angle": 270, "stats": ["+10% Elemental Res"], "connections": ["travel_w", "travel_w3", "resist_cluster1"]},
+    {"id": "travel_w3", "name": "Protection Way", "ring": 4.5, "angle": 270, "stats": ["+12% Elemental Res"], "connections": ["travel_w2", "resist_notable", "chaos_cluster1"]},
+    {"id": "resist_notable", "name": "Elemental Fortress", "ring": 6, "angle": 270, "isNotable": true, "stats": ["+30% All Elemental Res", "+3% Max Elemental Res"], "connections": ["travel_w3", "travel_w4"]},
+    {"id": "travel_w4", "name": "Immunity Road", "ring": 7.5, "angle": 270, "stats": ["+15% Elemental Res"], "connections": ["resist_notable", "resist_key"]},
+    {"id": "resist_key", "name": "ELEMENTAL TITAN", "ring": 9, "angle": 270, "isKeystone": true, "stats": ["+5% Max Elemental Res", "+50% All Elemental Res", "Cannot be Ignited, Frozen, or Shocked"], "connections": ["travel_w4"]},
+
+    {"id": "resist_cluster1", "name": "Fire Ward", "ring": 3.5, "angle": 245, "stats": ["+15% Fire Res"], "connections": ["travel_w2", "resist_cluster2"]},
+    {"id": "resist_cluster2", "name": "Cold Ward", "ring": 4, "angle": 235, "stats": ["+15% Cold Res"], "connections": ["resist_cluster1", "resist_cluster_notable"]},
+    {"id": "resist_cluster_notable", "name": "Lightning Ward", "ring": 4.5, "angle": 240, "isNotable": true, "stats": ["+15% Lightning Res", "+20% to All Elemental Res"], "connections": ["resist_cluster2"]},
+
+    {"id": "chaos_cluster1", "name": "Chaos Ward", "ring": 5, "angle": 290, "stats": ["+12% Chaos Res"], "connections": ["travel_w3", "chaos_cluster2"]},
+    {"id": "chaos_cluster2", "name": "Void Guard", "ring": 5.5, "angle": 300, "stats": ["+15% Chaos Res"], "connections": ["chaos_cluster1", "chaos_cluster_notable"]},
+    {"id": "chaos_cluster_notable", "name": "Chaos Immunity", "ring": 6, "angle": 295, "isNotable": true, "stats": ["+35% Chaos Res", "Chaos cannot bypass ES"], "connections": ["chaos_cluster2"]},
+
+    {"id": "travel_ne", "name": "NE Path", "ring": 2, "angle": 45, "stats": ["+50 Armour", "+2% Block"], "connections": ["travel_n", "travel_ne2"]},
+    {"id": "travel_ne2", "name": "NE Road", "ring": 3.5, "angle": 45, "stats": ["+70 Armour", "+3% Block"], "connections": ["travel_ne", "hybrid_ab_notable"]},
+    {"id": "hybrid_ab_notable", "name": "Armored Defender", "ring": 5, "angle": 45, "isNotable": true, "stats": ["+250 Armour", "+8% Block", "Block grants +150 Armour for 4 sec"], "connections": ["travel_ne2"]},
+
+    {"id": "travel_se", "name": "SE Path", "ring": 2, "angle": 135, "stats": ["+3% Block", "+30 Life"], "connections": ["travel_e", "travel_se2"]},
+    {"id": "travel_se2", "name": "SE Road", "ring": 3.5, "angle": 135, "stats": ["+4% Block", "+40 Life"], "connections": ["travel_se", "hybrid_bl_notable"]},
+    {"id": "hybrid_bl_notable", "name": "Vital Defense", "ring": 5, "angle": 135, "isNotable": true, "stats": ["+10% Block", "+100 Life", "Gain 20 Life on Block"], "connections": ["travel_se2"]},
+
+    {"id": "travel_sw", "name": "SW Path", "ring": 2, "angle": 225, "stats": ["+35 Life", "+8% Res"], "connections": ["travel_s", "travel_sw2"]},
+    {"id": "travel_sw2", "name": "SW Road", "ring": 3.5, "angle": 225, "stats": ["+45 Life", "+10% Res"], "connections": ["travel_sw", "hybrid_lr_notable"]},
+    {"id": "hybrid_lr_notable", "name": "Elemental Vitality", "ring": 5, "angle": 225, "isNotable": true, "stats": ["+100 Life", "+25% All Res", "+0.5% Life Regen per 10% overcapped Res"], "connections": ["travel_sw2"]},
+
+    {"id": "travel_nw", "name": "NW Path", "ring": 2, "angle": 315, "stats": ["+50 Armour", "+8% Res"], "connections": ["travel_w", "travel_nw2"]},
+    {"id": "travel_nw2", "name": "NW Road", "ring": 3.5, "angle": 315, "stats": ["+70 Armour", "+10% Res"], "connections": ["travel_nw", "hybrid_ar_notable"]},
+    {"id": "hybrid_ar_notable", "name": "Warded Fortress", "ring": 5, "angle": 315, "isNotable": true, "stats": ["+200 Armour", "+25% All Res", "Elemental hits grant Armour"], "connections": ["travel_nw2"]},
+
+    {"id": "fortify1", "name": "Fortify 1", "ring": 7, "angle": 45, "stats": ["+10% Fortify Effect"], "connections": ["armor_notable", "fortify2"]},
+    {"id": "fortify2", "name": "Fortify 2", "ring": 7.5, "angle": 50, "stats": ["+15% Fortify Effect"], "connections": ["fortify1", "fortify_notable"]},
+    {"id": "fortify_notable", "name": "Eternal Fortify", "ring": 8, "angle": 45, "isNotable": true, "stats": ["+40% Fortify Effect", "Fortify never expires", "+1 Fortify stack per second"], "connections": ["fortify2"]},
+
+    {"id": "counter1", "name": "Counter 1", "ring": 7, "angle": 135, "stats": ["+20% Counter Damage"], "connections": ["block_notable", "counter2"]},
+    {"id": "counter2", "name": "Counter 2", "ring": 7.5, "angle": 130, "stats": ["+25% Counter Damage"], "connections": ["counter1", "counter_notable"]},
+    {"id": "counter_notable", "name": "Righteous Fury", "ring": 8, "angle": 135, "isNotable": true, "stats": ["+50% Counter Damage", "Counter attacks cannot miss"], "connections": ["counter2"]},
+
+    {"id": "endurance1", "name": "Endurance 1", "ring": 7, "angle": 225, "stats": ["+1 Endurance Charge"], "connections": ["life_notable", "endurance2"]},
+    {"id": "endurance2", "name": "Endurance 2", "ring": 7.5, "angle": 220, "stats": ["+25% Endurance Duration"], "connections": ["endurance1", "endurance_notable"]},
+    {"id": "endurance_notable", "name": "Eternal Endurance", "ring": 8, "angle": 225, "isNotable": true, "stats": ["+2 Max Endurance", "Endurance grants +4% Phys Reduction"], "connections": ["endurance2"]},
+
+    {"id": "aura1", "name": "Aura 1", "ring": 7, "angle": 315, "stats": ["+10% Aura Effect"], "connections": ["resist_notable", "aura2"]},
+    {"id": "aura2", "name": "Aura 2", "ring": 7.5, "angle": 310, "stats": ["+15% Aura Range"], "connections": ["aura1", "aura_notable"]},
+    {"id": "aura_notable", "name": "Inspiring Presence", "ring": 8, "angle": 315, "isNotable": true, "stats": ["+25% Aura Effect", "Allies in Auras gain +15% All Res"], "connections": ["aura2"]},
+
+    {"id": "apex_key", "name": "CASTLE PINNACLE", "ring": 10.5, "angle": 0, "isKeystone": true, "stats": ["Immune to Stun", "30% less Damage while stationary", "Max Fortify when you stop moving", "+800 Armour", "+250 Life"], "connections": ["armor_key", "block_key", "life_key", "resist_key"]}
+  ]
+}

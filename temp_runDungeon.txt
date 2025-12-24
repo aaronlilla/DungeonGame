@@ -1,0 +1,2220 @@
+﻿  const runDungeon = async () => {
+    if (!canStart) return;
+    
+    setIsRunning(true);
+    setRunResult(null);
+    setIsPaused(false);
+    combatRef.current.stop = false;
+    combatRef.current.paused = false;
+    
+    const initialTeamStates = initTeamStates(team);
+    const initialAbilities = initAbilities();
+    
+    setCombatState({
+      phase: 'traveling',
+      currentPullIndex: 0,
+      teamPosition: { x: 100, y: 400 },
+      enemies: [],
+      teamStates: initialTeamStates,
+      combatLog: [{ timestamp: 0, type: 'phase', source: '', target: '', message: `âš”ï¸ ${dungeon.name} +${selectedKeyLevel} STARTED!` }],
+      forcesCleared: 0,
+      timeElapsed: 0,
+      killedGateBosses: new Set(),
+      abilities: initialAbilities,
+      bloodlustActive: false,
+      bloodlustTimer: 0,
+      floatingNumbers: []
+    });
+    
+    // Track healer ability cooldowns
+    const healerCooldowns = { painSuppression: 0 };
+    
+    // Track tank ability cooldowns
+    const tankCooldowns = { shieldSlam: 0, defensiveStance: 0, shieldBlock: 0 };
+
+    let totalForcesCleared = 0;
+    let totalTime = 0;
+    let currentPos = { x: 100, y: 400 };
+    let teamStates = [...initialTeamStates];
+    let abilities = [...initialAbilities];
+    let bloodlustActive = false;
+    let bloodlustTimer = 0;
+    let timedOut = false;
+
+    // Helper to check timeout
+    const checkTimeout = () => {
+      if (totalTime >= dungeon.timeLimitSeconds) {
+        timedOut = true;
+        return true;
+      }
+      return false;
+    };
+
+    for (let pullIdx = 0; pullIdx < routePulls.length; pullIdx++) {
+      if (combatRef.current.stop || timedOut) break;
+      
+      const pull = routePulls[pullIdx];
+      const packs = pull.packIds.map(id => dungeon.enemyPacks.find(p => p.id === id)).filter(Boolean) as EnemyPack[];
+      if (packs.length === 0) continue;
+
+      const targetX = packs.reduce((sum, p) => sum + p.position.x, 0) / packs.length;
+      const targetY = packs.reduce((sum, p) => sum + p.position.y, 0) / packs.length;
+
+      // Calculate travel time based on distance (faster movement, but still takes time)
+      const distance = Math.sqrt(Math.pow(targetX - currentPos.x, 2) + Math.pow(targetY - currentPos.y, 2));
+      const travelTime = Math.max(1.5, Math.min(5, distance / 200)); // 1.5-5 seconds based on distance
+      const travelSteps = 60; // Smooth 60fps-like animation
+
+      // Travel
+      setCombatState(prev => ({ ...prev, phase: 'traveling', currentPullIndex: pullIdx, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'travel', source: '', target: '', message: `ðŸš¶ Moving to Pull #${pullIdx + 1}... (${travelTime.toFixed(1)}s)` }] }));
+
+      for (let i = 1; i <= travelSteps; i++) {
+        if (combatRef.current.stop || checkTimeout()) break;
+        await sleep((travelTime * 1000) / travelSteps);
+        totalTime += travelTime / travelSteps;
+        // Use easing for smoother movement (ease-out)
+        const progress = i / travelSteps;
+        const eased = 1 - Math.pow(1 - progress, 2);
+        const newX = currentPos.x + (targetX - currentPos.x) * eased;
+        const newY = currentPos.y + (targetY - currentPos.y) * eased;
+        setCombatState(prev => ({ ...prev, teamPosition: { x: newX, y: newY }, timeElapsed: totalTime }));
+      }
+      
+      // Check if stopped during travel
+      if (combatRef.current.stop) {
+        setIsRunning(false);
+        return;
+      }
+      
+      currentPos = { x: targetX, y: targetY };
+      
+      if (timedOut) {
+        setCombatState(prev => ({ ...prev, phase: 'defeat', combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'phase', source: '', target: '', message: 'â° TIME EXPIRED! Dungeon failed.' }] }));
+        break;
+      }
+
+      // Create enemies
+      const pullEnemies: AnimatedEnemy[] = [];
+      packs.forEach(pack => {
+        pack.enemies.forEach(({ enemyId, count }) => {
+          const enemyDef = getEnemyById(enemyId);
+          if (!enemyDef) return;
+          for (let i = 0; i < count; i++) {
+            pullEnemies.push({
+              id: `${enemyId}_${pullIdx}_${i}_${Math.random()}`,
+              enemyId,
+              name: enemyDef.name,
+              icon: enemyDef.icon,
+              type: enemyDef.type,
+              behavior: getEnemyBehavior(enemyId),
+              health: enemyDef.baseHealth * scaling.healthMultiplier,
+              maxHealth: enemyDef.baseHealth * scaling.healthMultiplier,
+              damage: enemyDef.baseDamage * scaling.damageMultiplier * 0.2 * 2 * 2, // double enemy damage again
+              isCasting: false,
+              castProgress: 0,
+              gcdRemaining: 0,
+              aoeCooldown: 0,
+              autoAttackTimer: Math.random() * 0.6 + 0.1 // staggered start for autos
+            });
+          }
+        });
+      });
+
+      const hasGateBoss = packs.some(p => p.isGateBoss);
+      setCombatState(prev => ({
+        ...prev, phase: 'combat', enemies: pullEnemies, teamStates,
+        combatLog: [...prev.combatLog, { timestamp: totalTime, type: hasGateBoss ? 'boss' : 'pull', source: '', target: '', message: hasGateBoss ? `ðŸ‘‘ GATE BOSS: ${pullEnemies.length} enemies!` : `âš”ï¸ PULL #${pullIdx + 1}: ${pullEnemies.length} enemies!` }]
+      }));
+
+      // Combat loop - 1 second ticks, each entity acts when their GCD is ready
+      let currentEnemies = [...pullEnemies];
+      
+      while (currentEnemies.some(e => e.health > 0) && teamStates.some(m => !m.isDead) && !timedOut) {
+        if (combatRef.current.stop) break;
+        
+        // Pause check - wait while paused
+        while (combatRef.current.paused && !combatRef.current.stop) {
+          await sleep(100);
+        }
+        if (combatRef.current.stop) break;
+
+        if (checkTimeout()) {
+          setCombatState(prev => ({ ...prev, phase: 'defeat', combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'phase', source: '', target: '', message: 'â° TIME EXPIRED! Dungeon failed.' }] }));
+          break;
+        }
+        
+        // Wait 7ms (roughly 143 ticks per second for smooth timing)
+        const TICK_DURATION = 0.007; // seconds (7ms)
+        await sleep(7);
+        totalTime += TICK_DURATION;
+        
+        // Check for wipe
+        if (!teamStates.some(m => !m.isDead)) {
+          setCombatState(prev => ({ ...prev, phase: 'defeat', combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'phase', source: '', target: '', message: 'ðŸ’€ WIPE! Your party has been defeated.' }] }));
+          
+          // Find what killed teammates - look for recent damage entries targeting team members
+          const teamMemberNames = teamStates.map(m => m.name);
+          const deathCauses: Record<string, string> = {};
+          const recentDamage = combatState.combatLog
+            .filter(entry => entry.type === 'damage' && teamMemberNames.includes(entry.target))
+            .slice(-20); // Last 20 damage entries
+          
+          teamStates.forEach(member => {
+            if (member.isDead) {
+              // Find the last damage entry for this member
+              const lastDamage = recentDamage
+                .filter(entry => entry.target === member.name)
+                .sort((a, b) => b.timestamp - a.timestamp)[0];
+              if (lastDamage) {
+                deathCauses[member.name] = lastDamage.source || 'Unknown';
+              }
+            }
+          });
+          
+          // Generate reduced loot for wipe (scales with key level and progress made)
+          const progressPercent = totalForcesCleared / dungeon.requiredForces;
+          const wipeLootCount = Math.max(1, Math.floor(progressPercent * 3) + Math.floor(selectedKeyLevel / 5));
+          const loot = generateDungeonLoot(selectedKeyLevel, false, 0).slice(0, wipeLootCount);
+          const orbDrops = generateOrbDrops(selectedKeyLevel, false, progressPercent);
+          const xp = Math.floor(200 * scaling.rewardMultiplier * progressPercent);
+          
+          const result: DungeonRunResult = {
+            success: false, keyLevel: selectedKeyLevel, timeElapsed: totalTime, timeLimit: dungeon.timeLimitSeconds,
+            upgradeLevel: 0, loot, orbDrops, experienceGained: xp, deaths: teamStates.filter(m => m.isDead).length,
+            forcesCleared: totalForcesCleared, forcesRequired: dungeon.requiredForces, combatLog: combatState.combatLog,
+            failReason: 'wipe',
+            failedPullIndex: combatState.currentPullIndex,
+            deathCauses
+          };
+          
+          addOrbs(orbDrops);
+          setRunResult(result);
+          setIsRunning(false);
+          return;
+        }
+
+        // Reduce ability cooldowns - 0.2 seconds per tick
+        abilities = abilities.map(a => ({ ...a, currentCooldown: Math.max(0, a.currentCooldown - TICK_DURATION) }));
+        if (bloodlustActive) {
+          bloodlustTimer -= TICK_DURATION;
+          if (bloodlustTimer <= 0) bloodlustActive = false;
+        }
+
+        const aliveEnemies = currentEnemies.filter(e => e.health > 0);
+        
+        if (aliveEnemies.length === 0) break;
+
+        // Decrement all GCDs ONCE per tick (players and enemies) - 0.2s per tick
+        teamStates = teamStates.map(m => ({ ...m, gcdRemaining: Math.max(0, (m.gcdRemaining || 0) - TICK_DURATION) }));
+        
+        // Check for resurrection requests from useAbility
+        if (combatRef.current.resurrectRequest) {
+          const rezTargetId = combatRef.current.resurrectRequest;
+          teamStates = teamStates.map(m => 
+            m.id === rezTargetId 
+              ? { ...m, isDead: false, health: Math.floor(m.maxHealth * 0.6), mana: Math.floor(m.maxMana * 0.3), lastResurrectTime: Date.now() } 
+              : m
+          );
+          combatRef.current.resurrectRequest = null;
+        }
+        
+        // Check for bloodlust activation from useAbility
+        if (combatRef.current.bloodlustRequest) {
+          bloodlustActive = true;
+          bloodlustTimer = 15;
+          combatRef.current.bloodlustRequest = false;
+        }
+        
+        // Sync ability cooldowns from ref (when player clicks abilities)
+        Object.entries(combatRef.current.abilityCooldowns).forEach(([id, cd]) => {
+          const ability = abilities.find(a => a.id === id);
+          if (ability && cd > ability.currentCooldown) {
+            ability.currentCooldown = cd;
+          }
+        });
+        combatRef.current.abilityCooldowns = {};
+        
+        // Process buffs, HoTs, regen, and decay recent damage tracking
+        teamStates = teamStates.map(m => {
+          if (m.isDead) return m;
+          
+          // Base regeneration per second, scaled by tick duration
+          // Tanks regen 1% HP/sec, others 0.5%; Healers regen 3% mana/sec, others 2%
+          const hpRegenPerSecond = m.role === 'tank' ? m.maxHealth * 0.01 : m.maxHealth * 0.005;
+          const manaRegenPerSecond = m.role === 'healer' ? m.maxMana * 0.03 : m.maxMana * 0.02;
+          
+          // Apply regeneration scaled by tick (don't exceed max)
+          const hpRegenAmount = hpRegenPerSecond * TICK_DURATION;
+          const manaRegenAmount = manaRegenPerSecond * TICK_DURATION;
+          
+          // Decay damage reduction duration (Pain Suppression) - use TICK_DURATION
+          let newDmgReduction = m.damageReduction || 0;
+          let newDmgReductionDuration = (m.damageReductionDuration || 0) - TICK_DURATION;
+          if (newDmgReductionDuration <= 0) {
+            newDmgReduction = 0;
+            newDmgReductionDuration = 0;
+          }
+          
+          // Decay armor buff duration (Defensive Stance) - use TICK_DURATION
+          let newArmorBuff = m.armorBuff || 0;
+          let newArmorBuffDuration = (m.armorBuffDuration || 0) - TICK_DURATION;
+          if (newArmorBuffDuration <= 0) {
+            newArmorBuff = 0;
+            newArmorBuffDuration = 0;
+          }
+          
+          // Decay block buff duration (Shield Block) - use TICK_DURATION
+          let newBlockBuff = m.blockBuff || 0;
+          let newBlockBuffDuration = (m.blockBuffDuration || 0) - TICK_DURATION;
+          if (newBlockBuffDuration <= 0) {
+            newBlockBuff = 0;
+            newBlockBuffDuration = 0;
+          }
+          
+          // Decay recent damage taken (scaled by tick - decay slower with faster ticks)
+          const decayFactor = Math.pow(0.5, TICK_DURATION); // decay per tick at 7ms
+          const newRecentDamage = Math.floor((m.recentDamageTaken || 0) * decayFactor);
+          
+          // Process HoT effects - start with current health + passive regen
+          let newHealth = Math.min(m.maxHealth, m.health + hpRegenAmount);
+          let newMana = Math.min(m.maxMana, m.mana + manaRegenAmount);
+          let hotHealingBySource: Record<string, number> = {};
+          let newHotEffects = (m.hotEffects || []).map(hot => {
+            let updatedHot = { ...hot, remainingDuration: hot.remainingDuration - TICK_DURATION, nextTickIn: hot.nextTickIn - TICK_DURATION };
+            // Tick the HoT
+            if (updatedHot.nextTickIn <= 0 && updatedHot.remainingDuration > 0) {
+              const healAmount = hot.healPerTick;
+              // Check for critical heal on HoT tick
+              const hotHealerChar = team.find(c => c.id === hot.sourceId);
+              const critChance = hotHealerChar?.baseStats?.critChance || 10;
+              const isCritHeal = Math.random() < (critChance / 100);
+              const finalHealAmount = isCritHeal ? Math.floor(healAmount * 1.5) : healAmount;
+              const actualHeal = Math.min(m.maxHealth - newHealth, finalHealAmount);
+              newHealth = Math.min(m.maxHealth, newHealth + finalHealAmount);
+              // Track healing by source
+              if (hot.sourceId) {
+                hotHealingBySource[hot.sourceId] = (hotHealingBySource[hot.sourceId] || 0) + actualHeal;
+                // Track by spell name
+                const hotHealer = teamStates.find(t => t.id === hot.sourceId);
+                if (hotHealer) {
+                  hotHealer.healingBySpell = hotHealer.healingBySpell || {};
+                  hotHealer.healingBySpell[hot.name] = (hotHealer.healingBySpell[hot.name] || 0) + actualHeal;
+                }
+              }
+              updatedHot.nextTickIn = hot.tickInterval;
+              // Show heal number
+              const jitterX = (Math.random() * 80) - 40;
+              const jitterY = (Math.random() * 60) - 30;
+              const floatNum = createFloatingNumber(finalHealAmount, 'heal', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 45 + jitterY);
+              const hotHealTimestamp = Date.now();
+              // Update member's lastHealTime for frame animation
+              m.lastHealTime = hotHealTimestamp;
+              m.lastHealAmount = actualHeal;
+              m.lastHealCrit = isCritHeal;
+              if (isCritHeal) setScreenShake(prev => prev + 1);
+              setCombatState(prev => ({ 
+                ...prev, 
+                teamStates: prev.teamStates.map(teamMember => 
+                  teamMember.id === m.id 
+                    ? { ...teamMember, lastHealTime: hotHealTimestamp, lastHealAmount: actualHeal, lastHealCrit: isCritHeal, health: newHealth }
+                    : teamMember
+                ),
+                floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum] 
+              }));
+            }
+            return updatedHot;
+          }).filter(hot => hot.remainingDuration > 0);
+          
+          // Credit HoT healing to healers
+          Object.entries(hotHealingBySource).forEach(([sourceId, healing]) => {
+            const healer = teamStates.find(t => t.id === sourceId);
+            if (healer) {
+              healer.totalHealing = (healer.totalHealing || 0) + healing;
+            }
+          });
+          
+          return { 
+            ...m, 
+            health: newHealth,
+            mana: newMana,
+            damageReduction: newDmgReduction, 
+            damageReductionDuration: newDmgReductionDuration,
+            armorBuff: newArmorBuff,
+            armorBuffDuration: newArmorBuffDuration,
+            blockBuff: newBlockBuff,
+            blockBuffDuration: newBlockBuffDuration,
+            recentDamageTaken: newRecentDamage,
+            hotEffects: newHotEffects,
+            hasRejuv: newHotEffects.some(h => h.name === 'Rejuvenation')
+          };
+        });
+        
+        // Get references AFTER the teamStates reassignment so modifications persist
+        const tank = teamStates.find(m => m.role === 'tank' && !m.isDead);
+        const aliveMembers = teamStates.filter(m => !m.isDead);
+        
+        aliveEnemies.forEach(enemy => {
+          if (enemy.gcdRemaining === undefined) enemy.gcdRemaining = 0;
+          if (enemy.aoeCooldown === undefined) enemy.aoeCooldown = 0;
+          enemy.gcdRemaining = Math.max(0, enemy.gcdRemaining - TICK_DURATION);
+          if (enemy.behavior === 'aoe') {
+            enemy.aoeCooldown = Math.max(0, enemy.aoeCooldown - TICK_DURATION);
+          }
+          // Cast progress is now tracked via real-time (castStartTime + castTotalTime), not tick-based
+        });
+
+        // Enemy attacks - each enemy acts once per GCD / auto timer
+        if (!stunActive) {
+          for (const enemy of aliveEnemies) {
+            if (enemy.gcdRemaining === undefined) enemy.gcdRemaining = 0;
+            if (enemy.autoAttackTimer === undefined) enemy.autoAttackTimer = Math.random() * 0.6 + 0.1;
+
+            // If casting, check if cast is complete using real-time tracking
+            // Cast progress is tracked via real-time (castStartTime + castTotalTime)
+            if (enemy.isCasting && enemy.castStartTime && enemy.castTotalTime) {
+              const elapsedMs = Date.now() - enemy.castStartTime;
+              const elapsedSeconds = elapsedMs / 1000;
+              // Cast completes when elapsed time >= cast time
+              if (elapsedSeconds >= enemy.castTotalTime) {
+                const target = teamStates.find(m => m.id === enemy.castTarget);
+                if (target && !target.isDead) {
+                  const effectiveArmor = target.armor * (1 + (target.armorBuff || 0) / 100);
+                  const armorMult = calculateArmorReduction(effectiveArmor, selectedKeyLevel);
+                  const painSuppMult = target.damageReduction ? (1 - target.damageReduction / 100) : 1;
+                  const isAuto = enemy.castAbility === 'Auto Attack';
+                  let dmg;
+                  let blocked = false;
+                  if (isAuto) {
+                    // Physical auto: full damage, allow block
+                    dmg = Math.floor(enemy.damage * (shieldActive ? 0.5 : 1) * armorMult * painSuppMult);
+                    const blockChance = (target.blockChance || 0) + (target.blockBuff || 0);
+                    blocked = rollBlock(blockChance);
+                    if (blocked) {
+                      dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+                      target.lastBlockTime = Date.now();
+                    }
+                  } else {
+                    // Spell hit damage (heavily nerfed)
+                    dmg = Math.floor(enemy.damage * 0.1875 * (shieldActive ? 0.5 : 1) * armorMult * painSuppMult);
+                    const spellBlockChance = (target.spellBlockChance || 0) + (target.blockBuff || 0);
+                    blocked = rollBlock(spellBlockChance);
+                    if (blocked) {
+                      dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+                      target.lastBlockTime = Date.now();
+                    }
+                  }
+                  target.health = Math.max(0, target.health - dmg);
+                  target.recentDamageTaken = (target.recentDamageTaken || 0) + dmg;
+                  setTeamFightAnim(prev => prev + 1); // Trigger team hit animation
+                  setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 })); // Trigger enemy attack animation
+                  const jitterX = (Math.random() * 80) - 40;
+                  const jitterY = (Math.random() * 60) - 30;
+                  const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 40 + jitterY);
+                  setCombatState(prev => ({ ...prev, floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum], combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'damage', source: enemy.name, target: target.name, value: dmg, message: `${isAuto ? 'ðŸ—¡ï¸' : 'ðŸ’¥'} ${enemy.name} hits ${target.name} for ${dmg}${blocked ? ' (BLOCKED!)' : ''}!` }] }));
+                  if (target.health <= 0 && !target.isDead) {
+                    target.isDead = true;
+                    setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'death', source: '', target: target.name, message: `ðŸ’€ ${target.name} has died!` }] }));
+                  }
+                }
+                enemy.isCasting = false;
+                enemy.castStartTime = undefined;
+                enemy.castTotalTime = undefined;
+                enemy.castProgress = 0;
+                enemy.castTarget = undefined;
+                enemy.gcdRemaining = Math.max(0, enemy.gcdRemaining); // allow immediate recast if GCD already expired
+                // GCD was already set when cast started and has been decrementing
+                // If cast time > GCD, GCD is already 0 and enemy can recast immediately
+                // Don't continue here - fall through to check GCD and potentially start new cast
+              } else {
+                continue; // Still casting, don't do anything else
+              }
+            }
+
+            // If on personal GCD, skip
+            if (enemy.gcdRemaining > 0) continue;
+            
+            // Auto-attack for all enemies, staggered and aimed at tank (fallback to any alive)
+            enemy.autoAttackTimer = Math.max(0, enemy.autoAttackTimer - TICK_DURATION);
+            if (enemy.autoAttackTimer <= 0) {
+              const aaTarget = tank && !tank.isDead ? tank : aliveMembers[Math.floor(Math.random() * aliveMembers.length)];
+              if (aaTarget) {
+                enemy.isCasting = true;
+                enemy.castTarget = aaTarget.id;
+                enemy.lastCastTarget = aaTarget.id;
+                enemy.castAbility = 'Auto Attack';
+                enemy.castStartTime = Date.now();
+                enemy.castTotalTime = 0.4; // 0.4s swing/shot
+                enemy.gcdRemaining = 0.4; // start GCD at cast start
+                enemy.autoAttackTimer = 1.8 + Math.random() * 0.4; // next auto staggered
+                setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'ability', source: enemy.name, target: '', message: `âš”ï¸ ${enemy.name} prepares an auto attack...` }] }));
+                continue;
+              }
+            }
+            
+            if (enemy.behavior === 'melee') {
+              // Melee attacks tank if alive, otherwise random target - 1s GCD
+              const meleeTarget = tank || aliveMembers[Math.floor(Math.random() * aliveMembers.length)];
+              if (meleeTarget) {
+                const effectiveArmor = meleeTarget.armor * (1 + (meleeTarget.armorBuff || 0) / 100);
+                const armorMult = calculateArmorReduction(effectiveArmor, selectedKeyLevel);
+                const painSuppMult = meleeTarget.damageReduction ? (1 - meleeTarget.damageReduction / 100) : 1;
+                let dmg = Math.floor(enemy.damage * 1.5 * (shieldActive ? 0.5 : 1) * armorMult * painSuppMult);
+                // Check for block (physical attacks)
+                const blockChance = (meleeTarget.blockChance || 0) + (meleeTarget.blockBuff || 0);
+                const blocked = rollBlock(blockChance);
+                if (blocked) {
+                  dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+                  meleeTarget.lastBlockTime = Date.now();
+                }
+                meleeTarget.health = Math.max(0, meleeTarget.health - dmg);
+                meleeTarget.recentDamageTaken = (meleeTarget.recentDamageTaken || 0) + dmg;
+                if (dmg > 0) {
+                  setTeamFightAnim(prev => prev + 1); // Trigger team hit animation
+                  setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 })); // Trigger enemy attack animation
+                  const jitterX = (Math.random() * 80) - 40;
+                  const jitterY = (Math.random() * 60) - 30;
+                  const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 40 + jitterY);
+                  setCombatState(prev => ({ ...prev, floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum], combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'damage', source: enemy.name, target: meleeTarget.name, value: dmg, message: `âš”ï¸ ${enemy.name} hits ${meleeTarget.name} for ${dmg}${blocked ? ' (BLOCKED!)' : ''}!` }] }));
+                }
+                if (meleeTarget.health <= 0 && !meleeTarget.isDead) {
+                  meleeTarget.isDead = true;
+                  setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'death', source: '', target: meleeTarget.name, message: `ðŸ’€ ${meleeTarget.name} has died!` }] }));
+                }
+              }
+              enemy.gcdRemaining = 1; // 1 second GCD starts when ability is used
+
+              // Skeleton Warrior special: cleave AOE every 3s, hits all alive players
+              if (enemy.enemyId === 'skeleton_warrior') {
+                if (enemy.aoeCooldown === undefined) enemy.aoeCooldown = 0;
+                enemy.aoeCooldown = Math.max(0, enemy.aoeCooldown - TICK_DURATION);
+                if (enemy.aoeCooldown <= 0 && aliveMembers.length > 0) {
+                  const cleaveDmgBase = Math.floor(enemy.damage * 0.6); // softer than single hit
+                  aliveMembers.forEach(member => {
+                    const effectiveArmor = member.armor * (1 + (member.armorBuff || 0) / 100);
+                    const armorMult = calculateArmorReduction(effectiveArmor, selectedKeyLevel);
+                    const painSuppMult = member.damageReduction ? (1 - member.damageReduction / 100) : 1;
+                    let cleave = Math.floor(cleaveDmgBase * (shieldActive ? 0.5 : 1) * armorMult * painSuppMult);
+                    const blockChance = (member.blockChance || 0) + (member.blockBuff || 0);
+                    const blocked = rollBlock(blockChance);
+                    if (blocked) {
+                      cleave = Math.floor(cleave * (1 - BLOCK_DAMAGE_REDUCTION));
+                      member.lastBlockTime = Date.now();
+                    }
+                    member.health = Math.max(0, member.health - cleave);
+                    member.recentDamageTaken = (member.recentDamageTaken || 0) + cleave;
+                    const jitterX = (Math.random() * 80) - 40;
+                    const jitterY = (Math.random() * 60) - 30;
+                    const floatNum = createFloatingNumber(cleave, blocked ? 'blocked' : 'enemy', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 40 + jitterY);
+                    setCombatState(prev => ({ ...prev, floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum], combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'damage', source: enemy.name, target: member.name, value: cleave, message: `ðŸª“ ${enemy.name} cleaves ${member.name} for ${cleave}${blocked ? ' (BLOCKED!)' : ''}!` }] }));
+                    if (member.health <= 0 && !member.isDead) {
+                      member.isDead = true;
+                      setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'death', source: '', target: member.name, message: `ðŸ’€ ${member.name} has died!` }] }));
+                    }
+                  });
+                  enemy.aoeCooldown = 3; // 3 seconds between cleaves
+                }
+              }
+            } else if (enemy.behavior === 'caster') {
+              // Start a 2s cast if not already casting
+              // Can target anyone alive (tank, healer, or dps)
+              // Avoid targeting someone already being targeted by another caster
+              const alreadyTargeted = new Set(
+                currentEnemies
+                  .filter(e => e.isCasting && e.castTarget && e.id !== enemy.id)
+                  .map(e => e.castTarget)
+              );
+              // Recalculate alive members to ensure we have current state
+              const currentAliveMembers = teamStates.filter(m => !m.isDead);
+              if (currentAliveMembers.length === 0) continue; // No one alive, can't cast
+              
+              // Prefer targets not already being targeted and not the last cast target
+              const availableTargets = currentAliveMembers.filter(m => !alreadyTargeted.has(m.id) && m.id !== enemy.lastCastTarget);
+              const fallbackTargets = currentAliveMembers.filter(m => m.id !== enemy.lastCastTarget);
+              const targetPool = availableTargets.length > 0 ? availableTargets : (fallbackTargets.length > 0 ? fallbackTargets : currentAliveMembers);
+              const target = targetPool[Math.floor(Math.random() * targetPool.length)];
+              
+              if (!target) continue; // Safety check
+              
+              enemy.isCasting = true;
+              enemy.castTarget = target.id;
+              enemy.lastCastTarget = target.id;
+              enemy.castAbility = 'Shadow Bolt';
+              enemy.castStartTime = Date.now();
+              enemy.castTotalTime = 1.2; // 1.2 second cast
+              enemy.gcdRemaining = 1; // GCD is 1 second, starts when cast begins
+              setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'ability', source: enemy.name, target: '', message: `ðŸ”® ${enemy.name} begins casting Shadow Bolt...` }] }));
+            } else if (enemy.behavior === 'archer') {
+              // Archer shoots random target (can't be kicked) - 0.4s GCD
+              // Avoid targeting someone already being targeted by another archer
+              const alreadyTargeted = new Set(
+                currentEnemies
+                  .filter(e => e.behavior === 'archer' && e.id !== enemy.id && e.lastShotTarget)
+                  .map(e => e.lastShotTarget)
+              );
+              const availableTargets = aliveMembers.filter(m => !alreadyTargeted.has(m.id));
+              const targetPool = availableTargets.length > 0 ? availableTargets : aliveMembers;
+              const target = targetPool[Math.floor(Math.random() * targetPool.length)];
+              enemy.lastShotTarget = target.id; // Track who we're shooting
+              const effectiveArmor = target.armor * (1 + (target.armorBuff || 0) / 100);
+              const armorMult = calculateArmorReduction(effectiveArmor, selectedKeyLevel);
+              const painSuppMult = target.damageReduction ? (1 - target.damageReduction / 100) : 1;
+              let dmg = Math.floor(enemy.damage * 1.5 * (shieldActive ? 0.5 : 1) * 0.7 * armorMult * painSuppMult);
+              // Check for block (physical attacks)
+              const blockChance = (target.blockChance || 0) + (target.blockBuff || 0);
+              const blocked = rollBlock(blockChance);
+              if (blocked) {
+                dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+                target.lastBlockTime = Date.now();
+              }
+              target.health = Math.max(0, target.health - dmg);
+              target.recentDamageTaken = (target.recentDamageTaken || 0) + dmg;
+              setTeamFightAnim(prev => prev + 1); // Trigger team hit animation
+              setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 })); // Trigger enemy attack animation
+              const jitterX = (Math.random() * 80) - 40;
+              const jitterY = (Math.random() * 60) - 30;
+              const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 40 + jitterY);
+              setCombatState(prev => ({ ...prev, floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum], combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'damage', source: enemy.name, target: target.name, value: dmg, message: `ðŸ¹ ${enemy.name} shoots ${target.name} for ${dmg}${blocked ? ' (BLOCKED!)' : ''}!` }] }));
+              if (target.health <= 0 && !target.isDead) {
+                target.isDead = true;
+                setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'death', source: '', target: target.name, message: `ðŸ’€ ${target.name} has died!` }] }));
+              }
+              enemy.gcdRemaining = 0.4; // 0.4 second GCD for archers
+            } else if (enemy.behavior === 'aoe') {
+              // AOE damage - hits ALL party members (unkickable!) 
+              // AOE enemies pulse damage on a consistent timer
+              const isGateBoss = enemy.type === 'miniboss' || enemy.type === 'boss';
+              const aoeCooldownTime = isGateBoss ? 5 : 3;
+              
+              // Check if ready to pulse (aoeCooldown tracks time until next pulse)
+              if ((enemy.aoeCooldown || 0) <= 0) {
+                const aoeDmgMultiplier = isGateBoss ? 0.25 : 0.35;
+                const abilityName = isGateBoss ? 'ðŸ’¥ Devastating Slam' : 'ðŸŒ€ Dark Pulse';
+                
+                // Get fresh list of alive members for this attack
+                const currentAliveMembers = teamStates.filter(m => !m.isDead);
+                if (currentAliveMembers.length > 0) {
+                let totalAoeDamage = 0;
+                const newFloats: FloatingNumber[] = [];
+                  currentAliveMembers.forEach(member => {
+                    const effectiveArmor = member.armor * (1 + (member.armorBuff || 0) / 100);
+                    const armorMult = calculateArmorReduction(effectiveArmor, selectedKeyLevel);
+                    const painSuppMult = member.damageReduction ? (1 - member.damageReduction / 100) : 1;
+                    let dmg = Math.floor(enemy.damage * 1.5 * (shieldActive ? 0.5 : 1) * aoeDmgMultiplier * armorMult * painSuppMult);
+                    // Check for block (physical AOE)
+                    const blockChance = (member.blockChance || 0) + (member.blockBuff || 0);
+                    const blocked = rollBlock(blockChance);
+                    if (blocked) {
+                      dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+                      member.lastBlockTime = Date.now();
+                    }
+                  member.health = Math.max(0, member.health - dmg);
+                    member.recentDamageTaken = (member.recentDamageTaken || 0) + dmg;
+                    setTeamFightAnim(prev => prev + 1); // Trigger team hit animation
+                  totalAoeDamage += dmg;
+                  const jitterX = (Math.random() * 80) - 40;
+                  const jitterY = (Math.random() * 60) - 30;
+                    newFloats.push(createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 40 + jitterY));
+                  
+                  if (member.health <= 0 && !member.isDead) {
+                    member.isDead = true;
+                    setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'death', source: '', target: member.name, message: `ðŸ’€ ${member.name} has died!` }] }));
+                  }
+                });
+                
+                setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 })); // Trigger enemy attack animation
+                
+                setCombatState(prev => ({ 
+                  ...prev, 
+                  floatingNumbers: [...prev.floatingNumbers.slice(-20), ...newFloats].slice(-20),
+                    combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'damage', source: enemy.name, target: 'ALL', value: totalAoeDamage, message: `${abilityName} from ${enemy.name} hits EVERYONE for ${Math.floor(totalAoeDamage / currentAliveMembers.length)} each!` }] 
+                  }));
+                }
+                
+                // Set cooldown and GCD - use aoeCooldown as the primary timer
+                enemy.aoeCooldown = aoeCooldownTime;
+                enemy.gcdRemaining = aoeCooldownTime; // Sync GCD with AOE cooldown
+              } else {
+                // AOE enemy is waiting for cooldown, set GCD to remaining cooldown
+                enemy.gcdRemaining = enemy.aoeCooldown;
+              }
+            }
+          }
+        }
+
+        // Healer healing with cast times - find healer fresh from teamStates
+        const currentHealer = teamStates.find(m => m.role === 'healer' && !m.isDead);
+        if (currentHealer) {
+          const healerChar = team.find(c => c.id === currentHealer.id);
+          const spellPower = healerChar?.baseStats?.spellPower || 100;
+          
+          // If healer is currently casting - use real elapsed time
+          // If healer is currently casting - use real elapsed time
+          if (currentHealer.isCasting && currentHealer.castStartTime && currentHealer.castTotalTime) {
+            const castTarget = teamStates.find(m => m.id === currentHealer.castTargetId);
+            const elapsedMs = Date.now() - currentHealer.castStartTime;
+            const castComplete = elapsedMs >= (currentHealer.castTotalTime * 1000);
+            
+            if (!castTarget || castTarget.isDead) {
+              currentHealer.isCasting = false;
+              currentHealer.castProgress = 0;
+              currentHealer.castTargetId = undefined;
+              setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'ability', source: currentHealer.name, target: '', message: `âŒ ${currentHealer.name}'s heal was cancelled - target died!` }] }));
+              // Fall through to start new cast
+            } else if (castComplete) {
+                const abilityName = currentHealer.castAbility || 'Healing Wave';
+                
+                // Determine heal amount based on which spell was cast
+                let healAmount = 0;
+                let manaCost = 16;
+                let icon = 'ðŸ©¸';
+                
+                if (abilityName === 'Massive Heal') {
+                  healAmount = Math.floor(350 * (1 + spellPower / 100));
+                  manaCost = 36;
+                  icon = 'ðŸ’–';
+                } else {
+                  // Healing Wave
+                  healAmount = Math.floor(100 * (1 + spellPower / 100));
+                  manaCost = 16;
+                  icon = 'ðŸ©¸';
+                }
+                
+                if (currentHealer.mana >= manaCost) {
+                  // Check for critical heal
+                  const critChance = healerChar?.baseStats?.critChance || 10;
+                  const isCritHeal = Math.random() < (critChance / 100);
+                  const finalHealAmount = isCritHeal ? Math.floor(healAmount * 1.5) : healAmount;
+                  const actualHeal = Math.min(castTarget.maxHealth - castTarget.health, finalHealAmount);
+                  castTarget.health = Math.min(castTarget.maxHealth, castTarget.health + finalHealAmount);
+                  const healTimestamp = Date.now();
+                  castTarget.lastHealTime = healTimestamp;
+                  castTarget.lastHealAmount = actualHeal;
+                  castTarget.lastHealCrit = isCritHeal;
+                  if (isCritHeal) setScreenShake(prev => prev + 1);
+                  currentHealer.mana -= manaCost;
+                  currentHealer.totalHealing = (currentHealer.totalHealing || 0) + actualHeal;
+                  currentHealer.healingBySpell = currentHealer.healingBySpell || {};
+                  currentHealer.healingBySpell[abilityName] = (currentHealer.healingBySpell[abilityName] || 0) + actualHeal;
+                  
+              const jitterX = (Math.random() * 80) - 40;
+              const jitterY = (Math.random() * 60) - 30;
+              const floatNum = createFloatingNumber(healAmount, 'heal', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 50 + jitterY);
+              setCombatState(prev => ({ 
+                ...prev, 
+                teamStates: prev.teamStates.map(m => 
+                  m.id === castTarget.id 
+                    ? { ...m, lastHealTime: healTimestamp, lastHealAmount: actualHeal, lastHealCrit: isCritHeal, health: castTarget.health }
+                    : m.id === currentHealer.id
+                    ? { ...m, mana: currentHealer.mana, totalHealing: currentHealer.totalHealing, healingBySpell: currentHealer.healingBySpell }
+                    : m
+                ),
+                floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum],
+                    combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'heal', source: currentHealer.name, target: castTarget.name, value: healAmount, message: `${icon} ${currentHealer.name} casts ${abilityName} on ${castTarget.name} for ${healAmount}!` }] 
+                  }));
+                }
+                
+                currentHealer.isCasting = false;
+                currentHealer.castTargetId = undefined;
+                // Fall through to immediately start next cast
+              }
+          }
+          
+          // Not casting (or just finished) - decide what to cast if GCD is done
+          const healerGcdReady = !currentHealer.gcdEndTime || Date.now() >= currentHealer.gcdEndTime;
+          if (!currentHealer.isCasting && healerGcdReady) {
+            // Not casting and off GCD - decide what to cast
+            const aliveTeam = teamStates.filter(m => !m.isDead);
+            
+            // Priority 1: Pain Suppression on someone taking heavy damage recently (if off CD)
+            const painSuppCD = healerCooldowns.painSuppression || 0;
+            const heavyDamageTarget = aliveTeam.find(m => 
+              (m.recentDamageTaken || 0) > m.maxHealth * 0.15 && 
+              !m.damageReduction
+            );
+            
+            if (painSuppCD <= 0 && heavyDamageTarget && currentHealer.mana >= 40) {
+              // Instant cast Pain Suppression
+              heavyDamageTarget.damageReduction = 40;
+              heavyDamageTarget.damageReductionDuration = 6;
+              heavyDamageTarget.lastExternalTime = Date.now();
+              heavyDamageTarget.lastExternalName = 'Pain Supp';
+              currentHealer.mana -= 40;
+              healerCooldowns.painSuppression = 30;
+              currentHealer.gcdEndTime = Date.now() + 1500; // 1.5s GCD
+              setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'buff', source: currentHealer.name, target: heavyDamageTarget.name, message: `ðŸ›¡ï¸ ${currentHealer.name} casts Pain Suppression on ${heavyDamageTarget.name}! (-40% damage for 6s)` }] }));
+            }
+            // Priority 2: Massive Heal on critically injured (â‰¤50% health)
+            else {
+              const criticalTarget = aliveTeam.find(m => m.health <= m.maxHealth * 0.5);
+              
+              if (criticalTarget && currentHealer.mana >= 36) {
+                currentHealer.isCasting = true;
+                currentHealer.castProgress = 3; // 2.4s rounds to 3 ticks
+                currentHealer.castTotalTime = 2.4;
+                currentHealer.castStartTime = Date.now();
+                currentHealer.gcdEndTime = Date.now() + 1500; // 1.5s GCD starts when cast begins
+                currentHealer.castTargetId = criticalTarget.id;
+                currentHealer.castAbility = 'Massive Heal';
+                setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'ability', source: currentHealer.name, target: criticalTarget.name, message: `ðŸ”® ${currentHealer.name} begins casting Massive Heal on ${criticalTarget.name}...` }] }));
+              }
+              // Priority 3: Rejuvenation on damaged targets above 50% without HoT
+              else {
+                const rejuvTarget = aliveTeam.find(m => 
+                  m.health < m.maxHealth * 0.85 && 
+                  m.health > m.maxHealth * 0.5 && 
+                  !m.hasRejuv
+                );
+                
+                if (rejuvTarget && currentHealer.mana >= 8) {
+                  // Instant cast Rejuvenation
+                  const hotHeal = Math.floor(40 * (1 + spellPower / 200)); // HoT heal per tick
+                  rejuvTarget.hotEffects = rejuvTarget.hotEffects || [];
+                  rejuvTarget.hotEffects.push({
+                    name: 'Rejuvenation',
+                    icon: 'HoT',
+                    healPerTick: hotHeal,
+                    remainingDuration: 12,
+                    tickInterval: 2,
+                    nextTickIn: 2,
+                    sourceId: currentHealer.id
+                  });
+                  rejuvTarget.hasRejuv = true;
+                  currentHealer.mana -= 8;
+                  currentHealer.gcdEndTime = Date.now() + 1500; // 1.5s GCD
+                  setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'heal', source: currentHealer.name, target: rejuvTarget.name, message: `ðŸŒ¿ ${currentHealer.name} casts Rejuvenation on ${rejuvTarget.name}!` }] }));
+                }
+                // Priority 4: Healing Wave on anyone hurt
+                else {
+                  const hurtMembers = aliveTeam.filter(m => m.health < m.maxHealth * 0.95);
+                  
+                  if (hurtMembers.length > 0 && currentHealer.mana >= 16) {
+                    const tankMember = hurtMembers.find(m => m.role === 'tank');
+                    const healTarget = tankMember || hurtMembers.reduce((lowest, m) => 
+                      (!lowest || m.health / m.maxHealth < lowest.health / lowest.maxHealth) ? m : lowest, 
+                      hurtMembers[0]
+                    );
+                    
+                    currentHealer.isCasting = true;
+                    currentHealer.castProgress = 2; // 1.2s rounds to 2 ticks
+                    currentHealer.castTotalTime = 1.2;
+                    currentHealer.castStartTime = Date.now();
+                    currentHealer.gcdEndTime = Date.now() + 1500; // 1.5s GCD starts when cast begins
+                    currentHealer.castTargetId = healTarget.id;
+                    currentHealer.castAbility = 'Healing Wave';
+                    setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'ability', source: currentHealer.name, target: healTarget.name, message: `ðŸ”® ${currentHealer.name} begins casting Healing Wave on ${healTarget.name}...` }] }));
+                  }
+                }
+              }
+            }
+          }
+          
+          // Tick Pain Suppression cooldown - use TICK_DURATION
+          if (healerCooldowns.painSuppression > 0) {
+            healerCooldowns.painSuppression -= TICK_DURATION;
+          }
+
+          // Tick Tank cooldowns - use TICK_DURATION
+          if (tankCooldowns.shieldSlam > 0) tankCooldowns.shieldSlam -= TICK_DURATION;
+          if (tankCooldowns.defensiveStance > 0) tankCooldowns.defensiveStance -= TICK_DURATION;
+          if (tankCooldowns.shieldBlock > 0) tankCooldowns.shieldBlock -= TICK_DURATION;
+        }
+
+        // Collect DPS spell casts and damage to batch update
+        const dpsFloatNumbers: FloatingNumber[] = [];
+        const dpsLogEntries: CombatLogEntry[] = [];
+        
+        // Capture alive enemies ONCE at start of tick - all DPS hit the same targets simultaneously
+        const tickAliveEnemies = currentEnemies.filter(e => e.health > 0);
+
+        // Team DPS - all on 1s GCD, everyone attacks each tick
+        team.forEach((char) => {
+          const member = teamStates.find(m => m.id === char.id);
+          if (!member || member.isDead) return;
+          
+          // Healer should NOT attack if they are casting OR if someone needs healing
+          if (char.role === 'healer') {
+            if (member.isCasting) return; // Currently casting a heal
+            const hurtMembers = teamStates.filter(m => !m.isDead && m.health < m.maxHealth * 0.95);
+            if (hurtMembers.length > 0) return; // Someone needs healing, don't attack
+          }
+          
+          // DPS spell casting logic
+          if (char.role === 'dps') {
+            // If DPS is currently casting a spell - use real elapsed time
+            // Cast progress is tracked via real-time (castStartTime + castTotalTime)
+            if (member.isCasting && member.castStartTime && member.castTotalTime) {
+              const elapsedMs = Date.now() - member.castStartTime;
+              const castComplete = elapsedMs >= (member.castTotalTime * 1000);
+              
+              // Cast complete!
+              if (castComplete) {
+                const spellPower = char.baseStats?.spellPower || 100;
+                const isCrit = Math.random() < ((char.baseStats?.critChance || 10) / 100);
+                const ability = member.castAbility || 'Fireball';
+                
+                // Base damage calculation - Blow Up does more, others same
+                const baseDmg = ability === 'Blow Up' ? 175 : 150;
+                const damage = Math.floor(baseDmg * (1 + spellPower / 100) * (bloodlustActive ? 1.3 : 1));
+                const finalDamage = isCrit ? Math.floor(damage * 1.5) : damage;
+                
+                // Use the tick's snapshot of alive enemies so all DPS hit same targets
+                const currentAlive = tickAliveEnemies;
+                const dpsIndex = team.filter(c => c.role === 'dps').findIndex(c => c.id === char.id);
+                const jitterX = (Math.random() * 100) - 50 + (dpsIndex * 40);
+                const jitterY = (Math.random() * 70) - 35 - (dpsIndex * 15);
+                
+                if (ability === 'Blow Up') {
+                  // AOE damage to ALL enemies
+                  let totalDamage = 0;
+                  currentAlive.forEach(enemy => {
+                    enemy.health = Math.max(0, enemy.health - finalDamage);
+                    totalDamage += finalDamage;
+                    setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 })); // Trigger enemy hit animation
+                  });
+                  member.totalDamage = (member.totalDamage || 0) + totalDamage;
+                  member.damageBySpell = member.damageBySpell || {};
+                  member.damageBySpell['Blow Up'] = (member.damageBySpell['Blow Up'] || 0) + totalDamage;
+                  if (isCrit) setScreenShake(prev => prev + 1);
+                  setTeamFightAnim(prev => prev + 1); // Trigger team fighting animation
+                  dpsFloatNumbers.push(createFloatingNumber(totalDamage, isCrit ? 'crit' : 'player', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 40 + jitterY));
+                  dpsLogEntries.push({ timestamp: totalTime, type: 'damage', source: char.name, target: `${currentAlive.length} enemies`, value: totalDamage, message: `ðŸ’¥ ${char.name} casts Blow Up hitting ${currentAlive.length} enemies for ${finalDamage} each${isCrit ? ' CRIT!' : ''}!` });
+                } else if (ability === 'Shadow Bolt') {
+                  // Shadow Bolt - hits up to 3 targets (lowest health first)
+                  const targets = [...currentAlive].sort((a, b) => a.health - b.health).slice(0, 3);
+                  let totalDamage = 0;
+                  targets.forEach(enemy => {
+                    enemy.health = Math.max(0, enemy.health - finalDamage);
+                    totalDamage += finalDamage;
+                    setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 })); // Trigger enemy hit animation
+                  });
+                  member.totalDamage = (member.totalDamage || 0) + totalDamage;
+                  member.damageBySpell = member.damageBySpell || {};
+                  member.damageBySpell['Shadow Bolt'] = (member.damageBySpell['Shadow Bolt'] || 0) + totalDamage;
+                  if (isCrit) setScreenShake(prev => prev + 1);
+                  setTeamFightAnim(prev => prev + 1); // Trigger team fighting animation
+                  dpsFloatNumbers.push(createFloatingNumber(totalDamage, isCrit ? 'crit' : 'player', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 40 + jitterY));
+                  const targetNames = targets.length === 1 ? targets[0].name : `${targets.length} enemies`;
+                  dpsLogEntries.push({ timestamp: totalTime, type: 'damage', source: char.name, target: targetNames, value: totalDamage, message: `ðŸŒ‘ ${char.name} casts Shadow Bolt hitting ${targetNames} for ${finalDamage} each${isCrit ? ' CRIT!' : ''}!` });
+                } else {
+                  // Fireball - single target (use pre-selected target, or pick lowest health if target died)
+                  if (currentAlive.length > 0) {
+                    let target = member.castTargetId ? currentAlive.find(e => e.id === member.castTargetId) : null;
+                    // If original target died, pick lowest health enemy
+                    if (!target) {
+                      target = currentAlive.reduce((lowest, e) => e.health < lowest.health ? e : lowest, currentAlive[0]);
+                    }
+                    target.health = Math.max(0, target.health - finalDamage);
+                    member.totalDamage = (member.totalDamage || 0) + finalDamage;
+                    member.damageBySpell = member.damageBySpell || {};
+                    member.damageBySpell['Fireball'] = (member.damageBySpell['Fireball'] || 0) + finalDamage;
+                    if (isCrit) setScreenShake(prev => prev + 1);
+                    setTeamFightAnim(prev => prev + 1); // Trigger team fighting animation
+                    setEnemyFightAnims(prev => ({ ...prev, [target.id]: (prev[target.id] || 0) + 1 })); // Trigger enemy hit animation
+                    dpsFloatNumbers.push(createFloatingNumber(finalDamage, isCrit ? 'crit' : 'player', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 40 + jitterY));
+                    dpsLogEntries.push({ timestamp: totalTime, type: 'damage', source: char.name, target: target.name, value: finalDamage, message: `ðŸ”¥ ${char.name} casts Fireball on ${target.name} for ${finalDamage}${isCrit ? ' CRIT!' : ''}!` });
+                  }
+                }
+                
+                member.isCasting = false;
+                member.castAbility = undefined;
+                member.castTargetId = undefined;
+                // Fall through to immediately start next cast (no return here!)
+              } else {
+                return; // Still casting, don't do anything else
+              }
+            }
+            
+            // Not casting (or just finished) - start a new cast if GCD is done
+            const currentAlive = tickAliveEnemies;
+            const gcdReady = !member.gcdEndTime || Date.now() >= member.gcdEndTime;
+            if (gcdReady && currentAlive.length > 0) {
+              // Check what spells this character has equipped
+              const equippedSkillIds = char.skillGems?.map(sg => sg.skillGemId) || [];
+              const hasBlowUp = equippedSkillIds.includes('blow_up');
+              const hasShadowBolt = equippedSkillIds.includes('shadow_bolt');
+              const hasFireball = equippedSkillIds.includes('fireball');
+              
+              // Choose best available spell based on enemy count:
+              // 3+ enemies: Blow Up (if equipped), else Shadow Bolt, else Fireball
+              // 2 enemies: Shadow Bolt (if equipped), else Blow Up, else Fireball
+              // 1 enemy: Fireball (if equipped), else Shadow Bolt, else Blow Up
+              let spellChoice: string;
+              let castTimeSeconds: number;
+              
+              if (currentAlive.length >= 3) {
+                if (hasBlowUp) { spellChoice = 'Blow Up'; castTimeSeconds = 3.24; }
+                else if (hasShadowBolt) { spellChoice = 'Shadow Bolt'; castTimeSeconds = 1.6; }
+                else if (hasFireball) { spellChoice = 'Fireball'; castTimeSeconds = 1.2; }
+                else { spellChoice = 'Fireball'; castTimeSeconds = 1.2; } // fallback
+              } else if (currentAlive.length === 2) {
+                if (hasShadowBolt) { spellChoice = 'Shadow Bolt'; castTimeSeconds = 1.6; }
+                else if (hasBlowUp) { spellChoice = 'Blow Up'; castTimeSeconds = 1.62; }
+                else if (hasFireball) { spellChoice = 'Fireball'; castTimeSeconds = 1.2; }
+                else { spellChoice = 'Fireball'; castTimeSeconds = 1.2; } // fallback
+              } else {
+                if (hasFireball) { spellChoice = 'Fireball'; castTimeSeconds = 1.2; }
+                else if (hasShadowBolt) { spellChoice = 'Shadow Bolt'; castTimeSeconds = 1.6; }
+                else if (hasBlowUp) { spellChoice = 'Blow Up'; castTimeSeconds = 1.62; }
+                else { spellChoice = 'Fireball'; castTimeSeconds = 1.2; } // fallback
+              }
+              
+              // For single-target spells, pick target now and avoid targets already being cast on
+              let targetId: string | undefined = undefined;
+              if (spellChoice === 'Fireball') {
+                // Get IDs of enemies already being targeted by other casters
+                const alreadyTargeted = new Set(
+                  teamStates
+                    .filter(m => m.isCasting && m.castTargetId && m.id !== member.id)
+                    .map(m => m.castTargetId)
+                );
+                
+                // Find lowest health enemy not already being targeted
+                const availableTargets = currentAlive.filter(e => !alreadyTargeted.has(e.id));
+                const targetPool = availableTargets.length > 0 ? availableTargets : currentAlive; // Fall back to all if all targeted
+                const target = targetPool.reduce((lowest, e) => e.health < lowest.health ? e : lowest, targetPool[0]);
+                targetId = target.id;
+              }
+              
+              member.isCasting = true;
+              member.castProgress = Math.ceil(castTimeSeconds); // Ticks needed (for game logic)
+              member.castTotalTime = castTimeSeconds; // Actual cast time for smooth animation
+              member.castStartTime = Date.now();
+              member.gcdEndTime = Date.now() + 1500; // 1.5s GCD starts NOW when cast begins
+              member.castAbility = spellChoice;
+              member.castTargetId = targetId; // Store target for single-target spells
+              
+              const targetName = targetId ? currentAlive.find(e => e.id === targetId)?.name : '';
+              dpsLogEntries.push({ timestamp: totalTime, type: 'ability', source: char.name, target: targetName || '', message: `ðŸ”® ${char.name} begins casting ${spellChoice}${targetName ? ` on ${targetName}` : ''}...` });
+            }
+            return;
+          }
+          
+          // Tank-specific ability logic
+          if (char.role === 'tank') {
+            const tankGcdReady = !member.gcdEndTime || Date.now() >= member.gcdEndTime;
+            if (!tankGcdReady) return;
+          
+          const strength = char.baseStats?.attackPower || 100;
+          const agility = char.baseStats?.critChance || 10;
+          const isCrit = Math.random() < (agility / 100);
+            
+            // Check equipped skills
+            const equippedSkillIds = char.skillGems?.map(sg => sg.skillGemId) || [];
+            const hasShieldSlam = equippedSkillIds.includes('shield_slam');
+            const hasDefensiveStance = equippedSkillIds.includes('defensive_stance');
+            const hasShieldBlock = equippedSkillIds.includes('shield_block');
+            
+            // Priority 1: Shield Block when taking damage and no block buff active
+            if (hasShieldBlock && tankCooldowns.shieldBlock <= 0 && !member.blockBuff) {
+              if ((member.recentDamageTaken || 0) > member.maxHealth * 0.03 && member.mana >= 30) {
+                member.blockBuff = 30; // +30% block and spell block chance
+                member.blockBuffDuration = 6;
+                member.mana -= 30;
+                tankCooldowns.shieldBlock = 12;
+                member.gcdEndTime = Date.now() + 1500; // 1.5s GCD
+                setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'buff', source: char.name, target: char.name, message: `ðŸ”° ${char.name} raises Shield Block! (+30% block for 6s)` }] }));
+                return;
+              }
+            }
+            
+            // Priority 2: Defensive Stance if taking damage and no armor buff active
+            if (hasDefensiveStance && tankCooldowns.defensiveStance <= 0 && !member.armorBuff) {
+              // Check if tank has taken damage recently
+              if ((member.recentDamageTaken || 0) > member.maxHealth * 0.05 && member.mana >= 50) {
+                member.armorBuff = 50; // 50% armor increase
+                member.armorBuffDuration = 15;
+                member.mana -= 50;
+                tankCooldowns.defensiveStance = 30;
+                member.gcdEndTime = Date.now() + 1500; // 1.5s GCD
+                setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'buff', source: char.name, target: char.name, message: `ðŸ° ${char.name} enters Defensive Stance! (+50% armor for 15s)` }] }));
+                return;
+              }
+            }
+            
+            if (aliveEnemies.length > 0) {
+              // Priority 2: Shield Slam for single-target damage (off cooldown)
+              if (hasShieldSlam && tankCooldowns.shieldSlam <= 0 && member.mana >= 20) {
+                const target = aliveEnemies.reduce((lowest, e) => e.health < lowest.health ? e : lowest, aliveEnemies[0]);
+                const shieldSlamDmg = Math.floor(75 * (1 + strength / 150) * (bloodlustActive ? 1.3 : 1));
+                const finalDamage = isCrit ? Math.floor(shieldSlamDmg * 1.5) : shieldSlamDmg;
+                
+                target.health = Math.max(0, target.health - finalDamage);
+                member.totalDamage = (member.totalDamage || 0) + finalDamage;
+                member.damageBySpell = member.damageBySpell || {};
+                member.damageBySpell['Shield Slam'] = (member.damageBySpell['Shield Slam'] || 0) + finalDamage;
+                member.mana -= 20;
+                tankCooldowns.shieldSlam = 6;
+                member.gcdEndTime = Date.now() + 1500; // 1.5s GCD
+                
+                const jitterX = (Math.random() * 80) - 40;
+                const jitterY = (Math.random() * 60) - 30;
+                if (isCrit) setScreenShake(prev => prev + 1);
+                setTeamFightAnim(prev => prev + 1); // Trigger team fighting animation
+                setEnemyFightAnims(prev => ({ ...prev, [target.id]: (prev[target.id] || 0) + 1 })); // Trigger enemy hit animation
+                const floatNum = createFloatingNumber(finalDamage, isCrit ? 'crit' : 'player', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 40 + jitterY);
+                setCombatState(prev => ({ 
+                  ...prev, 
+                  floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum],
+                  combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'damage', source: char.name, target: target.name, value: finalDamage, message: `ðŸ›¡ï¸ ${char.name} Shield Slams ${target.name} for ${finalDamage}${isCrit ? ' CRIT!' : ''}!` }] 
+                }));
+                return;
+              }
+              
+              // Fallback: Thunder Clap AOE
+              const thunderClapDmg = Math.floor(50 * (1 + strength / 150) * (bloodlustActive ? 1.3 : 1));
+              const finalDamage = isCrit ? Math.floor(thunderClapDmg * 1.5) : thunderClapDmg;
+              let totalDamageDealt = 0;
+              
+              aliveEnemies.forEach(enemy => {
+                enemy.health = Math.max(0, enemy.health - finalDamage);
+                totalDamageDealt += finalDamage;
+                setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 })); // Trigger enemy hit animation
+              });
+              member.totalDamage = (member.totalDamage || 0) + totalDamageDealt;
+              member.damageBySpell = member.damageBySpell || {};
+              member.damageBySpell['Thunder Clap'] = (member.damageBySpell['Thunder Clap'] || 0) + totalDamageDealt;
+              
+              const jitterX = (Math.random() * 80) - 40;
+              const jitterY = (Math.random() * 60) - 30;
+              if (isCrit) setScreenShake(prev => prev + 1);
+              setTeamFightAnim(prev => prev + 1); // Trigger team fighting animation
+              const floatNum = createFloatingNumber(totalDamageDealt, isCrit ? 'crit' : 'player', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 40 + jitterY);
+              setCombatState(prev => ({ 
+                ...prev, 
+                floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum],
+                combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'damage', source: char.name, target: aliveEnemies.length > 1 ? `${aliveEnemies.length} enemies` : aliveEnemies[0].name, value: totalDamageDealt, message: `âš¡ ${char.name} Thunder Claps ${aliveEnemies.length > 1 ? aliveEnemies.length + ' enemies' : aliveEnemies[0].name} for ${finalDamage}${isCrit ? ' CRIT!' : ''} each!` }] 
+              }));
+            }
+            member.gcdEndTime = Date.now() + 1500; // 1.5s GCD
+            return;
+          }
+          
+          // Healer auto-attack logic
+          const autoGcdReady = !member.gcdEndTime || Date.now() >= member.gcdEndTime;
+          if (!autoGcdReady) return;
+          
+          const strength = char.baseStats?.attackPower || 100;
+          const agility = char.baseStats?.critChance || 10;
+          const isCrit = Math.random() < (agility / 100);
+          const roleDmg = 25;
+          const baseDamage = Math.floor(roleDmg * (1 + strength / 150) * (bloodlustActive ? 1.3 : 1));
+          const finalDamage = isCrit ? Math.floor(baseDamage * 1.5) : baseDamage;
+          
+          let totalDamageDealt = 0;
+          
+          if (aliveEnemies.length > 0) {
+            // AOE damage for healer
+          aliveEnemies.forEach(enemy => {
+            enemy.health = Math.max(0, enemy.health - finalDamage);
+            totalDamageDealt += finalDamage;
+            setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 })); // Trigger enemy hit animation
+          });
+            member.totalDamage = (member.totalDamage || 0) + totalDamageDealt;
+          
+            const jitterX = (Math.random() * 80) - 40;
+            const jitterY = (Math.random() * 60) - 30;
+            if (isCrit) setScreenShake(prev => prev + 1);
+            setTeamFightAnim(prev => prev + 1); // Trigger team fighting animation
+            const floatNum = createFloatingNumber(
+              totalDamageDealt,
+              isCrit ? 'crit' : 'player',
+              combatState.teamPosition.x + jitterX,
+              combatState.teamPosition.y - 40 + jitterY
+            );
+            setCombatState(prev => ({ 
+              ...prev, 
+              floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum],
+              combatLog: [...prev.combatLog, { 
+                timestamp: totalTime, 
+                type: 'damage', 
+                source: char.name, 
+                target: aliveEnemies.length > 1 ? `${aliveEnemies.length} enemies` : aliveEnemies[0].name, 
+                value: totalDamageDealt, 
+                message: `âœ¨ ${char.name} Holy Nova hits ${aliveEnemies.length > 1 ? aliveEnemies.length + ' enemies' : aliveEnemies[0].name} for ${finalDamage}${isCrit ? ' CRIT!' : ''} each!` 
+              }] 
+            }));
+          }
+          member.gcdEndTime = Date.now() + 1500; // 1.5s GCD
+        });
+        
+        // Apply batched DPS damage updates
+        if (dpsFloatNumbers.length > 0 || dpsLogEntries.length > 0) {
+          setCombatState(prev => ({
+            ...prev,
+            floatingNumbers: [...prev.floatingNumbers.slice(-20), ...dpsFloatNumbers].slice(-20),
+            combatLog: [...prev.combatLog, ...dpsLogEntries]
+          }));
+        }
+        
+        // Check for newly dead enemies and mark them
+        currentEnemies.forEach(enemy => {
+          if (enemy.health <= 0 && !enemy.isDead) {
+            enemy.isDead = true;
+            enemy.deathTime = Date.now();
+            setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'death', source: '', target: enemy.name, message: `â˜ ï¸ ${enemy.name} defeated!` }] }));
+          }
+        });
+        
+        // Persist updated enemy states (including dead enemies for animation)
+        // Keep dead enemies for 800ms after death for animation
+        const now = Date.now();
+        const enemiesToKeep = currentEnemies.filter(e => 
+          e.health > 0 || (e.isDead && e.deathTime && (now - e.deathTime) < 800)
+        );
+        
+        currentEnemies = enemiesToKeep.length > 0 
+          ? enemiesToKeep.map(e => ({ ...e }))
+          : aliveEnemies.map(e => ({ ...e }));
+        
+        teamStates = teamStates.map(m => ({ ...m }));
+        
+        setCombatState(prev => ({ ...prev, enemies: currentEnemies, teamStates: [...teamStates], abilities: [...abilities], bloodlustActive, bloodlustTimer, timeElapsed: totalTime }));
+      }
+
+      const pullForces = packs.reduce((sum, p) => sum + p.totalForces, 0);
+      totalForcesCleared += pullForces;
+      
+      setCombatState(prev => ({
+        ...prev, forcesCleared: totalForcesCleared, enemies: [], teamStates,
+        combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'loot', source: '', target: '', message: `âœ… Pull complete! +${pullForces} forces` }]
+      }));
+
+      await sleep(300);
+      
+      // Stop all current casts before post-combat recovery
+      teamStates = teamStates.map(m => ({
+        ...m,
+        isCasting: false,
+        castStartTime: undefined,
+        castTotalTime: undefined,
+        castAbility: undefined,
+        castTargetId: undefined
+      }));
+      setCombatState(prev => ({ ...prev, teamStates: [...teamStates] }));
+      
+      // Post-combat recovery phase - healer casts heals and drinks
+      const healer = teamStates.find(m => m.role === 'healer' && !m.isDead);
+      if (healer && !combatRef.current.stop) {
+        const aliveMembers = teamStates.filter(m => !m.isDead);
+        const membersNeedingHealing = aliveMembers.filter(m => m.health < m.maxHealth);
+        
+        // Phase 1: Healer casts heals on injured party members until everyone is full health
+        let firstHealMessage = true;
+        while (membersNeedingHealing.length > 0 && !combatRef.current.stop && !timedOut) {
+          if (firstHealMessage) {
+            setCombatState(prev => ({ ...prev, phase: 'traveling', combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'ability', source: healer.name, target: '', message: `ðŸ©¸ ${healer.name} is healing up the party...` }] }));
+            firstHealMessage = false;
+          }
+          
+          // Find the most injured member
+          const injured = membersNeedingHealing.reduce((mostInjured, m) => {
+            const injuredPercent = (mostInjured.maxHealth - mostInjured.health) / mostInjured.maxHealth;
+            const mPercent = (m.maxHealth - m.health) / m.maxHealth;
+            return mPercent > injuredPercent ? m : mostInjured;
+          });
+          
+          if (combatRef.current.stop) break;
+          if (checkTimeout()) { timedOut = true; break; }
+          
+          const healNeeded = injured.maxHealth - injured.health;
+          const healAmount = Math.min(healNeeded, Math.floor(injured.maxHealth * 0.4)); // Heal for 40% max HP per cast
+          const castTime = 1.2;
+          
+          // Set healer casting state
+          healer.isCasting = true;
+          healer.castAbility = 'Healing Wave';
+          healer.castStartTime = Date.now();
+          healer.castTotalTime = castTime;
+          healer.castTargetId = injured.id;
+          
+          // Update combat state to show casting
+          teamStates = teamStates.map(m => 
+            m.id === healer.id 
+              ? { ...m, isCasting: true, castAbility: 'Healing Wave', castStartTime: healer.castStartTime, castTotalTime: castTime, castTargetId: injured.id }
+              : m
+          );
+          setCombatState(prev => ({ ...prev, teamStates: [...teamStates] }));
+          
+          // Animate the cast - wait for actual cast time
+          const castStartTime = Date.now();
+          while (Date.now() - castStartTime < castTime * 1000) {
+            if (combatRef.current.stop) break;
+            await sleep(7);
+            totalTime += 0.007;
+            // Update combat state periodically to keep UI responsive
+            if (Math.floor((Date.now() - castStartTime) / 50) !== Math.floor((Date.now() - castStartTime - 10) / 50)) {
+              setCombatState(prev => ({ ...prev, teamStates: [...teamStates], timeElapsed: totalTime }));
+            }
+          }
+          
+          // Apply the heal
+          const healerChar = team.find(c => c.id === healer.id);
+          const critChance = healerChar?.baseStats?.critChance || 10;
+          const isCritHeal = Math.random() < (critChance / 100);
+          const finalHealAmount = isCritHeal ? Math.floor(healAmount * 1.5) : healAmount;
+          const actualHeal = Math.min(injured.maxHealth - injured.health, finalHealAmount);
+          injured.health = Math.min(injured.maxHealth, injured.health + finalHealAmount);
+          const healTimestamp = Date.now();
+          injured.lastHealTime = healTimestamp;
+          injured.lastHealAmount = actualHeal;
+          injured.lastHealCrit = isCritHeal;
+          if (isCritHeal) setScreenShake(prev => prev + 1);
+          healer.mana = Math.max(0, healer.mana - 16);
+          healer.totalHealing = (healer.totalHealing || 0) + actualHeal;
+          healer.healingBySpell = healer.healingBySpell || {};
+          healer.healingBySpell['Healing Wave'] = (healer.healingBySpell['Healing Wave'] || 0) + actualHeal;
+          healer.isCasting = false;
+          
+          // Show floating heal number
+          const jitterX = (Math.random() * 80) - 40;
+          const jitterY = (Math.random() * 60) - 30;
+          const floatNum = createFloatingNumber(actualHeal, 'heal', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 50 + jitterY);
+          
+          // Update teamStates with the healed member
+          teamStates = teamStates.map(m => 
+            m.id === injured.id 
+              ? { ...m, lastHealTime: healTimestamp, lastHealAmount: actualHeal, lastHealCrit: isCritHeal, health: injured.health }
+              : m.id === healer.id
+              ? { ...m, mana: healer.mana, totalHealing: healer.totalHealing, healingBySpell: healer.healingBySpell, isCasting: false }
+              : m
+          );
+          
+          setCombatState(prev => ({ 
+            ...prev, 
+            teamStates: [...teamStates],
+            timeElapsed: totalTime,
+            floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum],
+            combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'heal', source: healer.name, target: injured.name, value: actualHeal, message: `ðŸ’š ${healer.name} casts Healing Wave on ${injured.name} for ${actualHeal}${isCritHeal ? ' CRIT!' : ''}!` }]
+          }));
+          
+          // Update the list of members needing healing
+          const updatedAliveMembers = teamStates.filter(m => !m.isDead);
+          membersNeedingHealing.length = 0;
+          membersNeedingHealing.push(...updatedAliveMembers.filter(m => m.health < m.maxHealth));
+          
+          // If healer is out of mana, break and let them drink
+          if (healer.mana < 16) break;
+        }
+        
+        // Phase 2: Healer drinks to restore mana
+        if (healer.mana < healer.maxMana * 0.8 && !combatRef.current.stop && !timedOut) {
+          const drinkTime = Math.ceil((1 - healer.mana / healer.maxMana) * 4); // Up to 4 seconds drinking
+          const manaPerTick = Math.ceil((healer.maxMana - healer.mana) / (drinkTime * 100));
+          
+          setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'ability', source: healer.name, target: '', message: `ðŸ¥¤ ${healer.name} is drinking...` }] }));
+          
+          for (let t = 1; t <= drinkTime * 100; t++) {
+            if (combatRef.current.stop) break;
+            if (checkTimeout()) { timedOut = true; break; }
+            
+            await sleep(7);
+            totalTime += 0.007;
+            
+            healer.mana = Math.min(healer.maxMana, healer.mana + manaPerTick);
+            
+            // Also regen mana for others while waiting
+            teamStates = teamStates.map(m => {
+              if (m.isDead || m.role === 'healer') return m;
+              return { ...m, mana: Math.min(m.maxMana, m.mana + Math.floor(m.maxMana * 0.02)) };
+            });
+            
+            setCombatState(prev => ({ 
+              ...prev, 
+              teamStates: [...teamStates],
+              timeElapsed: totalTime
+            }));
+          }
+          
+          setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'buff', source: healer.name, target: '', message: `âœ¨ ${healer.name} finished drinking. Ready!` }] }));
+          
+          // After drinking, continue healing if anyone still needs it
+          const updatedAliveMembers = teamStates.filter(m => !m.isDead);
+          let stillNeedingHealing = updatedAliveMembers.filter(m => m.health < m.maxHealth);
+          
+          while (stillNeedingHealing.length > 0 && !combatRef.current.stop && !timedOut) {
+            // Find the most injured member
+            const injured = stillNeedingHealing.reduce((mostInjured, m) => {
+              const injuredPercent = (mostInjured.maxHealth - mostInjured.health) / mostInjured.maxHealth;
+              const mPercent = (m.maxHealth - m.health) / m.maxHealth;
+              return mPercent > injuredPercent ? m : mostInjured;
+            });
+            
+            if (combatRef.current.stop) break;
+            if (checkTimeout()) { timedOut = true; break; }
+            
+            const healNeeded = injured.maxHealth - injured.health;
+            const healAmount = Math.min(healNeeded, Math.floor(injured.maxHealth * 0.4));
+            const castTime = 1.2;
+            
+            // Set healer casting state
+            healer.isCasting = true;
+            healer.castAbility = 'Healing Wave';
+            healer.castStartTime = Date.now();
+            healer.castTotalTime = castTime;
+            healer.castTargetId = injured.id;
+            
+            // Update combat state to show casting
+            teamStates = teamStates.map(m => 
+              m.id === healer.id 
+                ? { ...m, isCasting: true, castAbility: 'Healing Wave', castStartTime: healer.castStartTime, castTotalTime: castTime, castTargetId: injured.id }
+                : m
+            );
+            setCombatState(prev => ({ ...prev, teamStates: [...teamStates] }));
+            
+            // Animate the cast - wait for actual cast time
+            const castStartTime = Date.now();
+            while (Date.now() - castStartTime < castTime * 1000) {
+              if (combatRef.current.stop) break;
+              await sleep(7);
+              totalTime += 0.007;
+              // Update combat state periodically to keep UI responsive
+              if (Math.floor((Date.now() - castStartTime) / 50) !== Math.floor((Date.now() - castStartTime - 10) / 50)) {
+                setCombatState(prev => ({ ...prev, teamStates: [...teamStates], timeElapsed: totalTime }));
+              }
+            }
+            
+            // Apply the heal
+            const healerChar = team.find(c => c.id === healer.id);
+            const critChance = healerChar?.baseStats?.critChance || 10;
+            const isCritHeal = Math.random() < (critChance / 100);
+            const finalHealAmount = isCritHeal ? Math.floor(healAmount * 1.5) : healAmount;
+            const actualHeal = Math.min(injured.maxHealth - injured.health, finalHealAmount);
+            injured.health = Math.min(injured.maxHealth, injured.health + finalHealAmount);
+            const healTimestamp = Date.now();
+            injured.lastHealTime = healTimestamp;
+            injured.lastHealAmount = actualHeal;
+            injured.lastHealCrit = isCritHeal;
+            if (isCritHeal) setScreenShake(prev => prev + 1);
+            healer.mana = Math.max(0, healer.mana - 16);
+            healer.totalHealing = (healer.totalHealing || 0) + actualHeal;
+            healer.healingBySpell = healer.healingBySpell || {};
+            healer.healingBySpell['Healing Wave'] = (healer.healingBySpell['Healing Wave'] || 0) + actualHeal;
+            healer.isCasting = false;
+            
+            // Show floating heal number
+            const jitterX = (Math.random() * 80) - 40;
+            const jitterY = (Math.random() * 60) - 30;
+            const floatNum = createFloatingNumber(actualHeal, 'heal', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 50 + jitterY);
+            
+            // Update teamStates
+            teamStates = teamStates.map(m => 
+              m.id === injured.id 
+                ? { ...m, lastHealTime: healTimestamp, lastHealAmount: actualHeal, lastHealCrit: isCritHeal, health: injured.health }
+                : m.id === healer.id
+                ? { ...m, mana: healer.mana, totalHealing: healer.totalHealing, healingBySpell: healer.healingBySpell, isCasting: false }
+                : m
+            );
+            
+            setCombatState(prev => ({ 
+              ...prev, 
+              teamStates: [...teamStates],
+              timeElapsed: totalTime,
+              floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum],
+              combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'heal', source: healer.name, target: injured.name, value: actualHeal, message: `ðŸ’š ${healer.name} casts Healing Wave on ${injured.name} for ${actualHeal}${isCritHeal ? ' CRIT!' : ''}!` }]
+            }));
+            
+            // Update the list of members needing healing
+            const refreshedAliveMembers = teamStates.filter(m => !m.isDead);
+            stillNeedingHealing = refreshedAliveMembers.filter(m => m.health < m.maxHealth);
+            
+            // If healer is out of mana again, break (shouldn't happen after drinking, but safety check)
+            if (healer.mana < 16) break;
+          }
+        }
+        
+        if (timedOut) {
+          setCombatState(prev => ({ ...prev, phase: 'defeat', combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'phase', source: '', target: '', message: 'â° TIME EXPIRED during recovery! Dungeon failed.' }] }));
+          setIsRunning(false);
+          return;
+        }
+      }
+      
+      // Final top-off to ensure everyone is full (only if healer couldn't finish)
+      teamStates = teamStates.map(m => ({
+        ...m,
+        health: m.isDead ? m.health : Math.min(m.maxHealth, m.health), // Don't exceed max, but ensure full if alive
+        mana: m.isDead ? m.mana : m.maxMana,
+        gcdRemaining: 0,
+        gcdEndTime: undefined,
+        isCasting: false,
+        castStartTime: undefined,
+        castTotalTime: undefined,
+        castAbility: undefined,
+        castTargetId: undefined
+      }));
+      
+      // Ensure all alive members are at full health
+      teamStates = teamStates.map(m => ({
+        ...m,
+        health: m.isDead ? m.health : m.maxHealth
+      }));
+
+      // Check if any team members died - healer must resurrect before continuing
+      const deadMembers = teamStates.filter(m => m.isDead);
+      if (deadMembers.length > 0) {
+        const healer = teamStates.find(m => m.role === 'healer' && !m.isDead);
+        
+        if (!healer) {
+          // No healer alive to resurrect - WIPE
+          setCombatState(prev => ({ ...prev, phase: 'defeat', combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'phase', source: '', target: '', message: 'ðŸ’€ WIPE! Healer is dead and cannot resurrect the party.' }] }));
+          setIsRunning(false);
+          return;
+        }
+
+        // Healer casts Mass Resurrection (6 second cast)
+        const rezCastTime = 6;
+        setCombatState(prev => ({ 
+          ...prev, 
+          phase: 'traveling',
+          combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'ability', source: healer.name, target: '', message: `ðŸ™ ${healer.name} begins casting Mass Resurrection... (${rezCastTime}s)` }]
+        }));
+
+        // Animate the resurrection cast - 6 second cast with 10ms ticks
+        const rezCastTicks = Math.ceil(rezCastTime * 100); // 100 ticks per second
+        for (let i = 1; i <= rezCastTicks; i++) {
+          if (combatRef.current.stop) break;
+          if (checkTimeout()) {
+            timedOut = true;
+            break;
+          }
+          await sleep(7);
+          totalTime += 0.007;
+          
+          // Update time display during rez cast
+          setCombatState(prev => ({ 
+            ...prev, 
+            timeElapsed: totalTime,
+            healerCasting: { ability: 'Mass Resurrection', progress: (i / rezCastTicks) * 100, startTime: i === 1 ? Date.now() : prev.healerCasting?.startTime || Date.now() }
+          }));
+        }
+
+        if (combatRef.current.stop) {
+          setIsRunning(false);
+          return;
+        }
+
+        if (timedOut) {
+          setCombatState(prev => ({ ...prev, phase: 'defeat', combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'phase', source: '', target: '', message: 'â° TIME EXPIRED during resurrection! Dungeon failed.' }] }));
+          setIsRunning(false);
+          return;
+        }
+
+        // Resurrect all dead members at 50% health
+        teamStates = teamStates.map(m => ({
+          ...m,
+          isDead: false,
+          health: m.isDead ? Math.floor(m.maxHealth * 0.5) : m.health,
+          gcdRemaining: 0
+        }));
+
+        const rezNames = deadMembers.map(m => m.name).join(', ');
+        setCombatState(prev => ({ 
+          ...prev, 
+          teamStates,
+          healerCasting: undefined,
+          combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'heal', source: healer.name, target: rezNames, message: `âœ¨ ${healer.name} resurrects ${rezNames}!` }]
+        }));
+
+        await sleep(500);
+      }
+    }
+
+    // Check if stopped after main pull loop
+    if (combatRef.current.stop) {
+      setIsRunning(false);
+      return;
+    }
+
+    // Final Boss
+    const boss = dungeon.bosses[0];
+    if (boss && teamStates.some(m => !m.isDead) && !timedOut && !combatRef.current.stop) {
+      // Travel to boss
+      const bossDistance = Math.sqrt(Math.pow(boss.position.x - currentPos.x, 2) + Math.pow(boss.position.y - currentPos.y, 2));
+      const bossTravelTime = Math.max(2, Math.min(6, Math.floor(bossDistance / 200)));
+      
+      setCombatState(prev => ({ ...prev, phase: 'traveling', combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'travel', source: '', target: '', message: `ðŸš¶ Approaching the Final Boss... (${bossTravelTime}s)` }] }));
+      
+      for (let i = 1; i <= 15; i++) {
+        if (combatRef.current.stop || checkTimeout()) break;
+        await sleep((bossTravelTime * 1000) / 15);
+        totalTime += bossTravelTime / 15;
+        const newX = currentPos.x + (boss.position.x - currentPos.x) * (i / 15);
+        const newY = currentPos.y + (boss.position.y - currentPos.y) * (i / 15);
+        setCombatState(prev => ({ ...prev, teamPosition: { x: newX, y: newY }, timeElapsed: totalTime }));
+      }
+      
+      // Check if stopped during boss travel
+      if (combatRef.current.stop) {
+        setIsRunning(false);
+        return;
+      }
+      
+      if (timedOut) {
+        setCombatState(prev => ({ ...prev, phase: 'defeat', combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'phase', source: '', target: '', message: 'â° TIME EXPIRED! Dungeon failed.' }] }));
+        setIsRunning(false);
+        return;
+      }
+      
+      const bossEnemy: AnimatedEnemy = {
+        id: 'final_boss', enemyId: boss.enemy.id, name: boss.enemy.name, icon: boss.enemy.icon,
+        type: boss.enemy.type, behavior: 'caster',
+        health: boss.enemy.baseHealth * scaling.healthMultiplier * 0.5,
+        maxHealth: boss.enemy.baseHealth * scaling.healthMultiplier * 0.5,
+        damage: boss.enemy.baseDamage * scaling.damageMultiplier * 0.5 * 0.2 * 2 * 2, // double boss damage again
+        isCasting: false, castProgress: 0, autoAttackTimer: Math.random() * 0.6 + 0.1
+      };
+
+      setCombatState(prev => ({
+        ...prev, phase: 'combat', enemies: [bossEnemy],
+        combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'boss', source: '', target: '', message: `ðŸ‘‘ FINAL BOSS: ${boss.enemy.name}!` }]
+      }));
+
+      let bossHealth = bossEnemy.health;
+      let phase = 1;
+      
+      // Boss ability cooldowns
+      let bossSlamCooldown = 0; // 0s cd (auto attack)
+      let bossPulseTimer = 0; // Pulse every 3 seconds
+      let bossTankBusterCooldown = 0; // 12s cd
+      let bossVolleyCooldown = 0; // 5s cd
+      let bossVolleyCasting = false;
+      let bossVolleyCastStartTime = 0;
+      const BOSS_VOLLEY_CAST_TIME = 1.5; // 1.5s cast time
+
+      while (bossHealth > 0 && teamStates.some(m => !m.isDead) && !timedOut) {
+        if (combatRef.current.stop) break;
+        
+        // Pause check - wait while paused
+        while (combatRef.current.paused && !combatRef.current.stop) {
+          await sleep(100);
+        }
+        if (combatRef.current.stop) break;
+        
+        if (checkTimeout()) {
+          setCombatState(prev => ({ ...prev, phase: 'defeat', combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'phase', source: '', target: '', message: 'â° TIME EXPIRED! Dungeon failed.' }] }));
+          break;
+        }
+        
+        // Wait 7ms (roughly 143 ticks per second for smooth timing)
+        const TICK_DURATION = 0.007; // seconds (7ms)
+        await sleep(7);
+        totalTime += TICK_DURATION;
+        
+        // Check for wipe
+        if (!teamStates.some(m => !m.isDead)) {
+          setCombatState(prev => ({ ...prev, phase: 'defeat', combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'phase', source: '', target: '', message: 'ðŸ’€ WIPE! Your party has been defeated.' }] }));
+          
+          // Find what killed teammates - look for recent damage entries targeting team members
+          const teamMemberNames = teamStates.map(m => m.name);
+          const deathCauses: Record<string, string> = {};
+          const recentDamage = combatState.combatLog
+            .filter(entry => entry.type === 'damage' && teamMemberNames.includes(entry.target))
+            .slice(-20); // Last 20 damage entries
+          
+          teamStates.forEach(member => {
+            if (member.isDead) {
+              // Find the last damage entry for this member
+              const lastDamage = recentDamage
+                .filter(entry => entry.target === member.name)
+                .sort((a, b) => b.timestamp - a.timestamp)[0];
+              if (lastDamage) {
+                deathCauses[member.name] = lastDamage.source || 'Unknown';
+              }
+            }
+          });
+          
+          // Generate reduced loot for wipe (scales with key level and progress made)
+          const progressPercent = totalForcesCleared / dungeon.requiredForces;
+          const wipeLootCount = Math.max(1, Math.floor(progressPercent * 3) + Math.floor(selectedKeyLevel / 5));
+          const loot = generateDungeonLoot(selectedKeyLevel, false, 0).slice(0, wipeLootCount);
+          const orbDrops = generateOrbDrops(selectedKeyLevel, false, progressPercent);
+          const xp = Math.floor(200 * scaling.rewardMultiplier * progressPercent);
+          
+          const result: DungeonRunResult = {
+            success: false, keyLevel: selectedKeyLevel, timeElapsed: totalTime, timeLimit: dungeon.timeLimitSeconds,
+            upgradeLevel: 0, loot, orbDrops, experienceGained: xp, deaths: teamStates.filter(m => m.isDead).length,
+            forcesCleared: totalForcesCleared, forcesRequired: dungeon.requiredForces, combatLog: combatState.combatLog,
+            failReason: 'wipe',
+            failedPullIndex: combatState.currentPullIndex,
+            deathCauses
+          };
+          
+          addOrbs(orbDrops);
+          setRunResult(result);
+          setIsRunning(false);
+          return;
+        }
+        
+        abilities = abilities.map(a => ({ ...a, currentCooldown: Math.max(0, a.currentCooldown - TICK_DURATION) }));
+        if (bloodlustActive) { bloodlustTimer -= TICK_DURATION; if (bloodlustTimer <= 0) bloodlustActive = false; }
+        
+        // Update boss cooldowns
+        bossSlamCooldown = Math.max(0, bossSlamCooldown - TICK_DURATION);
+        bossPulseTimer -= TICK_DURATION;
+        bossTankBusterCooldown = Math.max(0, bossTankBusterCooldown - TICK_DURATION);
+        bossVolleyCooldown = Math.max(0, bossVolleyCooldown - TICK_DURATION);
+
+        // Check for resurrection requests from useAbility
+        if (combatRef.current.resurrectRequest) {
+          const rezTargetId = combatRef.current.resurrectRequest;
+          teamStates = teamStates.map(m => 
+            m.id === rezTargetId 
+              ? { ...m, isDead: false, health: Math.floor(m.maxHealth * 0.6), mana: Math.floor(m.maxMana * 0.3), lastResurrectTime: Date.now() } 
+              : m
+          );
+          combatRef.current.resurrectRequest = null;
+        }
+        
+        // Check for bloodlust activation from useAbility
+        if (combatRef.current.bloodlustRequest) {
+          bloodlustActive = true;
+          bloodlustTimer = 15;
+          combatRef.current.bloodlustRequest = false;
+        }
+        
+        // Sync ability cooldowns from ref (when player clicks abilities)
+        Object.entries(combatRef.current.abilityCooldowns).forEach(([id, cd]) => {
+          const ability = abilities.find(a => a.id === id);
+          if (ability && cd > ability.currentCooldown) {
+            ability.currentCooldown = cd;
+          }
+        });
+        combatRef.current.abilityCooldowns = {};
+
+        // Boss abilities (only if not stunned)
+        if (!stunActive) {
+          const tank = teamStates.find(m => m.role === 'tank' && !m.isDead);
+          const aliveMembers = teamStates.filter(m => !m.isDead);
+          
+          // Pulse (aura - damages everyone periodically, doesn't prevent other abilities)
+          if (bossPulseTimer <= 0) {
+            bossPulseTimer = 3; // Reset to 3 seconds
+            const pulseDamage = Math.floor(bossEnemy.damage * 0.7 * 0.7); // Current pulse damage minus 30%
+            
+            for (const member of aliveMembers) {
+              const effectiveArmor = member.armor * (1 + (member.armorBuff || 0) / 100);
+              const armorMult = calculateArmorReduction(effectiveArmor, selectedKeyLevel);
+              const painSuppMult = member.damageReduction ? (1 - member.damageReduction / 100) : 1;
+              let dmg = Math.floor(pulseDamage * armorMult * painSuppMult);
+              const blockChance = (member.blockChance || 0) + (member.blockBuff || 0);
+              const blocked = rollBlock(blockChance);
+              if (blocked) {
+                dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+                member.lastBlockTime = Date.now();
+              }
+              member.health = Math.max(0, member.health - dmg);
+              member.recentDamageTaken = (member.recentDamageTaken || 0) + dmg;
+              const jitterX = (Math.random() * 80) - 40;
+              const jitterY = (Math.random() * 60) - 30;
+              const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 40 + jitterY);
+              setCombatState(prev => ({ ...prev, floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum], combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'damage', source: boss.enemy.name, target: member.name, value: dmg, message: `ðŸ’€ ${boss.enemy.name}'s Pulse hits ${member.name} for ${dmg}${blocked ? ' (BLOCKED!)' : ''}!` }] }));
+              if (member.health <= 0) {
+                member.isDead = true;
+                setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'death', source: '', target: member.name, message: `ðŸ’€ ${member.name} has died!` }] }));
+              }
+            }
+          }
+          
+          // Check if Volley cast is complete
+          if (bossVolleyCasting && bossVolleyCastStartTime > 0) {
+            const elapsedMs = Date.now() - bossVolleyCastStartTime;
+            if (elapsedMs >= (BOSS_VOLLEY_CAST_TIME * 1000)) {
+              // Volley completes - hits all teammates
+              const volleyDamage = Math.floor(bossEnemy.damage * 0.4); // Medium-low damage
+              
+              for (const member of aliveMembers) {
+                const effectiveArmor = member.armor * (1 + (member.armorBuff || 0) / 100);
+                const armorMult = calculateArmorReduction(effectiveArmor, selectedKeyLevel);
+                const painSuppMult = member.damageReduction ? (1 - member.damageReduction / 100) : 1;
+                let dmg = Math.floor(volleyDamage * armorMult * painSuppMult);
+                const blockChance = (member.blockChance || 0) + (member.blockBuff || 0);
+                const blocked = rollBlock(blockChance);
+                if (blocked) {
+                  dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+                  member.lastBlockTime = Date.now();
+                }
+                member.health = Math.max(0, member.health - dmg);
+                member.recentDamageTaken = (member.recentDamageTaken || 0) + dmg;
+                const jitterX = (Math.random() * 80) - 40;
+                const jitterY = (Math.random() * 60) - 30;
+                const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 40 + jitterY);
+                setCombatState(prev => ({ ...prev, floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum], combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'damage', source: boss.enemy.name, target: member.name, value: dmg, message: `âš¡ ${boss.enemy.name}'s Volley hits ${member.name} for ${dmg}${blocked ? ' (BLOCKED!)' : ''}!` }] }));
+                if (member.health <= 0) {
+                  member.isDead = true;
+                  setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'death', source: '', target: member.name, message: `ðŸ’€ ${member.name} has died!` }] }));
+                }
+              }
+              
+              bossVolleyCasting = false;
+              bossVolleyCastStartTime = 0;
+              bossVolleyCooldown = 5; // Reset cooldown
+              setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'ability', source: boss.enemy.name, target: '', message: `âš¡ ${boss.enemy.name} unleashes Volley on the party!` }] }));
+            }
+          }
+          
+          // Tank Buster (12s cooldown, hits tank very hard)
+          if (bossTankBusterCooldown <= 0 && tank && !bossVolleyCasting) {
+            bossTankBusterCooldown = 12;
+            const effectiveArmor = tank.armor * (1 + (tank.armorBuff || 0) / 100);
+            const armorMult = calculateArmorReduction(effectiveArmor, selectedKeyLevel);
+            const painSuppMult = tank.damageReduction ? (1 - tank.damageReduction / 100) : 1;
+            let dmg = Math.floor(bossEnemy.damage * 3.0 * armorMult * painSuppMult); // Very hard hit
+            const blockChance = (tank.blockChance || 0) + (tank.blockBuff || 0);
+            const blocked = rollBlock(blockChance);
+            if (blocked) {
+              dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+              tank.lastBlockTime = Date.now();
+            }
+            tank.health = Math.max(0, tank.health - dmg);
+            tank.recentDamageTaken = (tank.recentDamageTaken || 0) + dmg;
+            const jitterX = (Math.random() * 80) - 40;
+            const jitterY = (Math.random() * 60) - 30;
+            const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 40 + jitterY);
+            setCombatState(prev => ({ ...prev, floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum], combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'damage', source: boss.enemy.name, target: tank.name, value: dmg, message: `ðŸ’¥ ${boss.enemy.name}'s Tank Buster hits ${tank.name} for ${dmg}${blocked ? ' (BLOCKED!)' : ''}!` }] }));
+            if (tank.health <= 0) {
+              tank.isDead = true;
+              setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'death', source: '', target: tank.name, message: `ðŸ’€ ${tank.name} has died!` }] }));
+            }
+          }
+          
+          // Volley (5s cooldown, 1.5s cast time, hits all teammates)
+          if (bossVolleyCooldown <= 0 && !bossVolleyCasting && bossTankBusterCooldown > 0) {
+            bossVolleyCasting = true;
+            bossVolleyCastStartTime = Date.now();
+            setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'ability', source: boss.enemy.name, target: '', message: `âš¡ ${boss.enemy.name} begins casting Volley...` }] }));
+          }
+          
+          // Slam (auto attack - 0s cd, 0s cast time, hits tank moderately)
+          if (bossSlamCooldown <= 0 && tank && !bossVolleyCasting) {
+            bossSlamCooldown = 2.0; // Auto attack every 2 seconds
+            const effectiveArmor = tank.armor * (1 + (tank.armorBuff || 0) / 100);
+            const armorMult = calculateArmorReduction(effectiveArmor, selectedKeyLevel);
+            const painSuppMult = tank.damageReduction ? (1 - tank.damageReduction / 100) : 1;
+            let dmg = Math.floor(bossEnemy.damage * 1.0 * armorMult * painSuppMult); // Moderate damage
+            const blockChance = (tank.blockChance || 0) + (tank.blockBuff || 0);
+            const blocked = rollBlock(blockChance);
+            if (blocked) {
+              dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+              tank.lastBlockTime = Date.now();
+            }
+            tank.health = Math.max(0, tank.health - dmg);
+            tank.recentDamageTaken = (tank.recentDamageTaken || 0) + dmg;
+            const jitterX = (Math.random() * 80) - 40;
+            const jitterY = (Math.random() * 60) - 30;
+            const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', combatState.teamPosition.x + jitterX, combatState.teamPosition.y - 40 + jitterY);
+            setCombatState(prev => ({ ...prev, floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum], combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'damage', source: boss.enemy.name, target: tank.name, value: dmg, message: `ðŸ’¢ ${boss.enemy.name}'s Slam hits ${tank.name} for ${dmg}${blocked ? ' (BLOCKED!)' : ''}!` }] }));
+            if (tank.health <= 0) {
+              tank.isDead = true;
+              setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'death', source: '', target: tank.name, message: `ðŸ’€ ${tank.name} has died!` }] }));
+            }
+          }
+        }
+
+        // Process buffs, HoTs, regen, and decay recent damage tracking (same as regular combat)
+        teamStates = teamStates.map(m => {
+          if (m.isDead) return m;
+          
+          // Base regeneration per second
+          const hpRegenPerSecond = m.role === 'tank' ? m.maxHealth * 0.01 : m.maxHealth * 0.005;
+          const manaRegenPerSecond = m.role === 'healer' ? m.maxMana * 0.03 : m.maxMana * 0.02;
+          
+          // Apply regeneration scaled by tick (don't exceed max)
+          const hpRegenAmount = hpRegenPerSecond * TICK_DURATION;
+          const manaRegenAmount = manaRegenPerSecond * TICK_DURATION;
+          
+          // Decay damage reduction duration (Pain Suppression) - use TICK_DURATION
+          let newDmgReduction = m.damageReduction || 0;
+          let newDmgReductionDuration = (m.damageReductionDuration || 0) - TICK_DURATION;
+          if (newDmgReductionDuration <= 0) {
+            newDmgReduction = 0;
+            newDmgReductionDuration = 0;
+          }
+          
+          // Decay armor buff duration (Defensive Stance) - use TICK_DURATION
+          let newArmorBuff = m.armorBuff || 0;
+          let newArmorBuffDuration = (m.armorBuffDuration || 0) - TICK_DURATION;
+          if (newArmorBuffDuration <= 0) {
+            newArmorBuff = 0;
+            newArmorBuffDuration = 0;
+          }
+          
+          // Decay block buff duration (Shield Block) - use TICK_DURATION
+          let newBlockBuff = m.blockBuff || 0;
+          let newBlockBuffDuration = (m.blockBuffDuration || 0) - TICK_DURATION;
+          if (newBlockBuffDuration <= 0) {
+            newBlockBuff = 0;
+            newBlockBuffDuration = 0;
+          }
+          
+          // Decay recent damage taken (scaled by tick - decay slower with faster ticks)
+          const decayFactor = Math.pow(0.5, TICK_DURATION); // decay per tick at 7ms
+          const newRecentDamage = Math.floor((m.recentDamageTaken || 0) * decayFactor);
+          
+          // Process HoT effects
+          let newHealth = Math.min(m.maxHealth, m.health + hpRegenAmount);
+          let newMana = Math.min(m.maxMana, m.mana + manaRegenAmount);
+          let newHotEffects = (m.hotEffects || []).map(hot => {
+            let updatedHot = { ...hot, remainingDuration: hot.remainingDuration - TICK_DURATION, nextTickIn: hot.nextTickIn - TICK_DURATION };
+            if (updatedHot.nextTickIn <= 0 && updatedHot.remainingDuration > 0) {
+              const healAmount = hot.healPerTick;
+              const hotHealerChar = team.find(c => c.id === hot.sourceId);
+              const critChance = hotHealerChar?.baseStats?.critChance || 10;
+              const isCritHeal = Math.random() < (critChance / 100);
+              const finalHealAmount = isCritHeal ? Math.floor(healAmount * 1.5) : healAmount;
+              const actualHeal = Math.min(m.maxHealth - newHealth, finalHealAmount);
+              newHealth = Math.min(m.maxHealth, newHealth + finalHealAmount);
+              updatedHot.nextTickIn = hot.tickInterval;
+              const hotHealTimestamp = Date.now();
+              m.lastHealTime = hotHealTimestamp;
+              m.lastHealAmount = actualHeal;
+              m.lastHealCrit = isCritHeal;
+              if (isCritHeal) setScreenShake(prev => prev + 1);
+            }
+            return updatedHot;
+          }).filter(hot => hot.remainingDuration > 0);
+          
+          return { 
+            ...m, 
+            health: newHealth,
+            mana: newMana,
+            damageReduction: newDmgReduction, 
+            damageReductionDuration: newDmgReductionDuration,
+            armorBuff: newArmorBuff,
+            armorBuffDuration: newArmorBuffDuration,
+            blockBuff: newBlockBuff,
+            blockBuffDuration: newBlockBuffDuration,
+            recentDamageTaken: newRecentDamage,
+            hotEffects: newHotEffects
+          };
+        });
+
+        // Healer casting logic (same as regular combat)
+        const healer = teamStates.find(m => m.role === 'healer' && !m.isDead);
+        if (healer && healer.mana > 0) {
+          const aliveMembers = teamStates.filter(m => !m.isDead);
+          const hurtMembers = aliveMembers.filter(m => m.health < m.maxHealth * 0.95);
+          
+          if (hurtMembers.length > 0) {
+            // If currently casting, check if cast is complete
+            if (healer.isCasting && healer.castStartTime && healer.castTotalTime) {
+            const elapsedMs = Date.now() - healer.castStartTime;
+            const castComplete = elapsedMs >= (healer.castTotalTime * 1000);
+              
+              if (castComplete) {
+                const targetId = healer.castTargetId;
+                const target = teamStates.find(m => m.id === targetId && !m.isDead);
+                if (target) {
+                  const healAmount = Math.floor(target.maxHealth * 0.4);
+                  const healerChar = team.find(c => c.id === healer.id);
+                  const critChance = healerChar?.baseStats?.critChance || 10;
+                  const isCritHeal = Math.random() < (critChance / 100);
+                  const finalHealAmount = isCritHeal ? Math.floor(healAmount * 1.5) : healAmount;
+                  const actualHeal = Math.min(target.maxHealth - target.health, finalHealAmount);
+                  target.health = Math.min(target.maxHealth, target.health + finalHealAmount);
+                  const healTimestamp = Date.now();
+                  target.lastHealTime = healTimestamp;
+                  target.lastHealAmount = actualHeal;
+                  target.lastHealCrit = isCritHeal;
+                  if (isCritHeal) setScreenShake(prev => prev + 1);
+                  healer.mana -= 4;
+                  healer.totalHealing = (healer.totalHealing || 0) + actualHeal;
+                }
+                healer.isCasting = false;
+                healer.castAbility = undefined;
+                healer.castTargetId = undefined;
+                healer.gcdEndTime = Date.now() + 1500;
+              }
+            } else {
+              // Not casting - start a new cast if GCD is ready
+              const gcdReady = !healer.gcdEndTime || Date.now() >= healer.gcdEndTime;
+              if (gcdReady) {
+                const lowestHealth = hurtMembers.reduce((lowest, m) => (!lowest || m.health / m.maxHealth < lowest.health / lowest.maxHealth) ? m : lowest, null as TeamMemberState | null);
+                if (lowestHealth) {
+                  healer.isCasting = true;
+                  healer.castStartTime = Date.now();
+                  healer.castTotalTime = 1.2;
+                  healer.castAbility = 'Healing Wave';
+                  healer.castTargetId = lowestHealth.id;
+                  healer.gcdEndTime = Date.now() + 1500;
+                }
+              }
+            }
+          }
+        }
+
+        // Team DPS - casting logic (same as regular combat)
+        team.forEach((char) => {
+          const member = teamStates.find(m => m.id === char.id);
+          if (!member || member.isDead) return;
+          
+          // Healer should NOT attack if they are casting OR if someone needs healing
+          if (char.role === 'healer') {
+            if (member.isCasting) return;
+            const hurtMembers = teamStates.filter(m => !m.isDead && m.health < m.maxHealth * 0.95);
+            if (hurtMembers.length > 0) return;
+          }
+          
+          // DPS spell casting logic
+          if (char.role === 'dps') {
+            // If currently casting, check if cast is complete
+            if (member.isCasting && member.castStartTime && member.castTotalTime) {
+              const elapsedMs = Date.now() - member.castStartTime;
+              const castComplete = elapsedMs >= (member.castTotalTime * 1000);
+              
+              if (castComplete) {
+                const spellPower = char.baseStats?.spellPower || 100;
+                const isCrit = Math.random() < ((char.baseStats?.critChance || 10) / 100);
+                const ability = member.castAbility || 'Fireball';
+                
+                // Base damage - single target on boss
+                const baseDmg = ability === 'Blow Up' ? 175 : ability === 'Shadow Bolt' ? 200 : 150;
+                const damage = Math.floor(baseDmg * (1 + spellPower / 100) * (bloodlustActive ? 1.3 : 1));
+                const finalDamage = isCrit ? Math.floor(damage * 1.5) : damage;
+                
+                bossHealth = Math.max(0, bossHealth - finalDamage);
+                member.totalDamage = (member.totalDamage || 0) + finalDamage;
+                member.damageBySpell = member.damageBySpell || {};
+                member.damageBySpell[ability] = (member.damageBySpell[ability] || 0) + finalDamage;
+                if (isCrit) setScreenShake(prev => prev + 1);
+                
+                const abilityName = ability === 'Blow Up' ? 'ðŸ’¥ Blow Up' : ability === 'Shadow Bolt' ? 'ðŸŒ‘ Shadow Bolt' : 'ðŸ”¥ Fireball';
+                setCombatState(prev => ({ 
+                  ...prev, 
+                  combatLog: [...prev.combatLog, { 
+                    timestamp: totalTime, 
+                    type: 'damage', 
+                    source: char.name, 
+                    target: boss.enemy.name, 
+                    value: finalDamage, 
+                    message: `${abilityName} ${char.name} hits ${boss.enemy.name} for ${finalDamage}${isCrit ? ' CRIT!' : ''}!` 
+                  }] 
+                }));
+                
+                member.isCasting = false;
+                member.castAbility = undefined;
+                member.castTargetId = undefined;
+                member.gcdEndTime = Date.now() + 1500;
+              } else {
+                return; // Still casting
+              }
+            }
+            
+            // Not casting (or just finished) - start a new cast if GCD is done
+            const gcdReady = !member.gcdEndTime || Date.now() >= member.gcdEndTime;
+            if (gcdReady && bossHealth > 0) {
+              const equippedSkillIds = char.skillGems?.map(sg => sg.skillGemId) || [];
+              const hasBlowUp = equippedSkillIds.includes('blow_up');
+              const hasShadowBolt = equippedSkillIds.includes('shadow_bolt');
+              const hasFireball = equippedSkillIds.includes('fireball');
+              
+              // For boss, prefer single target spells
+              let spellChoice: string;
+              let castTimeSeconds: number;
+              
+              if (hasFireball) { spellChoice = 'Fireball'; castTimeSeconds = 1.2; }
+              else if (hasShadowBolt) { spellChoice = 'Shadow Bolt'; castTimeSeconds = 1.6; }
+              else if (hasBlowUp) { spellChoice = 'Blow Up'; castTimeSeconds = 1.62; }
+              else { spellChoice = 'Fireball'; castTimeSeconds = 1.2; }
+              
+              member.isCasting = true;
+              member.castProgress = Math.ceil(castTimeSeconds);
+              member.castTotalTime = castTimeSeconds;
+              member.castStartTime = Date.now();
+              member.gcdEndTime = Date.now() + 1500;
+              member.castAbility = spellChoice;
+              
+              setCombatState(prev => ({ 
+                ...prev, 
+                combatLog: [...prev.combatLog, { 
+                  timestamp: totalTime, 
+                  type: 'ability', 
+                  source: char.name, 
+                  target: boss.enemy.name, 
+                  message: `ðŸ”® ${char.name} begins casting ${spellChoice} on ${boss.enemy.name}...` 
+                }] 
+              }));
+            }
+            return;
+          }
+          
+          // Tank attacks (instant)
+          if (char.role === 'tank') {
+            const tankGcdReady = !member.gcdEndTime || Date.now() >= member.gcdEndTime;
+            if (!tankGcdReady) return;
+            
+            const strength = char.baseStats?.attackPower || 100;
+            const agility = char.baseStats?.critChance || 10;
+            const isCrit = Math.random() < (agility / 100);
+            const roleDmg = 70;
+            const baseDamage = Math.floor(roleDmg * (1 + strength / 150) * (bloodlustActive ? 1.3 : 1));
+            const finalDamage = isCrit ? Math.floor(baseDamage * 1.5) : baseDamage;
+            
+            bossHealth = Math.max(0, bossHealth - finalDamage);
+            member.totalDamage = (member.totalDamage || 0) + finalDamage;
+            member.damageBySpell = member.damageBySpell || {};
+            member.damageBySpell['Shield Slam'] = (member.damageBySpell['Shield Slam'] || 0) + finalDamage;
+            if (isCrit) setScreenShake(prev => prev + 1);
+            member.gcdEndTime = Date.now() + 1500;
+            
+            setCombatState(prev => ({ 
+              ...prev, 
+              combatLog: [...prev.combatLog, { 
+                timestamp: totalTime, 
+                type: 'damage', 
+                source: char.name, 
+                target: boss.enemy.name, 
+                value: finalDamage, 
+                message: `ðŸ›¡ï¸ Shield Slam ${char.name} hits ${boss.enemy.name} for ${finalDamage}${isCrit ? ' CRIT!' : ''}!` 
+              }] 
+            }));
+            return;
+          }
+          
+          // Healer auto-attack (if not healing)
+          const autoGcdReady = !member.gcdEndTime || Date.now() >= member.gcdEndTime;
+          if (!autoGcdReady) return;
+          
+          const strength = char.baseStats?.attackPower || 100;
+          const agility = char.baseStats?.critChance || 10;
+          const isCrit = Math.random() < (agility / 100);
+          const roleDmg = 25;
+          const baseDamage = Math.floor(roleDmg * (1 + strength / 150) * (bloodlustActive ? 1.3 : 1));
+          const finalDamage = isCrit ? Math.floor(baseDamage * 1.5) : baseDamage;
+          
+          bossHealth = Math.max(0, bossHealth - finalDamage);
+          member.totalDamage = (member.totalDamage || 0) + finalDamage;
+          member.damageBySpell = member.damageBySpell || {};
+          member.damageBySpell['Smite'] = (member.damageBySpell['Smite'] || 0) + finalDamage;
+          if (isCrit) setScreenShake(prev => prev + 1);
+          member.gcdEndTime = Date.now() + 1500;
+          
+          setCombatState(prev => ({ 
+            ...prev, 
+            combatLog: [...prev.combatLog, { 
+              timestamp: totalTime, 
+              type: 'damage', 
+              source: char.name, 
+              target: boss.enemy.name, 
+              value: finalDamage, 
+              message: `âœ¨ Smite ${char.name} hits ${boss.enemy.name} for ${finalDamage}${isCrit ? ' CRIT!' : ''}!` 
+            }] 
+          }));
+        });
+        
+        const healthPercent = (bossHealth / bossEnemy.maxHealth) * 100;
+        if (phase === 1 && healthPercent <= 60) {
+          phase = 2;
+          setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'phase', source: boss.enemy.name, target: '', message: `âš¡ ${boss.enemy.name} enters Phase 2!` }] }));
+        } else if (phase === 2 && healthPercent <= 30) {
+          phase = 3;
+          setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'phase', source: boss.enemy.name, target: '', message: `ðŸ”¥ ${boss.enemy.name} ENRAGES!` }] }));
+        }
+
+        // Update boss enemy state for UI (show casting state)
+        const bossEnemyState: AnimatedEnemy = {
+          ...bossEnemy,
+          health: bossHealth,
+          isCasting: bossVolleyCasting,
+          castProgress: bossVolleyCasting ? ((Date.now() - bossVolleyCastStartTime) / (BOSS_VOLLEY_CAST_TIME * 1000)) * 100 : 0,
+          castStartTime: bossVolleyCastStartTime,
+          castTotalTime: bossVolleyCasting ? BOSS_VOLLEY_CAST_TIME : undefined
+        };
+        
+        setCombatState(prev => ({ ...prev, enemies: [bossEnemyState], teamStates: [...teamStates], abilities: [...abilities], bloodlustActive, bloodlustTimer, timeElapsed: totalTime }));
+      }
+
+      if (bossHealth <= 0) {
+        setCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'death', source: '', target: boss.enemy.name, message: `ðŸŽ‰ ${boss.enemy.name} DEFEATED!` }] }));
+      }
+    }
+
+    // Check for wipe (not timeout) - still give some loot based on progress
+    if (!teamStates.some(m => !m.isDead) && !timedOut) {
+      setCombatState(prev => ({ ...prev, phase: 'defeat', combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'phase', source: '', target: '', message: 'ðŸ’€ WIPE! Your party has been defeated.' }] }));
+      
+      // Find what killed teammates - look for recent damage entries targeting team members
+      const teamMemberNames = teamStates.map(m => m.name);
+      const deathCauses: Record<string, string> = {};
+      const recentDamage = combatState.combatLog
+        .filter(entry => entry.type === 'damage' && teamMemberNames.includes(entry.target))
+        .slice(-20); // Last 20 damage entries
+      
+      teamStates.forEach(member => {
+        if (member.isDead) {
+          // Find the last damage entry for this member
+          const lastDamage = recentDamage
+            .filter(entry => entry.target === member.name)
+            .sort((a, b) => b.timestamp - a.timestamp)[0];
+          if (lastDamage) {
+            deathCauses[member.name] = lastDamage.source || 'Unknown';
+          }
+        }
+      });
+      
+      // Generate reduced loot for wipe (scales with key level and progress made)
+      const progressPercent = totalForcesCleared / dungeon.requiredForces;
+      const wipeLootCount = Math.max(1, Math.floor(progressPercent * 3) + Math.floor(selectedKeyLevel / 5));
+      const loot = generateDungeonLoot(selectedKeyLevel, false, 0).slice(0, wipeLootCount);
+      const orbDrops = generateOrbDrops(selectedKeyLevel, false, progressPercent);
+      const xp = Math.floor(200 * scaling.rewardMultiplier * progressPercent);
+      
+      const result: DungeonRunResult = {
+        success: false, keyLevel: selectedKeyLevel, timeElapsed: totalTime, timeLimit: dungeon.timeLimitSeconds,
+        upgradeLevel: 0, loot, orbDrops, experienceGained: xp, deaths: teamStates.filter(m => m.isDead).length,
+        forcesCleared: totalForcesCleared, forcesRequired: dungeon.requiredForces, combatLog: combatState.combatLog,
+        failReason: 'wipe',
+        failedPullIndex: combatState.currentPullIndex,
+        deathCauses
+      };
+      
+      addOrbs(orbDrops);
+      setRunResult(result);
+      setIsRunning(false);
+      return;
+    }
+
+    // Check for timeout - still give loot but no key upgrade
+    if (timedOut) {
+      const loot = generateDungeonLoot(selectedKeyLevel, true, 0);
+      const orbDrops = generateOrbDrops(selectedKeyLevel, true);
+      const xp = Math.floor(500 * scaling.rewardMultiplier);
+      
+      const result: DungeonRunResult = {
+        success: false, keyLevel: selectedKeyLevel, timeElapsed: totalTime, timeLimit: dungeon.timeLimitSeconds,
+        upgradeLevel: 0, loot, orbDrops, experienceGained: xp, deaths: teamStates.filter(m => m.isDead).length,
+        forcesCleared: totalForcesCleared, forcesRequired: dungeon.requiredForces, combatLog: combatState.combatLog,
+        failReason: 'timeout',
+        failedPullIndex: combatState.currentPullIndex
+      };
+      
+      addOrbs(orbDrops);
+      setRunResult(result);
+      setIsRunning(false);
+      return;
+    }
+
+    setCombatState(prev => ({ ...prev, phase: 'victory', enemies: [], combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'phase', source: '', target: '', message: `ðŸ† DUNGEON COMPLETE in ${Math.floor(totalTime)}s!` }] }));
+
+    await sleep(500);
+
+    // Calculate upgrade level based on time remaining
+    const timeRemaining = dungeon.timeLimitSeconds - totalTime;
+    const upgradeLevel = timeRemaining > dungeon.timeLimitSeconds * 0.4 ? 3 : timeRemaining > dungeon.timeLimitSeconds * 0.2 ? 2 : 1;
+    
+    const loot = generateDungeonLoot(selectedKeyLevel, true, upgradeLevel);
+    const orbDrops = generateOrbDrops(selectedKeyLevel, true);
+    const xp = Math.floor(1000 * scaling.rewardMultiplier * (1 + upgradeLevel * 0.25));
+
+    const result: DungeonRunResult = {
+      success: true, keyLevel: selectedKeyLevel, timeElapsed: totalTime, timeLimit: dungeon.timeLimitSeconds,
+      upgradeLevel, loot, orbDrops, experienceGained: xp, deaths: teamStates.filter(m => m.isDead).length,
+      forcesCleared: totalForcesCleared, forcesRequired: dungeon.requiredForces, combatLog: combatState.combatLog
+    };
+
+    completeDungeonRun(result);
+    addOrbs(orbDrops);
+    addKey({ id: crypto.randomUUID(), dungeonId: dungeon.id, level: selectedKeyLevel + upgradeLevel, affixes: [], depleted: false });
+
+    setRunResult(result);
+    setIsRunning(false);
+  };

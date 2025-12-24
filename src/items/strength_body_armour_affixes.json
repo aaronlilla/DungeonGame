@@ -1,0 +1,1323 @@
+{
+  "item": "Body Armour",
+  "subtype": "Strength (Armour)",
+  "source_note": "User-provided affix list (normal affixes).",
+  "prefixes": [
+    {
+      "group": "IncreasedLife",
+      "stat_line": "+# to maximum Life",
+      "modifiers": [
+        {
+          "name": "Hale",
+          "ilvl": 1,
+          "stats": [
+            "+(3-9) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Healthy",
+          "ilvl": 5,
+          "stats": [
+            "+(10-24) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Sanguine",
+          "ilvl": 11,
+          "stats": [
+            "+(25-39) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Stalwart",
+          "ilvl": 18,
+          "stats": [
+            "+(40-54) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Stout",
+          "ilvl": 24,
+          "stats": [
+            "+(55-69) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Robust",
+          "ilvl": 30,
+          "stats": [
+            "+(70-84) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Rotund",
+          "ilvl": 36,
+          "stats": [
+            "+(85-99) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Virile",
+          "ilvl": 44,
+          "stats": [
+            "+(100-114) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Athlete's",
+          "ilvl": 54,
+          "stats": [
+            "+(115-129) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Fecund",
+          "ilvl": 64,
+          "stats": [
+            "+(130-144) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Vigorous",
+          "ilvl": 73,
+          "stats": [
+            "+(145-159) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Rapturous",
+          "ilvl": 81,
+          "stats": [
+            "+(160-174) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "Prime",
+          "ilvl": 86,
+          "stats": [
+            "+(175-189) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "BaseLocalDefences",
+      "stat_line": "+# to Armour",
+      "modifiers": [
+        {
+          "name": "Lacquered",
+          "ilvl": 1,
+          "stats": [
+            "+(6-12) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Studded",
+          "ilvl": 11,
+          "stats": [
+            "+(13-35) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Ribbed",
+          "ilvl": 17,
+          "stats": [
+            "+(36-63) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Fortified",
+          "ilvl": 23,
+          "stats": [
+            "+(64-82) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Plated",
+          "ilvl": 29,
+          "stats": [
+            "+(83-101) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Carapaced",
+          "ilvl": 35,
+          "stats": [
+            "+(102-120) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Encased",
+          "ilvl": 43,
+          "stats": [
+            "+(121-150) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Enveloped",
+          "ilvl": 51,
+          "stats": [
+            "+(151-200) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Abating",
+          "ilvl": 60,
+          "stats": [
+            "+(201-300) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Unmoving",
+          "ilvl": 69,
+          "stats": [
+            "+(301-400) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Impervious",
+          "ilvl": 77,
+          "stats": [
+            "+(401-500) to Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "DefencesPercent",
+      "stat_line": "#% increased Armour",
+      "modifiers": [
+        {
+          "name": "Reinforced",
+          "ilvl": 3,
+          "stats": [
+            "(15-26)% increased Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Layered",
+          "ilvl": 17,
+          "stats": [
+            "(27-42)% increased Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Lobstered",
+          "ilvl": 29,
+          "stats": [
+            "(43-55)% increased Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Buttressed",
+          "ilvl": 42,
+          "stats": [
+            "(56-67)% increased Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Thickened",
+          "ilvl": 60,
+          "stats": [
+            "(68-79)% increased Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Girded",
+          "ilvl": 72,
+          "stats": [
+            "(80-91)% increased Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Impregnable",
+          "ilvl": 84,
+          "stats": [
+            "(92-100)% increased Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Impenetrable",
+          "ilvl": 86,
+          "stats": [
+            "(101-110)% increased Armour"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "AttackerTakesDamageNoRange",
+      "stat_line": "Reflects # Physical Damage to Melee Attackers",
+      "modifiers": [
+        {
+          "name": "Thorny",
+          "ilvl": 1,
+          "stats": [
+            "Reflects (1-4) Physical Damage to Melee Attackers"
+          ],
+          "tags": [
+            "physical_damage",
+            "damage",
+            "physical"
+          ]
+        },
+        {
+          "name": "Spiny",
+          "ilvl": 10,
+          "stats": [
+            "Reflects (5-10) Physical Damage to Melee Attackers"
+          ],
+          "tags": [
+            "physical_damage",
+            "damage",
+            "physical"
+          ]
+        },
+        {
+          "name": "Barbed",
+          "ilvl": 20,
+          "stats": [
+            "Reflects (11-24) Physical Damage to Melee Attackers"
+          ],
+          "tags": [
+            "physical_damage",
+            "damage",
+            "physical"
+          ]
+        },
+        {
+          "name": "Jagged",
+          "ilvl": 35,
+          "stats": [
+            "Reflects (25-50) Physical Damage to Melee Attackers"
+          ],
+          "tags": [
+            "physical_damage",
+            "damage",
+            "physical"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "DefencesPercentAndStunRecovery",
+      "stat_line": [
+        "#% increased Armour",
+        "#% increased Stun and Block Recovery"
+      ],
+      "modifiers": [
+        {
+          "name": "Beetle's",
+          "ilvl": 1,
+          "stats": [
+            "(6-13)% increased Armour",
+            "(6-7)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Crab's",
+          "ilvl": 17,
+          "stats": [
+            "(14-20)% increased Armour",
+            "(8-9)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Armadillo's",
+          "ilvl": 29,
+          "stats": [
+            "(21-26)% increased Armour",
+            "(10-11)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Rhino's",
+          "ilvl": 42,
+          "stats": [
+            "(27-32)% increased Armour",
+            "(12-13)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Elephant's",
+          "ilvl": 60,
+          "stats": [
+            "(33-38)% increased Armour",
+            "(14-15)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        },
+        {
+          "name": "Mammoth's",
+          "ilvl": 78,
+          "stats": [
+            "(39-42)% increased Armour",
+            "(16-17)% increased Stun and Block Recovery"
+          ],
+          "tags": [
+            "armour",
+            "defences"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "BaseLocalDefencesAndLife",
+      "stat_line": [
+        "+# to Armour",
+        "+# to maximum Life"
+      ],
+      "modifiers": [
+        {
+          "name": "Oyster's",
+          "ilvl": 30,
+          "stats": [
+            "+(20-32) to Armour",
+            "+(18-23) to maximum Life"
+          ],
+          "tags": [
+            "armour",
+            "resource",
+            "life",
+            "defences"
+          ]
+        },
+        {
+          "name": "Urchin's",
+          "ilvl": 46,
+          "stats": [
+            "+(33-48) to Armour",
+            "+(24-28) to maximum Life"
+          ],
+          "tags": [
+            "armour",
+            "resource",
+            "life",
+            "defences"
+          ]
+        },
+        {
+          "name": "Nautilus's",
+          "ilvl": 62,
+          "stats": [
+            "+(49-96) to Armour",
+            "+(29-33) to maximum Life"
+          ],
+          "tags": [
+            "armour",
+            "resource",
+            "life",
+            "defences"
+          ]
+        },
+        {
+          "name": "Crocodile's",
+          "ilvl": 78,
+          "stats": [
+            "+(97-144) to Armour",
+            "+(34-38) to maximum Life"
+          ],
+          "tags": [
+            "armour",
+            "resource",
+            "life",
+            "defences"
+          ]
+        }
+      ]
+    }
+  ],
+  "suffixes": [
+    {
+      "group": "LifeRegeneration",
+      "stat_line": "Regenerate # Life per second",
+      "modifiers": [
+        {
+          "name": "of the Newt",
+          "ilvl": 1,
+          "stats": [
+            "Regenerate (1-2) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of the Lizard",
+          "ilvl": 7,
+          "stats": [
+            "Regenerate (2.1-8) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of the Flatworm",
+          "ilvl": 19,
+          "stats": [
+            "Regenerate (8.1-16) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of the Starfish",
+          "ilvl": 31,
+          "stats": [
+            "Regenerate (16.1-24) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of the Hydra",
+          "ilvl": 44,
+          "stats": [
+            "Regenerate (24.1-32) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of the Troll",
+          "ilvl": 55,
+          "stats": [
+            "Regenerate (32.1-48) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of Ryslatha",
+          "ilvl": 68,
+          "stats": [
+            "Regenerate (48.1-64) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of the Phoenix",
+          "ilvl": 74,
+          "stats": [
+            "Regenerate (64.1-96) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of Recuperation",
+          "ilvl": 78,
+          "stats": [
+            "Regenerate (96.1-128) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of Life-giving",
+          "ilvl": 83,
+          "stats": [
+            "Regenerate (128.1-152) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        },
+        {
+          "name": "of Convalescence",
+          "ilvl": 86,
+          "stats": [
+            "Regenerate (152.1-176) Life per second"
+          ],
+          "tags": [
+            "flat_life_regen",
+            "resource",
+            "life"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "ChaosResistance",
+      "stat_line": "+#% to Chaos Resistance",
+      "modifiers": [
+        {
+          "name": "of the Lost",
+          "ilvl": 16,
+          "stats": [
+            "+(5-10)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Banishment",
+          "ilvl": 30,
+          "stats": [
+            "+(11-15)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Eviction",
+          "ilvl": 44,
+          "stats": [
+            "+(16-20)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Expulsion",
+          "ilvl": 56,
+          "stats": [
+            "+(21-25)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Exile",
+          "ilvl": 65,
+          "stats": [
+            "+(26-30)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Bameth",
+          "ilvl": 81,
+          "stats": [
+            "+(31-35)% to Chaos Resistance"
+          ],
+          "tags": [
+            "chaos",
+            "resistance"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "LightningResistance",
+      "stat_line": "+#% to Lightning Resistance",
+      "modifiers": [
+        {
+          "name": "of the Cloud",
+          "ilvl": 1,
+          "stats": [
+            "+(6-11)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Squall",
+          "ilvl": 13,
+          "stats": [
+            "+(12-17)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Storm",
+          "ilvl": 25,
+          "stats": [
+            "+(18-23)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Thunderhead",
+          "ilvl": 37,
+          "stats": [
+            "+(24-29)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Tempest",
+          "ilvl": 49,
+          "stats": [
+            "+(30-35)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Maelstrom",
+          "ilvl": 60,
+          "stats": [
+            "+(36-41)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Lightning",
+          "ilvl": 72,
+          "stats": [
+            "+(42-45)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Ephij",
+          "ilvl": 84,
+          "stats": [
+            "+(46-48)% to Lightning Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "lightning",
+            "resistance"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "ColdResistance",
+      "stat_line": "+#% to Cold Resistance",
+      "modifiers": [
+        {
+          "name": "of the Inuit",
+          "ilvl": 1,
+          "stats": [
+            "+(6-11)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Seal",
+          "ilvl": 14,
+          "stats": [
+            "+(12-17)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Penguin",
+          "ilvl": 26,
+          "stats": [
+            "+(18-23)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Yeti",
+          "ilvl": 38,
+          "stats": [
+            "+(24-29)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Walrus",
+          "ilvl": 50,
+          "stats": [
+            "+(30-35)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Polar Bear",
+          "ilvl": 60,
+          "stats": [
+            "+(36-41)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Ice",
+          "ilvl": 72,
+          "stats": [
+            "+(42-45)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Haast",
+          "ilvl": 84,
+          "stats": [
+            "+(46-48)% to Cold Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "cold",
+            "resistance"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Strength",
+      "stat_line": "+# to Strength",
+      "modifiers": [
+        {
+          "name": "of the Brute",
+          "ilvl": 1,
+          "stats": [
+            "+(8-12) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Wrestler",
+          "ilvl": 11,
+          "stats": [
+            "+(13-17) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Bear",
+          "ilvl": 22,
+          "stats": [
+            "+(18-22) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Lion",
+          "ilvl": 33,
+          "stats": [
+            "+(23-27) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Gorilla",
+          "ilvl": 44,
+          "stats": [
+            "+(28-32) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Goliath",
+          "ilvl": 55,
+          "stats": [
+            "+(33-37) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Leviathan",
+          "ilvl": 66,
+          "stats": [
+            "+(38-42) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Titan",
+          "ilvl": 74,
+          "stats": [
+            "+(43-50) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        },
+        {
+          "name": "of the Gods",
+          "ilvl": 82,
+          "stats": [
+            "+(51-55) to Strength"
+          ],
+          "tags": [
+            "attribute"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "LocalAttributeRequirements",
+      "stat_line": "#% reduced Attribute Requirements",
+      "modifiers": [
+        {
+          "name": "of the Worthy",
+          "ilvl": 36,
+          "stats": [
+            "18% reduced Attribute Requirements"
+          ],
+          "tags": []
+        },
+        {
+          "name": "of the Apt",
+          "ilvl": 60,
+          "stats": [
+            "32% reduced Attribute Requirements"
+          ],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "group": "StunRecovery",
+      "stat_line": "#% increased Stun and Block Recovery",
+      "modifiers": [
+        {
+          "name": "of Thick Skin",
+          "ilvl": 1,
+          "stats": [
+            "(11-13)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        },
+        {
+          "name": "of Stone Skin",
+          "ilvl": 17,
+          "stats": [
+            "(14-16)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        },
+        {
+          "name": "of Iron Skin",
+          "ilvl": 28,
+          "stats": [
+            "(17-19)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        },
+        {
+          "name": "of Steel Skin",
+          "ilvl": 42,
+          "stats": [
+            "(20-22)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        },
+        {
+          "name": "of Adamantite Skin",
+          "ilvl": 56,
+          "stats": [
+            "(23-25)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        },
+        {
+          "name": "of Corundum Skin",
+          "ilvl": 79,
+          "stats": [
+            "(26-28)% increased Stun and Block Recovery"
+          ],
+          "tags": []
+        }
+      ]
+    },
+    {
+      "group": "ReducedPhysicalDamageTaken",
+      "stat_line": "#% additional Physical Damage Reduction",
+      "modifiers": [
+        {
+          "name": "of the Watchman",
+          "ilvl": 45,
+          "stats": [
+            "4% additional Physical Damage Reduction"
+          ],
+          "tags": [
+            "physical"
+          ]
+        },
+        {
+          "name": "of the Sentry",
+          "ilvl": 58,
+          "stats": [
+            "5% additional Physical Damage Reduction"
+          ],
+          "tags": [
+            "physical"
+          ]
+        },
+        {
+          "name": "of the Keeper",
+          "ilvl": 67,
+          "stats": [
+            "6% additional Physical Damage Reduction"
+          ],
+          "tags": [
+            "physical"
+          ]
+        },
+        {
+          "name": "of the Protector",
+          "ilvl": 77,
+          "stats": [
+            "7% additional Physical Damage Reduction"
+          ],
+          "tags": [
+            "physical"
+          ]
+        },
+        {
+          "name": "of the Conservator",
+          "ilvl": 86,
+          "stats": [
+            "8% additional Physical Damage Reduction"
+          ],
+          "tags": [
+            "physical"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "FireResistance",
+      "stat_line": "+#% to Fire Resistance",
+      "modifiers": [
+        {
+          "name": "of the Whelpling",
+          "ilvl": 1,
+          "stats": [
+            "+(6-11)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Salamander",
+          "ilvl": 12,
+          "stats": [
+            "+(12-17)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Drake",
+          "ilvl": 24,
+          "stats": [
+            "+(18-23)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Kiln",
+          "ilvl": 36,
+          "stats": [
+            "+(24-29)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Furnace",
+          "ilvl": 48,
+          "stats": [
+            "+(30-35)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Volcano",
+          "ilvl": 60,
+          "stats": [
+            "+(36-41)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of the Magma",
+          "ilvl": 72,
+          "stats": [
+            "+(42-45)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        },
+        {
+          "name": "of Tzteosh",
+          "ilvl": 84,
+          "stats": [
+            "+(46-48)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        }
+      ]
+    }
+  ]
+}

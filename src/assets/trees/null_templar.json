@@ -1,0 +1,101 @@
+{
+  "name": "Null Templar",
+  "color": "#4b0082",
+  "nodes": [
+    {"id": "start", "name": "NULL TEMPLAR", "ring": 0, "angle": 0, "isStart": true, "stats": ["You can allocate Passives starting from here"], "connections": ["travel_n", "travel_e", "travel_s", "travel_w"]},
+
+    {"id": "travel_n", "name": "Void Path", "ring": 1.5, "angle": 90, "stats": ["+15% Spell Suppression"], "connections": ["start", "travel_n2"]},
+    {"id": "travel_n2", "name": "Null Road", "ring": 3, "angle": 90, "stats": ["+18% Spell Suppression"], "connections": ["travel_n", "travel_n3", "suppress_cluster1"]},
+    {"id": "travel_n3", "name": "Emptiness Way", "ring": 4.5, "angle": 90, "stats": ["+22% Spell Suppression"], "connections": ["travel_n2", "suppress_notable", "magic_res_cluster1"]},
+    {"id": "suppress_notable", "name": "Spell Nullifier", "ring": 6, "angle": 90, "isNotable": true, "stats": ["+50% Spell Suppression", "Suppressed spells deal no damage", "Counter suppressed spells"], "connections": ["travel_n3", "travel_n4"]},
+    {"id": "travel_n4", "name": "Annihilation Path", "ring": 7.5, "angle": 90, "stats": ["+25% Spell Suppression"], "connections": ["suppress_notable", "suppress_key"]},
+    {"id": "suppress_key", "name": "SPELL VOID", "ring": 9, "angle": 90, "isKeystone": true, "stats": ["100% Spell Suppression", "Suppressed spells heal you", "Immune to all magical effects", "Reflect suppressed spells"], "connections": ["travel_n4"]},
+
+    {"id": "suppress_cluster1", "name": "Magic Ward", "ring": 3.5, "angle": 115, "stats": ["+18% Spell Suppression"], "connections": ["travel_n2", "suppress_cluster2"]},
+    {"id": "suppress_cluster2", "name": "Arcane Block", "ring": 4, "angle": 125, "stats": ["+20% Spell Suppression"], "connections": ["suppress_cluster1", "suppress_cluster_notable"]},
+    {"id": "suppress_cluster_notable", "name": "Magic Nullifier", "ring": 4.5, "angle": 120, "isNotable": true, "stats": ["+45% Spell Suppression", "Suppression reduces spell damage by 60%"], "connections": ["suppress_cluster2"]},
+
+    {"id": "magic_res_cluster1", "name": "Spell Resist", "ring": 5, "angle": 70, "stats": ["+12% Spell Resistance"], "connections": ["travel_n3", "magic_res_cluster2"]},
+    {"id": "magic_res_cluster2", "name": "Magic Resist", "ring": 5.5, "angle": 60, "stats": ["+15% Spell Resistance"], "connections": ["magic_res_cluster1", "magic_res_cluster_notable"]},
+    {"id": "magic_res_cluster_notable", "name": "Spell Immunity", "ring": 6, "angle": 65, "isNotable": true, "stats": ["+35% Spell Resistance", "Cannot be affected by debuff spells"], "connections": ["magic_res_cluster2"]},
+
+    {"id": "travel_e", "name": "Energy Path", "ring": 1.5, "angle": 0, "stats": ["+35 Energy Shield"], "connections": ["start", "travel_e2"]},
+    {"id": "travel_e2", "name": "Barrier Road", "ring": 3, "angle": 0, "stats": ["+50 Energy Shield"], "connections": ["travel_e", "travel_e3", "es_cluster1"]},
+    {"id": "travel_e3", "name": "Shield Way", "ring": 4.5, "angle": 0, "stats": ["+65 Energy Shield"], "connections": ["travel_e2", "es_notable", "recharge_cluster1"]},
+    {"id": "es_notable", "name": "Null Shield", "ring": 6, "angle": 0, "isNotable": true, "stats": ["+180 ES", "+20% Max ES", "ES absorbs spell damage first"], "connections": ["travel_e3", "travel_e4"]},
+    {"id": "travel_e4", "name": "Eternal Path", "ring": 7.5, "angle": 0, "stats": ["+80 Energy Shield"], "connections": ["es_notable", "es_key"]},
+    {"id": "es_key", "name": "VOID AEGIS", "ring": 9, "angle": 0, "isKeystone": true, "stats": ["+400 ES", "+35% Max ES", "ES cannot be bypassed", "ES regenerates when hit by spells"], "connections": ["travel_e4"]},
+
+    {"id": "es_cluster1", "name": "Spirit Pool", "ring": 3.5, "angle": 335, "stats": ["+50 ES"], "connections": ["travel_e2", "es_cluster2"]},
+    {"id": "es_cluster2", "name": "Spirit Flow", "ring": 4, "angle": 325, "stats": ["+65 ES"], "connections": ["es_cluster1", "es_cluster_notable"]},
+    {"id": "es_cluster_notable", "name": "Overflowing Spirit", "ring": 4.5, "angle": 330, "isNotable": true, "stats": ["+150 ES", "+12% Max ES"], "connections": ["es_cluster2"]},
+
+    {"id": "recharge_cluster1", "name": "Quick Charge", "ring": 5, "angle": 25, "stats": ["+15% ES Recharge"], "connections": ["travel_e3", "recharge_cluster2"]},
+    {"id": "recharge_cluster2", "name": "Rapid Charge", "ring": 5.5, "angle": 35, "stats": ["+20% ES Recharge"], "connections": ["recharge_cluster1", "recharge_cluster_notable"]},
+    {"id": "recharge_cluster_notable", "name": "Instant Charge", "ring": 6, "angle": 30, "isNotable": true, "stats": ["+50% ES Recharge", "Recharge not interrupted by spells"], "connections": ["recharge_cluster2"]},
+
+    {"id": "travel_s", "name": "Life Path", "ring": 1.5, "angle": 270, "stats": ["+40 Life"], "connections": ["start", "travel_s2"]},
+    {"id": "travel_s2", "name": "Vital Road", "ring": 3, "angle": 270, "stats": ["+55 Life"], "connections": ["travel_s", "travel_s3", "life_cluster1"]},
+    {"id": "travel_s3", "name": "Heart Way", "ring": 4.5, "angle": 270, "stats": ["+70 Life"], "connections": ["travel_s2", "life_notable", "regen_cluster1"]},
+    {"id": "life_notable", "name": "Void Vitality", "ring": 6, "angle": 270, "isNotable": true, "stats": ["+180 Life", "+12% Max Life", "Spell damage heals you"], "connections": ["travel_s3", "travel_s4"]},
+    {"id": "travel_s4", "name": "Immortal Path", "ring": 7.5, "angle": 270, "stats": ["+90 Life"], "connections": ["life_notable", "life_key"]},
+    {"id": "life_key", "name": "NULL IMMORTAL", "ring": 9, "angle": 270, "isKeystone": true, "stats": ["+400 Life", "+25% Max Life", "Immune to magical death effects", "Spells restore Life instead of damaging"], "connections": ["travel_s4"]},
+
+    {"id": "life_cluster1", "name": "Vitality", "ring": 3.5, "angle": 245, "stats": ["+55 Life"], "connections": ["travel_s2", "life_cluster2"]},
+    {"id": "life_cluster2", "name": "Constitution", "ring": 4, "angle": 235, "stats": ["+70 Life"], "connections": ["life_cluster1", "life_cluster_notable"]},
+    {"id": "life_cluster_notable", "name": "Robust", "ring": 4.5, "angle": 240, "isNotable": true, "stats": ["+160 Life", "+10% Max Life"], "connections": ["life_cluster2"]},
+
+    {"id": "regen_cluster1", "name": "Recovery", "ring": 5, "angle": 290, "stats": ["+0.4% Life Regen"], "connections": ["travel_s3", "regen_cluster2"]},
+    {"id": "regen_cluster2", "name": "Renewal", "ring": 5.5, "angle": 300, "stats": ["+0.5% Life Regen"], "connections": ["regen_cluster1", "regen_cluster_notable"]},
+    {"id": "regen_cluster_notable", "name": "Endless Renewal", "ring": 6, "angle": 295, "isNotable": true, "stats": ["+1.5% Life Regen", "Regen from suppressed spells"], "connections": ["regen_cluster2"]},
+
+    {"id": "travel_w", "name": "Dispel Path", "ring": 1.5, "angle": 180, "stats": ["+12% Dispel Effect"], "connections": ["start", "travel_w2"]},
+    {"id": "travel_w2", "name": "Purge Road", "ring": 3, "angle": 180, "stats": ["+15% Dispel Effect"], "connections": ["travel_w", "travel_w3", "dispel_cluster1"]},
+    {"id": "travel_w3", "name": "Cleanse Way", "ring": 4.5, "angle": 180, "stats": ["+18% Dispel Effect"], "connections": ["travel_w2", "dispel_notable", "anti_magic_cluster1"]},
+    {"id": "dispel_notable", "name": "Master Dispeller", "ring": 6, "angle": 180, "isNotable": true, "stats": ["+45% Dispel Effect", "Dispel all magic on hit", "Dispelled magic heals you"], "connections": ["travel_w3", "travel_w4"]},
+    {"id": "travel_w4", "name": "Annihilation Path", "ring": 7.5, "angle": 180, "stats": ["+22% Dispel Effect"], "connections": ["dispel_notable", "dispel_key"]},
+    {"id": "dispel_key", "name": "MAGIC ANNIHILATOR", "ring": 9, "angle": 180, "isKeystone": true, "stats": ["+100% Dispel Effect", "Presence dispels all magic", "Enemies cannot cast near you", "Magic-using enemies take damage"], "connections": ["travel_w4"]},
+
+    {"id": "dispel_cluster1", "name": "Strip", "ring": 3.5, "angle": 155, "stats": ["+15% Dispel Effect"], "connections": ["travel_w2", "dispel_cluster2"]},
+    {"id": "dispel_cluster2", "name": "Purge", "ring": 4, "angle": 145, "stats": ["+18% Dispel Effect"], "connections": ["dispel_cluster1", "dispel_cluster_notable"]},
+    {"id": "dispel_cluster_notable", "name": "Mass Dispel", "ring": 4.5, "angle": 150, "isNotable": true, "stats": ["+40% Dispel Effect", "Dispel affects all enemies"], "connections": ["dispel_cluster2"]},
+
+    {"id": "anti_magic_cluster1", "name": "Null Zone", "ring": 5, "angle": 200, "stats": ["+10% Anti-Magic Effect"], "connections": ["travel_w3", "anti_magic_cluster2"]},
+    {"id": "anti_magic_cluster2", "name": "Void Zone", "ring": 5.5, "angle": 210, "stats": ["+12% Anti-Magic Effect"], "connections": ["anti_magic_cluster1", "anti_magic_cluster_notable"]},
+    {"id": "anti_magic_cluster_notable", "name": "Dead Zone", "ring": 6, "angle": 205, "isNotable": true, "stats": ["+30% Anti-Magic Effect", "Create anti-magic field", "Enemies in field cannot cast"], "connections": ["anti_magic_cluster2"]},
+
+    {"id": "travel_ne", "name": "NE Path", "ring": 2, "angle": 45, "stats": ["+12% Spell Suppression", "+25 ES"], "connections": ["travel_n", "travel_ne2"]},
+    {"id": "travel_ne2", "name": "NE Road", "ring": 3.5, "angle": 45, "stats": ["+15% Spell Suppression", "+35 ES"], "connections": ["travel_ne", "hybrid_se_notable"]},
+    {"id": "hybrid_se_notable", "name": "Shielded Null", "ring": 5, "angle": 45, "isNotable": true, "stats": ["+35% Spell Suppression", "+100 ES", "Suppression restores ES"], "connections": ["travel_ne2"]},
+
+    {"id": "travel_se", "name": "SE Path", "ring": 2, "angle": 315, "stats": ["+25 ES", "+35 Life"], "connections": ["travel_e", "travel_se2"]},
+    {"id": "travel_se2", "name": "SE Road", "ring": 3.5, "angle": 315, "stats": ["+35 ES", "+45 Life"], "connections": ["travel_se", "hybrid_el_notable"]},
+    {"id": "hybrid_el_notable", "name": "Dual Defense", "ring": 5, "angle": 315, "isNotable": true, "stats": ["+100 ES", "+120 Life", "ES and Life synergize"], "connections": ["travel_se2"]},
+
+    {"id": "travel_sw", "name": "SW Path", "ring": 2, "angle": 225, "stats": ["+35 Life", "+10% Dispel"], "connections": ["travel_s", "travel_sw2"]},
+    {"id": "travel_sw2", "name": "SW Road", "ring": 3.5, "angle": 225, "stats": ["+45 Life", "+12% Dispel"], "connections": ["travel_sw", "hybrid_ld_notable"]},
+    {"id": "hybrid_ld_notable", "name": "Vital Dispel", "ring": 5, "angle": 225, "isNotable": true, "stats": ["+120 Life", "+30% Dispel", "Dispel heals you"], "connections": ["travel_sw2"]},
+
+    {"id": "travel_nw", "name": "NW Path", "ring": 2, "angle": 135, "stats": ["+10% Dispel", "+12% Suppression"], "connections": ["travel_w", "travel_nw2"]},
+    {"id": "travel_nw2", "name": "NW Road", "ring": 3.5, "angle": 135, "stats": ["+12% Dispel", "+15% Suppression"], "connections": ["travel_nw", "hybrid_ds_notable"]},
+    {"id": "hybrid_ds_notable", "name": "Null Master", "ring": 5, "angle": 135, "isNotable": true, "stats": ["+30% Dispel", "+35% Suppression", "Dispel and Suppress synergize"], "connections": ["travel_nw2"]},
+
+    {"id": "counter1", "name": "Counter 1", "ring": 7, "angle": 45, "stats": ["+20% Spell Counter Damage"], "connections": ["suppress_notable", "counter2"]},
+    {"id": "counter2", "name": "Counter 2", "ring": 7.5, "angle": 50, "stats": ["+25% Spell Counter Damage"], "connections": ["counter1", "counter_notable"]},
+    {"id": "counter_notable", "name": "Spell Reflect", "ring": 8, "angle": 45, "isNotable": true, "stats": ["+50% Spell Counter Damage", "Reflect suppressed spells at double damage"], "connections": ["counter2"]},
+
+    {"id": "chaos1", "name": "Chaos Res 1", "ring": 7, "angle": 315, "stats": ["+15% Chaos Resistance"], "connections": ["es_notable", "chaos2"]},
+    {"id": "chaos2", "name": "Chaos Res 2", "ring": 7.5, "angle": 310, "stats": ["+20% Chaos Resistance"], "connections": ["chaos1", "chaos_notable"]},
+    {"id": "chaos_notable", "name": "Void Resistance", "ring": 8, "angle": 315, "isNotable": true, "stats": ["+50% Chaos Resistance", "Immune to Chaos DoT"], "connections": ["chaos2"]},
+
+    {"id": "armor1", "name": "Armor 1", "ring": 7, "angle": 225, "stats": ["+80 Armour"], "connections": ["life_notable", "armor2"]},
+    {"id": "armor2", "name": "Armor 2", "ring": 7.5, "angle": 220, "stats": ["+100 Armour"], "connections": ["armor1", "armor_notable"]},
+    {"id": "armor_notable", "name": "Null Armor", "ring": 8, "angle": 225, "isNotable": true, "stats": ["+250 Armour", "Armour applies to spell damage"], "connections": ["armor2"]},
+
+    {"id": "silence1", "name": "Silence 1", "ring": 7, "angle": 135, "stats": ["+20% Silence Effect"], "connections": ["dispel_notable", "silence2"]},
+    {"id": "silence2", "name": "Silence 2", "ring": 7.5, "angle": 130, "stats": ["+25% Silence Effect"], "connections": ["silence1", "silence_notable"]},
+    {"id": "silence_notable", "name": "Eternal Silence", "ring": 8, "angle": 135, "isNotable": true, "stats": ["+50% Silence Effect", "Silenced enemies take damage", "Silence spreads"], "connections": ["silence2"]},
+
+    {"id": "apex_key", "name": "NULL CHAMPION", "ring": 10.5, "angle": 0, "isKeystone": true, "stats": ["Magic cannot exist near you", "100% Spell Suppression", "+500 ES", "+400 Life", "+100% Dispel Effect", "Permanent anti-magic field", "All spells heal you", "Magic-using enemies are silenced and damaged"], "connections": ["suppress_key", "es_key", "life_key", "dispel_key"]}
+  ]
+}

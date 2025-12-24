@@ -1,0 +1,101 @@
+{
+  "name": "Vitalist",
+  "color": "#32cd32",
+  "nodes": [
+    {"id": "start", "name": "VITALIST", "ring": 0, "angle": 0, "isStart": true, "stats": ["You can allocate Passives starting from here"], "connections": ["travel_n", "travel_e", "travel_s", "travel_w"]},
+
+    {"id": "travel_n", "name": "Life Path", "ring": 1.5, "angle": 90, "stats": ["+50 Life"], "connections": ["start", "travel_n2"]},
+    {"id": "travel_n2", "name": "Vital Road", "ring": 3, "angle": 90, "stats": ["+65 Life"], "connections": ["travel_n", "travel_n3", "life_cluster1"]},
+    {"id": "travel_n3", "name": "Heart Way", "ring": 4.5, "angle": 90, "stats": ["+80 Life"], "connections": ["travel_n2", "life_notable", "max_life_cluster1"]},
+    {"id": "life_notable", "name": "Primal Life", "ring": 6, "angle": 90, "isNotable": true, "stats": ["+200 Life", "+15% Max Life", "+1% Life Regen"], "connections": ["travel_n3", "travel_n4"]},
+    {"id": "travel_n4", "name": "Eternal Path", "ring": 7.5, "angle": 90, "stats": ["+100 Life"], "connections": ["life_notable", "life_key"]},
+    {"id": "life_key", "name": "PRIMORDIAL LIFE", "ring": 9, "angle": 90, "isKeystone": true, "stats": ["+600 Life", "+30% Max Life", "+5% Life Regen", "Life Regen is tripled", "Cannot die to DoT"], "connections": ["travel_n4"]},
+
+    {"id": "life_cluster1", "name": "Vitality", "ring": 3.5, "angle": 115, "stats": ["+55 Life"], "connections": ["travel_n2", "life_cluster2"]},
+    {"id": "life_cluster2", "name": "Constitution", "ring": 4, "angle": 125, "stats": ["+70 Life"], "connections": ["life_cluster1", "life_cluster_notable"]},
+    {"id": "life_cluster_notable", "name": "Robust", "ring": 4.5, "angle": 120, "isNotable": true, "stats": ["+160 Life", "+10% Max Life"], "connections": ["life_cluster2"]},
+
+    {"id": "max_life_cluster1", "name": "Max Life 1", "ring": 5, "angle": 70, "stats": ["+6% Max Life"], "connections": ["travel_n3", "max_life_cluster2"]},
+    {"id": "max_life_cluster2", "name": "Max Life 2", "ring": 5.5, "angle": 60, "stats": ["+8% Max Life"], "connections": ["max_life_cluster1", "max_life_cluster_notable"]},
+    {"id": "max_life_cluster_notable", "name": "Massive Life", "ring": 6, "angle": 65, "isNotable": true, "stats": ["+20% Max Life", "+100 Flat Life"], "connections": ["max_life_cluster2"]},
+
+    {"id": "travel_e", "name": "Regen Path", "ring": 1.5, "angle": 0, "stats": ["+0.3% Life Regen"], "connections": ["start", "travel_e2"]},
+    {"id": "travel_e2", "name": "Recovery Road", "ring": 3, "angle": 0, "stats": ["+0.4% Life Regen"], "connections": ["travel_e", "travel_e3", "regen_cluster1"]},
+    {"id": "travel_e3", "name": "Renewal Way", "ring": 4.5, "angle": 0, "stats": ["+0.5% Life Regen"], "connections": ["travel_e2", "regen_notable", "regen_rate_cluster1"]},
+    {"id": "regen_notable", "name": "Endless Regen", "ring": 6, "angle": 0, "isNotable": true, "stats": ["+2% Life Regen", "Regen not interrupted by damage", "Regen continues 3s after full"], "connections": ["travel_e3", "travel_e4"]},
+    {"id": "travel_e4", "name": "Immortal Path", "ring": 7.5, "angle": 0, "stats": ["+0.7% Life Regen"], "connections": ["regen_notable", "regen_key"]},
+    {"id": "regen_key", "name": "INSTANT RECOVERY", "ring": 9, "angle": 0, "isKeystone": true, "stats": ["+5% Life Regen", "All Life Recovery is instant", "Immune to reduced healing", "Recovery continues 3s after death"], "connections": ["travel_e4"]},
+
+    {"id": "regen_cluster1", "name": "Quick Regen", "ring": 3.5, "angle": 335, "stats": ["+0.4% Life Regen"], "connections": ["travel_e2", "regen_cluster2"]},
+    {"id": "regen_cluster2", "name": "Fast Regen", "ring": 4, "angle": 325, "stats": ["+0.5% Life Regen"], "connections": ["regen_cluster1", "regen_cluster_notable"]},
+    {"id": "regen_cluster_notable", "name": "Rapid Regen", "ring": 4.5, "angle": 330, "isNotable": true, "stats": ["+1.5% Life Regen", "+30 Life"], "connections": ["regen_cluster2"]},
+
+    {"id": "regen_rate_cluster1", "name": "Rate 1", "ring": 5, "angle": 25, "stats": ["+15% Life Regen Rate"], "connections": ["travel_e3", "regen_rate_cluster2"]},
+    {"id": "regen_rate_cluster2", "name": "Rate 2", "ring": 5.5, "angle": 35, "stats": ["+20% Life Regen Rate"], "connections": ["regen_rate_cluster1", "regen_rate_cluster_notable"]},
+    {"id": "regen_rate_cluster_notable", "name": "Maximum Rate", "ring": 6, "angle": 30, "isNotable": true, "stats": ["+50% Life Regen Rate", "Regen ticks faster"], "connections": ["regen_rate_cluster2"]},
+
+    {"id": "travel_s", "name": "Healing Path", "ring": 1.5, "angle": 270, "stats": ["+15% Healing Effect"], "connections": ["start", "travel_s2"]},
+    {"id": "travel_s2", "name": "Restoration Road", "ring": 3, "angle": 270, "stats": ["+18% Healing Effect"], "connections": ["travel_s", "travel_s3", "heal_cluster1"]},
+    {"id": "travel_s3", "name": "Mending Way", "ring": 4.5, "angle": 270, "stats": ["+22% Healing Effect"], "connections": ["travel_s2", "heal_notable", "ally_heal_cluster1"]},
+    {"id": "heal_notable", "name": "Vital Healing", "ring": 6, "angle": 270, "isNotable": true, "stats": ["+50% Healing Effect", "Healing also applies regen", "Healing removes debuffs"], "connections": ["travel_s3", "travel_s4"]},
+    {"id": "travel_s4", "name": "Divine Path", "ring": 7.5, "angle": 270, "stats": ["+25% Healing Effect"], "connections": ["heal_notable", "heal_key"]},
+    {"id": "heal_key", "name": "AVATAR OF LIFE", "ring": 9, "angle": 270, "isKeystone": true, "stats": ["+100% Healing Effect", "All healing doubled", "Allies share your regen", "Prevent death once per 60s"], "connections": ["travel_s4"]},
+
+    {"id": "heal_cluster1", "name": "Gentle Touch", "ring": 3.5, "angle": 245, "stats": ["+15% Healing"], "connections": ["travel_s2", "heal_cluster2"]},
+    {"id": "heal_cluster2", "name": "Caring Hands", "ring": 4, "angle": 235, "stats": ["+18% Healing"], "connections": ["heal_cluster1", "heal_cluster_notable"]},
+    {"id": "heal_cluster_notable", "name": "Master Healer", "ring": 4.5, "angle": 240, "isNotable": true, "stats": ["+40% Healing", "+30% Healing Range"], "connections": ["heal_cluster2"]},
+
+    {"id": "ally_heal_cluster1", "name": "Ally Heal 1", "ring": 5, "angle": 290, "stats": ["+15% Ally Healing"], "connections": ["travel_s3", "ally_heal_cluster2"]},
+    {"id": "ally_heal_cluster2", "name": "Ally Heal 2", "ring": 5.5, "angle": 300, "stats": ["+20% Ally Healing"], "connections": ["ally_heal_cluster1", "ally_heal_cluster_notable"]},
+    {"id": "ally_heal_cluster_notable", "name": "Group Healing", "ring": 6, "angle": 295, "isNotable": true, "stats": ["+50% Ally Healing", "Healing pulses to all allies"], "connections": ["ally_heal_cluster2"]},
+
+    {"id": "travel_w", "name": "Defense Path", "ring": 1.5, "angle": 180, "stats": ["+40 Armour"], "connections": ["start", "travel_w2"]},
+    {"id": "travel_w2", "name": "Shield Road", "ring": 3, "angle": 180, "stats": ["+55 Armour"], "connections": ["travel_w", "travel_w3", "armor_cluster1"]},
+    {"id": "travel_w3", "name": "Guard Way", "ring": 4.5, "angle": 180, "stats": ["+70 Armour"], "connections": ["travel_w2", "armor_notable", "resist_cluster1"]},
+    {"id": "armor_notable", "name": "Vital Defense", "ring": 6, "angle": 180, "isNotable": true, "stats": ["+200 Armour", "+8% Phys Reduction", "Armour scales with Life"], "connections": ["travel_w3", "travel_w4"]},
+    {"id": "travel_w4", "name": "Fortress Path", "ring": 7.5, "angle": 180, "stats": ["+90 Armour"], "connections": ["armor_notable", "armor_key"]},
+    {"id": "armor_key", "name": "LIVING FORTRESS", "ring": 9, "angle": 180, "isKeystone": true, "stats": ["+500 Armour", "+15% Phys Reduction", "Armour reduces Elemental by 20%", "Life Regen increases with Armour"], "connections": ["travel_w4"]},
+
+    {"id": "armor_cluster1", "name": "Iron Skin", "ring": 3.5, "angle": 155, "stats": ["+50 Armour"], "connections": ["travel_w2", "armor_cluster2"]},
+    {"id": "armor_cluster2", "name": "Steel Skin", "ring": 4, "angle": 145, "stats": ["+65 Armour"], "connections": ["armor_cluster1", "armor_cluster_notable"]},
+    {"id": "armor_cluster_notable", "name": "Adamantine", "ring": 4.5, "angle": 150, "isNotable": true, "stats": ["+150 Armour", "+60 Life"], "connections": ["armor_cluster2"]},
+
+    {"id": "resist_cluster1", "name": "Ward", "ring": 5, "angle": 200, "stats": ["+10% Elemental Res"], "connections": ["travel_w3", "resist_cluster2"]},
+    {"id": "resist_cluster2", "name": "Protection", "ring": 5.5, "angle": 210, "stats": ["+12% Elemental Res"], "connections": ["resist_cluster1", "resist_cluster_notable"]},
+    {"id": "resist_cluster_notable", "name": "Full Protection", "ring": 6, "angle": 205, "isNotable": true, "stats": ["+30% Elemental Res", "+2% Max Elemental Res"], "connections": ["resist_cluster2"]},
+
+    {"id": "travel_ne", "name": "NE Path", "ring": 2, "angle": 45, "stats": ["+40 Life", "+0.3% Regen"], "connections": ["travel_n", "travel_ne2"]},
+    {"id": "travel_ne2", "name": "NE Road", "ring": 3.5, "angle": 45, "stats": ["+50 Life", "+0.4% Regen"], "connections": ["travel_ne", "hybrid_lr_notable"]},
+    {"id": "hybrid_lr_notable", "name": "Living Regen", "ring": 5, "angle": 45, "isNotable": true, "stats": ["+120 Life", "+1.5% Life Regen", "Regen scales with Life"], "connections": ["travel_ne2"]},
+
+    {"id": "travel_se", "name": "SE Path", "ring": 2, "angle": 315, "stats": ["+0.3% Regen", "+12% Healing"], "connections": ["travel_e", "travel_se2"]},
+    {"id": "travel_se2", "name": "SE Road", "ring": 3.5, "angle": 315, "stats": ["+0.4% Regen", "+15% Healing"], "connections": ["travel_se", "hybrid_rh_notable"]},
+    {"id": "hybrid_rh_notable", "name": "Regen Healer", "ring": 5, "angle": 315, "isNotable": true, "stats": ["+1.5% Life Regen", "+35% Healing", "Healing applies your Regen"], "connections": ["travel_se2"]},
+
+    {"id": "travel_sw", "name": "SW Path", "ring": 2, "angle": 225, "stats": ["+12% Healing", "+35 Armour"], "connections": ["travel_s", "travel_sw2"]},
+    {"id": "travel_sw2", "name": "SW Road", "ring": 3.5, "angle": 225, "stats": ["+15% Healing", "+50 Armour"], "connections": ["travel_sw", "hybrid_ha_notable"]},
+    {"id": "hybrid_ha_notable", "name": "Armored Healer", "ring": 5, "angle": 225, "isNotable": true, "stats": ["+35% Healing", "+120 Armour", "Healing grants Armour"], "connections": ["travel_sw2"]},
+
+    {"id": "travel_nw", "name": "NW Path", "ring": 2, "angle": 135, "stats": ["+35 Armour", "+40 Life"], "connections": ["travel_w", "travel_nw2"]},
+    {"id": "travel_nw2", "name": "NW Road", "ring": 3.5, "angle": 135, "stats": ["+50 Armour", "+50 Life"], "connections": ["travel_nw", "hybrid_al_notable"]},
+    {"id": "hybrid_al_notable", "name": "Vital Armor", "ring": 5, "angle": 135, "isNotable": true, "stats": ["+120 Armour", "+100 Life", "Life and Armour synergize"], "connections": ["travel_nw2"]},
+
+    {"id": "leech1", "name": "Leech 1", "ring": 7, "angle": 45, "stats": ["0.5% Damage Leeched as Life"], "connections": ["life_notable", "leech2"]},
+    {"id": "leech2", "name": "Leech 2", "ring": 7.5, "angle": 50, "stats": ["0.7% Damage Leeched as Life"], "connections": ["leech1", "leech_notable"]},
+    {"id": "leech_notable", "name": "Vital Leech", "ring": 8, "angle": 45, "isNotable": true, "stats": ["2% Damage Leeched as Life", "Leech is instant at low Life"], "connections": ["leech2"]},
+
+    {"id": "recoup1", "name": "Recoup 1", "ring": 7, "angle": 315, "stats": ["5% Damage Recouped as Life"], "connections": ["regen_notable", "recoup2"]},
+    {"id": "recoup2", "name": "Recoup 2", "ring": 7.5, "angle": 310, "stats": ["8% Damage Recouped as Life"], "connections": ["recoup1", "recoup_notable"]},
+    {"id": "recoup_notable", "name": "Vital Recoup", "ring": 8, "angle": 315, "isNotable": true, "stats": ["15% Damage Recouped as Life", "Recoup faster"], "connections": ["recoup2"]},
+
+    {"id": "flask1", "name": "Flask 1", "ring": 7, "angle": 225, "stats": ["+15% Flask Effect"], "connections": ["heal_notable", "flask2"]},
+    {"id": "flask2", "name": "Flask 2", "ring": 7.5, "angle": 220, "stats": ["+20% Flask Effect"], "connections": ["flask1", "flask_notable"]},
+    {"id": "flask_notable", "name": "Vital Flask", "ring": 8, "angle": 225, "isNotable": true, "stats": ["+40% Flask Effect", "Flasks grant Regen", "Flask 50% more effective at low Life"], "connections": ["flask2"]},
+
+    {"id": "endurance1", "name": "Endurance 1", "ring": 7, "angle": 135, "stats": ["+1 Endurance Charge"], "connections": ["armor_notable", "endurance2"]},
+    {"id": "endurance2", "name": "Endurance 2", "ring": 7.5, "angle": 130, "stats": ["+25% Endurance Duration"], "connections": ["endurance1", "endurance_notable"]},
+    {"id": "endurance_notable", "name": "Vital Endurance", "ring": 8, "angle": 135, "isNotable": true, "stats": ["+2 Max Endurance", "Endurance heals over time"], "connections": ["endurance2"]},
+
+    {"id": "apex_key", "name": "LIFE INCARNATE", "ring": 10.5, "angle": 0, "isKeystone": true, "stats": ["You embody life itself", "+800 Life", "+50% Max Life", "+8% Life Regen", "+150% Healing", "All Life effects doubled", "Allies share 50% of your Regen", "When you would die, heal to full (once per 60s)"], "connections": ["life_key", "regen_key", "heal_key", "armor_key"]}
+  ]
+}

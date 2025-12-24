@@ -1,0 +1,101 @@
+{
+  "name": "Aegis Keeper",
+  "color": "#6eb5ff",
+  "nodes": [
+    {"id": "start", "name": "AEGIS KEEPER", "ring": 0, "angle": 0, "isStart": true, "stats": ["You can allocate Passives starting from here"], "connections": ["travel_n", "travel_e", "travel_s", "travel_w"]},
+
+    {"id": "travel_n", "name": "Shield Path", "ring": 1.5, "angle": 90, "stats": ["+5% Block Chance"], "connections": ["start", "travel_n2"]},
+    {"id": "travel_n2", "name": "Aegis Road", "ring": 3, "angle": 90, "stats": ["+6% Block Chance"], "connections": ["travel_n", "travel_n3", "block_cluster1"]},
+    {"id": "travel_n3", "name": "Guardian Way", "ring": 4.5, "angle": 90, "stats": ["+7% Block Chance"], "connections": ["travel_n2", "block_notable", "spell_block_cluster1"]},
+    {"id": "block_notable", "name": "Aegis Master", "ring": 6, "angle": 90, "isNotable": true, "stats": ["+15% Block Chance", "+10% Spell Block", "Recover 3% Life on Block"], "connections": ["travel_n3", "travel_n4"]},
+    {"id": "travel_n4", "name": "Fortress Path", "ring": 7.5, "angle": 90, "stats": ["+8% Block Chance"], "connections": ["block_notable", "block_key"]},
+    {"id": "block_key", "name": "PERFECT AEGIS", "ring": 9, "angle": 90, "isKeystone": true, "stats": ["Max Block Chance is 90%", "+25% Block Chance", "Block has no recovery time"], "connections": ["travel_n4"]},
+
+    {"id": "block_cluster1", "name": "Shield Wall", "ring": 3.5, "angle": 115, "stats": ["+5% Block"], "connections": ["travel_n2", "block_cluster2"]},
+    {"id": "block_cluster2", "name": "Iron Guard", "ring": 4, "angle": 125, "stats": ["+6% Block"], "connections": ["block_cluster1", "block_cluster_notable"]},
+    {"id": "block_cluster_notable", "name": "Unbreakable Guard", "ring": 4.5, "angle": 120, "isNotable": true, "stats": ["+12% Block", "Counter attack on Block"], "connections": ["block_cluster2"]},
+
+    {"id": "spell_block_cluster1", "name": "Magic Ward", "ring": 5, "angle": 70, "stats": ["+4% Spell Block"], "connections": ["travel_n3", "spell_block_cluster2"]},
+    {"id": "spell_block_cluster2", "name": "Arcane Shield", "ring": 5.5, "angle": 60, "stats": ["+5% Spell Block"], "connections": ["spell_block_cluster1", "spell_block_cluster_notable"]},
+    {"id": "spell_block_cluster_notable", "name": "Spell Reflection", "ring": 6, "angle": 65, "isNotable": true, "stats": ["+12% Spell Block", "Reflect 20% of blocked spell damage"], "connections": ["spell_block_cluster2"]},
+
+    {"id": "travel_e", "name": "Energy Path", "ring": 1.5, "angle": 0, "stats": ["+30 Energy Shield"], "connections": ["start", "travel_e2"]},
+    {"id": "travel_e2", "name": "Barrier Road", "ring": 3, "angle": 0, "stats": ["+45 Energy Shield"], "connections": ["travel_e", "travel_e3", "es_cluster1"]},
+    {"id": "travel_e3", "name": "Aegis Way", "ring": 4.5, "angle": 0, "stats": ["+60 Energy Shield"], "connections": ["travel_e2", "es_notable", "recharge_cluster1"]},
+    {"id": "es_notable", "name": "Barrier Master", "ring": 6, "angle": 0, "isNotable": true, "stats": ["+150 Energy Shield", "+15% Max ES", "ES recharge cannot be interrupted"], "connections": ["travel_e3", "travel_e4"]},
+    {"id": "travel_e4", "name": "Eternal Barrier", "ring": 7.5, "angle": 0, "stats": ["+80 Energy Shield"], "connections": ["es_notable", "es_key"]},
+    {"id": "es_key", "name": "INFINITE AEGIS", "ring": 9, "angle": 0, "isKeystone": true, "stats": ["+400 Energy Shield", "+30% Max ES", "ES recharge rate doubled", "ES protects Life"], "connections": ["travel_e4"]},
+
+    {"id": "es_cluster1", "name": "Energy Pool", "ring": 3.5, "angle": 335, "stats": ["+40 ES"], "connections": ["travel_e2", "es_cluster2"]},
+    {"id": "es_cluster2", "name": "Energy Flow", "ring": 4, "angle": 325, "stats": ["+50 ES"], "connections": ["es_cluster1", "es_cluster_notable"]},
+    {"id": "es_cluster_notable", "name": "Overflowing Energy", "ring": 4.5, "angle": 330, "isNotable": true, "stats": ["+120 ES", "+10% Max ES"], "connections": ["es_cluster2"]},
+
+    {"id": "recharge_cluster1", "name": "Quick Recharge", "ring": 5, "angle": 25, "stats": ["+10% ES Recharge"], "connections": ["travel_e3", "recharge_cluster2"]},
+    {"id": "recharge_cluster2", "name": "Rapid Recharge", "ring": 5.5, "angle": 35, "stats": ["+15% ES Recharge"], "connections": ["recharge_cluster1", "recharge_cluster_notable"]},
+    {"id": "recharge_cluster_notable", "name": "Instant Recharge", "ring": 6, "angle": 30, "isNotable": true, "stats": ["+40% ES Recharge Rate", "ES starts recharging 0.5s faster"], "connections": ["recharge_cluster2"]},
+
+    {"id": "travel_s", "name": "Defense Path", "ring": 1.5, "angle": 270, "stats": ["+50 Armour"], "connections": ["start", "travel_s2"]},
+    {"id": "travel_s2", "name": "Fortification Road", "ring": 3, "angle": 270, "stats": ["+70 Armour"], "connections": ["travel_s", "travel_s3", "armor_cluster1"]},
+    {"id": "travel_s3", "name": "Bulwark Way", "ring": 4.5, "angle": 270, "stats": ["+90 Armour"], "connections": ["travel_s2", "armor_notable", "phys_cluster1"]},
+    {"id": "armor_notable", "name": "Living Fortress", "ring": 6, "angle": 270, "isNotable": true, "stats": ["+300 Armour", "+15% Armour", "5% Phys Damage Reduction"], "connections": ["travel_s3", "travel_s4"]},
+    {"id": "travel_s4", "name": "Eternal Bulwark", "ring": 7.5, "angle": 270, "stats": ["+120 Armour"], "connections": ["armor_notable", "armor_key"]},
+    {"id": "armor_key", "name": "AEGIS OF IRON", "ring": 9, "angle": 270, "isKeystone": true, "stats": ["+800 Armour", "+25% Armour", "10% Phys Reduction", "Armour also reduces Elemental Damage"], "connections": ["travel_s4"]},
+
+    {"id": "armor_cluster1", "name": "Plate Mail", "ring": 3.5, "angle": 245, "stats": ["+80 Armour"], "connections": ["travel_s2", "armor_cluster2"]},
+    {"id": "armor_cluster2", "name": "Heavy Plate", "ring": 4, "angle": 235, "stats": ["+100 Armour"], "connections": ["armor_cluster1", "armor_cluster_notable"]},
+    {"id": "armor_cluster_notable", "name": "Adamantine", "ring": 4.5, "angle": 240, "isNotable": true, "stats": ["+250 Armour", "+40 Life"], "connections": ["armor_cluster2"]},
+
+    {"id": "phys_cluster1", "name": "Thick Skin", "ring": 5, "angle": 290, "stats": ["2% Phys Reduction"], "connections": ["travel_s3", "phys_cluster2"]},
+    {"id": "phys_cluster2", "name": "Stone Flesh", "ring": 5.5, "angle": 300, "stats": ["3% Phys Reduction"], "connections": ["phys_cluster1", "phys_cluster_notable"]},
+    {"id": "phys_cluster_notable", "name": "Unbreakable", "ring": 6, "angle": 295, "isNotable": true, "stats": ["8% Phys Reduction", "Cannot be Stunned"], "connections": ["phys_cluster2"]},
+
+    {"id": "travel_w", "name": "Warding Path", "ring": 1.5, "angle": 180, "stats": ["+40 Life"], "connections": ["start", "travel_w2"]},
+    {"id": "travel_w2", "name": "Vitality Road", "ring": 3, "angle": 180, "stats": ["+55 Life"], "connections": ["travel_w", "travel_w3", "life_cluster1"]},
+    {"id": "travel_w3", "name": "Endurance Way", "ring": 4.5, "angle": 180, "stats": ["+70 Life"], "connections": ["travel_w2", "life_notable", "regen_cluster1"]},
+    {"id": "life_notable", "name": "Undying Vitality", "ring": 6, "angle": 180, "isNotable": true, "stats": ["+180 Life", "+12% Max Life", "+0.5% Life Regen"], "connections": ["travel_w3", "travel_w4"]},
+    {"id": "travel_w4", "name": "Immortal Path", "ring": 7.5, "angle": 180, "stats": ["+90 Life"], "connections": ["life_notable", "life_key"]},
+    {"id": "life_key", "name": "AEGIS OF LIFE", "ring": 9, "angle": 180, "isKeystone": true, "stats": ["+400 Life", "+25% Max Life", "Cannot be reduced below 1 Life", "+2% Life Regen"], "connections": ["travel_w4"]},
+
+    {"id": "life_cluster1", "name": "Vitality", "ring": 3.5, "angle": 155, "stats": ["+50 Life"], "connections": ["travel_w2", "life_cluster2"]},
+    {"id": "life_cluster2", "name": "Constitution", "ring": 4, "angle": 145, "stats": ["+60 Life"], "connections": ["life_cluster1", "life_cluster_notable"]},
+    {"id": "life_cluster_notable", "name": "Robust Health", "ring": 4.5, "angle": 150, "isNotable": true, "stats": ["+140 Life", "+8% Max Life"], "connections": ["life_cluster2"]},
+
+    {"id": "regen_cluster1", "name": "Recovery", "ring": 5, "angle": 200, "stats": ["+0.3% Life Regen"], "connections": ["travel_w3", "regen_cluster2"]},
+    {"id": "regen_cluster2", "name": "Healing", "ring": 5.5, "angle": 210, "stats": ["+0.4% Life Regen"], "connections": ["regen_cluster1", "regen_cluster_notable"]},
+    {"id": "regen_cluster_notable", "name": "Eternal Healing", "ring": 6, "angle": 205, "isNotable": true, "stats": ["+1.5% Life Regen", "Regen not interrupted"], "connections": ["regen_cluster2"]},
+
+    {"id": "travel_ne", "name": "NE Path", "ring": 2, "angle": 45, "stats": ["+4% Block", "+20 ES"], "connections": ["travel_n", "travel_ne2"]},
+    {"id": "travel_ne2", "name": "NE Road", "ring": 3.5, "angle": 45, "stats": ["+5% Block", "+30 ES"], "connections": ["travel_ne", "hybrid_be_notable"]},
+    {"id": "hybrid_be_notable", "name": "Shielded Aegis", "ring": 5, "angle": 45, "isNotable": true, "stats": ["+10% Block", "+100 ES", "ES recharges on Block"], "connections": ["travel_ne2"]},
+
+    {"id": "travel_se", "name": "SE Path", "ring": 2, "angle": 315, "stats": ["+25 ES", "+40 Armour"], "connections": ["travel_e", "travel_se2"]},
+    {"id": "travel_se2", "name": "SE Road", "ring": 3.5, "angle": 315, "stats": ["+35 ES", "+55 Armour"], "connections": ["travel_se", "hybrid_ea_notable"]},
+    {"id": "hybrid_ea_notable", "name": "Hybrid Defense", "ring": 5, "angle": 315, "isNotable": true, "stats": ["+100 ES", "+150 Armour", "ES and Armour boost each other"], "connections": ["travel_se2"]},
+
+    {"id": "travel_sw", "name": "SW Path", "ring": 2, "angle": 225, "stats": ["+45 Armour", "+35 Life"], "connections": ["travel_s", "travel_sw2"]},
+    {"id": "travel_sw2", "name": "SW Road", "ring": 3.5, "angle": 225, "stats": ["+60 Armour", "+45 Life"], "connections": ["travel_sw", "hybrid_al_notable"]},
+    {"id": "hybrid_al_notable", "name": "Armored Vitality", "ring": 5, "angle": 225, "isNotable": true, "stats": ["+180 Armour", "+120 Life", "Armour grants Life Regen"], "connections": ["travel_sw2"]},
+
+    {"id": "travel_nw", "name": "NW Path", "ring": 2, "angle": 135, "stats": ["+35 Life", "+4% Block"], "connections": ["travel_w", "travel_nw2"]},
+    {"id": "travel_nw2", "name": "NW Road", "ring": 3.5, "angle": 135, "stats": ["+45 Life", "+5% Block"], "connections": ["travel_nw", "hybrid_lb_notable"]},
+    {"id": "hybrid_lb_notable", "name": "Living Shield", "ring": 5, "angle": 135, "isNotable": true, "stats": ["+120 Life", "+10% Block", "Gain Life on Block"], "connections": ["travel_nw2"]},
+
+    {"id": "counter1", "name": "Counter 1", "ring": 7, "angle": 45, "stats": ["+20% Counter Damage"], "connections": ["block_notable", "counter2"]},
+    {"id": "counter2", "name": "Counter 2", "ring": 7.5, "angle": 50, "stats": ["+25% Counter Damage"], "connections": ["counter1", "counter_notable"]},
+    {"id": "counter_notable", "name": "Aegis Strike", "ring": 8, "angle": 45, "isNotable": true, "stats": ["+50% Counter Damage", "Counters cannot miss", "Counters restore ES"], "connections": ["counter2"]},
+
+    {"id": "leech1", "name": "ES Leech 1", "ring": 7, "angle": 315, "stats": ["0.5% Damage Leeched as ES"], "connections": ["es_notable", "leech2"]},
+    {"id": "leech2", "name": "ES Leech 2", "ring": 7.5, "angle": 310, "stats": ["0.7% Damage Leeched as ES"], "connections": ["leech1", "leech_notable"]},
+    {"id": "leech_notable", "name": "Ghost Reaver", "ring": 8, "angle": 315, "isNotable": true, "stats": ["1.5% Damage Leeched as ES", "+50% ES Leech Rate"], "connections": ["leech2"]},
+
+    {"id": "endurance1", "name": "Endurance 1", "ring": 7, "angle": 225, "stats": ["+1 Endurance Charge"], "connections": ["armor_notable", "endurance2"]},
+    {"id": "endurance2", "name": "Endurance 2", "ring": 7.5, "angle": 220, "stats": ["+20% Endurance Duration"], "connections": ["endurance1", "endurance_notable"]},
+    {"id": "endurance_notable", "name": "Eternal Endurance", "ring": 8, "angle": 225, "isNotable": true, "stats": ["+2 Max Endurance", "Endurance grants +4% Phys Reduction"], "connections": ["endurance2"]},
+
+    {"id": "flask1", "name": "Flask 1", "ring": 7, "angle": 135, "stats": ["+15% Flask Effect"], "connections": ["life_notable", "flask2"]},
+    {"id": "flask2", "name": "Flask 2", "ring": 7.5, "angle": 130, "stats": ["+20% Flask Duration"], "connections": ["flask1", "flask_notable"]},
+    {"id": "flask_notable", "name": "Divine Flasks", "ring": 8, "angle": 135, "isNotable": true, "stats": ["+30% Flask Effect", "Flasks charge on Block"], "connections": ["flask2"]},
+
+    {"id": "apex_key", "name": "ETERNAL AEGIS", "ring": 10.5, "angle": 0, "isKeystone": true, "stats": ["The ultimate defensive stance", "+30% Block", "+300 ES", "+500 Armour", "+300 Life", "Immune to Stun", "All damage types are blocked equally"], "connections": ["block_key", "es_key", "armor_key", "life_key"]}
+  ]
+}

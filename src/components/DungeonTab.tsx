@@ -25,6 +25,7 @@ import { getItemGridSize } from '../types/items';
 import { findAvailablePosition, buildOccupancyGrid } from '../utils/gridUtils';
 import { getRandomBossName } from '../utils/bossNames';
 import type { DungeonBoss } from '../types/dungeon';
+import loadingScreen3 from '../assets/loadingscreen3.png';
 
 
 export function DungeonTab() {
@@ -61,7 +62,8 @@ export function DungeonTab() {
       enemyDamageIncrease: 0,
       enemyHealthIncrease: 0,
       playerDamageReduction: 0,
-      enemySpeed: 0
+      enemySpeed: 0,
+      twinBoss: false
     };
     
     if (!activatedMap) return effects;
@@ -81,6 +83,9 @@ export function DungeonTab() {
             break;
           case 'enemySpeed':
             effects.enemySpeed += effect.value;
+            break;
+          case 'twinBoss':
+            effects.twinBoss = true;
             break;
         }
       });
@@ -856,7 +861,7 @@ export function DungeonTab() {
         <div style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: 'url(/src/assets/loadingscreen3.png)',
+          backgroundImage: `url(${loadingScreen3})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           opacity: 0.15,
@@ -1095,6 +1100,7 @@ export function DungeonTab() {
             gateBossKilled={gateBossKilled}
             previewGateBossKilled={previewGateBossKilled}
             isCreatingPull={isCreatingPull}
+            activatedMap={activatedMap ?? undefined}
             onPackClick={handlePackClick}
             onBossClick={(boss) => {
               if (!isRunning) {

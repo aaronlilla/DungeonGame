@@ -263,9 +263,13 @@ export function CombatPanel({ isRunning, combatState, enemyFightAnims }: CombatP
                       {/* Content row */}
                       <div style={{ display: 'flex', alignItems: 'center', gap: isBoss ? '1rem' : '0.6rem', marginBottom: isBoss ? '0.8rem' : '0.4rem', position: 'relative', zIndex: 2 }}>
                         {/* Enemy Image/Icon Frame - Grand style for bosses */}
-                        <div style={{
-                          width: isBoss ? '64px' : '32px',
-                          height: isBoss ? '64px' : '32px',
+                        {(() => {
+                          // Check if this is a final boss (not miniboss)
+                          const isFinalBoss = isBoss && (enemy.id === 'final_boss' || enemy.id === 'final_boss_twin');
+                          return (
+                            <div style={{
+                              width: isFinalBoss ? '96px' : isBoss ? '64px' : '32px',
+                              height: isFinalBoss ? '96px' : isBoss ? '64px' : '32px',
                           borderRadius: isBoss ? '4px' : '2px',
                           background: isBoss
                             ? `linear-gradient(145deg, rgba(50, 40, 35, 0.98) 0%, rgba(30, 25, 20, 1) 100%)`
@@ -303,7 +307,9 @@ export function CombatPanel({ isRunning, combatState, enemyFightAnims }: CombatP
                               <span style={{ position: 'relative', zIndex: 1 }}>{enemy.icon}</span>
                             );
                           })()}
-                        </div>
+                            </div>
+                          );
+                        })()}
                         
                         {/* Enemy Name and Type */}
                         <div style={{ flex: 1, minWidth: 0 }}>

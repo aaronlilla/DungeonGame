@@ -45,10 +45,11 @@ export interface BossKillBuff {
   id: string;
   name: string;
   description: string;
+  icon: string;
+  color: string;
   effects: {
-    type: 'itemQuantity' | 'damage' | 'cooldownReduction' | 'chaosDamage' | 'lifeRegen' | 'armor' | 'blockChance' | 'manaEfficiency' | 'castSpeed' | 'statGain' | 'damageAvoidance' | 'bossDamage';
+    type: 'damage' | 'armor' | 'damageReduction' | 'lifeRegen' | 'castSpeed' | 'maxHealth';
     value: number;
-    condition?: string;
   }[];
 }
 
@@ -662,96 +663,120 @@ export const BOSS_ABILITIES: Record<string, BossAbility[]> = {
   ]
 };
 
-// Kill buffs for each boss
+// Kill buffs for gate minibosses (permanent for the rest of the dungeon run)
+export const MINIBOSS_KILL_BUFFS: Record<string, BossKillBuff> = {
+  'bone_golem': {
+    id: 'bone_barrier',
+    name: 'Bone Barrier',
+    description: '+8% Armor',
+    icon: '🦴',
+    color: '#a0a0a0',
+    effects: [{ type: 'armor', value: 8 }]
+  },
+  'death_knight': {
+    id: 'deathbringer',
+    name: 'Deathbringer',
+    description: '+8% Damage',
+    icon: '⚔️',
+    color: '#8b4513',
+    effects: [{ type: 'damage', value: 8 }]
+  },
+  'lich': {
+    id: 'soul_siphon',
+    name: 'Soul Siphon',
+    description: '+1% Life Regeneration per second',
+    icon: '💀',
+    color: '#6b5b95',
+    effects: [{ type: 'lifeRegen', value: 1 }]
+  }
+};
+
+// Kill buffs for final bosses (permanent for the rest of the dungeon run)
 export const BOSS_KILL_BUFFS: Record<string, BossKillBuff> = {
   'Vaelrix the Gilded Ruin': {
     id: 'gilded_fortune',
     name: 'Gilded Fortune',
-    description: '+10% increased Item Quantity, +5% increased Damage per active Buff',
-    effects: [
-      { type: 'itemQuantity', value: 10 },
-      { type: 'damage', value: 5, condition: 'per active buff' }
-    ]
+    description: '+12% Damage',
+    icon: '💰',
+    color: '#ffd700',
+    effects: [{ type: 'damage', value: 12 }]
   },
   'Morchant, Bell-Bearer of the Last Toll': {
     id: 'deaths_punctuality',
-    name: 'Death\'s Punctuality',
-    description: '+15% increased Damage against Low Life enemies, −10% Skill Cooldowns',
-    effects: [
-      { type: 'damage', value: 15, condition: 'against low life' },
-      { type: 'cooldownReduction', value: 10 }
-    ]
+    name: 'Death\'s Toll',
+    description: '+10% Cast Speed',
+    icon: '🔔',
+    color: '#4a4a4a',
+    effects: [{ type: 'castSpeed', value: 10 }]
   },
   'Xyra Noctyss, Widow of the Black Sun': {
     id: 'black_suns_grace',
     name: 'Black Sun\'s Grace',
-    description: '+10% Chaos Damage, +5% chance to Apply Withered on Hit',
+    description: '+10% Damage, +5% Damage Reduction',
+    icon: '🌑',
+    color: '#1a1a2e',
     effects: [
-      { type: 'chaosDamage', value: 10 },
-      { type: 'damage', value: 5, condition: 'withered on hit' }
+      { type: 'damage', value: 10 },
+      { type: 'damageReduction', value: 5 }
     ]
   },
   'Thalos Grimmwake': {
     id: 'grim_vitality',
     name: 'Grim Vitality',
-    description: '+1% Life Regeneration, Damage over Time deals +10% more Damage',
-    effects: [
-      { type: 'lifeRegen', value: 1 },
-      { type: 'damage', value: 10, condition: 'damage over time' }
-    ]
+    description: '+2% Life Regeneration per second',
+    icon: '🩸',
+    color: '#8b0000',
+    effects: [{ type: 'lifeRegen', value: 2 }]
   },
   'Eidolon Kareth, the Unremembered': {
     id: 'echo_of_self',
     name: 'Echo of Self',
-    description: '+1 Maximum Charge, +10% increased Effect of Charges',
-    effects: [
-      { type: 'statGain', value: 1, condition: 'max charges' },
-      { type: 'damage', value: 10, condition: 'charge effect' }
-    ]
+    description: '+10% Maximum Health',
+    icon: '👻',
+    color: '#e0e0e0',
+    effects: [{ type: 'maxHealth', value: 10 }]
   },
   'The Ashbound Regent': {
     id: 'ashen_authority',
     name: 'Ashen Authority',
-    description: '+10% Fire Damage, Ignites deal damage 20% faster',
-    effects: [
-      { type: 'damage', value: 10, condition: 'fire' },
-      { type: 'damage', value: 20, condition: 'ignite speed' }
-    ]
+    description: '+15% Damage',
+    icon: '🔥',
+    color: '#ff4500',
+    effects: [{ type: 'damage', value: 15 }]
   },
   'Kaelthorne, He Who Will Not Fall': {
     id: 'iron_resolve',
     name: 'Iron Resolve',
-    description: '+15% Armour, +5% Chance to Block Attack Damage',
-    effects: [
-      { type: 'armor', value: 15 },
-      { type: 'blockChance', value: 5 }
-    ]
+    description: '+15% Armor',
+    icon: '🛡️',
+    color: '#708090',
+    effects: [{ type: 'armor', value: 15 }]
   },
   'Ulthraxis of the Hungering Quiet': {
     id: 'hungering_quiet',
     name: 'Hungering Quiet',
-    description: '+10% Mana Efficiency, +10% Damage while Silenced',
-    effects: [
-      { type: 'manaEfficiency', value: 10 },
-      { type: 'damage', value: 10, condition: 'while silenced' }
-    ]
+    description: '+8% Damage Reduction',
+    icon: '🤫',
+    color: '#2f4f4f',
+    effects: [{ type: 'damageReduction', value: 8 }]
   },
   'Nyxavel, Mouth of the Void Choir': {
     id: 'void_choir',
     name: 'Void Choir',
-    description: 'Skills repeat 5% of the time, +10% Cast Speed',
-    effects: [
-      { type: 'damage', value: 5, condition: 'skill repeat' },
-      { type: 'castSpeed', value: 10 }
-    ]
+    description: '+12% Cast Speed',
+    icon: '🎭',
+    color: '#4b0082',
+    effects: [{ type: 'castSpeed', value: 12 }]
   },
   'Zha\'karoth, The Fold Between Stars': {
     id: 'fold_between_stars',
     name: 'Fold Between Stars',
-    description: '+5% chance to avoid Damage, +10% Randomized Damage',
+    description: '+6% Damage Reduction, +6% Damage',
+    icon: '✨',
+    color: '#9400d3',
     effects: [
-      { type: 'damageAvoidance', value: 5 },
-      { type: 'damage', value: 10, condition: 'randomized' }
+      { type: 'damageReduction', value: 6 },
+      { type: 'damage', value: 6 }
     ]
   }
 };

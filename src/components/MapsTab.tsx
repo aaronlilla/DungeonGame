@@ -61,7 +61,11 @@ export function MapsTab() {
   // Handle dropping a map into the device
   const handleDropMapOnDevice = () => {
     if (heldMapId) {
-      const map = mapStash.find(m => m.id === heldMapId);
+      // Check if it's from crafting station
+      const craftingStationMapId = (window as any).__craftingStationMapId;
+      const map = mapStash.find(m => m.id === heldMapId) || 
+                  (craftingStationMapId === heldMapId ? mapStash.find(m => m.id === heldMapId) : null);
+      
       if (map) {
         setMapDeviceMap(map);
         setHeldMapId(null);
@@ -177,7 +181,11 @@ export function MapsTab() {
       </div>
 
       {/* Map Crafting */}
-      <MapCraftingStation />
+      <MapCraftingStation 
+        isDragging={heldMapId !== null}
+        heldMapId={heldMapId}
+        onMapDropped={() => setHeldMapId(null)}
+      />
 
       {/* Right: Map & Fragment Stash Grid */}
       <div style={{

@@ -136,13 +136,16 @@ export function createPullEnemies(
         // Bosses/minibosses deal 0.875x (reduced from 1.75x) - still dangerous but more manageable
         const damageMultiplier = isBossType ? 0.875 : 0.16; // Regular enemies remain at 0.16x
         
+        // Apply type-based damage adjustments: +20% for bosses/minibosses, -20% for trash
+        const typeDamageModifier = isBossType ? 1.2 : 0.8; // Bosses/minibosses +20%, trash -20%
+        
         // Calculate health and damage with map modifiers
         // Minibosses: target ~20k HP at +2 (doubled from 10k)
         // Adjust multiplier for miniboss to get target HP
         const healthMultiplier = (enemyDef.type === 'miniboss') ? 104.16 : 10; // DOUBLED: miniboss multiplier from 52.08
         const finalHealth = enemyDef.baseHealth * scaling.healthMultiplier * healthMod * healthMultiplier;
-        // Enemy base damage reduced by 20% (from 2 to 1.6)
-        const finalDamage = enemyDef.baseDamage * scaling.damageMultiplier * damageMultiplier * damageMod * 1.6;
+        // Enemy base damage reduced by 20% (from 2 to 1.6), then apply type modifier
+        const finalDamage = enemyDef.baseDamage * scaling.damageMultiplier * damageMultiplier * damageMod * 1.6 * typeDamageModifier;
         
         // Scale defensive stats with key level
         const finalArmor = (enemyDef.baseArmor || 0) * scaling.healthMultiplier;

@@ -57,11 +57,12 @@ export async function processPull(
   const targetX = packs.reduce((sum, p) => sum + p.position.x, 0) / packs.length;
   const targetY = packs.reduce((sum, p) => sum + p.position.y, 0) / packs.length;
 
-  // Update context with current state
+  // Update context with current state (CRITICAL: update teamStates at start to use passed parameter)
   context.currentPos = currentPosLocal;
   context.totalTime = totalTime;
   context.currentTick = currentTickLocal;
   context.timedOut = timedOutLocal;
+  context.teamStates = teamStatesLocal; // Ensure context uses the passed teamStates (from previous pull's recovery)
   
   // Use travel module
   await travelToPull(context, pullIdx, packs, targetX, targetY);
@@ -120,6 +121,9 @@ export async function processPull(
     : hasGateBoss 
     ? `👑 GATE BOSS: ${pullEnemies.length} enemies!`
     : `⚔️ PULL #${pullIdx + 1}: ${pullEnemies.length} enemies!`;
+  
+  // Ensure context.teamStates is updated before combat starts
+  context.teamStates = teamStatesLocal;
   
   updateCombatState(prev => ({
     ...prev,
@@ -196,6 +200,9 @@ export async function processPull(
   teamStatesLocal = recoveryResult.teamStates;
   timedOutLocal = recoveryResult.timedOut;
   totalTime = context.totalTime;
+  
+  // CRITICAL: Update context.teamStates after recovery so the next pull uses the recovered state
+  context.teamStates = teamStatesLocal;
   
   if (timedOutLocal) {
     setIsRunning(false);

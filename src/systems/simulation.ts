@@ -122,6 +122,10 @@ function createEnemyEntity(enemy: DungeonEnemy, scaling: KeyLevel, isFortified: 
   const healthMult = isFortified && enemy.type !== 'boss' ? 1.2 : 1;
   const damageMult = isFortified && enemy.type !== 'boss' ? 1.3 : 1;
   
+  // Apply type-based damage adjustments: +20% for bosses/minibosses, -20% for trash
+  const isBossType = enemy.type === 'boss' || enemy.type === 'miniboss';
+  const typeDamageModifier = isBossType ? 1.2 : 0.8; // Bosses/minibosses +20%, trash -20%
+  
   return {
     id: `${enemy.id}_${Math.random().toString(36).substr(2, 9)}`,
     name: enemy.name,
@@ -130,7 +134,7 @@ function createEnemyEntity(enemy: DungeonEnemy, scaling: KeyLevel, isFortified: 
     maxHealth: enemy.baseHealth * scaling.healthMultiplier * healthMult,
     mana: 100,
     maxMana: 100,
-    damage: enemy.baseDamage * scaling.damageMultiplier * damageMult,
+    damage: enemy.baseDamage * scaling.damageMultiplier * damageMult * typeDamageModifier,
     armor: 0,
     cooldowns: {},
     effects: [],

@@ -57,6 +57,7 @@ export interface MapAffixEffects {
   enemyHealthIncrease: number;    // e.g., 0.30 = +30% enemy health
   playerDamageReduction: number;  // e.g., 0.15 = -15% player damage
   enemySpeed: number;             // e.g., 0.20 = +20% attack speed (faster cooldowns)
+  twinBoss: boolean;              // If true, spawn a second boss
 }
 
 export interface CombatContext {

@@ -4,25 +4,36 @@ import { getEnemyById } from '../../types/dungeon';
 
 interface BossHealthBarProps {
   bossEnemy: AnimatedEnemy | undefined;
+  bossEnemies?: AnimatedEnemy[]; // For twin bosses
   isRunning: boolean;
   phase: 'idle' | 'traveling' | 'combat' | 'victory' | 'defeat';
 }
 
-export function BossHealthBar({ bossEnemy, isRunning, phase }: BossHealthBarProps) {
-  if (!bossEnemy || !isRunning || phase !== 'combat') {
+export function BossHealthBar({ bossEnemy, bossEnemies, isRunning, phase }: BossHealthBarProps) {
+  // Support both single boss and twin bosses
+  const bosses = bossEnemies && bossEnemies.length > 0 ? bossEnemies : (bossEnemy ? [bossEnemy] : []);
+  
+  if (bosses.length === 0 || !isRunning || phase !== 'combat') {
     return null;
   }
 
-  const bossHealthPercent = (bossEnemy.health / bossEnemy.maxHealth) * 100;
+  const isTwinBoss = bosses.length === 2;
+  const mainBoss = bosses[0];
+  const secondBoss = bosses[1];
+  
+  // Calculate combined health for twin bosses, or single boss health
+  const totalHealth = bosses.reduce((sum, b) => sum + b.health, 0);
+  const totalMaxHealth = bosses.reduce((sum, b) => sum + b.maxHealth, 0);
+  const bossHealthPercent = (totalHealth / totalMaxHealth) * 100;
   
   // Get boss image for background
-  const getBossImage = () => {
-    const isMiniboss = bossEnemy.type === 'miniboss';
-    let imageKey = bossEnemy.name;
+  const getBossImage = (enemy: AnimatedEnemy) => {
+    const isMiniboss = enemy.type === 'miniboss';
+    let imageKey = enemy.name;
     
-    if (isMiniboss && bossEnemy.enemyId) {
+    if (isMiniboss && enemy.enemyId) {
       // Get the original enemy definition to use its name for the image
-      const originalEnemy = getEnemyById(bossEnemy.enemyId);
+      const originalEnemy = getEnemyById(enemy.enemyId);
       if (originalEnemy) {
         imageKey = originalEnemy.name;
       }
@@ -31,7 +42,8 @@ export function BossHealthBar({ bossEnemy, isRunning, phase }: BossHealthBarProp
     return getEnemyImage(imageKey);
   };
   
-  const bossImage = getBossImage();
+  const mainBossImage = getBossImage(mainBoss);
+  const secondBossImage = secondBoss ? getBossImage(secondBoss) : null;
 
   return (
     <div 
@@ -57,15 +69,47 @@ export function BossHealthBar({ bossEnemy, isRunning, phase }: BossHealthBarProp
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {/* Boss Image Background */}
-        {bossImage && (
+        {/* Boss Image Background - handle twin bosses */}
+        {isTwinBoss && mainBossImage && secondBossImage ? (
           <div style={{
             position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundImage: `url(${bossImage})`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '-40px', // Overlap them
+            opacity: 0.15,
+            filter: 'blur(1px)',
+            zIndex: 0
+          }}>
+            <div style={{
+              backgroundImage: `url(${mainBossImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              width: '50%',
+              height: '100%',
+              marginRight: '-20%' // Overlap
+            }} />
+            <div style={{
+              backgroundImage: `url(${secondBossImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              width: '50%',
+              height: '100%',
+              marginLeft: '-20%' // Overlap
+            }} />
+          </div>
+        ) : mainBossImage && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage: `url(${mainBossImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             opacity: 0.15,
@@ -119,7 +163,7 @@ export function BossHealthBar({ bossEnemy, isRunning, phase }: BossHealthBarProp
           zIndex: 1
         }} />
         
-        {/* Boss Name */}
+        {/* Boss Name(s) */}
         <div style={{
           fontSize: '28px',
           fontWeight: 'bold',
@@ -134,31 +178,96 @@ export function BossHealthBar({ bossEnemy, isRunning, phase }: BossHealthBarProp
           justifyContent: 'center',
           gap: '12px',
           position: 'relative',
-          zIndex: 1
+          zIndex: 1,
+          flexWrap: 'wrap'
         }}>
-          {bossImage ? (
-            <img 
-              src={bossImage} 
-              alt={bossEnemy.name}
-              style={{
-                width: '48px',
-                height: '48px',
-                objectFit: 'contain',
-                imageRendering: 'crisp-edges',
-                border: '2px solid #8b0000',
-                borderRadius: '4px',
-                background: 'rgba(0,0,0,0.5)',
-                padding: '4px',
-                boxShadow: '0 0 10px rgba(139, 0, 0, 0.4)'
-              }}
-            />
+          {isTwinBoss ? (
+            <>
+              {/* First boss image and name */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {mainBossImage ? (
+                  <img 
+                    src={mainBossImage} 
+                    alt={mainBoss.name}
+                    style={{
+                      width: '64px', // Bigger for final boss
+                      height: '64px',
+                      objectFit: 'contain',
+                      imageRendering: 'crisp-edges',
+                      border: '2px solid #8b0000',
+                      borderRadius: '4px',
+                      background: 'rgba(0,0,0,0.5)',
+                      padding: '4px',
+                      boxShadow: '0 0 10px rgba(139, 0, 0, 0.4)',
+                      position: 'relative',
+                      zIndex: 2
+                    }}
+                  />
+                ) : (
+                  <span style={{
+                    fontSize: '48px',
+                    filter: 'drop-shadow(0 0 5px rgba(139, 0, 0, 0.6))'
+                  }}>{mainBoss.icon}</span>
+                )}
+                <span>{mainBoss.name}</span>
+              </div>
+              <span style={{ fontSize: '24px', opacity: 0.7 }}>&</span>
+              {/* Second boss image and name - overlapped */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '-30px' }}>
+                {secondBossImage ? (
+                  <img 
+                    src={secondBossImage} 
+                    alt={secondBoss.name}
+                    style={{
+                      width: '64px',
+                      height: '64px',
+                      objectFit: 'contain',
+                      imageRendering: 'crisp-edges',
+                      border: '2px solid #8b0000',
+                      borderRadius: '4px',
+                      background: 'rgba(0,0,0,0.5)',
+                      padding: '4px',
+                      boxShadow: '0 0 10px rgba(139, 0, 0, 0.4)',
+                      position: 'relative',
+                      zIndex: 1
+                    }}
+                  />
+                ) : (
+                  <span style={{
+                    fontSize: '48px',
+                    filter: 'drop-shadow(0 0 5px rgba(139, 0, 0, 0.6))'
+                  }}>{secondBoss.icon}</span>
+                )}
+                <span>{secondBoss.name}</span>
+              </div>
+            </>
           ) : (
-            <span style={{
-              fontSize: '36px',
-              filter: 'drop-shadow(0 0 5px rgba(139, 0, 0, 0.6))'
-            }}>{bossEnemy.icon}</span>
+            <>
+              {mainBossImage ? (
+                <img 
+                  src={mainBossImage} 
+                  alt={mainBoss.name}
+                  style={{
+                    width: '64px', // Bigger for final boss
+                    height: '64px',
+                    objectFit: 'contain',
+                    imageRendering: 'crisp-edges',
+                    border: '2px solid #8b0000',
+                    borderRadius: '4px',
+                    background: 'rgba(0,0,0,0.5)',
+                    padding: '4px',
+                    boxShadow: '0 0 10px rgba(139, 0, 0, 0.4)'
+                  }}
+                />
+              ) : (
+                <span style={{
+                  fontSize: '48px',
+                  filter: 'drop-shadow(0 0 5px rgba(139, 0, 0, 0.6))'
+                }}>{mainBoss.icon}</span>
+              )}
+              <span>{mainBoss.name}</span>
+            </>
           )}
-          <span>{bossEnemy.name}</span>
         </div>
         
         {/* Health Bar Container */}
@@ -214,7 +323,10 @@ export function BossHealthBar({ bossEnemy, isRunning, phase }: BossHealthBarProp
             pointerEvents: 'none',
             fontFamily: 'Cinzel, serif'
           }}>
-            {Math.floor(bossEnemy.health).toLocaleString()} / {Math.floor(bossEnemy.maxHealth).toLocaleString()}
+            {isTwinBoss 
+              ? `${Math.floor(totalHealth).toLocaleString()} / ${Math.floor(totalMaxHealth).toLocaleString()} (${bosses.length} bosses)`
+              : `${Math.floor(mainBoss.health).toLocaleString()} / ${Math.floor(mainBoss.maxHealth).toLocaleString()}`
+            }
           </div>
         </div>
       </div>

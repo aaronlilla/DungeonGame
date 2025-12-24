@@ -9,8 +9,9 @@ import { GiShieldBash, GiHealthPotion, GiBroadsword, GiSkullCrossedBones } from 
 import { FloatingNumbers } from './FloatingNumbers';
 import { LootDrops } from './LootDrops';
 import { LeagueEncounters } from './LeagueEncounters';
-import { getEnemyImage } from '../../utils/enemyImages';
-import { getClassById } from '../../types/classes';
+import { getEnemyImage, getEnemyIconComponent, ENEMY_TYPE_COLORS } from '../../utils/enemyImages';
+import { getClassById, getClassPortrait } from '../../types/classes';
+import { BOSS_NAMES } from '../../utils/bossNames';
 
 // Memoized role icons to prevent recreation
 const ROLE_ICONS_MEMO = {
@@ -54,6 +55,7 @@ interface DungeonMapProps {
   mapScrollRef: RefObject<HTMLDivElement>;
   onCollectLoot?: (lootId: string) => void;
   onEngageEncounter?: (encounterId: string) => void;
+  activatedMap?: import('../../types/maps').MapItem; // For checking twin boss affix
 }
 
 export const DungeonMap = memo(function DungeonMap({
@@ -76,6 +78,7 @@ export const DungeonMap = memo(function DungeonMap({
   gateBossKilled,
   previewGateBossKilled,
   isCreatingPull,
+  activatedMap,
   onPackClick,
   onBossClick,
   onGateBossClick,
@@ -160,15 +163,15 @@ export const DungeonMap = memo(function DungeonMap({
   }, [scrollState.scrollLeft, scrollState.scrollTop, scrollState.viewportWidth, scrollState.viewportHeight]);
 
   // Memoize orbiting icons calculation
-  const getOrbitingIcons = React.useCallback((pack: EnemyPack): { image: string | null; name: string; type: EnemyType }[] => {
-    const icons: { image: string | null; name: string; type: EnemyType }[] = [];
+  const getOrbitingIcons = React.useCallback((pack: EnemyPack): { image: string | null; name: string; type: EnemyType; enemyId: string }[] => {
+    const icons: { image: string | null; name: string; type: EnemyType; enemyId: string }[] = [];
     pack.enemies.forEach(({ enemyId, count }) => {
       const enemy = getEnemyById(enemyId);
       if (!enemy) return;
       // Use display name if available (for gate bosses), otherwise use enemy name
       const displayName = pack.displayName || enemy.name;
       const imagePath = getEnemyImage(displayName);
-      for (let i = 0; i < count; i++) icons.push({ image: imagePath, name: displayName, type: enemy.type });
+      for (let i = 0; i < count; i++) icons.push({ image: imagePath, name: displayName, type: enemy.type, enemyId });
     });
     return icons.slice(0, 10);
   }, []);
@@ -204,21 +207,28 @@ export const DungeonMap = memo(function DungeonMap({
     // Get main image - prefer miniboss/elite, fallback to first enemy
     let mainImage: string | null = null;
     let mainEnemyName: string = '';
+    let mainEnemyId: string = '';
+    let mainEnemyType: EnemyType = 'normal';
     for (const { enemyId } of pack.enemies) {
       const enemy = getEnemyById(enemyId);
       if (enemy && (enemy.type === 'miniboss' || enemy.type === 'elite')) {
         const displayName = pack.displayName || enemy.name;
         mainImage = getEnemyImage(displayName);
         mainEnemyName = displayName;
+        mainEnemyId = enemyId;
+        mainEnemyType = enemy.type;
         break;
       }
     }
-    if (!mainImage) {
-      const firstEnemy = getEnemyById(pack.enemies[0]?.enemyId);
+    if (!mainEnemyId) {
+      const firstEnemyId = pack.enemies[0]?.enemyId;
+      const firstEnemy = getEnemyById(firstEnemyId);
       if (firstEnemy) {
         const displayName = pack.displayName || firstEnemy.name;
         mainImage = getEnemyImage(displayName);
         mainEnemyName = displayName;
+        mainEnemyId = firstEnemyId;
+        mainEnemyType = firstEnemy.type;
       }
     }
     
@@ -230,7 +240,7 @@ export const DungeonMap = memo(function DungeonMap({
     const packOpacity = !unlocked ? 0.25 : isDefeated ? 0.35 : (isRunning && !isInCurrentGate) ? 0.3 : 1;
     
     return (
-      <div key={pack.id} style={{ position: 'absolute', left: `${pack.position.x}px`, top: `${pack.position.y}px`, transform: 'translate(-50%, -50%)', opacity: packOpacity, transition: 'opacity 0.3s ease' }}>
+      <div key={pack.id} style={{ position: 'absolute', left: `${pack.position.x}px`, top: `${pack.position.y}px`, transform: 'translate(-50%, -50%)', opacity: packOpacity, transition: 'opacity 0.3s ease', zIndex: isGateBoss ? 50 : (inCurrentPull || isCurrentTarget ? 15 : 10) }}>
         {!isGateBoss && orbitingIcons.map((orb, i) => {
           const arcSpan = 240;
           const startAngle = -90 - (arcSpan / 2);
@@ -239,35 +249,33 @@ export const DungeonMap = memo(function DungeonMap({
           const x = Math.cos(angle) * orbitRadius;
           const y = Math.sin(angle) * orbitRadius;
           const iconSize = orb.type === 'miniboss' ? 26 : orb.type === 'elite' ? 22 : 18;
-          const orbColor = orb.type === 'miniboss' ? '#9b59b6' : orb.type === 'elite' ? '#e67e22' : '#6c7a89';
-          const orbGlow = orb.type === 'miniboss' ? 'rgba(155,89,182,0.6)' : orb.type === 'elite' ? 'rgba(230,126,34,0.5)' : 'rgba(108,122,137,0.3)';
+          const typeColors = ENEMY_TYPE_COLORS[orb.type];
+          const IconComponent = getEnemyIconComponent(orb.enemyId, orb.type);
           return (
-            <div 
-              key={i} 
-              style={{ 
-                position: 'absolute', 
-                left: `${baseSize / 2 + x - iconSize / 2}px`, 
-                top: `${baseSize / 2 + y - iconSize / 2}px`, 
-                width: `${iconSize}px`, 
-                height: `${iconSize}px`, 
-                borderRadius: '6px', 
-                background: orb.image ? 'transparent' : `linear-gradient(135deg, ${orbColor}40 0%, ${orbColor}20 100%)`,
-                border: orb.image ? 'none' : `2px solid ${orbColor}`,
-                boxShadow: orb.image ? 'none' : `0 0 8px ${orbGlow}, inset 0 0 4px rgba(0,0,0,0.4)`,
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                fontSize: orb.image ? '0' : `${iconSize * 0.65}px`, 
+            <div
+              key={i}
+              style={{
+                position: 'absolute',
+                left: `${baseSize / 2 + x - iconSize / 2}px`,
+                top: `${baseSize / 2 + y - iconSize / 2}px`,
+                width: `${iconSize}px`,
+                height: `${iconSize}px`,
+                borderRadius: '4px',
+                background: orb.image ? 'transparent' : typeColors.bg,
+                border: orb.image ? 'none' : `1px solid ${typeColors.primary}60`,
+                boxShadow: orb.image ? 'none' : `0 2px 4px rgba(0,0,0,0.5), 0 0 6px ${typeColors.glow}`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 pointerEvents: 'none',
-                // PERFORMANCE: Only transition transform and opacity (GPU-accelerated properties)
                 transition: 'transform 0.2s ease, opacity 0.2s ease',
                 overflow: 'hidden',
                 willChange: 'transform, opacity'
               }}
             >
               {orb.image ? (
-                <img 
-                  src={orb.image} 
+                <img
+                  src={orb.image}
                   alt={orb.name}
                   style={{
                     width: '100%',
@@ -277,55 +285,57 @@ export const DungeonMap = memo(function DungeonMap({
                   }}
                 />
               ) : (
-                <span>💀</span>
+                <IconComponent
+                  style={{
+                    width: iconSize * 0.7,
+                    height: iconSize * 0.7,
+                    color: typeColors.primary,
+                    filter: `drop-shadow(0 1px 2px rgba(0,0,0,0.6))`
+                  }}
+                />
               )}
             </div>
           );
         })}
         
-        <div 
-          style={{ 
-            width: `${baseSize}px`, 
-            height: `${baseSize}px`, 
-            borderRadius: isGateBoss ? '0' : '12px', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            fontSize: `${baseSize * 0.5}px`, 
-            background: isGateBoss 
-              ? 'transparent' 
-              : isCurrentTarget 
-                ? 'linear-gradient(135deg, rgba(239,68,68,0.95) 0%, rgba(185,28,28,1) 100%)' 
-                : inCurrentPull 
-                  ? 'linear-gradient(135deg, rgba(34,197,94,0.95) 0%, rgba(22,163,74,1) 100%)' 
-                  : inRoute 
-                    ? 'linear-gradient(135deg, rgba(34,197,94,0.7) 0%, rgba(22,101,52,0.8) 100%)' 
-                    : isAvailable && isCreatingPull 
-                      ? 'linear-gradient(135deg, rgba(250,204,21,0.6) 0%, rgba(202,138,4,0.7) 100%)' 
-                      : isSelected 
-                        ? 'linear-gradient(135deg, rgba(250,204,21,0.8) 0%, rgba(202,138,4,0.9) 100%)' 
-                        : dominantType === 'elite'
-                          ? 'linear-gradient(135deg, rgba(249,115,22,0.8) 0%, rgba(194,65,12,0.9) 100%)'
-                          : 'linear-gradient(135deg, rgba(55,65,81,0.9) 0%, rgba(31,41,55,1) 100%)', 
-            border: isGateBoss ? 'none' : `3px solid ${isCurrentTarget ? '#ef4444' : inCurrentPull ? '#22c55e' : inRoute ? '#16a34a' : isAvailable && isCreatingPull ? '#fbbf24' : dominantType === 'elite' ? '#f97316' : '#4b5563'}`, 
-            boxShadow: isGateBoss 
-              ? '0 8px 16px rgba(0, 0, 0, 0.8), 0 4px 8px rgba(0, 0, 0, 0.6)'
-              : isCurrentTarget 
-                ? '0 0 20px rgba(239,68,68,0.7), 0 0 40px rgba(239,68,68,0.3), inset 0 0 10px rgba(0,0,0,0.3)' 
-                : inCurrentPull 
-                  ? '0 0 16px rgba(34,197,94,0.6), 0 0 32px rgba(34,197,94,0.25), inset 0 0 8px rgba(0,0,0,0.3)'
-                  : dominantType === 'elite'
-                    ? '0 0 12px rgba(249,115,22,0.5), inset 0 0 6px rgba(0,0,0,0.3)'
-                    : '0 4px 12px rgba(0,0,0,0.5), inset 0 0 6px rgba(0,0,0,0.2)', 
-            animation: isCurrentTarget ? 'pulse 0.6s ease-in-out infinite' : 'none', 
-            position: 'relative', 
+        <div
+          style={{
+            width: `${baseSize}px`,
+            height: `${baseSize}px`,
+            borderRadius: isGateBoss ? '0' : '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: `${baseSize * 0.5}px`,
+            background: isGateBoss
+              ? 'transparent'
+              : isCurrentTarget
+                ? 'linear-gradient(135deg, rgba(160,55,50,0.9) 0%, rgba(120,40,35,0.95) 100%)'
+                : inCurrentPull
+                  ? 'linear-gradient(135deg, rgba(60,110,65,0.9) 0%, rgba(40,80,45,0.95) 100%)'
+                  : inRoute
+                    ? 'linear-gradient(135deg, rgba(50,90,55,0.8) 0%, rgba(35,65,40,0.85) 100%)'
+                    : isAvailable && isCreatingPull
+                      ? 'linear-gradient(135deg, rgba(180,150,60,0.7) 0%, rgba(140,110,40,0.8) 100%)'
+                      : isSelected
+                        ? 'linear-gradient(135deg, rgba(180,150,60,0.8) 0%, rgba(140,110,40,0.9) 100%)'
+                        : ENEMY_TYPE_COLORS[dominantType].bg,
+            border: isGateBoss ? 'none' : `2px solid ${isCurrentTarget ? 'rgba(160,55,50,0.8)' : inCurrentPull ? 'rgba(60,110,65,0.8)' : inRoute ? 'rgba(50,90,55,0.7)' : isAvailable && isCreatingPull ? 'rgba(180,150,60,0.7)' : ENEMY_TYPE_COLORS[dominantType].primary}80`,
+            boxShadow: isGateBoss
+              ? 'none'
+              : isCurrentTarget
+                ? '0 0 12px rgba(160,55,50,0.5), 0 0 24px rgba(160,55,50,0.2), inset 0 0 8px rgba(0,0,0,0.3)'
+                : inCurrentPull
+                  ? '0 0 10px rgba(60,110,65,0.4), 0 0 20px rgba(60,110,65,0.15), inset 0 0 6px rgba(0,0,0,0.3)'
+                  : `0 4px 12px rgba(0,0,0,0.6), 0 0 6px ${ENEMY_TYPE_COLORS[dominantType].glow}, inset 0 0 6px rgba(0,0,0,0.3)`,
+            animation: isCurrentTarget ? 'pulse 0.6s ease-in-out infinite' : 'none',
+            position: 'relative',
             zIndex: isGateBoss ? 100 : (inCurrentPull || isCurrentTarget ? 15 : 10),
             overflow: 'hidden',
-            // PERFORMANCE: Only transition transform and opacity (GPU-accelerated)
             transition: 'transform 0.2s ease, opacity 0.3s ease, box-shadow 0.2s ease',
             cursor: isGateBoss && onGateBossClick && !isRunning ? 'pointer' : (!unlocked || inRoute || isRunning ? 'default' : 'pointer'),
             willChange: 'transform, opacity',
-            filter: isGateBoss ? 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.8)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6))' : 'none'
+            filter: 'none'
           }} 
           onClick={(e) => {
             e.stopPropagation();
@@ -358,36 +368,44 @@ export const DungeonMap = memo(function DungeonMap({
           )}
           {/* Main image/icon */}
           {mainImage ? (
-            <img 
-              src={mainImage} 
+            <img
+              src={mainImage}
               alt={mainEnemyName}
               style={{
                 width: '100%',
                 height: '100%',
                 objectFit: 'contain',
                 imageRendering: 'crisp-edges',
-                filter: isGateBoss 
-                  ? 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.8)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6))'
-                  : (isCurrentTarget || inCurrentPull) 
-                    ? 'drop-shadow(0 0 4px rgba(255,255,255,0.5))' 
+                filter: isGateBoss
+                  ? 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.5))'
+                  : (isCurrentTarget || inCurrentPull)
+                    ? 'drop-shadow(0 0 4px rgba(255,255,255,0.5))'
                     : 'none',
                 position: 'relative',
                 zIndex: 1
               }}
             />
           ) : (
-            <span style={{
-              filter: isGateBoss 
-                ? 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.8)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6))'
-                : (isCurrentTarget || inCurrentPull) 
-                  ? 'drop-shadow(0 0 4px rgba(255,255,255,0.5))' 
-                  : 'none',
-              position: 'relative',
-              zIndex: 1,
-              fontSize: `${baseSize * 0.5}px`
-            }}>
-              💀
-            </span>
+            (() => {
+              const MainIconComponent = getEnemyIconComponent(mainEnemyId, mainEnemyType);
+              const mainTypeColors = ENEMY_TYPE_COLORS[mainEnemyType];
+              return (
+                <MainIconComponent
+                  style={{
+                    width: baseSize * 0.55,
+                    height: baseSize * 0.55,
+                    color: mainTypeColors.primary,
+                    filter: isGateBoss
+                      ? 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.5))'
+                      : (isCurrentTarget || inCurrentPull)
+                        ? `drop-shadow(0 0 6px ${mainTypeColors.glow})`
+                        : `drop-shadow(0 1px 2px rgba(0,0,0,0.5))`,
+                    position: 'relative',
+                    zIndex: 1
+                  }}
+                />
+              );
+            })()
           )}
           {/* Animated ring for current target */}
           {isCurrentTarget && (
@@ -402,47 +420,42 @@ export const DungeonMap = memo(function DungeonMap({
         </div>
         
         {/* Pack info label */}
-        <div style={{ 
-          position: 'absolute', 
-          top: `${baseSize + 8}px`, 
-          left: '50%', 
-          transform: 'translateX(-50%)', 
-          background: 'linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(20,20,30,0.9) 100%)', 
-          padding: '4px 10px', 
-          borderRadius: '6px', 
-          fontSize: '0.7rem', 
-          fontWeight: '600', 
-          color: '#fff', 
-          border: `1px solid ${dominantType === 'elite' ? '#f9731650' : '#4b556350'}`, 
-          boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
-          whiteSpace: 'nowrap', 
-          pointerEvents: 'none',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px'
-        }}>
-          <span style={{ opacity: 0.8 }}>{mobCount}</span>
-          <span style={{ color: '#9ca3af' }}>👤</span>
-          <span style={{ 
-            color: pack.totalForces >= 4 ? '#fbbf24' : pack.totalForces >= 2 ? '#22c55e' : '#60a5fa',
-            fontWeight: 700
+        {!isGateBoss && (
+          <div style={{
+            position: 'absolute',
+            top: `${baseSize + 6}px`,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'linear-gradient(180deg, rgba(15,12,10,0.95) 0%, rgba(10,8,6,0.98) 100%)',
+            padding: '3px 8px',
+            borderRadius: '4px',
+            fontSize: '0.65rem',
+            fontWeight: '600',
+            color: '#c8b88a',
+            border: `1px solid ${ENEMY_TYPE_COLORS[dominantType].primary}40`,
+            boxShadow: `0 2px 6px rgba(0,0,0,0.5), 0 0 4px ${ENEMY_TYPE_COLORS[dominantType].glow}`,
+            whiteSpace: 'nowrap',
+            pointerEvents: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px'
           }}>
-            +{pack.totalForces}
-          </span>
-        </div>
+            <span style={{ color: ENEMY_TYPE_COLORS[dominantType].primary, opacity: 0.9 }}>{mobCount}</span>
+            <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.5rem' }}>•</span>
+            <span style={{
+              color: pack.totalForces >= 4 ? '#d4a84b' : pack.totalForces >= 2 ? '#7cb87c' : '#6b9ec4',
+              fontWeight: 700
+            }}>
+              +{pack.totalForces}
+            </span>
+          </div>
+        )}
       </div>
     );
   };
 
   return (
-    <div className="panel" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', flex: 1, minHeight: 0 }}>
-      <div className="panel-header" style={{ padding: '0.5rem 1rem', flexShrink: 0 }}>
-        <h3 style={{ fontSize: '1rem' }}>🏰 {dungeon.name}</h3>
-        {isRunning && <span style={{ padding: '0.2rem 0.6rem', background: combatState.healerCasting ? '#9b59b6' : combatState.phase === 'combat' ? 'var(--accent-red)' : combatState.phase === 'defeat' ? '#8e44ad' : 'var(--accent-blue)', borderRadius: '10px', fontSize: '0.8rem' }}>
-          {combatState.healerCasting ? '🙏 Resurrecting' : combatState.phase === 'traveling' ? '🚶 Moving' : combatState.phase === 'combat' ? '⚔️ Combat' : combatState.phase === 'defeat' ? '💀 Defeated' : '🏆 Victory'}
-        </span>}
-      </div>
-      
+    <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', flex: 1, minHeight: 0, borderRadius: '2px', border: '1px solid rgba(90, 70, 50, 0.4)' }}>
       <div ref={mapContainerRef} className={`${screenShake > 0 ? 'screen-shake' : ''} ${isRunning && combatState.phase === 'combat' ? 'combat-glow' : ''}`} style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
         <div 
           ref={mapScrollRef} 
@@ -674,19 +687,19 @@ export const DungeonMap = memo(function DungeonMap({
                 })();
                 
                 return (
-                  <line 
-                    key={idx} 
-                    x1={prevX} 
-                    y1={prevY} 
-                    x2={currX} 
-                    y2={currY} 
-                    stroke={isNearLine ? "#ffd700" : "#d4a84b"} 
-                    strokeWidth={isNearLine ? "4" : "3"} 
-                    strokeDasharray="8,6" 
-                    opacity={isNearLine ? "1" : "0.7"}
-                    style={{ 
+                  <line
+                    key={idx}
+                    x1={prevX}
+                    y1={prevY}
+                    x2={currX}
+                    y2={currY}
+                    stroke={isNearLine ? "#c9a855" : "#9a8045"}
+                    strokeWidth={isNearLine ? "3" : "2"}
+                    strokeDasharray="8,6"
+                    opacity={isNearLine ? "0.9" : "0.5"}
+                    style={{
                       transition: 'stroke 0.3s ease, stroke-width 0.3s ease, opacity 0.3s ease',
-                      filter: isNearLine ? 'drop-shadow(0 0 8px rgba(255, 215, 0, 0.8))' : 'none'
+                      filter: isNearLine ? 'drop-shadow(0 0 4px rgba(180, 150, 70, 0.5))' : 'none'
                     }}
                   />
                 );
@@ -736,6 +749,34 @@ export const DungeonMap = memo(function DungeonMap({
               const bossDisplayName = boss.displayName || boss.enemy.name;
               const bossImage = getEnemyImage(bossDisplayName);
               
+              // Check if map has twinned affix
+              const isTwinBoss = activatedMap?.affixes.some(affix => 
+                affix.effects.some(effect => effect.type === 'twinBoss')
+              ) || false;
+              
+              // Get second boss name if twinned - use deterministic selection based on first boss name
+              let secondBossName: string | null = null;
+              if (isTwinBoss) {
+                // Create a simple hash from the first boss name to deterministically select second boss
+                // This ensures consistency across renders
+                const usedNames = new Set([bossDisplayName]);
+                const availableNames = BOSS_NAMES.filter(name => !usedNames.has(name));
+                if (availableNames.length > 0) {
+                  // Use character codes from boss name to create a deterministic index
+                  let hash = 0;
+                  for (let i = 0; i < bossDisplayName.length; i++) {
+                    hash = ((hash << 5) - hash) + bossDisplayName.charCodeAt(i);
+                    hash = hash & hash; // Convert to 32-bit integer
+                  }
+                  const index = Math.abs(hash) % availableNames.length;
+                  secondBossName = availableNames[index];
+                } else {
+                  // Fallback if all names are used
+                  secondBossName = BOSS_NAMES[0];
+                }
+              }
+              const secondBossImage = secondBossName ? getEnemyImage(secondBossName) : null;
+              
               // Debug: log if image not found or displayName not set
               if (import.meta.env.DEV) {
                 if (!boss.displayName) {
@@ -744,7 +785,11 @@ export const DungeonMap = memo(function DungeonMap({
                 if (!bossImage && bossDisplayName) {
                   console.warn('[DungeonMap] Final boss image not found for:', bossDisplayName);
                 }
+                if (isTwinBoss && secondBossName && !secondBossImage) {
+                  console.warn('[DungeonMap] Twin boss image not found for:', secondBossName);
+                }
               }
+              
               return (
                 <div 
                   key={boss.id} 
@@ -763,20 +808,26 @@ export const DungeonMap = memo(function DungeonMap({
                     opacity: bossOpacity, 
                     transition: 'opacity 0.3s ease',
                     cursor: !isRunning && onBossClick ? 'pointer' : 'default',
-                    filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.8)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6))'
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: isTwinBoss ? '-60px' : '0' // Overlap for twin bosses
                   }}
                 >
+                  {/* First boss */}
                   {bossImage ? (
-                    <img 
-                      src={bossImage} 
+                    <img
+                      src={bossImage}
                       alt={bossDisplayName}
                       style={{
-                        width: '140px',
-                        height: '140px',
+                        width: '280px',
+                        height: '280px',
                         objectFit: 'contain',
                         imageRendering: 'crisp-edges',
-                        filter: 'none',
-                        transition: 'transform 0.2s ease'
+                        filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.7))',
+                        transition: 'transform 0.2s ease',
+                        position: 'relative',
+                        zIndex: isTwinBoss ? 2 : 1
                       }}
                       onMouseEnter={(e) => {
                         if (!isRunning && onBossClick) {
@@ -790,9 +841,11 @@ export const DungeonMap = memo(function DungeonMap({
                   ) : (
                     <div
                       style={{
-                        fontSize: '9rem',
-                        filter: 'none',
-                        transition: 'transform 0.2s ease'
+                        fontSize: '18rem',
+                        filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.7))',
+                        transition: 'transform 0.2s ease',
+                        position: 'relative',
+                        zIndex: isTwinBoss ? 2 : 1
                       }}
                       onMouseEnter={(e) => {
                         if (!isRunning && onBossClick) {
@@ -805,6 +858,56 @@ export const DungeonMap = memo(function DungeonMap({
                     >
                       {boss.enemy.icon}
                     </div>
+                  )}
+                  
+                  {/* Second boss (if twinned) */}
+                  {isTwinBoss && secondBossName && (
+                    secondBossImage ? (
+                      <img
+                        src={secondBossImage}
+                        alt={secondBossName}
+                        style={{
+                          width: '280px',
+                          height: '280px',
+                          objectFit: 'contain',
+                          imageRendering: 'crisp-edges',
+                          filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.7))',
+                          transition: 'transform 0.2s ease',
+                          position: 'relative',
+                          zIndex: 1,
+                          marginLeft: '-60px' // Overlap with first boss
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!isRunning && onBossClick) {
+                            e.currentTarget.style.transform = 'scale(1.1)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'scale(1)';
+                        }}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          fontSize: '18rem',
+                          filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.7))',
+                          transition: 'transform 0.2s ease',
+                          position: 'relative',
+                          zIndex: 1,
+                          marginLeft: '-60px' // Overlap with first boss
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!isRunning && onBossClick) {
+                            e.currentTarget.style.transform = 'scale(1.1)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'scale(1)';
+                        }}
+                      >
+                        {boss.enemy.icon}
+                      </div>
+                    )
                   )}
                 </div>
               );
@@ -828,79 +931,104 @@ export const DungeonMap = memo(function DungeonMap({
               }}
             >
               {/* Outer glow ring */}
-              <div style={{ 
-                position: 'absolute', 
-                width: '85px', 
-                height: '85px', 
+              <div style={{
+                position: 'absolute',
+                width: '100px',
+                height: '100px',
                 left: '50%',
                 top: '50%',
                 transform: 'translate(-50%, -50%)',
-                borderRadius: '50%', 
-                background: isRunning && combatState.phase === 'combat' 
-                  ? 'radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(239,68,68,0.05) 50%, transparent 70%)'
-                  : 'radial-gradient(circle, rgba(0,212,170,0.2) 0%, rgba(0,212,170,0.05) 50%, transparent 70%)',
-                boxShadow: isRunning && combatState.phase === 'combat' 
-                  ? '0 0 30px rgba(239,68,68,0.4), 0 0 60px rgba(239,68,68,0.15)'
-                  : '0 0 25px rgba(0,212,170,0.3), 0 0 50px rgba(0,212,170,0.1)',
+                borderRadius: '50%',
+                background: isRunning && combatState.phase === 'combat'
+                  ? 'radial-gradient(circle, rgba(160,60,55,0.15) 0%, rgba(160,60,55,0.03) 50%, transparent 70%)'
+                  : 'radial-gradient(circle, rgba(100,140,120,0.12) 0%, rgba(100,140,120,0.03) 50%, transparent 70%)',
+                boxShadow: isRunning && combatState.phase === 'combat'
+                  ? '0 0 20px rgba(160,60,55,0.25), 0 0 40px rgba(160,60,55,0.1)'
+                  : '0 0 15px rgba(100,140,120,0.2), 0 0 30px rgba(100,140,120,0.08)',
                 animation: isRunning && combatState.phase === 'combat' ? 'pulse 0.8s infinite' : 'none'
               }} />
               
-              <div style={{ position: 'relative', width: '60px', height: '60px' }}>
+              <div style={{ position: 'relative', width: '80px', height: '80px' }}>
                 {team.length > 0 ? team.map((member, idx) => {
                   const angle = (idx / team.length) * 2 * Math.PI - Math.PI / 2;
-                  const radius = team.length === 1 ? 0 : 20;
-                  const x = 30 + Math.cos(angle) * radius;
-                  const y = 30 + Math.sin(angle) * radius;
+                  const radius = team.length === 1 ? 0 : 26;
+                  const x = 40 + Math.cos(angle) * radius;
+                  const y = 40 + Math.sin(angle) * radius;
                   const memberState = combatState.teamStates.find(m => m.id === member.id);
                   const isDead = memberState?.isDead || false;
                   const healthPercent = memberState ? (memberState.health / memberState.maxHealth) : 1;
-                  
+                  const portrait = member.classId ? getClassPortrait(member.classId) : null;
+
                   const roleColors = {
-                    tank: { bg: '#3498db', border: '#60a5fa', glow: 'rgba(52,152,219,0.7)', gradient: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' },
-                    healer: { bg: '#22c55e', border: '#4ade80', glow: 'rgba(34,197,94,0.7)', gradient: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)' },
-                    dps: { bg: '#f97316', border: '#fb923c', glow: 'rgba(249,115,22,0.7)', gradient: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' }
+                    tank: { bg: '#4a6a8c', border: '#5a7a9c', glow: 'rgba(74,106,140,0.5)', gradient: 'linear-gradient(135deg, rgba(74,106,140,0.9) 0%, rgba(45,74,92,0.95) 100%)' },
+                    healer: { bg: '#2d6b3a', border: '#3d7b4a', glow: 'rgba(45,107,58,0.5)', gradient: 'linear-gradient(135deg, rgba(45,107,58,0.9) 0%, rgba(26,74,37,0.95) 100%)' },
+                    dps: { bg: '#8b5a2b', border: '#9b6a3b', glow: 'rgba(139,90,43,0.5)', gradient: 'linear-gradient(135deg, rgba(139,90,43,0.9) 0%, rgba(92,58,26,0.95) 100%)' }
                   };
                   const colors = roleColors[member.role];
-                  
+
                   return (
-                    <div 
+                    <div
                       key={member.id}
-                      style={{ 
+                      style={{
                         position: 'absolute',
                         left: `${x}px`,
                         top: `${y}px`,
                         transform: 'translate(-50%, -50%)',
-                        width: '28px', 
-                        height: '28px', 
-                        borderRadius: '6px', 
-                        background: isDead ? 'linear-gradient(135deg, #374151 0%, #1f2937 100%)' : colors.gradient,
-                        border: `2px solid ${isDead ? '#4b5563' : colors.border}`,
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        fontSize: '1rem',
-                        color: isDead ? '#6b7280' : '#fff',
-                        boxShadow: isDead ? 'none' : `0 0 12px ${colors.glow}, inset 0 0 6px rgba(255,255,255,0.15)`,
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '6px',
+                        background: isDead
+                          ? 'linear-gradient(135deg, rgba(30,30,30,0.95) 0%, rgba(20,20,20,0.98) 100%)'
+                          : portrait
+                            ? 'rgba(0,0,0,0.4)'
+                            : colors.gradient,
+                        border: `2px solid ${isDead ? 'rgba(80,80,80,0.6)' : colors.border}`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.1rem',
+                        color: isDead ? '#555' : '#fff',
+                        boxShadow: isDead
+                          ? 'inset 0 2px 4px rgba(0,0,0,0.5)'
+                          : `0 2px 8px rgba(0,0,0,0.5), 0 0 8px ${colors.glow}, inset 0 1px 0 rgba(255,255,255,0.1)`,
                         opacity: isDead ? 0.6 : 1,
-                        filter: isDead ? 'grayscale(0.5)' : 'none'
+                        filter: isDead ? 'grayscale(0.7)' : 'none',
+                        overflow: 'hidden'
                       }}
                       title={`${(() => {
                         const classData = member.classId ? getClassById(member.classId) : null;
                         return classData?.name || member.role.toUpperCase();
                       })()} - ${Math.floor(healthPercent * 100)}% HP`}
                     >
-                      {/* Icon glow */}
-                      <span style={{ filter: isDead ? 'none' : 'drop-shadow(0 0 2px rgba(255,255,255,0.5))' }}>
-                        {isDead ? <GiSkullCrossedBones /> : ROLE_ICONS_COMPONENTS[member.role]}
-                      </span>
+                      {/* Portrait background */}
+                      {portrait && !isDead && (
+                        <div style={{
+                          position: 'absolute',
+                          inset: '-20%',
+                          backgroundImage: `url(${portrait})`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center 20%',
+                          opacity: 0.9
+                        }} />
+                      )}
+                      {/* Fallback icon if no portrait or dead */}
+                      {(!portrait || isDead) && (
+                        <span style={{
+                          filter: isDead ? 'none' : 'drop-shadow(0 1px 2px rgba(0,0,0,0.6))',
+                          position: 'relative',
+                          zIndex: 1
+                        }}>
+                          {isDead ? <GiSkullCrossedBones /> : ROLE_ICONS_COMPONENTS[member.role]}
+                        </span>
+                      )}
                       {/* Health ring indicator */}
                       {!isDead && memberState && healthPercent < 1 && (
                         <div style={{
                           position: 'absolute',
-                          inset: '-4px',
+                          inset: '-3px',
                           borderRadius: '8px',
-                          background: `conic-gradient(${healthPercent > 0.5 ? '#22c55e' : healthPercent > 0.25 ? '#fbbf24' : '#ef4444'} ${healthPercent * 360}deg, transparent 0deg)`,
-                          opacity: 0.8,
+                          background: `conic-gradient(${healthPercent > 0.5 ? 'rgba(45,107,58,0.8)' : healthPercent > 0.25 ? 'rgba(180,140,50,0.8)' : 'rgba(180,60,50,0.8)'} ${healthPercent * 360}deg, transparent 0deg)`,
+                          opacity: 0.7,
                           zIndex: -1,
                           mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                           maskComposite: 'exclude',
@@ -914,9 +1042,9 @@ export const DungeonMap = memo(function DungeonMap({
                           position: 'absolute',
                           inset: -2,
                           borderRadius: '8px',
-                          border: '2px solid #ef4444',
+                          border: '2px solid rgba(180,60,50,0.7)',
                           animation: 'pulse 0.5s ease-in-out infinite',
-                          boxShadow: '0 0 8px rgba(239,68,68,0.6)'
+                          boxShadow: '0 0 6px rgba(180,60,50,0.4)'
                         }} />
                       )}
                     </div>

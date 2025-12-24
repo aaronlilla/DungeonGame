@@ -11,6 +11,7 @@ import { assignEnemyDefensiveStats } from '../../../utils/enemyStats';
 import { handleWipe } from './wipeHandler';
 import { processPlayerActions } from '../playerCombat';
 import { processBuffsAndRegen } from '../buffs';
+import { processEnemyAttacks } from '../enemyCombat';
 import {
   getBossAbilities,
   initBossAbilityState,
@@ -129,6 +130,9 @@ export async function runBossFight(
   // Use display name if available, otherwise use enemy name
   const bossDisplayName = boss.displayName || boss.enemy.name;
   
+  // Check if twinBoss effect is active
+  const isTwinBoss = context.mapAffixEffects?.twinBoss || false;
+  
   let bossEnemy: AnimatedEnemy = {
     id: 'final_boss',
     enemyId: boss.enemy.id,
@@ -154,14 +158,52 @@ export async function runBossFight(
     gcdEndTick: currentTick
   };
 
+  // Create second boss if twinBoss is active
+  let secondBossEnemy: AnimatedEnemy | null = null;
+  if (isTwinBoss) {
+    const { getRandomBossName } = await import('../../../utils/bossNames');
+    const secondBossName = getRandomBossName(usedBossNames);
+    if (usedBossNames) {
+      usedBossNames.add(secondBossName);
+    }
+    
+    secondBossEnemy = {
+      id: 'final_boss_twin',
+      enemyId: boss.enemy.id,
+      name: secondBossName,
+      icon: boss.enemy.icon,
+      type: boss.enemy.type,
+      behavior: 'boss',
+      health: boss.enemy.baseHealth * scaling.healthMultiplier * 104.16 * healthMod,
+      maxHealth: boss.enemy.baseHealth * scaling.healthMultiplier * 104.16 * healthMod,
+      damage: boss.enemy.baseDamage * scaling.damageMultiplier * 1.0 * damageMod * 4,
+      armor: finalArmor,
+      evasion: finalEvasion,
+      energyShield: finalEnergyShield,
+      maxEnergyShield: finalEnergyShield,
+      fireResistance: boss.enemy.baseFireResistance || 0,
+      coldResistance: boss.enemy.baseColdResistance || 0,
+      lightningResistance: boss.enemy.baseLightningResistance || 0,
+      chaosResistance: boss.enemy.baseChaosResistance || 0,
+      isCasting: false,
+      gcdEndTick: currentTick
+    };
+  }
+
+  const bossEnemies = secondBossEnemy ? [bossEnemy, secondBossEnemy] : [bossEnemy];
+  const bossMessage = isTwinBoss 
+    ? `👑👑 TWIN BOSSES: ${bossDisplayName} & ${secondBossEnemy!.name}!`
+    : `👑 FINAL BOSS: ${bossDisplayName}!`;
+
   updateCombatState(prev => ({
     ...prev,
     phase: 'combat',
-    enemies: [bossEnemy],
-    combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'boss', source: '', target: '', message: `👑 FINAL BOSS: ${bossDisplayName}!` }]
+    enemies: bossEnemies,
+    combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'boss', source: '', target: '', message: bossMessage }]
   }));
 
   let bossHealth = bossEnemy.health;
+  let secondBossHealth = secondBossEnemy?.health || 0;
   let phase = 1;
   
   // Initialize boss ability system
@@ -183,7 +225,15 @@ export async function runBossFight(
   let ticksSinceLastYield = 0;
   const TICKS_PER_YIELD = isSimulation ? 10 : Infinity;
 
-  while (bossHealth > 0 && teamStates.some(m => !m.isDead) && !timedOut) {
+  // Check if both bosses are dead (if twinBoss) or just the main boss
+  const allBossesDead = () => {
+    if (isTwinBoss && secondBossEnemy) {
+      return bossHealth <= 0 && secondBossHealth <= 0;
+    }
+    return bossHealth <= 0;
+  };
+
+  while (!allBossesDead() && teamStates.some(m => !m.isDead) && !timedOut) {
     if (combatRef.current.stop) break;
     
     // Pause check
@@ -700,25 +750,58 @@ export async function runBossFight(
     currentCombatState = context.currentCombatState;
     totalTime = context.totalTime;
     
+    // Update boss enemies from combat state before processing attacks
+    const currentEnemies = currentCombatState.enemies;
+    bossEnemy = currentEnemies.find(e => e.id === 'final_boss') || bossEnemy;
+    if (secondBossEnemy) {
+      secondBossEnemy = currentEnemies.find(e => e.id === 'final_boss_twin') || secondBossEnemy;
+    }
+    
+    const bossEnemyArray = secondBossEnemy ? [bossEnemy, secondBossEnemy] : [bossEnemy];
+    
+    // Process enemy attacks for BOTH bosses (this handles their abilities)
+    if (!stunActive && bossEnemyArray.some(e => e.health > 0)) {
+      const aliveBosses = bossEnemyArray.filter(e => e.health > 0);
+      processEnemyAttacks(context, aliveBosses, teamStates, bossEnemyArray, currentTick);
+      
+      // Update boss enemies after attacks
+      const updatedEnemies = currentCombatState.enemies;
+      bossEnemy = updatedEnemies.find(e => e.id === 'final_boss') || bossEnemy;
+      if (secondBossEnemy) {
+        secondBossEnemy = updatedEnemies.find(e => e.id === 'final_boss_twin') || secondBossEnemy;
+      }
+      bossHealth = bossEnemy.health;
+      if (secondBossEnemy) {
+        secondBossHealth = secondBossEnemy.health;
+      }
+    }
+    
     // Process player actions
     context.teamStates = teamStates;
     context.currentCombatState = currentCombatState;
     context.totalTime = totalTime;
     context.currentTick = currentTick;
     
-    const bossEnemyArray = [bossEnemy];
     const playerActionResult = processPlayerActions(context, teamStates, bossEnemyArray, bossEnemyArray, currentTick);
     
     bossEnemy = bossEnemyArray[0];
     bossHealth = bossEnemy.health;
-    
-    if (playerActionResult.dpsFloatNumbers.length > 0 || playerActionResult.dpsLogEntries.length > 0) {
-      updateCombatState(prev => ({
-        ...prev,
-        floatingNumbers: [...prev.floatingNumbers.slice(-20), ...playerActionResult.dpsFloatNumbers].slice(-20),
-        combatLog: [...prev.combatLog, ...playerActionResult.dpsLogEntries]
-      }));
+    if (secondBossEnemy && bossEnemyArray.length > 1) {
+      secondBossEnemy = bossEnemyArray[1];
+      secondBossHealth = secondBossEnemy.health;
     }
+    
+    // Update combat state with both bosses
+    updateCombatState(prev => ({
+      ...prev,
+      enemies: bossEnemyArray,
+      floatingNumbers: playerActionResult.dpsFloatNumbers.length > 0 
+        ? [...prev.floatingNumbers.slice(-20), ...playerActionResult.dpsFloatNumbers].slice(-20)
+        : prev.floatingNumbers,
+      combatLog: playerActionResult.dpsLogEntries.length > 0
+        ? [...prev.combatLog, ...playerActionResult.dpsLogEntries]
+        : prev.combatLog
+    }));
     
     teamStates = context.teamStates;
     currentCombatState = context.currentCombatState;

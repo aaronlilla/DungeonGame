@@ -134,7 +134,8 @@ export function initializeCombat(
       enemyDamageIncrease: 0,
       enemyHealthIncrease: 0,
       playerDamageReduction: 0,
-      enemySpeed: 0
+      enemySpeed: 0,
+      twinBoss: false
     },
     updateCombatState: null as any, // Will be set below
     checkTimeout,

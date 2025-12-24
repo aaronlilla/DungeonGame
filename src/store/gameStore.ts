@@ -23,6 +23,7 @@ import type { TalentTierLevel } from '../types/talents';
 import { getItemGridSize, type GearSlot } from '../types/items';
 import { canPlaceItem, buildOccupancyGrid, findAvailablePosition } from '../utils/gridUtils';
 import { applyOrbToItem } from '../systems/crafting';
+import { applyOrbToMap as craftMap } from '../systems/mapCrafting';
 import { validateEquipment, getEquipmentSideEffects, checkItemRequirements } from '../utils/equipmentValidation';
 import { calculateTotalCharacterStats } from '../systems/equipmentStats';
 import { getClassById } from '../types/classes';
@@ -61,7 +62,10 @@ export type OrbType =
   | 'alchemy'        // Normal -> Rare
   | 'chaos'          // Reroll rare affixes
   | 'exalted'        // Add affix to rare item
-  | 'annulment';     // Remove random affix
+  | 'annulment'      // Remove random affix
+  | 'scouring'       // Remove all affixes (-> Normal)
+  | 'regal'          // Magic -> Rare (keeps mods, adds 1)
+  | 'divine';        // Reroll values of explicit mods on rare items
 
 export interface CraftingOrb {
   type: OrbType;
@@ -77,7 +81,10 @@ export const CRAFTING_ORBS: CraftingOrb[] = [
   { type: 'alchemy', name: 'Alchemy', description: 'Upgrades a normal item to rare', icon: '🟡' },
   { type: 'chaos', name: 'Chaos', description: 'Rerolls all affixes on a rare item', icon: '🌀' },
   { type: 'exalted', name: 'Exalted', description: 'Adds an affix to a rare item', icon: '⭐' },
-  { type: 'annulment', name: 'Annulment', description: 'Removes a random affix', icon: '❌' }
+  { type: 'annulment', name: 'Annulment', description: 'Removes a random affix', icon: '❌' },
+  { type: 'scouring', name: 'Scouring', description: 'Removes all affixes, reverts to normal', icon: '⚪' },
+  { type: 'regal', name: 'Regal', description: 'Upgrades magic item to rare, adds one affix', icon: '🔶' },
+  { type: 'divine', name: 'Divine', description: 'Rerolls the values of explicit modifiers on rare items', icon: '💎' }
 ];
 
 // Game state
@@ -171,6 +178,7 @@ export interface GameState {
   removeMap: (mapId: string) => void;
   clearAllMaps: () => void;
   moveMapInStash: (mapId: string, x: number, y: number) => boolean;
+  applyOrbToMap: (mapId: string, orbType: OrbType) => { success: boolean; message: string };
   addFragment: (fragment: Fragment) => void;
   removeFragment: (fragmentId: string) => void;
   setMapDeviceMap: (map: MapItem | null) => void;
@@ -401,7 +409,10 @@ export const useGameStore = create<GameState>()(
         alchemy: 0,
         chaos: 0,
         exalted: 0,
-        annulment: 0
+        annulment: 0,
+        scouring: 0,
+        regal: 0,
+        divine: 0
       },
       ownedSkillGems: [],
       ownedSupportGems: [],
@@ -1091,6 +1102,72 @@ export const useGameStore = create<GameState>()(
         // No longer needed - maps don't have fixed positions
         return true;
       },
+
+      applyOrbToMap: (mapId, orbType) => {
+        const state = get();
+        
+        // Check if player has the orb
+        if (state.orbs[orbType] <= 0) {
+          return {
+            success: false,
+            message: `Not enough ${CRAFTING_ORBS.find(o => o.type === orbType)?.name || orbType} orbs`
+          };
+        }
+
+        // Find the map in stash
+        let mapIndex = state.mapStash.findIndex(m => m.id === mapId);
+        let map = mapIndex >= 0 ? state.mapStash[mapIndex] : null;
+        let isInDevice = false;
+
+        // If not in stash, check if it's in the device
+        if (!map) {
+          if (state.mapDeviceMap?.id === mapId) {
+            map = state.mapDeviceMap;
+            isInDevice = true;
+          } else {
+            return {
+              success: false,
+              message: 'Map not found'
+            };
+          }
+        }
+
+        if (!map) {
+          return {
+            success: false,
+            message: 'Map not found'
+          };
+        }
+
+        // Apply the orb
+        const result = craftMap(map, orbType);
+        
+        if (!result.success || !result.map) {
+          // Don't consume orb if crafting failed
+          return {
+            success: false,
+            message: result.message
+          };
+        }
+
+        // Update the map in state
+        set(state => {
+          // Consume the orb only if crafting succeeded
+          state.orbs[orbType] = Math.max(0, state.orbs[orbType] - 1);
+
+          // Update the map
+          if (isInDevice) {
+            state.mapDeviceMap = result.map!;
+          } else if (mapIndex >= 0) {
+            state.mapStash[mapIndex] = result.map!;
+          }
+        });
+
+        return {
+          success: true,
+          message: result.message
+        };
+      },
       
       addFragment: (fragment) => set(state => {
         const baseId = fragment.baseId;
@@ -1383,7 +1460,10 @@ export const useGameStore = create<GameState>()(
           alchemy: 5,
           chaos: 3,
           exalted: 1,
-          annulment: 2
+          annulment: 2,
+          scouring: 10,
+          regal: 5,
+          divine: 2
         };
         
         state.gold = 1000;

@@ -8,6 +8,14 @@
 
 import type { Item } from './items';
 
+// Import fragment images
+import sixthFragmentImg from '../assets/fragments/The Sixth Fragment.png';
+import fragmentThatRemembersImg from '../assets/fragments/The Fragment That Remembers.png';
+import fragmentThatShouldNotPersistImg from '../assets/fragments/The Fragment That Should Not Persist.png';
+import brokenConstantImg from '../assets/fragments/The Broken Constant.png';
+import uncountedShardImg from '../assets/fragments/The Uncounted Shard.png';
+import finalPartialImg from '../assets/fragments/The Final Partial.png';
+
 // ===== MAP TYPES =====
 
 // Map rarity (affects number of affixes)
@@ -47,11 +55,6 @@ export type MapAffixEffectType =
   | 'enemyHealthIncrease'
   | 'playerDamageReduction'
   | 'enemySpeed'
-  | 'extraProjectiles'
-  | 'areaOfEffect'
-  | 'regeneration'
-  | 'reflect'
-  | 'cursed'
   | 'twinBoss';
 
 // A Map item that can be used in the Map Device
@@ -171,7 +174,7 @@ export const MAP_AFFIXES: MapAffix[] = [
     id: 'bountiful',
     name: 'Bountiful',
     description: 'Increased Item Quantity',
-    quantityBonus: 0.20,
+    quantityBonus: 0.10,
     rarityBonus: 0,
     difficultyMultiplier: 1.0,
     effects: []
@@ -180,9 +183,9 @@ export const MAP_AFFIXES: MapAffix[] = [
     id: 'plentiful',
     name: 'Plentiful',
     description: 'More Monster Packs',
-    quantityBonus: 0.10,
-    rarityBonus: 0.05,
-    difficultyMultiplier: 1.05,
+    quantityBonus: 0.05,
+    rarityBonus: 0.025,
+    difficultyMultiplier: 1.025,
     effects: []
   },
   
@@ -191,8 +194,8 @@ export const MAP_AFFIXES: MapAffix[] = [
     id: 'enriched',
     name: 'Enriched',
     description: 'Increased Item Rarity',
-    quantityBonus: 0.05,
-    rarityBonus: 0.25,
+    quantityBonus: 0.025,
+    rarityBonus: 0.125,
     difficultyMultiplier: 1.0,
     effects: []
   },
@@ -201,55 +204,55 @@ export const MAP_AFFIXES: MapAffix[] = [
   {
     id: 'deadly',
     name: 'Deadly',
-    description: 'Monsters deal 25% increased Damage',
-    quantityBonus: 0.15,
-    rarityBonus: 0.10,
-    difficultyMultiplier: 1.25,
-    effects: [{ type: 'enemyDamageIncrease', value: 0.25 }]
+    description: 'Monsters deal 12% increased Damage',
+    quantityBonus: 0.075,
+    rarityBonus: 0.05,
+    difficultyMultiplier: 1.125,
+    effects: [{ type: 'enemyDamageIncrease', value: 0.125 }]
   },
   {
     id: 'massive',
     name: 'Massive',
-    description: 'Monsters have 30% increased Life',
-    quantityBonus: 0.18,
-    rarityBonus: 0.08,
-    difficultyMultiplier: 1.30,
-    effects: [{ type: 'enemyHealthIncrease', value: 0.30 }]
+    description: 'Monsters have 15% increased Life',
+    quantityBonus: 0.09,
+    rarityBonus: 0.04,
+    difficultyMultiplier: 1.15,
+    effects: [{ type: 'enemyHealthIncrease', value: 0.15 }]
   },
   {
     id: 'swift',
     name: 'Swift',
-    description: 'Monsters have 20% increased Movement and Attack Speed',
-    quantityBonus: 0.12,
-    rarityBonus: 0.06,
-    difficultyMultiplier: 1.20,
-    effects: [{ type: 'enemySpeed', value: 0.20 }]
+    description: 'Monsters have 10% increased Movement and Attack Speed',
+    quantityBonus: 0.06,
+    rarityBonus: 0.03,
+    difficultyMultiplier: 1.10,
+    effects: [{ type: 'enemySpeed', value: 0.10 }]
   },
   {
     id: 'empowered',
     name: 'Empowered',
-    description: 'Monsters deal 40% increased Damage',
-    quantityBonus: 0.25,
-    rarityBonus: 0.15,
-    difficultyMultiplier: 1.40,
-    effects: [{ type: 'enemyDamageIncrease', value: 0.40 }]
+    description: 'Monsters deal 20% increased Damage',
+    quantityBonus: 0.125,
+    rarityBonus: 0.075,
+    difficultyMultiplier: 1.20,
+    effects: [{ type: 'enemyDamageIncrease', value: 0.20 }]
   },
   {
     id: 'armored',
     name: 'Armored',
-    description: 'Monsters have 50% increased Life',
-    quantityBonus: 0.28,
-    rarityBonus: 0.12,
-    difficultyMultiplier: 1.50,
-    effects: [{ type: 'enemyHealthIncrease', value: 0.50 }]
+    description: 'Monsters have 25% increased Life',
+    quantityBonus: 0.14,
+    rarityBonus: 0.06,
+    difficultyMultiplier: 1.25,
+    effects: [{ type: 'enemyHealthIncrease', value: 0.25 }]
   },
   {
     id: 'twinned',
     name: 'Twinned',
     description: 'Area contains two Unique Bosses',
-    quantityBonus: 0.35,
-    rarityBonus: 0.20,
-    difficultyMultiplier: 2.0,
+    quantityBonus: 1.0, // 100% increased quantity
+    rarityBonus: 1.0, // 100% increased rarity
+    difficultyMultiplier: 1.5,
     effects: [{ type: 'twinBoss', value: 1 }]
   },
   
@@ -257,20 +260,20 @@ export const MAP_AFFIXES: MapAffix[] = [
   {
     id: 'smothering',
     name: 'Smothering',
-    description: 'Players have 15% reduced Damage',
-    quantityBonus: 0.12,
-    rarityBonus: 0.08,
-    difficultyMultiplier: 1.15,
-    effects: [{ type: 'playerDamageReduction', value: 0.15 }]
+    description: 'Players have 7% reduced Damage',
+    quantityBonus: 0.06,
+    rarityBonus: 0.04,
+    difficultyMultiplier: 1.075,
+    effects: [{ type: 'playerDamageReduction', value: 0.075 }]
   },
   {
     id: 'hexed',
     name: 'Hexed',
-    description: 'Players are Cursed with Vulnerability',
-    quantityBonus: 0.18,
-    rarityBonus: 0.10,
-    difficultyMultiplier: 1.25,
-    effects: [{ type: 'cursed', value: 1 }]
+    description: 'Players take 10% increased Damage',
+    quantityBonus: 0.09,
+    rarityBonus: 0.05,
+    difficultyMultiplier: 1.125,
+    effects: [{ type: 'playerDamageReduction', value: -0.10 }] // Negative = take more damage
   }
 ];
 
@@ -326,7 +329,7 @@ export const FRAGMENT_BASES = [
     id: 'the_sixth_fragment',
     name: 'The Sixth Fragment',
     icon: '🔷',
-    image: '/src/assets/fragments/The Sixth Fragment.png',
+    image: sixthFragmentImg,
     description: 'A fragment of something greater.',
     quantityBonus: 0.15,
     rarityBonus: 0.15,
@@ -336,7 +339,7 @@ export const FRAGMENT_BASES = [
     id: 'the_fragment_that_remembers',
     name: 'The Fragment That Remembers',
     icon: '💎',
-    image: '/src/assets/fragments/The Fragment That Remembers.png',
+    image: fragmentThatRemembersImg,
     description: 'Echoes of forgotten power.',
     quantityBonus: 0.15,
     rarityBonus: 0.15,
@@ -346,7 +349,7 @@ export const FRAGMENT_BASES = [
     id: 'the_fragment_that_should_not_persist',
     name: 'The Fragment That Should Not Persist',
     icon: '⭐',
-    image: '/src/assets/fragments/The Fragment That Should Not Persist.png',
+    image: fragmentThatShouldNotPersistImg,
     description: 'Defying the natural order.',
     quantityBonus: 0.15,
     rarityBonus: 0.15,
@@ -356,7 +359,7 @@ export const FRAGMENT_BASES = [
     id: 'the_broken_constant',
     name: 'The Broken Constant',
     icon: '💔',
-    image: '/src/assets/fragments/The Broken Constant.png',
+    image: brokenConstantImg,
     description: 'Once immutable, now fractured.',
     quantityBonus: 0.20,
     rarityBonus: 0.20,
@@ -366,7 +369,7 @@ export const FRAGMENT_BASES = [
     id: 'the_uncounted_shard',
     name: 'The Uncounted Shard',
     icon: '🔸',
-    image: '/src/assets/fragments/The Uncounted Shard.png',
+    image: uncountedShardImg,
     description: 'Beyond enumeration.',
     quantityBonus: 0.20,
     rarityBonus: 0.20,
@@ -376,7 +379,7 @@ export const FRAGMENT_BASES = [
     id: 'the_final_partial',
     name: 'The Final Partial',
     icon: '🟣',
-    image: '/src/assets/fragments/The Final Partial.png',
+    image: finalPartialImg,
     description: 'The last piece of infinity.',
     quantityBonus: 0.25,
     rarityBonus: 0.25,
@@ -505,6 +508,41 @@ export function getLootFilterSound(item: Item): LootFilterSound {
 }
 
 /**
+ * Calculate aggregate bonuses from map affixes
+ */
+export function calculateMapBonuses(affixes: MapAffix[]): {
+  quantityBonus: number;
+  rarityBonus: number;
+  packSize: number;
+} {
+  let quantityBonus = 0;
+  let rarityBonus = 0;
+  let packSize = 0;
+  
+  for (const affix of affixes) {
+    quantityBonus += affix.quantityBonus;
+    rarityBonus += affix.rarityBonus;
+    // Pack size could be calculated from specific affixes in the future
+    // For now, we can use quantityBonus as a proxy
+  }
+  
+  return { quantityBonus, rarityBonus, packSize };
+}
+
+/**
+ * Update map bonuses based on current affixes
+ */
+export function updateMapBonuses(map: MapItem): MapItem {
+  const bonuses = calculateMapBonuses(map.affixes);
+  return {
+    ...map,
+    quantityBonus: bonuses.quantityBonus,
+    rarityBonus: bonuses.rarityBonus,
+    packSize: bonuses.packSize,
+  };
+}
+
+/**
  * Roll map affixes based on rarity
  */
 export function rollMapAffixes(rarity: MapRarity, _itemLevel: number): MapAffix[] {
@@ -519,12 +557,28 @@ export function rollMapAffixes(rarity: MapRarity, _itemLevel: number): MapAffix[
     numAffixes = 4 + Math.floor(Math.random() * 4); // 4-7 affixes
   }
   
-  const availableAffixes = [...MAP_AFFIXES];
+  // Twinned is super rare - only appears on rare/corrupted maps with 5% chance
+  const canHaveTwinned = (rarity === 'rare' || rarity === 'corrupted') && Math.random() < 0.05;
+  const twinnedAffix = MAP_AFFIXES.find(a => a.id === 'twinned');
+  
+  // Filter out twinned from regular pool if we're not rolling it
+  const availableAffixes = canHaveTwinned 
+    ? [...MAP_AFFIXES] 
+    : MAP_AFFIXES.filter(a => a.id !== 'twinned');
+  
+  // If we can have twinned, add it first with a 30% chance (so overall ~1.5% chance on rare/corrupted)
+  if (canHaveTwinned && twinnedAffix && Math.random() < 0.3) {
+    affixes.push(twinnedAffix);
+    numAffixes--; // One less affix to roll
+  }
   
   for (let i = 0; i < numAffixes && availableAffixes.length > 0; i++) {
-    const idx = Math.floor(Math.random() * availableAffixes.length);
-    affixes.push(availableAffixes[idx]);
-    availableAffixes.splice(idx, 1); // Remove to prevent duplicates
+    // Don't add twinned if already added
+    const pool = availableAffixes.filter(a => !affixes.some(existing => existing.id === a.id));
+    if (pool.length === 0) break;
+    
+    const idx = Math.floor(Math.random() * pool.length);
+    affixes.push(pool[idx]);
   }
   
   return affixes;

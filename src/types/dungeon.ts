@@ -475,19 +475,19 @@ export const SAMPLE_DUNGEON: Dungeon = {
   description: 'An ancient burial ground corrupted by dark necromancy.',
   requiredForces: 225, // 75 * 3 gates
   timeLimitSeconds: 720, // 12 minutes
-  mapWidth: 3800,
+  mapWidth: 4200, // Extended to accommodate twin bosses side by side
   mapHeight: 800,
   availableEnemies: SAMPLE_ENEMIES,
   gates: [
     { id: 1, name: 'The Graveyard', requiredForces: 75, xStart: 0, xEnd: 1200, bossPackId: 'g1_boss' },
     { id: 2, name: 'The Catacombs', requiredForces: 75, xStart: 1200, xEnd: 2400, bossPackId: 'g2_boss' },
-    { id: 3, name: 'Throne Chamber', requiredForces: 75, xStart: 2400, xEnd: 3800, bossPackId: '' } // No gate boss - Final Boss serves this role
+    { id: 3, name: 'Throne Chamber', requiredForces: 75, xStart: 2400, xEnd: 4200, bossPackId: '' } // No gate boss - Final Boss serves this role
   ],
   enemyPacks: DUNGEON_PACKS,
   bosses: [{
     id: 'final_boss',
     enemy: SAMPLE_ENEMIES.find(e => e.id === 'necromancer_lord')!,
-    position: { x: 3600, y: 400 },
+    position: { x: 3750, y: 400 }, // Moved further right, away from other monsters
     isFinalBoss: true,
     gate: 3,
     phases: [

@@ -39,8 +39,16 @@ function SkillPickerItem({ skill, onSelect }: { skill: SkillGem; onSelect: () =>
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button === 0) { // Left click only
       e.preventDefault();
+      e.stopPropagation(); // Prevent modal from closing
       onSelect();
     }
+  }, [onSelect]);
+  
+  // Also handle onClick as backup
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation(); // Prevent modal from closing
+    onSelect();
   }, [onSelect]);
 
   return (
@@ -56,6 +64,7 @@ function SkillPickerItem({ skill, onSelect }: { skill: SkillGem; onSelect: () =>
           : 'inset 0 1px 0 rgba(255,255,255,0.02)',
       }}
       onMouseDown={handleMouseDown}
+      onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -256,6 +265,7 @@ export function SkillPickerModal({ characterName, availableSkills, onSelect, onC
     >
       <div 
         className="skill-picker-modal"
+        onMouseDown={e => e.stopPropagation()}
         onClick={e => e.stopPropagation()}
       >
         {/* Corner ornaments */}

@@ -136,34 +136,6 @@ export function MapTooltip({ map, position }: MapTooltipProps) {
         {baseName}
       </div>
 
-      {/* Affixes */}
-      {map.affixes.length > 0 && (
-        <>
-          <Separator />
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '4px',
-            marginBottom: '8px',
-          }}>
-            {map.affixes.map((affix, i) => (
-              <div
-                key={affix.id || i}
-                style={{
-                  fontSize: '14px',
-                  color: '#82c982',
-                  textAlign: 'center',
-                  lineHeight: 1.4,
-                  fontFamily: "'Cormorant', 'Crimson Text', Georgia, serif",
-                }}
-              >
-                {affix.description || affix.name}
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-
       {/* Bonuses */}
       {(map.quantityBonus > 0 || map.rarityBonus > 0 || map.packSize > 0) && (
         <>
@@ -201,6 +173,34 @@ export function MapTooltip({ map, position }: MapTooltipProps) {
                 +{map.packSize}% Monster Pack Size
               </div>
             )}
+          </div>
+        </>
+      )}
+
+      {/* Affixes */}
+      {map.affixes.length > 0 && (
+        <>
+          <Separator />
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '4px',
+            marginBottom: '8px',
+          }}>
+            {map.affixes.map((affix, i) => (
+              <div
+                key={affix.id || i}
+                style={{
+                  fontSize: '14px',
+                  color: '#82c982',
+                  textAlign: 'center',
+                  lineHeight: 1.4,
+                  fontFamily: "'Cormorant', 'Crimson Text', Georgia, serif",
+                }}
+              >
+                {affix.description || affix.name}
+              </div>
+            ))}
           </div>
         </>
       )}

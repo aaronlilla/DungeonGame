@@ -320,7 +320,7 @@ export function BossSidebar({ boss, keyLevel, onClose }: BossSidebarProps) {
               <div style={{ fontSize: '0.9rem', color: '#aaa' }}>
                 {killBuff.effects.map((effect, idx) => (
                   <div key={idx} style={{ marginTop: '0.25rem' }}>
-                    • {effect.type}: +{effect.value}%{effect.condition ? ` (${effect.condition})` : ''}
+                    • {effect.type}: +{effect.value}%
                   </div>
                 ))}
               </div>

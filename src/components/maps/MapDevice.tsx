@@ -187,6 +187,40 @@ export function MapDevice({
         </h2>
       </div>
 
+      {/* Map Title - Displayed above the map slot */}
+      <AnimatePresence mode="wait">
+        {mapSlot && (
+          <motion.div
+            key={mapSlot.id}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              textAlign: 'center',
+              marginBottom: '0.75rem',
+              position: 'relative',
+              zIndex: 2,
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '1rem',
+                margin: 0,
+                fontFamily: "'Cinzel', Georgia, serif",
+                fontWeight: 600,
+                color: '#c9a227',
+                textTransform: 'none',
+                letterSpacing: '0.05em',
+                textShadow: '0 0 10px rgba(201, 162, 39, 0.4), 0 2px 4px rgba(0,0,0,0.5)',
+              }}
+            >
+              {mapSlot.name}
+            </h3>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Map Slot - Large square focal point */}
       <div
         onMouseUp={() => {

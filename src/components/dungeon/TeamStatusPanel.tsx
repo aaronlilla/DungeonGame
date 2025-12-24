@@ -42,7 +42,15 @@ export function TeamStatusPanel({
 }: TeamStatusPanelProps) {
   if (!isRunning) return null;
 
-  const memberCount = combatState.teamStates.length;
+  // Sort team states by role: tank, healer, then dps
+  const roleOrder: Record<string, number> = { tank: 0, healer: 1, dps: 2 };
+  const sortedTeamStates = [...combatState.teamStates].sort((a, b) => {
+    const aOrder = roleOrder[a.role] ?? 99;
+    const bOrder = roleOrder[b.role] ?? 99;
+    return aOrder - bOrder;
+  });
+
+  const memberCount = sortedTeamStates.length;
 
   return (
     <motion.div 
@@ -65,7 +73,7 @@ export function TeamStatusPanel({
         flex: 1,
         minHeight: 0
       }}>
-        {combatState.teamStates.map((member, index) => {
+        {sortedTeamStates.map((member, index) => {
           const character = team.find(c => c.id === member.id);
           const classId = character?.classId;
           const classColors = classId ? getClassColor(classId) : null;
@@ -191,7 +199,7 @@ export function TeamStatusPanel({
                   backgroundImage: `url(${background})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center top',
-                  opacity: 0.12,
+                  opacity: 0.25,
                   filter: 'saturate(1.1)',
                   pointerEvents: 'none',
                 }} />

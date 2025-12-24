@@ -1,14 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Character } from '../../types/character';
-import { getClassById, getClassColor } from '../../types/classes';
-
-// Map classId to portrait image
-function getPortraitPath(classId?: string): string | null {
-  if (!classId) return null;
-  const filename = classId.replace(/_/g, '');
-  return `/src/assets/backgrounds/${filename}.png`;
-}
+import { getClassById, getClassColor, getClassPortrait } from '../../types/classes';
 
 interface CharacterSelectorProps {
   team: Character[];
@@ -254,7 +247,7 @@ function CharacterCard({ character, isSelected, onSelect, info }: CharacterCardP
   const classColors = character.classId ? getClassColor(character.classId) : null;
   const primaryColor = classColors?.primary || '#c9a227';
   const secondaryColor = classColors?.secondary || '#8b7019';
-  const portraitPath = getPortraitPath(character.classId);
+  const portraitPath = character.classId ? getClassPortrait(character.classId) : null;
   
   // Generate ember particles - more embers for better visibility
   const emberCount = 10;

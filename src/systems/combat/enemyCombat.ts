@@ -25,6 +25,17 @@ import {
 import { createVerboseDamageLog } from './verboseLogging';
 
 /**
+ * Apply enemySpeed modifier to cooldown duration
+ * enemySpeed of 0.10 means 10% faster = cooldowns are 10% shorter
+ */
+function applyEnemySpeedToCooldown(baseCooldownSeconds: number, enemySpeed: number): number {
+  if (enemySpeed <= 0) return baseCooldownSeconds;
+  // Faster enemies = shorter cooldowns
+  // 10% faster = cooldown is 90.9% of original (1 / 1.10)
+  return baseCooldownSeconds / (1 + enemySpeed);
+}
+
+/**
  * Track damage taken by a team member for statistics
  */
 function trackDamageTaken(
@@ -617,7 +628,9 @@ function processMeleeAttack(
       } else {
         updateCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'damage', source: enemy.name, target: 'ALL', value: 0, message: `⚔️ ${enemy.name} cleaves everyone!` }] }));
       }
-      enemy.aoeCooldownEndTick = currentTick + secondsToTicks(3); // 3s cooldown
+      const enemySpeed = context.mapAffixEffects?.enemySpeed || 0;
+      const aoeCooldown = applyEnemySpeedToCooldown(3, enemySpeed);
+      enemy.aoeCooldownEndTick = currentTick + secondsToTicks(aoeCooldown);
     }
   }
 }
@@ -647,7 +660,9 @@ function processTankbusterAttack(
   if (currentTick >= enemy.tankbusterCooldownEndTick && tank && !tank.isDead && !reservedTargets.has(tank.id)) {
     const castTimeTicks = secondsToTicks(castTimeSeconds);
     startEnemyCast(enemy, castTimeTicks, currentTick, tank.id, abilityName);
-    enemy.tankbusterCooldownEndTick = currentTick + secondsToTicks(abilityCooldownSeconds);
+    const enemySpeed = context.mapAffixEffects?.enemySpeed || 0;
+    const adjustedCooldown = applyEnemySpeedToCooldown(abilityCooldownSeconds, enemySpeed);
+    enemy.tankbusterCooldownEndTick = currentTick + secondsToTicks(adjustedCooldown);
     reservedTargets.add(tank.id);
     updateCombatState(prev => ({ ...prev, combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'ability', source: enemy.name, target: tank.name, message: `💥 ${enemy.name} begins casting ${abilityName} on ${tank.name}... (UNINTERRUPTABLE!)` }] }));
   } else {
@@ -784,7 +799,10 @@ function processAoeAttack(
   if (!canEnemyAct(enemy, currentTick)) return;
   
   const isGateBoss = enemy.type === 'miniboss' || enemy.type === 'boss';
-  const aoeCooldownTicks = secondsToTicks(isGateBoss ? 5 : 3);
+  const enemySpeed = context.mapAffixEffects?.enemySpeed || 0;
+  const baseAoeCooldown = isGateBoss ? 5 : 3;
+  const adjustedAoeCooldown = applyEnemySpeedToCooldown(baseAoeCooldown, enemySpeed);
+  const aoeCooldownTicks = secondsToTicks(adjustedAoeCooldown);
   
   if (enemy.aoeCooldownEndTick === undefined) enemy.aoeCooldownEndTick = 0;
   
@@ -1232,7 +1250,9 @@ function processBossAttack(
     const castTimeTicks = secondsToTicks(castTimeSeconds);
     
     startEnemyCast(enemy, castTimeTicks, currentTick, tank.id, abilityName);
-    enemy.tankbusterCooldownEndTick = currentTick + secondsToTicks(5); // 5 second cooldown
+    const enemySpeed = context.mapAffixEffects?.enemySpeed || 0;
+    const adjustedCooldown = applyEnemySpeedToCooldown(5, enemySpeed);
+    enemy.tankbusterCooldownEndTick = currentTick + secondsToTicks(adjustedCooldown);
     reservedTargets.add(tank.id);
     
     updateCombatState(prev => ({ 
@@ -1336,7 +1356,9 @@ function processBossAttack(
       }));
     }
     
-    enemy.aoeCooldownEndTick = currentTick + secondsToTicks(3); // 3 second cooldown - constant pressure!
+    const enemySpeed = context.mapAffixEffects?.enemySpeed || 0;
+    const adjustedCooldown = applyEnemySpeedToCooldown(3, enemySpeed);
+    enemy.aoeCooldownEndTick = currentTick + secondsToTicks(adjustedCooldown);
     return;
   }
   

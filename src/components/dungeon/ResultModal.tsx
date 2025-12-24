@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, memo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getItemBaseById } from '../../types/items';
 import { CRAFTING_ORBS, useGameStore } from '../../store/gameStore';
 import { SKILL_GEMS, SUPPORT_GEMS } from '../../types/skills';
@@ -8,6 +8,7 @@ import type { MapLootDrop } from '../../types/combat';
 import { getRoleIcon as getRoleIconFromClasses, getClassById } from '../../types/classes';
 import type { CharacterRole } from '../../types/character';
 import { ItemTooltip } from '../shared/ItemTooltip';
+import { EmberBackground } from '../shared/EmberBackground';
 import { GiTrophy, GiSkullCrossedBones, GiCrossedSwords, GiDeathSkull, GiUpgrade, GiScrollUnfurled } from 'react-icons/gi';
 
 interface ResultModalProps {
@@ -79,63 +80,6 @@ const ORB_NAMES: Record<string, string> = {
   fusing: 'Orb of Fusing',
   vaal: 'Vaal Orb',
 };
-
-// Ember particle component - optimized with fewer particles and GPU acceleration
-const EmberParticles = memo(function EmberParticles({ count = 15, color = '#ff6b35' }: { count?: number; color?: string }) {
-  const particles = useMemo(() => {
-    return Array.from({ length: count }, (_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      delay: Math.random() * 5,
-      duration: 4 + Math.random() * 3,
-      size: 2 + Math.random() * 3,
-      drift: (Math.random() - 0.5) * 80,
-    }));
-  }, [count]);
-
-  return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
-      {particles.map(p => (
-        <div
-          key={p.id}
-          style={{
-            position: 'absolute',
-            left: `${p.left}%`,
-            bottom: '-10px',
-            width: `${p.size}px`,
-            height: `${p.size}px`,
-            background: color,
-            borderRadius: '50%',
-            boxShadow: `0 0 ${p.size}px ${color}`,
-            opacity: 0,
-            animation: `ember-rise ${p.duration}s ease-out infinite`,
-            animationDelay: `${p.delay}s`,
-            willChange: 'transform, opacity',
-            '--drift': `${p.drift}px`,
-          } as React.CSSProperties}
-        />
-      ))}
-      <style>{`
-        @keyframes ember-rise {
-          0% { 
-            opacity: 0; 
-            transform: translateY(0) translateX(0) scale(1); 
-          }
-          10% { 
-            opacity: 0.7; 
-          }
-          90% { 
-            opacity: 0.2; 
-          }
-          100% { 
-            opacity: 0; 
-            transform: translateY(-350px) translateX(var(--drift)) scale(0.4); 
-          }
-        }
-      `}</style>
-    </div>
-  );
-});
 
 // Uncollected Loot Tile Component
 function LootTile({ 
@@ -666,16 +610,14 @@ export function ResultModal({ runResult, uncollectedLoot, onCollectLoot, onClose
   const totalHealing = runResult.playerStats?.reduce((sum, p) => sum + p.totalHealing, 0) || 0;
   
   const accentColor = isSuccess ? '#22c55e' : '#ef4444';
-  const emberColor = isSuccess ? '#22c55e' : '#ff6b35';
-  
+
   return (
-    <div 
+    <div
       onClick={onClose}
       style={{
         position: 'fixed',
         inset: 0,
-        background: 'rgba(0,0,0,0.85)',
-        backdropFilter: 'blur(8px)',
+        background: 'rgba(0,0,0,0.9)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -684,93 +626,143 @@ export function ResultModal({ runResult, uncollectedLoot, onCollectLoot, onClose
         transition: 'opacity 0.3s ease-out'
       }}
     >
-      <div 
+      {/* Full-screen ember background */}
+      <EmberBackground
+        intensity="medium"
+        colorScheme={isSuccess ? 'green' : 'fire'}
+      />
+
+      {/* Vignette overlay */}
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.6) 100%)',
+          pointerEvents: 'none',
+          zIndex: 1
+        }}
+      />
+
+      <div
         onClick={e => e.stopPropagation()}
-        style={{ 
+        style={{
           maxWidth: '900px',
           width: '95%',
           maxHeight: '90vh',
           display: 'flex',
           flexDirection: 'column',
           position: 'relative',
-          borderRadius: '12px',
+          zIndex: 2,
+          borderRadius: '4px',
           overflow: 'hidden',
-          background: `
-            linear-gradient(180deg, rgba(20,20,25,0.98) 0%, rgba(15,15,20,0.99) 100%),
-            url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E")
-          `,
-          border: `1px solid ${isSuccess ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+          background: 'linear-gradient(180deg, rgba(15,12,10,0.97) 0%, rgba(10,8,6,0.98) 100%)',
+          border: `1px solid ${isSuccess ? 'rgba(34, 197, 94, 0.4)' : 'rgba(180, 100, 50, 0.5)'}`,
           boxShadow: `
-            0 0 100px ${isSuccess ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)'},
-            0 25px 50px -12px rgba(0, 0, 0, 0.5),
-            inset 0 1px 0 rgba(255,255,255,0.05)
+            0 0 80px ${isSuccess ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255, 100, 30, 0.15)'},
+            0 25px 50px -12px rgba(0, 0, 0, 0.8),
+            inset 0 1px 0 rgba(255,255,255,0.03),
+            inset 0 0 60px rgba(0,0,0,0.5)
           `,
           transform: isVisible ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(20px)',
           transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
         }}
       >
-        {/* Ember Particles */}
-        <EmberParticles count={isSuccess ? 25 : 40} color={emberColor} />
-        
+        {/* Noise texture overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: 0.03,
+            background: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")',
+            pointerEvents: 'none',
+            zIndex: 0
+          }}
+        />
+
+        {/* Top accent line */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '2px',
+            background: isSuccess
+              ? 'linear-gradient(90deg, transparent 5%, rgba(34, 197, 94, 0.6) 30%, rgba(34, 197, 94, 0.8) 50%, rgba(34, 197, 94, 0.6) 70%, transparent 95%)'
+              : 'linear-gradient(90deg, transparent 5%, rgba(255, 100, 30, 0.6) 30%, rgba(255, 140, 50, 0.8) 50%, rgba(255, 100, 30, 0.6) 70%, transparent 95%)',
+            boxShadow: isSuccess
+              ? '0 0 15px rgba(34, 197, 94, 0.5), 0 0 30px rgba(34, 197, 94, 0.2)'
+              : '0 0 15px rgba(255, 100, 30, 0.5), 0 0 30px rgba(255, 80, 20, 0.2)',
+            zIndex: 10
+          }}
+        />
+
         {/* Header */}
-        <div style={{ 
+        <div style={{
           flexShrink: 0,
-          padding: '1.5rem 2rem',
-          background: `linear-gradient(135deg, ${isSuccess ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)'} 0%, transparent 60%)`,
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          padding: '1.75rem 2rem',
+          background: isSuccess
+            ? 'linear-gradient(180deg, rgba(34, 197, 94, 0.08) 0%, transparent 100%)'
+            : 'linear-gradient(180deg, rgba(180, 80, 30, 0.1) 0%, transparent 100%)',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           position: 'relative',
           zIndex: 1
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div style={{ 
-              fontSize: '3rem',
-              filter: `drop-shadow(0 0 20px ${accentColor})`,
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+            <div style={{
+              fontSize: '3.5rem',
+              filter: `drop-shadow(0 0 25px ${accentColor})`,
               animation: 'pulse-glow 2s ease-in-out infinite'
             }}>
               {isSuccess ? <GiTrophy style={{ color: '#fbbf24' }} /> : <GiSkullCrossedBones style={{ color: '#ef4444' }} />}
             </div>
             <div>
-              <h2 style={{ 
+              <h2 style={{
                 margin: 0,
-                fontSize: '1.5rem',
+                fontSize: '1.6rem',
                 fontWeight: 700,
-                color: accentColor,
-                letterSpacing: '-0.02em',
-                textShadow: `0 0 30px ${accentColor}40`
+                color: isSuccess ? '#4ade80' : '#f87171',
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                textShadow: `0 0 30px ${accentColor}50`,
+                fontFamily: '"Fontin", "Palatino Linotype", serif'
               }}>
-                {isSuccess ? 'DUNGEON COMPLETE' : 'DUNGEON FAILED'}
+                {isSuccess ? 'Dungeon Complete' : 'Dungeon Failed'}
               </h2>
-              <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.25rem' }}>
-                {runResult.dungeonName || 'Unknown'} 
-                <span style={{ color: '#fbbf24', fontWeight: 600, marginLeft: '0.5rem' }}>+{runResult.keyLevel}</span>
+              <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.375rem', letterSpacing: '0.02em' }}>
+                {runResult.dungeonName || 'Unknown'}
+                <span style={{ color: '#d4a84b', fontWeight: 600, marginLeft: '0.5rem' }}>+{runResult.keyLevel}</span>
                 {runResult.mapTier && (
-                  <span style={{ color: 'rgba(255,255,255,0.4)', marginLeft: '0.75rem' }}>Tier {runResult.mapTier}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.35)', marginLeft: '0.75rem' }}>Tier {runResult.mapTier}</span>
                 )}
               </div>
             </div>
           </div>
-          <button 
+          <button
             onClick={onClose}
             style={{
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: 'rgba(255,255,255,0.6)',
-              fontSize: '1.25rem',
+              background: 'rgba(0,0,0,0.3)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              color: 'rgba(255,255,255,0.5)',
+              fontSize: '1.5rem',
               cursor: 'pointer',
-              padding: '0.5rem 0.75rem',
-              borderRadius: '6px',
-              transition: 'all 0.15s'
+              padding: '0.375rem 0.75rem',
+              borderRadius: '4px',
+              transition: 'all 0.15s',
+              lineHeight: 1
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
               e.currentTarget.style.color = 'white';
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
-              e.currentTarget.style.color = 'rgba(255,255,255,0.6)';
+              e.currentTarget.style.background = 'rgba(0,0,0,0.3)';
+              e.currentTarget.style.color = 'rgba(255,255,255,0.5)';
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
             }}
           >
             ×
@@ -778,14 +770,14 @@ export function ResultModal({ runResult, uncollectedLoot, onCollectLoot, onClose
         </div>
 
         {/* Stats Bar */}
-        <div style={{ 
+        <div style={{
           flexShrink: 0,
           display: 'grid',
           gridTemplateColumns: 'repeat(5, 1fr)',
           gap: '0.75rem',
           padding: '1rem 2rem',
-          background: 'rgba(0,0,0,0.3)',
-          borderBottom: '1px solid rgba(255,255,255,0.05)',
+          background: 'rgba(0,0,0,0.4)',
+          borderBottom: '1px solid rgba(255,255,255,0.04)',
           position: 'relative',
           zIndex: 1
         }}>
@@ -801,14 +793,14 @@ export function ResultModal({ runResult, uncollectedLoot, onCollectLoot, onClose
         </div>
 
         {/* Tabs */}
-        <div style={{ 
+        <div style={{
           flexShrink: 0,
-          display: 'flex', 
+          display: 'flex',
           alignItems: 'center',
-          gap: '0.25rem', 
+          gap: '0.25rem',
           padding: '0.75rem 2rem',
-          borderBottom: '1px solid rgba(255,255,255,0.05)',
-          background: 'rgba(0,0,0,0.2)',
+          borderBottom: '1px solid rgba(255,255,255,0.04)',
+          background: 'rgba(0,0,0,0.3)',
           position: 'relative',
           zIndex: 1
         }}>
@@ -822,11 +814,13 @@ export function ResultModal({ runResult, uncollectedLoot, onCollectLoot, onClose
               onClick={() => setActiveTab(tab.id)}
               style={{
                 padding: '0.5rem 1rem',
-                background: activeTab === tab.id ? 'rgba(255,255,255,0.1)' : 'transparent',
-                border: 'none',
-                borderBottom: activeTab === tab.id ? `2px solid ${accentColor}` : '2px solid transparent',
+                background: activeTab === tab.id ? 'rgba(255,255,255,0.08)' : 'transparent',
+                border: '1px solid transparent',
+                borderBottom: activeTab === tab.id
+                  ? `2px solid ${isSuccess ? '#4ade80' : '#d4a84b'}`
+                  : '2px solid transparent',
                 borderRadius: '4px 4px 0 0',
-                color: activeTab === tab.id ? 'white' : 'rgba(255,255,255,0.5)',
+                color: activeTab === tab.id ? '#c8b88a' : 'rgba(255,255,255,0.4)',
                 fontSize: '0.85rem',
                 fontWeight: activeTab === tab.id ? 600 : 400,
                 cursor: 'pointer',
@@ -836,16 +830,16 @@ export function ResultModal({ runResult, uncollectedLoot, onCollectLoot, onClose
                 gap: '0.375rem'
               }}
             >
-              <span style={{ fontSize: '1rem' }}>{tab.icon}</span>
+              <span style={{ fontSize: '1rem', opacity: activeTab === tab.id ? 1 : 0.6 }}>{tab.icon}</span>
               {tab.label}
             </button>
           ))}
-          
+
           <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.375rem' }}>
-            <button onClick={copyLogToClipboard} style={{ padding: '0.375rem 0.625rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: 'rgba(255,255,255,0.6)', fontSize: '0.7rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+            <button onClick={copyLogToClipboard} style={{ padding: '0.375rem 0.625rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '4px', color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', transition: 'all 0.15s' }}>
               📋 Copy
             </button>
-            <button onClick={exportLog} style={{ padding: '0.375rem 0.625rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: 'rgba(255,255,255,0.6)', fontSize: '0.7rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+            <button onClick={exportLog} style={{ padding: '0.375rem 0.625rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '4px', color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', transition: 'all 0.15s' }}>
               💾 Export
             </button>
           </div>
@@ -1022,49 +1016,75 @@ export function ResultModal({ runResult, uncollectedLoot, onCollectLoot, onClose
         </div>
 
         {/* Footer */}
-        <div style={{ 
+        <div style={{
           flexShrink: 0,
-          padding: '1rem 2rem', 
-          background: 'rgba(0,0,0,0.4)', 
-          borderTop: '1px solid rgba(255,255,255,0.05)',
+          padding: '1.25rem 2rem',
+          background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.5) 100%)',
+          borderTop: '1px solid rgba(255,255,255,0.04)',
           display: 'flex',
           justifyContent: 'center',
           position: 'relative',
           zIndex: 1
         }}>
-          <button 
+          {/* Bottom accent line */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '2px',
+              background: isSuccess
+                ? 'linear-gradient(90deg, transparent 5%, rgba(34, 197, 94, 0.4) 30%, rgba(34, 197, 94, 0.6) 50%, rgba(34, 197, 94, 0.4) 70%, transparent 95%)'
+                : 'linear-gradient(90deg, transparent 5%, rgba(255, 100, 30, 0.4) 30%, rgba(255, 140, 50, 0.6) 50%, rgba(255, 100, 30, 0.4) 70%, transparent 95%)',
+              boxShadow: isSuccess
+                ? '0 0 10px rgba(34, 197, 94, 0.3)'
+                : '0 0 10px rgba(255, 100, 30, 0.3)'
+            }}
+          />
+          <button
             onClick={onClose}
-            style={{ 
+            style={{
               padding: '0.875rem 3rem',
               fontSize: '1rem',
               fontWeight: 600,
-              background: isSuccess 
-                ? 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)' 
-                : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-              boxShadow: isSuccess 
-                ? '0 0 30px rgba(34, 197, 94, 0.4)' 
-                : '0 0 30px rgba(59, 130, 246, 0.4)',
-              border: 'none',
-              borderRadius: '8px',
-              color: 'white',
+              background: isSuccess
+                ? 'linear-gradient(180deg, rgba(34, 197, 94, 0.2) 0%, rgba(22, 163, 74, 0.3) 100%)'
+                : 'linear-gradient(180deg, rgba(180, 100, 50, 0.2) 0%, rgba(140, 70, 30, 0.3) 100%)',
+              boxShadow: isSuccess
+                ? '0 0 20px rgba(34, 197, 94, 0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
+                : '0 0 20px rgba(255, 100, 30, 0.15), inset 0 1px 0 rgba(255,255,255,0.1)',
+              border: isSuccess
+                ? '1px solid rgba(34, 197, 94, 0.4)'
+                : '1px solid rgba(180, 100, 50, 0.4)',
+              borderRadius: '4px',
+              color: isSuccess ? '#4ade80' : '#d4a84b',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
-              letterSpacing: '0.02em'
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              fontFamily: '"Fontin", "Palatino Linotype", serif'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = isSuccess 
-                ? '0 8px 40px rgba(34, 197, 94, 0.5)' 
-                : '0 8px 40px rgba(59, 130, 246, 0.5)';
+              e.currentTarget.style.background = isSuccess
+                ? 'linear-gradient(180deg, rgba(34, 197, 94, 0.3) 0%, rgba(22, 163, 74, 0.4) 100%)'
+                : 'linear-gradient(180deg, rgba(180, 100, 50, 0.3) 0%, rgba(140, 70, 30, 0.4) 100%)';
+              e.currentTarget.style.boxShadow = isSuccess
+                ? '0 8px 30px rgba(34, 197, 94, 0.3), inset 0 1px 0 rgba(255,255,255,0.15)'
+                : '0 8px 30px rgba(255, 100, 30, 0.25), inset 0 1px 0 rgba(255,255,255,0.15)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = isSuccess 
-                ? '0 0 30px rgba(34, 197, 94, 0.4)' 
-                : '0 0 30px rgba(59, 130, 246, 0.4)';
+              e.currentTarget.style.background = isSuccess
+                ? 'linear-gradient(180deg, rgba(34, 197, 94, 0.2) 0%, rgba(22, 163, 74, 0.3) 100%)'
+                : 'linear-gradient(180deg, rgba(180, 100, 50, 0.2) 0%, rgba(140, 70, 30, 0.3) 100%)';
+              e.currentTarget.style.boxShadow = isSuccess
+                ? '0 0 20px rgba(34, 197, 94, 0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
+                : '0 0 20px rgba(255, 100, 30, 0.15), inset 0 1px 0 rgba(255,255,255,0.1)';
             }}
           >
-            {isSuccess ? '🎉 Continue' : '🔄 Try Again'}
+            {isSuccess ? 'Continue' : 'Try Again'}
           </button>
         </div>
         

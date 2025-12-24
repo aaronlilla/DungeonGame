@@ -70,7 +70,7 @@ export function CombatLog({ combatLog, onTestCombat, isRunning }: CombatLogProps
               📥 Export
             </button>
           )}
-          {onTestCombat && !isRunning && (
+          {false && onTestCombat && !isRunning && (
             <button
               onClick={onTestCombat}
               style={{

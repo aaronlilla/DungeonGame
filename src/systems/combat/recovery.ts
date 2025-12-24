@@ -623,22 +623,27 @@ export async function performPostCombatRecovery(
   // Final validation and ensure all alive members are at full health before returning
   teamStates = validateAndFixTeamHealth(teamStates);
   
-  // CRITICAL: Ensure all alive members have health > 0 and are at full health
+  // CRITICAL: Ensure all alive members have health > 0 and are at full health and mana
   // This is especially important after resurrection to prevent resurrected members from dying immediately
   teamStates = teamStates.map(m => {
     if (m.isDead) {
       // Dead members should have 0 health
       return { ...m, health: 0, isDead: true };
     } else {
-      // Alive members MUST have health > 0 and should be at full health after recovery
+      // Alive members MUST have health > 0 and should be at full health and mana after recovery
       const safeMaxHealth = (m.maxHealth != null && !isNaN(m.maxHealth) && isFinite(m.maxHealth) && m.maxHealth > 0) 
         ? m.maxHealth 
         : 1000;
-      // Ensure alive members are at full health after recovery
+      const safeMaxMana = (m.maxMana != null && !isNaN(m.maxMana) && isFinite(m.maxMana) && m.maxMana > 0) 
+        ? m.maxMana 
+        : 100;
+      // Ensure alive members are at full health and mana after recovery
       return { 
         ...m, 
         health: safeMaxHealth, 
         maxHealth: safeMaxHealth,
+        mana: safeMaxMana,
+        maxMana: safeMaxMana,
         isDead: false // Explicitly ensure isDead is false for alive members
       };
     }
@@ -657,14 +662,17 @@ export async function performPostCombatRecovery(
   if (membersStillNeedingHealing.length > 0 && !timedOut && !combatRef.current.stop) {
     console.warn(`[Recovery] Warning: ${membersStillNeedingHealing.length} members still need healing after recovery loop:`, 
       membersStillNeedingHealing.map(m => `${m.name} (${m.health}/${m.maxHealth})`));
-    // Set them to full health as a safety measure
+    // Set them to full health and mana as a safety measure
     teamStates = teamStates.map(m => {
       const memberNeedsHealing = membersStillNeedingHealing.some(needy => needy.id === m.id);
       if (memberNeedsHealing) {
         const safeMaxHealth = (m.maxHealth != null && !isNaN(m.maxHealth) && isFinite(m.maxHealth) && m.maxHealth > 0) 
           ? m.maxHealth 
           : 1000;
-        return { ...m, health: safeMaxHealth, maxHealth: safeMaxHealth, isDead: false };
+        const safeMaxMana = (m.maxMana != null && !isNaN(m.maxMana) && isFinite(m.maxMana) && m.maxMana > 0) 
+          ? m.maxMana 
+          : 100;
+        return { ...m, health: safeMaxHealth, maxHealth: safeMaxHealth, mana: safeMaxMana, maxMana: safeMaxMana, isDead: false };
       }
       return m;
     });

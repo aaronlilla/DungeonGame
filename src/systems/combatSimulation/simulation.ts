@@ -558,14 +558,17 @@ function spawnEnemies(packs: EnemyPack[], pullIdx: number, scaling: { healthMult
       
       for (let i = 0; i < count; i++) {
         const behavior = getBehavior(enemyId);
+        // Apply type-based damage adjustments: +20% for bosses/minibosses, -20% for trash
+        const isBossType = def.type === 'boss' || def.type === 'miniboss';
+        const typeDamageModifier = isBossType ? 1.2 : 0.8; // Bosses/minibosses +20%, trash -20%
         enemies.push({
           id: `${enemyId}_${pullIdx}_${i}_${Math.random().toString(36).substr(2, 9)}`,
           enemyId,
           name: def.name,
           health: def.baseHealth * scaling.healthMultiplier,
           maxHealth: def.baseHealth * scaling.healthMultiplier,
-          // Use full damage multiplier - enemy base damage is now balanced
-          damage: def.baseDamage * scaling.damageMultiplier,
+          // Use full damage multiplier - enemy base damage is now balanced, then apply type modifier
+          damage: def.baseDamage * scaling.damageMultiplier * typeDamageModifier,
           behavior,
           gcdRemaining: Math.random() * 0.5,
           castRemaining: 0,

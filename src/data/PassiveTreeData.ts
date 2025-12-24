@@ -3,6 +3,8 @@
  * Loads tree data from individual JSON files per class
  */
 
+import { getClassBackground } from '../types/classes';
+
 // ============================================================================
 // Import tree JSON files
 // ============================================================================
@@ -322,7 +324,6 @@ export function getClassThemeColors(classId: string): { primary: string; seconda
   };
 }
 
-export function getClassBackgroundImage(classId: string): string {
-  const normalized = classId.toLowerCase().replace(/_/g, '');
-  return `/src/assets/backgrounds/${normalized}.png`;
+export function getClassBackgroundImage(classId: string): string | null {
+  return getClassBackground(classId as import('../types/classes').CharacterClassId);
 }

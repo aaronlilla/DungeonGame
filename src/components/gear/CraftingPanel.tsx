@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { createPortal } from 'react-dom';
+import { CurrencyTooltip } from '../shared/CurrencyTooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GiAnvil, GiGems, GiClick, GiSparkles, GiMagicSwirl } from 'react-icons/gi';
 import { PanelOrnaments, HeaderOrnament } from '../shared/PanelOrnaments';
@@ -10,13 +10,16 @@ import { ItemCard } from '../shared/ItemCard';
 import { getClassColor } from '../../types/classes';
 
 // Import orb images
-import transmutationOrb from '../../assets/orbs/orboftransmutation.png';
-import alterationOrb from '../../assets/orbs/orbofalteration.png';
-import augmentationOrb from '../../assets/orbs/orbofaugmentation.png';
-import alchemyOrb from '../../assets/orbs/orbofalchemy.png';
-import chaosOrb from '../../assets/orbs/orbofchaos.png';
-import exaltedOrb from '../../assets/orbs/exaltedorb.png';
+import transmutationOrb from '../../assets/orbs/transmutation_original.png';
+import alterationOrb from '../../assets/orbs/alteration_original.webp';
+import augmentationOrb from '../../assets/orbs/augmentation_original.png';
+import alchemyOrb from '../../assets/orbs/alchemy_original.webp';
+import chaosOrb from '../../assets/orbs/chaos_original.webp';
+import exaltedOrb from '../../assets/orbs/exalt_original.webp';
 import annulmentOrb from '../../assets/orbs/orbofannulment.png';
+import scouringOrb from '../../assets/orbs/scouring_original.webp';
+import regalOrb from '../../assets/orbs/regal_original.webp';
+import divineOrb from '../../assets/orbs/divine_original.webp';
 
 // Map orb types to images
 const ORB_IMAGES: Record<OrbType, string> = {
@@ -27,91 +30,12 @@ const ORB_IMAGES: Record<OrbType, string> = {
   chaos: chaosOrb,
   exalted: exaltedOrb,
   annulment: annulmentOrb,
+  scouring: scouringOrb,
+  regal: regalOrb,
+  divine: divineOrb,
 };
 
 // Custom orb tooltip component
-function OrbTooltip({ 
-  orb, 
-  count, 
-  position 
-}: { 
-  orb: typeof CRAFTING_ORBS[0]; 
-  count: number; 
-  position: { x: number; y: number };
-}) {
-  return createPortal(
-    <div style={{
-      position: 'fixed',
-      left: Math.min(position.x + 12, window.innerWidth - 220),
-      top: position.y - 10,
-      transform: 'translateY(-100%)',
-      zIndex: 100000,
-      pointerEvents: 'none',
-      minWidth: '180px',
-      maxWidth: '200px',
-    }}>
-      {/* Tooltip container */}
-      <div style={{
-        background: 'linear-gradient(180deg, rgba(35, 30, 24, 0.98) 0%, rgba(20, 18, 14, 0.99) 100%)',
-        border: '2px solid rgba(201, 162, 39, 0.6)',
-        borderRadius: '8px',
-        overflow: 'hidden',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.7), 0 0 20px rgba(201, 162, 39, 0.15)',
-      }}>
-        {/* Header */}
-        <div style={{
-          padding: '0.6rem 0.75rem',
-          background: 'linear-gradient(180deg, rgba(201, 162, 39, 0.15) 0%, rgba(201, 162, 39, 0.03) 100%)',
-          borderBottom: '1px solid rgba(201, 162, 39, 0.25)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
-          <span style={{
-            fontFamily: "'Cinzel', Georgia, serif",
-            fontWeight: 700,
-            fontSize: '0.85rem',
-            color: '#c9a227',
-            textShadow: '0 0 10px rgba(201, 162, 39, 0.4)',
-          }}>
-            {orb.name}
-          </span>
-          <span style={{
-            fontSize: '0.7rem',
-            fontWeight: 700,
-            color: count > 0 ? '#4ade80' : '#f87171',
-            background: 'rgba(0,0,0,0.4)',
-            padding: '0.15rem 0.4rem',
-            borderRadius: '4px',
-          }}>
-            ×{count}
-          </span>
-        </div>
-        
-        {/* Description */}
-        <div style={{
-          padding: '0.6rem 0.75rem',
-          fontSize: '0.78rem',
-          color: 'rgba(220, 210, 190, 0.9)',
-          lineHeight: 1.45,
-        }}>
-          {orb.description}
-        </div>
-      </div>
-      
-      {/* Arrow pointing down */}
-      <div style={{
-        width: 0,
-        height: 0,
-        borderLeft: '8px solid transparent',
-        borderRight: '8px solid transparent',
-        borderTop: '8px solid rgba(201, 162, 39, 0.6)',
-        marginLeft: '20px',
-      }} />
-    </div>,
-    document.body
-  );
-}
 
 // Individual orb button component
 function OrbButton({
@@ -255,7 +179,7 @@ function OrbButton({
       </div>
       
       {/* Custom tooltip */}
-      {isHovered && <OrbTooltip orb={orb} count={count} position={tooltipPos} />}
+      {isHovered && <CurrencyTooltip orbType={orb.type} count={count} position={tooltipPos} />}
     </>
   );
 }

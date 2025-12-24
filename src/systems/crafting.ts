@@ -696,27 +696,60 @@ export function generateEnemyLootDrops(
   };
   
   if (Math.random() < orbChance[enemyType] * (1 + quantityBonus * 0.3)) {
-    // Determine which orb type
-    const orbRoll = Math.random();
-    let orbType: string;
-    let orbRarity: 'common' | 'uncommon' | 'rare' | 'epic' = 'common';
+    // Currency drop rates (within currency category, ignoring scrolls)
+    // These rates are normalized to sum to 1.0 for weighted selection
+    // Rates are provided as: Rate | Chance%
+    // Orb of Transmutation: 0.20831 (20.831%)
+    // Orb of Augmentation: 0.10328 (10.328%)
+    // Orb of Alteration: 0.05508 (5.508%)
+    // Orb of Alchemy: 0.02754 (2.754%)
+    // Chaos Orb: 0.01652 (1.652%)
+    // Orb of Scouring: 0.01377 (1.377%)
+    // Regal Orb: 0.00207 (0.207%)
+    // Exalted Orb: 0.00055 (0.055%)
+    // Divine Orb: 0.00034 (0.055%)
+    const currencyRates: Array<{ type: string; rate: number }> = [
+      { type: 'transmutation', rate: 0.20831 },
+      { type: 'augmentation', rate: 0.10328 },
+      { type: 'alteration', rate: 0.05508 },
+      { type: 'alchemy', rate: 0.02754 },
+      { type: 'chaos', rate: 0.01652 },
+      { type: 'scouring', rate: 0.01377 },
+      { type: 'regal', rate: 0.00207 },
+      { type: 'exalted', rate: 0.00055 },
+      { type: 'divine', rate: 0.00034 }
+    ];
     
-    if (orbRoll < 0.4) {
-      orbType = 'transmutation';
-    } else if (orbRoll < 0.7) {
-      orbType = 'alteration';
+    // Normalize rates to probabilities
+    const totalRate = currencyRates.reduce((sum, item) => sum + item.rate, 0);
+    
+    // Build cumulative probability thresholds
+    let cumulative = 0;
+    const thresholds: Array<{ type: string; threshold: number }> = [];
+    for (const { type, rate } of currencyRates) {
+      cumulative += rate / totalRate;
+      thresholds.push({ type, threshold: cumulative });
+    }
+    
+    // Select orb type based on weighted probabilities
+    const orbRoll = Math.random();
+    let orbType: string = currencyRates[0].type; // fallback
+    for (const { type, threshold } of thresholds) {
+      if (orbRoll <= threshold) {
+        orbType = type;
+        break;
+      }
+    }
+    
+    // Determine rarity based on orb type
+    let orbRarity: 'common' | 'uncommon' | 'rare' | 'epic' = 'common';
+    if (orbType === 'transmutation' || orbType === 'augmentation') {
+      orbRarity = 'common';
+    } else if (orbType === 'alteration' || orbType === 'scouring') {
       orbRarity = 'uncommon';
-    } else if (orbRoll < 0.85) {
-      orbType = 'augmentation';
-      orbRarity = 'uncommon';
-    } else if (orbRoll < 0.92) {
-      orbType = 'alchemy';
+    } else if (orbType === 'alchemy' || orbType === 'chaos' || orbType === 'regal') {
       orbRarity = 'rare';
-    } else if (orbRoll < 0.97) {
-      orbType = 'chaos';
-      orbRarity = 'rare';
-    } else {
-      orbType = 'exalted';
+    } else if (orbType === 'exalted' || orbType === 'divine') {
       orbRarity = 'epic';
     }
     

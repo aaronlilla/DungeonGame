@@ -1014,7 +1014,7 @@ export function TeamTab() {
     return charactersOfRole[roleSlotIndex] || null;
   };
 
-  const handleSlotClick = (slotIndex: number) => {
+  const handleSlotClick = () => {
     // Automatically generate a temp DPS character (same as dialogue does)
     const timestamp = Date.now().toString().slice(-4); // Last 4 digits of timestamp for uniqueness
     const placeholderName = `DPS Fighter ${timestamp}`;
@@ -1125,7 +1125,7 @@ export function TeamTab() {
               return (
                 <EmptySlotCard 
                   key={`empty-${slotIndex}`} 
-                  onClick={() => handleSlotClick(slotIndex)}
+                  onClick={handleSlotClick}
                   index={slotIndex}
                   role={slot.role}
                   label={slot.label}

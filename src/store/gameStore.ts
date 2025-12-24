@@ -1085,12 +1085,12 @@ export const useGameStore = create<GameState>()(
         // Clear activated map if present
         state.activatedMap = null;
         
-        console.log('[CLEAR ALL MAPS] Maps cleared. Adding 5 tier 1 maps...');
+        console.log('[CLEAR ALL MAPS] Maps cleared. Adding 4 tier 1 maps...');
         
-        // Immediately add 5 tier 1 maps
-        for (let i = 0; i < 5; i++) {
+        // Immediately add 4 tier 1 maps
+        for (let i = 0; i < 4; i++) {
           const newMap = generateMap(1, 'normal');
-          console.log(`[CLEAR ALL MAPS] Generated map ${i+1}/5:`, { id: newMap.id, tier: newMap.tier, name: newMap.name });
+          console.log(`[CLEAR ALL MAPS] Generated map ${i+1}/4:`, { id: newMap.id, tier: newMap.tier, name: newMap.name });
           state.mapStash.push(newMap);
         }
         
@@ -1271,7 +1271,7 @@ export const useGameStore = create<GameState>()(
         if (wasT1Map) {
           const currentT1Count = state.mapStash.filter(m => m.tier === 1).length;
           console.log(`[CLEAR ACTIVATED MAP] T1 map was consumed. Current T1 count: ${currentT1Count}`);
-          if (currentT1Count < 5) {
+          if (currentT1Count < 4) {
             const newMap = generateMap(1, 'normal');
             state.mapStash.push(newMap);
             console.log(`[CLEAR ACTIVATED MAP] Generated replacement T1 map`);
@@ -1487,9 +1487,8 @@ export const useGameStore = create<GameState>()(
           depleted: false
         }];
         
-        // Create starter maps (new map system)
+        // Create starter maps (new map system) - 4 tier 1 maps
         state.mapStash = [
-          generateMap(1),
           generateMap(1),
           generateMap(1),
           generateMap(1),
@@ -1509,14 +1508,6 @@ export const useGameStore = create<GameState>()(
         state.pendingLoot = [];
         state.activeLeagueEncounters = [];
         state.highestMapTierCompleted = 0;
-        
-        // Generate starter tier 1 maps - fill the entire stash grid
-        state.mapStash = [];
-        const starterMapCount = STASH_GRID_SIZE * STASH_GRID_SIZE; // 576 maps
-        for (let i = 0; i < starterMapCount; i++) {
-          const map = generateMap(1, 'normal'); // White tier 1 maps
-          state.mapStash.push(map);
-        }
         
         // Set default tab
         state.activeTab = 'team';

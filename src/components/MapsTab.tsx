@@ -26,8 +26,11 @@ export function MapsTab() {
   const [heldMapId, setHeldMapId] = useState<string | null>(null);
   const [mapTierFilter, setMapTierFilter] = useState<number | null>(null);
 
-  // Auto-fill map stash with tier 1 maps
+  // Auto-fill map stash with tier 1 maps (maintain minimum of 4)
   useEffect(() => {
+    // Skip if there are no maps at all (initialization might not be complete yet)
+    if (mapStash.length === 0) return;
+    
     console.log('[MAPS TAB] Auto-fill effect running. Total maps:', mapStash.length);
     
     // Count tier 1 maps in stash only (not in device or activated)
@@ -37,12 +40,12 @@ export function MapsTab() {
     
     console.log('[MAPS TAB] T1 maps - In stash:', tier1MapsInStash, 'In device:', tier1MapInDevice, 'Total:', totalT1Maps);
     
-    const desiredTier1Maps = 5; // Keep just 5 tier 1 maps available
+    const desiredTier1Maps = 4; // Keep just 4 tier 1 maps available
     const tier1MapsNeeded = Math.max(0, desiredTier1Maps - totalT1Maps);
     console.log('[MAPS TAB] Tier 1 maps needed:', tier1MapsNeeded);
     
-    // Generate tier 1 maps if needed
-    if (tier1MapsNeeded > 0) {
+    // Generate tier 1 maps if needed (only if less than desired amount)
+    if (tier1MapsNeeded > 0 && tier1MapsNeeded <= desiredTier1Maps) {
       console.log('[MAPS TAB] Generating', tier1MapsNeeded, 'tier 1 maps...');
       // Use setTimeout to break out of the render cycle
       const timeout = setTimeout(() => {

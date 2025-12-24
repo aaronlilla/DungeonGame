@@ -271,14 +271,21 @@ function generateStarterItems(character: Character): Map<GearSlot, Item> {
       }
     }
     
-    // Prefer items closer to the character's level
+    // Sort by level proximity, then randomly select from the top tier
+    // This adds variety while still preferring level-appropriate items
     candidates.sort((a, b) => {
       const aDiff = Math.abs(level - a.dropLevel);
       const bDiff = Math.abs(level - b.dropLevel);
       return aDiff - bDiff;
     });
     
-    return candidates[0] || null;
+    // Pick randomly from the top 3 closest-level items (or all if less than 3)
+    // This adds variety while keeping items level-appropriate
+    const topTierCount = Math.min(3, candidates.length);
+    const topTier = candidates.slice(0, topTierCount);
+    const selected = topTier[Math.floor(Math.random() * topTier.length)];
+    
+    return selected || candidates[0] || null;
   };
   
   // Helper to get item class for a slot

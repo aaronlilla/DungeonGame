@@ -879,8 +879,27 @@ export function generatePoeItem(
       return null;
     }
     
-    // Use weighted selection - bases closer to ilvl are more common
-    baseItem = selectWeightedBaseItem(candidates, itemLevel);
+    // First, pick an item class randomly to ensure balanced distribution
+    // This prevents armor items from dominating due to having more entries
+    const itemClasses = new Set(candidates.map(b => b.itemClass));
+    const availableClasses = Array.from(itemClasses).filter(itemClass => {
+      // Make sure this class has at least one valid candidate
+      return candidates.some(b => b.itemClass === itemClass);
+    });
+    
+    if (availableClasses.length > 0) {
+      // Pick a random item class with equal probability
+      const selectedClass = availableClasses[Math.floor(Math.random() * availableClasses.length)];
+      
+      // Filter to only candidates from this class
+      const classCandidates = candidates.filter(b => b.itemClass === selectedClass);
+      
+      // Use weighted selection within the selected class - bases closer to ilvl are more common
+      baseItem = selectWeightedBaseItem(classCandidates, itemLevel);
+    } else {
+      // Fallback to weighted selection across all candidates if something went wrong
+      baseItem = selectWeightedBaseItem(candidates, itemLevel);
+    }
   }
   
   // Get affix data for this item

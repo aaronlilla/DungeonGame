@@ -16,7 +16,7 @@ import augmentationOrb from '../../assets/orbs/augmentation_original.png';
 import alchemyOrb from '../../assets/orbs/alchemy_original.webp';
 import chaosOrb from '../../assets/orbs/chaos_original.webp';
 import exaltedOrb from '../../assets/orbs/exalt_original.webp';
-import annulmentOrb from '../../assets/orbs/orbofannulment.png';
+import annulmentOrb from '../../assets/orbs/annul_original.png';
 import scouringOrb from '../../assets/orbs/scouring_original.webp';
 import regalOrb from '../../assets/orbs/regal_original.webp';
 import divineOrb from '../../assets/orbs/divine_original.webp';

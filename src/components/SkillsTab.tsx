@@ -9,6 +9,7 @@ import { SupportPickerModal } from './skills/SupportPickerModal';
 import { AvailableSkillsList } from './skills/AvailableSkillsList';
 import { GiMagicSwirl, GiStarFormation } from 'react-icons/gi';
 import { getClassById } from '../types/classes';
+import { getEnabledSkillSlots, getEnabledSupportSlots, getRequiredLevelForSkillSlot } from '../types/character';
 
 // Corner ornament component for grand styling
 function CornerOrnaments({ color = 'var(--accent-gold)' }: { color?: string }) {
@@ -102,11 +103,15 @@ export function SkillsTab() {
   };
 
   const handleEquipSkill = (skillId: string) => {
-    const emptySlot = [0, 1, 2, 3, 4].find(i => !getEquippedSkill(i));
+    const enabledSlots = getEnabledSkillSlots(selectedCharacter.level);
+    const emptySlot = Array.from({ length: enabledSlots }, (_, i) => i).find(i => !getEquippedSkill(i));
     if (emptySlot !== undefined) {
       equipSkillGem(selectedCharacter.id, emptySlot, skillId);
     }
   };
+  
+  const enabledSkillSlots = getEnabledSkillSlots(selectedCharacter.level);
+  const enabledSupportSlots = getEnabledSupportSlots(selectedCharacter.level);
 
   // Universal arcane/gold color scheme for skills page
   const themeColors = {
@@ -141,7 +146,8 @@ export function SkillsTab() {
           onSelectCharacter={selectCharacter}
           getCharacterInfo={(char) => {
             const skillCount = char.skillGems.filter(s => s.skillGemId).length;
-            return `${skillCount}/5 skills equipped`;
+            const enabledSlots = getEnabledSkillSlots(char.level);
+            return `${skillCount}/${enabledSlots} skills equipped`;
           }}
         />
       </div>
@@ -246,9 +252,9 @@ export function SkillsTab() {
                 fontFamily: "'Cinzel', Georgia, serif",
                 fontSize: '0.8rem',
                 fontWeight: 600,
-                color: equippedCount === 5 ? 'var(--accent-green)' : themeColors.primary,
+                color: equippedCount === enabledSkillSlots ? 'var(--accent-green)' : themeColors.primary,
               }}>
-                {equippedCount}/5
+                {equippedCount}/{enabledSkillSlots}
               </span>
             </div>
           </div>
@@ -263,10 +269,12 @@ export function SkillsTab() {
           background: `radial-gradient(ellipse at 50% 0%, ${themeColors.glow} 0%, transparent 60%)`,
         }}>
           <div className="skill-slots">
-            {[0, 1, 2, 3, 4].map(slotIndex => {
+            {[0, 1, 2, 3, 4, 5, 6].map(slotIndex => {
               const skill = getEquippedSkill(slotIndex);
               const supports = getEquippedSupports(slotIndex);
               const usageConfig = getUsageConfig(slotIndex);
+              const isEnabled = slotIndex < enabledSkillSlots;
+              const requiredLevel = getRequiredLevelForSkillSlot(slotIndex);
               
               return (
                 <SkillSlot
@@ -275,20 +283,35 @@ export function SkillsTab() {
                   skill={skill}
                   supports={supports}
                   usageConfig={usageConfig}
+                  isEnabled={isEnabled}
+                  requiredLevel={requiredLevel}
+                  enabledSupportSlots={enabledSupportSlots}
                   onSelectSlot={() => {
-                    setSelectedSlot(slotIndex);
-                    setShowSkillPicker(true);
+                    if (isEnabled) {
+                      setSelectedSlot(slotIndex);
+                      setShowSkillPicker(true);
+                    }
                   }}
-                  onUnequipSkill={() => unequipSkillGem(selectedCharacter.id, slotIndex)}
+                  onUnequipSkill={() => {
+                    if (isEnabled) {
+                      unequipSkillGem(selectedCharacter.id, slotIndex);
+                    }
+                  }}
                   onSelectSupportSlot={(supportIndex) => {
-                    setSelectedSupportSlot({ skillSlot: slotIndex, supportSlot: supportIndex });
-                    setShowSupportPicker(true);
+                    if (isEnabled) {
+                      setSelectedSupportSlot({ skillSlot: slotIndex, supportSlot: supportIndex });
+                      setShowSupportPicker(true);
+                    }
                   }}
                   onUnequipSupport={(supportIndex) => {
-                    unequipSupportGem(selectedCharacter.id, slotIndex, supportIndex);
+                    if (isEnabled) {
+                      unequipSupportGem(selectedCharacter.id, slotIndex, supportIndex);
+                    }
                   }}
                   onUpdateUsageConfig={(usageConf) => {
-                    updateSkillUsageConfig(selectedCharacter.id, slotIndex, usageConf);
+                    if (isEnabled) {
+                      updateSkillUsageConfig(selectedCharacter.id, slotIndex, usageConf);
+                    }
                   }}
                 />
               );
@@ -340,6 +363,7 @@ export function SkillsTab() {
             const classData = selectedCharacter.classId ? getClassById(selectedCharacter.classId) : null;
             return classData?.name || selectedCharacter.role.toUpperCase();
           })()}
+          characterLevel={selectedCharacter.level}
           availableSkills={availableSkills}
           onSelect={handleSelectSkill}
           onClose={() => {

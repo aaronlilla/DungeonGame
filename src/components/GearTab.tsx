@@ -5,7 +5,7 @@ import { GearSlots } from './gear/GearSlots';
 import { InventoryPanel } from './gear/InventoryPanel';
 import { getItemSlot, getItemGridSize, type GearSlot } from '../types/items';
 import { buildOccupancyGrid, canPlaceItem } from '../utils/gridUtils';
-import { validateEquipment } from '../utils/equipmentValidation';
+import { validateEquipment, isOffHandWeapon, isShield, isTwoHandedWeapon } from '../utils/equipmentValidation';
 import { calculateTotalCharacterStats } from '../systems/equipmentStats';
 
 export function GearTab() {
@@ -50,7 +50,26 @@ export function GearTab() {
     // Handle rings - they can go in either ring slot
     const isRingSlot = slot === 'ring1' || slot === 'ring2';
     const isRingItem = itemSlot === 'ring1' || itemSlot === 'ring2';
-    const isValidSlot = itemSlot === slot || (isRingSlot && isRingItem);
+    let isValidSlot = false;
+    
+    if (isRingSlot && isRingItem) {
+      isValidSlot = true;
+    } else {
+      // Handle one-handed weapons and shields - they can go in either mainHand or offHand
+      const isWeaponSlot = slot === 'mainHand' || slot === 'offHand';
+      const isWeaponItem = itemSlot === 'mainHand' || itemSlot === 'offHand';
+      if (isWeaponSlot && isWeaponItem) {
+        // One-handed weapons and shields can go in either slot
+        if (isOffHandWeapon(item) || isShield(item)) {
+          isValidSlot = true;
+        } else if (slot === 'mainHand' && isTwoHandedWeapon(item)) {
+          // Two-handers can only go in mainHand
+          isValidSlot = true;
+        }
+      } else if (itemSlot === slot) {
+        isValidSlot = true;
+      }
+    }
     
     if (!isValidSlot) return;
     

@@ -334,7 +334,7 @@ export function createDefaultBaseStats(): BaseStats {
 }
 
 // Block calculation - returns true if the attack was blocked (PoE: capped at 75%)
-// Blocked attacks deal 30% less damage
+// Blocked attacks deal 80% less damage (20% damage is taken)
 export function rollBlock(blockChance: number, blockBuff: number = 0): boolean {
   const totalBlockChance = Math.min(blockChance + blockBuff, 75); // PoE cap: 75%
   return Math.random() * 100 < totalBlockChance;
@@ -353,8 +353,8 @@ export function rollSpellSuppression(spellSuppressionChance: number): boolean {
   return Math.random() * 100 < cappedChance;
 }
 
-// Block damage reduction (30% of damage blocked)
-export const BLOCK_DAMAGE_REDUCTION = 0.30;
+// Block damage reduction (80% of damage blocked, so 20% damage is taken)
+export const BLOCK_DAMAGE_REDUCTION = 0.80;
 
 // Spell Suppression damage reduction (50% of damage suppressed)
 export const SPELL_SUPPRESSION_DAMAGE_REDUCTION = 0.50;
@@ -443,7 +443,7 @@ export function calculateDamageWithResistances(
 
 // Create a new character (PoE style)
 // Stats come from class definitions. Role bonuses only used as fallback for legacy characters without a class.
-export function createCharacter(name: string, role: CharacterRole, level: number = 1, classId?: CharacterClassId): Character {
+export function createCharacter(name: string, role: CharacterRole, level: number = 2, classId?: CharacterClassId): Character {
   // Override name with class name if classId is provided
   const actualName = classId ? (getClassById(classId)?.name || name) : name;
   const baseStats = createDefaultBaseStats();
@@ -500,6 +500,14 @@ export function createCharacter(name: string, role: CharacterRole, level: number
   
   // Evasion bonus from Dexterity: +1% Evasion Rating per 5 Dexterity
   baseStats.evasion = calculateEvasionBonus(baseStats.dexterity, baseStats.evasion);
+  
+  // Apply permanent -30% resistance penalty if character is level 40+
+  if (level >= 40) {
+    baseStats.fireResistance = (baseStats.fireResistance || 0) - 30;
+    baseStats.coldResistance = (baseStats.coldResistance || 0) - 30;
+    baseStats.lightningResistance = (baseStats.lightningResistance || 0) - 30;
+    baseStats.chaosResistance = (baseStats.chaosResistance || 0) - 30;
+  }
 
   return {
     id: crypto.randomUUID(),
@@ -515,6 +523,35 @@ export function createCharacter(name: string, role: CharacterRole, level: number
     selectedTalents: {},   // MoP-style talents
     portrait: `${role}_default`,
   };
+}
+
+// Get number of enabled skill slots based on level
+export function getEnabledSkillSlots(level: number): number {
+  if (level >= 100) return 7;
+  if (level >= 80) return 6;
+  if (level >= 60) return 5;
+  if (level >= 40) return 4;
+  if (level >= 20) return 3;
+  return 2; // Level 1+
+}
+
+// Get required level for a skill slot index (0-based)
+export function getRequiredLevelForSkillSlot(slotIndex: number): number {
+  if (slotIndex < 2) return 1;  // Slots 0-1: Level 1+
+  if (slotIndex === 2) return 20; // Slot 2: Level 20
+  if (slotIndex === 3) return 40; // Slot 3: Level 40
+  if (slotIndex === 4) return 60; // Slot 4: Level 60
+  if (slotIndex === 5) return 80; // Slot 5: Level 80
+  return 100; // Slot 6: Level 100
+}
+
+// Get number of enabled support gem slots based on level
+export function getEnabledSupportSlots(level: number): number {
+  if (level >= 100) return 5;
+  if (level >= 80) return 4;
+  if (level >= 60) return 3;
+  if (level >= 40) return 2;
+  return 1; // Level 1+
 }
 
 // Recalculate character stats for a given level (call when leveling up)

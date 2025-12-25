@@ -1,6 +1,7 @@
 import React, { useEffect, Suspense, lazy, useState } from 'react';
+import { motion } from 'framer-motion';
 import { useGameStore } from './store/gameStore';
-import { GiCrossedSwords, GiCastle, GiTwoCoins, GiShieldBash, GiHealthPotion, GiWizardStaff, GiTreasureMap } from 'react-icons/gi';
+import { GiCrossedSwords, GiCastle, GiShieldBash, GiHealthPotion, GiWizardStaff, GiTreasureMap, GiAnvil } from 'react-icons/gi';
 import { EmberBackground } from './components/shared/EmberBackground';
 import { LoadingScreen } from './components/LoadingScreen';
 
@@ -11,11 +12,13 @@ const GearTab = lazy(() => import('./components/GearTab').then(module => ({ defa
 const TalentsTab = lazy(() => import('./components/TalentsTab').then(module => ({ default: module.TalentsTab })));
 const DungeonTab = lazy(() => import('./components/DungeonTab').then(module => ({ default: module.DungeonTab })));
 const MapsTab = lazy(() => import('./components/MapsTab').then(module => ({ default: module.MapsTab })));
+const CraftingTab = lazy(() => import('./components/CraftingTab').then(module => ({ default: module.CraftingTab })));
 
 const TABS = [
   { id: 'team', label: 'Team', icon: <GiShieldBash /> },
   { id: 'skills', label: 'Skills', icon: <GiWizardStaff /> },
   { id: 'gear', label: 'Equipment', icon: <GiCrossedSwords /> },
+  { id: 'crafting', label: 'Crafting', icon: <GiAnvil /> },
   { id: 'talents', label: 'Talents', icon: <GiHealthPotion /> },
   { id: 'maps', label: 'Maps', icon: <GiTreasureMap /> },
   { id: 'dungeon', label: 'Dungeon', icon: <GiCastle /> },
@@ -26,14 +29,13 @@ function App() {
   
   const { 
     team, 
-    gold, 
-    highestKeyCompleted,
-    highestMapTierCompleted,
     activeTab, 
     setActiveTab,
     initializeNewGame,
     clearStash
   } = useGameStore();
+  
+  const [showResetDialog, setShowResetDialog] = useState(false);
 
   // Initialize game only on first load if no saved data exists
   const hasCheckedInit = React.useRef(false);
@@ -70,7 +72,10 @@ function App() {
     const redirectKey = `${team.length}-${activeTab}`;
     if (team.length < 5 && activeTab !== 'team' && lastRedirectRef.current !== redirectKey) {
       lastRedirectRef.current = redirectKey;
-      setActiveTab('team');
+      // Use setTimeout to avoid state update during render
+      setTimeout(() => {
+        setActiveTab('team');
+      }, 0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [team.length, activeTab]); // setActiveTab is stable from Zustand, no need to include it
@@ -91,6 +96,7 @@ function App() {
       case 'team': return <Suspense fallback={<LoadingFallback />}><TeamTab /></Suspense>;
       case 'skills': return <Suspense fallback={<LoadingFallback />}><SkillsTab /></Suspense>;
       case 'gear': return <Suspense fallback={<LoadingFallback />}><GearTab /></Suspense>;
+      case 'crafting': return <Suspense fallback={<LoadingFallback />}><CraftingTab /></Suspense>;
       case 'talents': return <Suspense fallback={<LoadingFallback />}><TalentsTab /></Suspense>;
       case 'maps': return <Suspense fallback={<LoadingFallback />}><MapsTab /></Suspense>;
       case 'dungeon': return <Suspense fallback={<LoadingFallback />}><DungeonTab /></Suspense>;
@@ -100,6 +106,17 @@ function App() {
 
   // Show embers on most tabs (not dungeon - it has its own effects)
   const showEmbers = activeTab !== 'dungeon';
+
+  const handleResetData = () => {
+    setShowResetDialog(true);
+  };
+
+  const confirmReset = () => {
+    // Clear all localStorage
+    localStorage.clear();
+    // Reload the page
+    window.location.reload();
+  };
 
   return (
     <div className="app-container">
@@ -123,8 +140,11 @@ function App() {
           return (
             <button
               key={tab.id}
+              type="button"
               className={`nav-tab ${activeTab === tab.id ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`}
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 if (!isDisabled) {
                   setActiveTab(tab.id as typeof activeTab);
                 }
@@ -138,17 +158,182 @@ function App() {
           );
         })}
         <div style={{ flex: 1 }} />
-        <div className="nav-stats">
-          <div className="stat-display">
-            <span className="icon" style={{ display: 'flex', alignItems: 'center' }}><GiTwoCoins /></span>
-            <span className="value">{gold.toLocaleString()}</span>
-          </div>
-          <div className="stat-display" title="Highest Map Tier Completed">
-            <span className="icon" style={{ display: 'flex', alignItems: 'center' }}><GiTreasureMap /></span>
-            <span className="value">T{highestMapTierCompleted || highestKeyCompleted}</span>
-          </div>
-        </div>
+        <motion.button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleResetData();
+          }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          style={{
+            padding: '0.75rem 1.5rem',
+            fontSize: '0.95rem',
+            fontWeight: 700,
+            fontFamily: "'Cinzel', Georgia, serif",
+            background: 'linear-gradient(180deg, rgba(168, 85, 247, 0.12) 0%, rgba(168, 85, 247, 0.04) 100%)',
+            border: '1px solid rgba(168, 85, 247, 0.2)',
+            borderRadius: '12px',
+            color: '#e9d5ff',
+            cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(168, 85, 247, 0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
+            transition: 'all 0.3s ease',
+            textTransform: 'uppercase',
+            letterSpacing: '0.15em',
+            position: 'relative',
+            overflow: 'hidden',
+            marginRight: '1rem',
+          }}
+        >
+          {/* Textured background overlay */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: 'url(/tilebackground.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            opacity: 0.025,
+            pointerEvents: 'none',
+          }} />
+
+          {/* Top purple line with glow */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '2px',
+            background: 'linear-gradient(90deg, transparent 5%, #a855f7 50%, transparent 95%)',
+            boxShadow: '0 0 12px rgba(168, 85, 247, 0.4)',
+          }} />
+
+          {/* Bottom purple line with glow */}
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '2px',
+            background: 'linear-gradient(90deg, transparent 5%, #a855f7 50%, transparent 95%)',
+            boxShadow: '0 0 12px rgba(168, 85, 247, 0.4)',
+          }} />
+
+          <span style={{ 
+            position: 'relative', 
+            zIndex: 1,
+            textShadow: '0 0 20px rgba(168, 85, 247, 0.5), 0 2px 4px rgba(0,0,0,0.5)',
+          }}>
+            Reset All Data
+          </span>
+        </motion.button>
       </nav>
+
+      {/* Reset Confirmation Dialog */}
+      {showResetDialog && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10000,
+        }} onClick={() => setShowResetDialog(false)}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: 'linear-gradient(135deg, rgba(30, 26, 22, 0.95) 0%, rgba(20, 18, 15, 0.98) 100%)',
+              border: '1px solid rgba(168, 85, 247, 0.3)',
+              borderRadius: '12px',
+              padding: '2rem',
+              maxWidth: '500px',
+              width: '90%',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px rgba(168, 85, 247, 0.2)',
+            }}
+          >
+            <h2 style={{
+              fontSize: '1.5rem',
+              fontWeight: 700,
+              color: '#e9d5ff',
+              fontFamily: "'Cinzel', Georgia, serif",
+              marginBottom: '1rem',
+              textAlign: 'center',
+            }}>
+              Reset All Data?
+            </h2>
+            <p style={{
+              fontSize: '1rem',
+              color: 'rgba(200, 190, 170, 0.9)',
+              marginBottom: '2rem',
+              lineHeight: 1.6,
+              textAlign: 'center',
+            }}>
+              This will permanently delete all your saved progress, including your team, items, currency, and maps. This action cannot be undone.
+            </p>
+            <div style={{
+              display: 'flex',
+              gap: '1rem',
+              justifyContent: 'center',
+            }}>
+              <motion.button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowResetDialog(false);
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                style={{
+                  padding: '0.75rem 2rem',
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  fontFamily: "'Cinzel', Georgia, serif",
+                  background: 'linear-gradient(135deg, rgba(60, 50, 40, 0.8) 0%, rgba(40, 35, 30, 0.9) 100%)',
+                  border: '1px solid rgba(100, 90, 80, 0.5)',
+                  borderRadius: '8px',
+                  color: 'rgba(200, 190, 170, 0.9)',
+                  cursor: 'pointer',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                }}
+              >
+                Cancel
+              </motion.button>
+              <motion.button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  confirmReset();
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                style={{
+                  padding: '0.75rem 2rem',
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  fontFamily: "'Cinzel', Georgia, serif",
+                  background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.8) 0%, rgba(185, 28, 28, 0.9) 100%)',
+                  border: '1px solid rgba(220, 38, 38, 0.5)',
+                  borderRadius: '8px',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                  boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)',
+                }}
+              >
+                Yes, Reset
+              </motion.button>
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       <main className="main-content">
         {renderTabContent()}

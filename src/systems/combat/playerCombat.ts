@@ -6,7 +6,8 @@ import { calculatePlayerDamageToEnemy } from '../../utils/enemyDamage';
 import {
   getSkillGemById,
   calculateCriticalStrikeChance,
-  getSkillIdFromAbilityName
+  getSkillIdFromAbilityName,
+  applySupportGems
 } from '../../types/skills';
 import { processOnHealEffects, processOnHitEffects } from './talentEvents';
 import type { SkillGem } from '../../types/skills';
@@ -15,6 +16,7 @@ import type { CombatContext } from './types';
 import type { CombatLogEntry } from '../../types/dungeon';
 import { checkSkillConditions, createSmartSkillConfig, type SkillUsageConfig } from '../../types/skillUsage';
 import { createVerboseDamageLog, createVerboseHealLog } from './verboseLogging';
+import { getEquippedWeaponDamage } from '../../systems/equipmentStats';
 
 /**
  * Extract icon string from skill icon (handles React components)
@@ -89,14 +91,62 @@ function mapDamageType(damageType: string): 'physical' | 'fire' | 'cold' | 'ligh
 }
 
 /**
+ * Update weapon damage for dual wielding (alternates between weapons)
+ * This should be called before calculating damage for attack skills
+ * Returns the weapon slot that was used ('mainHand' or 'offHand')
+ */
+function updateWeaponDamageForDualWielding(
+  member: TeamMemberState,
+  inventory: import('../../types/items').Item[],
+  char: Character
+): 'mainHand' | 'offHand' | null {
+  if (!member.isDualWielding) return null;
+  
+  // Get equipped items for this character
+  const equippedItems: import('../../types/items').Item[] = [];
+  for (const [, itemId] of Object.entries(char.equippedGear)) {
+    if (itemId) {
+      const item = inventory.find(i => i.id === itemId);
+      if (item) {
+        equippedItems.push(item);
+      }
+    }
+  }
+  
+  // Get weapon damage for the next weapon (alternates based on lastWeaponUsed)
+  // getEquippedWeaponDamage will use mainHand if lastWeaponUsed is null or 'offHand'
+  // and will use offHand if lastWeaponUsed is 'mainHand'
+  const newWeaponDamage = getEquippedWeaponDamage(equippedItems, member.lastWeaponUsed || null);
+  
+  if (newWeaponDamage) {
+    member.weaponDamage = newWeaponDamage;
+    
+    // Determine which weapon was just used and update lastWeaponUsed
+    // If lastWeaponUsed was null or 'offHand', we just used mainHand
+    // If lastWeaponUsed was 'mainHand', we just used offHand
+    const weaponJustUsed: 'mainHand' | 'offHand' = 
+      (member.lastWeaponUsed === null || member.lastWeaponUsed === 'offHand') ? 'mainHand' : 'offHand';
+    member.lastWeaponUsed = weaponJustUsed;
+    return weaponJustUsed;
+  }
+  
+  return null;
+}
+
+/**
  * Calculate damage for a skill based on whether it's an attack (uses weapon) or spell (uses skill base damage)
+ * Now includes support gem application
  */
 function calculateSkillDamage(
   skill: SkillGem,
   member: TeamMemberState,
   char: { baseStats?: { intelligence?: number; strength?: number } },
-  bloodlustActive: boolean
-): { damage: number; damageType: 'physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'shadow' | 'holy' | 'mixed' } {
+  bloodlustActive: boolean,
+  supportGemIds: string[] = []
+): { damage: number; damageType: 'physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'shadow' | 'holy' | 'mixed'; supportResult?: ReturnType<typeof applySupportGems> } {
+  // Apply support gems
+  const supportResult = applySupportGems(skill, supportGemIds);
+  
   const isAttackSkill = skill.tags?.includes('attack');
   const spellPowerMultiplier = (skill.damageEffectiveness || 100) / 100;
   
@@ -123,7 +173,10 @@ function calculateSkillDamage(
     const strengthBonus = 1 + (strength / 200); // +0.5% damage per point of strength
     // Apply talent damage multiplier
     const talentDamageMultiplier = 1 + ((member.talentBonuses?.damageMultiplier || 0) / 100);
-    const damage = Math.floor(totalWeaponDamage * spellPowerMultiplier * strengthBonus * talentDamageMultiplier * (bloodlustActive ? 1.3 : 1));
+    // Apply support gem damage multiplier
+    let damage = Math.floor(totalWeaponDamage * spellPowerMultiplier * strengthBonus * talentDamageMultiplier * (bloodlustActive ? 1.3 : 1) * supportResult.damageMultiplier);
+    // Add flat damage from support gems
+    damage += supportResult.addedDamage;
     
     // Determine primary damage type
     const maxEle = Math.max(fireDamage, coldDamage, lightningDamage, chaosDamage);
@@ -138,20 +191,25 @@ function calculateSkillDamage(
       damageType = 'mixed';
     }
     
-    return { damage, damageType };
+    return { damage, damageType, supportResult };
   } else {
     // Spell skill - use skill's base damage
     // Reduced spell power scaling: int * 2.5 instead of * 5 (40-50 spell power at level 1 instead of 100)
     const spellPower = (char.baseStats?.intelligence || 20) * 2.5;
     // Reduced base damage fallback from 150 to 50
-    const baseDmg = skill.baseDamage || 50;
+    // Apply Empower support level bonus (each level adds ~10% more base damage)
+    const empowerBonus = 1 + (supportResult.levelBonus * 0.1);
+    let baseDmg = (skill.baseDamage || 50) * empowerBonus;
     // Apply talent damage multiplier
     const talentDamageMultiplier = 1 + ((member.talentBonuses?.damageMultiplier || 0) / 100);
     // Reduced spell power effectiveness: divide by 200 instead of 100 for gentler scaling
-    const damage = Math.floor(baseDmg * (1 + (spellPower * spellPowerMultiplier) / 200) * talentDamageMultiplier * (bloodlustActive ? 1.3 : 1));
+    // Apply support gem damage multiplier
+    let damage = Math.floor(baseDmg * (1 + (spellPower * spellPowerMultiplier) / 200) * talentDamageMultiplier * (bloodlustActive ? 1.3 : 1) * supportResult.damageMultiplier);
+    // Add flat damage from support gems
+    damage += supportResult.addedDamage;
     
     const damageType = skill.damageType === 'nature' ? 'physical' : (skill.damageType || 'physical') as 'physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'shadow' | 'holy' | 'mixed';
-    return { damage, damageType };
+    return { damage, damageType, supportResult };
   }
 }
 
@@ -256,16 +314,17 @@ export function processPlayerActions(
 
 /**
  * Check if entity can start a new action (GCD check)
+ * @param isHealingSpell - If true, allows casting even when silenced (healing spells bypass silence)
  */
-function canStartAction(member: TeamMemberState, currentTick: number): boolean {
+function canStartAction(member: TeamMemberState, currentTick: number, isHealingSpell: boolean = false): boolean {
   // Can't act while casting
   if (member.isCasting) return false;
   // Can't act while channeling
   if (member.isChanneling) return false;
   // Check GCD
   if (member.gcdEndTick && currentTick < member.gcdEndTick) return false;
-  // Check if silenced
-  if (member.canCastSpells === false) return false;
+  // Check if silenced - healers can still cast healing spells when silenced
+  if (member.canCastSpells === false && !isHealingSpell) return false;
   return true;
 }
 
@@ -318,9 +377,15 @@ function processHealerHealing(
     const castTarget = teamStates.find(m => m.id === currentHealer.castTargetId);
     
     if (!castTarget || castTarget.isDead) {
-      // Target died, cancel cast
+      // Target died, cancel cast - clear all cast-related fields
       currentHealer.isCasting = false;
       currentHealer.castTargetId = undefined;
+      currentHealer.castAbility = undefined;
+      currentHealer.castStartTick = undefined;
+      currentHealer.castEndTick = undefined;
+      currentHealer.castTotalTicks = undefined;
+      currentHealer.castStartTime = undefined;
+      currentHealer.castTotalTime = undefined;
       updateCombatState(prev => ({ 
         ...prev, 
         combatLog: [...prev.combatLog, { 
@@ -332,110 +397,361 @@ function processHealerHealing(
         }] 
       }));
     } else {
-      // Cast complete - apply heal
+      // Cast complete - apply skill effect
       const abilityName = currentHealer.castAbility || 'Healing Wave';
       const skillId = getSkillIdFromAbilityName(abilityName);
       const skill = skillId ? getSkillGemById(skillId) : undefined;
       
       if (!skill) return;
       
-      // Apply talent mana cost reduction
-      const talentManaCostReduction = currentHealer.talentBonuses?.manaCostReduction || 0;
-      const effectiveManaCost = Math.max(0, skill.manaCost * (1 - talentManaCostReduction / 100));
+      // Get support gem IDs for this skill
+      const equippedSkill = healerChar?.skillGems?.find(sg => sg.skillGemId === skillId);
+      const supportGemIds = equippedSkill?.supportGemIds || [];
       
-      if (skill.baseHealing && currentHealer.mana >= effectiveManaCost) {
+      // Apply support gems
+      const supportResult = applySupportGems(skill, supportGemIds);
+      
+      // Get alive team members for allAllies skills
+      const aliveTeamForHeal = teamStates.filter(m => !m.isDead);
+      
+      // Apply talent mana cost reduction and support gem mana cost multiplier
+      const talentManaCostReduction = currentHealer.talentBonuses?.manaCostReduction || 0;
+      const baseManaCost = skill.manaCost * supportResult.manaCostMultiplier;
+      const effectiveManaCost = Math.max(0, baseManaCost * (1 - talentManaCostReduction / 100));
+      
+      // Check if lifetap is active (manaCostMultiplier = 0 means lifetap)
+      const hasLifetap = supportResult.manaCostMultiplier === 0;
+      
+      // Check resource availability (mana or life for lifetap)
+      const hasResources = hasLifetap 
+        ? (currentHealer.health > effectiveManaCost) 
+        : (currentHealer.mana >= effectiveManaCost);
+      
+      if (skill.baseHealing && hasResources) {
         const spellPowerMultiplier = (skill.damageEffectiveness || 100) / 100;
         const baseHeal = skill.baseHealing || 100;
-        // Apply talent healing multiplier
+        // Apply talent healing multiplier and support gem healing multiplier
         const talentHealingMultiplier = 1 + ((currentHealer.talentBonuses?.healingMultiplier || 0) / 100);
-        const healAmount = Math.floor(baseHeal * (1 + (spellPower * spellPowerMultiplier) / 100) * talentHealingMultiplier);
+        let healAmount = Math.floor(baseHeal * (1 + (spellPower * spellPowerMultiplier) / 100) * talentHealingMultiplier * supportResult.healingMultiplier);
+        // Add flat healing from support gems
+        healAmount += supportResult.addedHealing;
         const baseCritChance = skill.baseCriticalStrikeChance || 8;
         const increasedCritChance = healerChar?.baseStats?.criticalStrikeChance || 0;
-        const finalCritChance = calculateCriticalStrikeChance(baseCritChance, increasedCritChance);
+        // Apply support gem crit chance multiplier
+        const finalCritChance = calculateCriticalStrikeChance(baseCritChance, increasedCritChance) * supportResult.critChanceMultiplier;
         const isCritHeal = Math.random() < (finalCritChance / 100);
         const critMultiplier = (healerChar?.baseStats?.criticalStrikeMultiplier || 150) / 100;
         let finalHealAmount = isCritHeal ? Math.floor(healAmount * critMultiplier) : healAmount;
         
-        // Apply heal absorb shield if present
-        if (castTarget.healAbsorb && castTarget.healAbsorb > 0) {
-          if (finalHealAmount <= castTarget.healAbsorb) {
-            // All healing absorbed
-            castTarget.healAbsorb -= finalHealAmount;
-            finalHealAmount = 0;
+        // Handle allAllies target type (Circle of Healing, etc.)
+        if (skill.targetType === 'allAllies') {
+          const floatNumbers: FloatingNumber[] = [];
+          let totalHealing = 0;
+          const healTimestamp = Date.now();
+          
+          // Heal all alive team members
+          aliveTeamForHeal.forEach(target => {
+            if (target.isDead) return;
+            
+            let targetHealAmount = finalHealAmount;
+            
+            // Apply heal absorb shield if present
+            if (target.healAbsorb && target.healAbsorb > 0) {
+              if (targetHealAmount <= target.healAbsorb) {
+                target.healAbsorb -= targetHealAmount;
+                targetHealAmount = 0;
+              } else {
+                targetHealAmount -= target.healAbsorb;
+                target.healAbsorb = 0;
+              }
+            }
+            
+            const actualHeal = Math.min(target.maxHealth - target.health, targetHealAmount);
+            const safeCurrentHealth = isNaN(target.health) || !isFinite(target.health) ? target.maxHealth : target.health;
+            const safeFinalHealAmount = isNaN(targetHealAmount) || !isFinite(targetHealAmount) ? 0 : targetHealAmount;
+            safeSetHealth(target, safeCurrentHealth + safeFinalHealAmount);
+            
+            if (actualHeal > 0) {
+              target.lastHealTime = healTimestamp;
+              target.lastHealAmount = actualHeal;
+              target.lastHealCrit = isCritHeal;
+              totalHealing += actualHeal;
+              
+              // Process onHeal effects
+              processOnHealEffects(currentHealer, target, targetHealAmount, currentTick, teamStates);
+              
+              // Create floating number for each target
+              const jitterX = (Math.random() * 80) - 40;
+              const jitterY = (Math.random() * 60) - 30;
+              floatNumbers.push(createFloatingNumber(healAmount, 'heal', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 50 + jitterY));
+            }
+          });
+          
+          if (isCritHeal) setScreenShake(prev => prev + 1);
+          
+          // Pay resource cost (mana or life for lifetap)
+          if (hasLifetap) {
+            const safeCurrentHealth = isNaN(currentHealer.health) || !isFinite(currentHealer.health) ? currentHealer.maxHealth : currentHealer.health;
+            const safeLifeCost = isNaN(effectiveManaCost) || !isFinite(effectiveManaCost) ? 0 : Math.min(effectiveManaCost, safeCurrentHealth - 1);
+            safeSetHealth(currentHealer, safeCurrentHealth - safeLifeCost);
+            updateCombatState(prev => ({ 
+              ...prev, 
+              combatLog: [...prev.combatLog, { 
+                timestamp: totalTime, 
+                type: 'system', 
+                source: currentHealer.name, 
+                target: '', 
+                message: `💉 ${currentHealer.name} pays ${safeLifeCost} life to cast ${abilityName}` 
+              }] 
+            }));
           } else {
-            // Partial absorption
-            finalHealAmount -= castTarget.healAbsorb;
-            castTarget.healAbsorb = 0;
+            currentHealer.mana -= effectiveManaCost;
+          }
+          
+          currentHealer.totalHealing = (currentHealer.totalHealing || 0) + totalHealing;
+          currentHealer.healingBySpell = currentHealer.healingBySpell || {};
+          currentHealer.healingBySpell[abilityName] = (currentHealer.healingBySpell[abilityName] || 0) + totalHealing;
+          
+          updateCombatState(prev => ({ 
+            ...prev, 
+            teamStates: prev.teamStates.map(m => {
+              const updatedMember = aliveTeamForHeal.find(t => t.id === m.id);
+              if (updatedMember && updatedMember.lastHealTime === healTimestamp) {
+                return { 
+                  ...m, 
+                  lastHealTime: updatedMember.lastHealTime, 
+                  lastHealAmount: updatedMember.lastHealAmount, 
+                  lastHealCrit: updatedMember.lastHealCrit, 
+                  health: updatedMember.health 
+                };
+              }
+              if (m.id === currentHealer.id) {
+                return { ...m, mana: currentHealer.mana, totalHealing: currentHealer.totalHealing, healingBySpell: currentHealer.healingBySpell };
+              }
+              return m;
+            }),
+            floatingNumbers: [...prev.floatingNumbers.slice(-20), ...floatNumbers],
+            combatLog: [...prev.combatLog, { 
+              timestamp: totalTime, 
+              type: 'heal', 
+              source: currentHealer.name, 
+              target: 'all allies', 
+              message: `${getSkillIconString(skill)} ${currentHealer.name} casts ${abilityName} on all allies! (${totalHealing} total healing${isCritHeal ? ' CRIT!' : ''})` 
+            }] 
+          }));
+          
+          // Spell Echo for allAllies healing spells
+          if (supportResult?.hasSpellEcho && skill.tags?.includes('spell')) {
+            const echoHealAmount = Math.floor(finalHealAmount * 0.8); // Echo does 80% healing
+            let echoTotalHealing = 0;
+            const echoHealTimestamp = Date.now();
+            
+            aliveTeamForHeal.forEach(target => {
+              if (target.isDead) return;
+              
+              let echoTargetHealAmount = echoHealAmount;
+              
+              // Apply heal absorb shield if present
+              if (target.healAbsorb && target.healAbsorb > 0) {
+                if (echoTargetHealAmount <= target.healAbsorb) {
+                  target.healAbsorb -= echoTargetHealAmount;
+                  echoTargetHealAmount = 0;
+                } else {
+                  echoTargetHealAmount -= target.healAbsorb;
+                  target.healAbsorb = 0;
+                }
+              }
+              
+              const echoActualHeal = Math.min(target.maxHealth - target.health, echoTargetHealAmount);
+              const safeCurrentHealth = isNaN(target.health) || !isFinite(target.health) ? target.maxHealth : target.health;
+              const safeEchoHealAmount = isNaN(echoTargetHealAmount) || !isFinite(echoTargetHealAmount) ? 0 : echoTargetHealAmount;
+              safeSetHealth(target, safeCurrentHealth + safeEchoHealAmount);
+              
+              if (echoActualHeal > 0) {
+                target.lastHealTime = echoHealTimestamp;
+                target.lastHealAmount = echoActualHeal;
+                target.lastHealCrit = false; // Echo doesn't crit
+                echoTotalHealing += echoActualHeal;
+                
+                processOnHealEffects(currentHealer, target, echoTargetHealAmount, currentTick, teamStates);
+                
+                const jitterX = (Math.random() * 80) - 40;
+                const jitterY = (Math.random() * 60) - 30;
+                floatNumbers.push(createFloatingNumber(echoHealAmount, 'heal', currentCombatState.teamPosition.x + jitterX + 15, currentCombatState.teamPosition.y - 50 + jitterY));
+              }
+            });
+            
+            if (echoTotalHealing > 0) {
+              currentHealer.totalHealing = (currentHealer.totalHealing || 0) + echoTotalHealing;
+              currentHealer.healingBySpell[abilityName] = (currentHealer.healingBySpell[abilityName] || 0) + echoTotalHealing;
+              updateCombatState(prev => ({ 
+                ...prev, 
+                combatLog: [...prev.combatLog, { 
+                  timestamp: totalTime, 
+                  type: 'heal', 
+                  source: currentHealer.name, 
+                  target: 'all allies', 
+                  message: `⟳ ${currentHealer.name}'s ${abilityName} echoes on all allies! (${echoTotalHealing} total healing)` 
+                }] 
+              }));
+            }
+          }
+        } else {
+          // Single target heal (original logic)
+          // Apply heal absorb shield if present
+          if (castTarget.healAbsorb && castTarget.healAbsorb > 0) {
+            if (finalHealAmount <= castTarget.healAbsorb) {
+              // All healing absorbed
+              castTarget.healAbsorb -= finalHealAmount;
+              finalHealAmount = 0;
+            } else {
+              // Partial absorption
+              finalHealAmount -= castTarget.healAbsorb;
+              castTarget.healAbsorb = 0;
+            }
+          }
+          
+          // Capture state before healing
+          const healthBefore = castTarget.health;
+          
+          const actualHeal = Math.min(castTarget.maxHealth - castTarget.health, finalHealAmount);
+          const safeCurrentHealth = isNaN(castTarget.health) || !isFinite(castTarget.health) ? castTarget.maxHealth : castTarget.health;
+          const safeFinalHealAmount = isNaN(finalHealAmount) || !isFinite(finalHealAmount) ? 0 : finalHealAmount;
+          safeSetHealth(castTarget, safeCurrentHealth + safeFinalHealAmount);
+          
+          // Capture state after healing
+          const healthAfter = castTarget.health;
+          
+          const healTimestamp = Date.now();
+          castTarget.lastHealTime = healTimestamp;
+          castTarget.lastHealAmount = actualHeal;
+          castTarget.lastHealCrit = isCritHeal;
+          if (isCritHeal) setScreenShake(prev => prev + 1);
+          
+          // Pay resource cost (mana or life for lifetap)
+          const hasLifetap = supportResult.manaCostMultiplier === 0;
+          if (hasLifetap) {
+            const safeCurrentHealth = isNaN(currentHealer.health) || !isFinite(currentHealer.health) ? currentHealer.maxHealth : currentHealer.health;
+            const safeLifeCost = isNaN(effectiveManaCost) || !isFinite(effectiveManaCost) ? 0 : Math.min(effectiveManaCost, safeCurrentHealth - 1);
+            safeSetHealth(currentHealer, safeCurrentHealth - safeLifeCost);
+            updateCombatState(prev => ({ 
+              ...prev, 
+              combatLog: [...prev.combatLog, { 
+                timestamp: totalTime, 
+                type: 'system', 
+                source: currentHealer.name, 
+                target: '', 
+                message: `💉 ${currentHealer.name} pays ${safeLifeCost} life to cast ${abilityName}` 
+              }] 
+            }));
+          } else {
+            currentHealer.mana -= effectiveManaCost;
+          }
+          
+          currentHealer.totalHealing = (currentHealer.totalHealing || 0) + actualHeal;
+          currentHealer.healingBySpell = currentHealer.healingBySpell || {};
+          currentHealer.healingBySpell[abilityName] = (currentHealer.healingBySpell[abilityName] || 0) + actualHeal;
+          
+          // Process onHeal effects
+          processOnHealEffects(currentHealer, castTarget, finalHealAmount, currentTick, teamStates);
+          
+          const jitterX = (Math.random() * 80) - 40;
+          const jitterY = (Math.random() * 60) - 30;
+          const floatNum = createFloatingNumber(healAmount, 'heal', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 50 + jitterY);
+          
+          // Create verbose heal log with full stats
+          const verboseHealLog = createVerboseHealLog(
+            totalTime,
+            currentHealer.name,
+            castTarget.name,
+            actualHeal,
+            castTarget,
+            {
+              healthBefore,
+              healthAfter,
+              maxHealth: castTarget.maxHealth,
+              crit: isCritHeal,
+              abilityName,
+              skillIcon: getSkillIconString(skill)
+            },
+            currentHealer, // sourceState
+            teamStates, // allTeamStates
+            currentCombatState?.enemies || [] // allEnemies
+          );
+          
+          updateCombatState(prev => ({ 
+            ...prev, 
+            teamStates: prev.teamStates.map(m => 
+              m.id === castTarget.id 
+                ? { ...m, lastHealTime: healTimestamp, lastHealAmount: actualHeal, lastHealCrit: isCritHeal, health: castTarget.health }
+                : m.id === currentHealer.id
+                ? { ...m, mana: currentHealer.mana, totalHealing: currentHealer.totalHealing, healingBySpell: currentHealer.healingBySpell }
+                : m
+            ),
+            floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum],
+            combatLog: [...prev.combatLog, verboseHealLog] 
+          }));
+          
+          // Spell Echo for single target healing spells
+          if (supportResult?.hasSpellEcho && skill.tags?.includes('spell')) {
+            const echoHealAmount = Math.floor(finalHealAmount * 0.8); // Echo does 80% healing
+            let echoTargetHealAmount = echoHealAmount;
+            
+            // Apply heal absorb shield if present
+            if (castTarget.healAbsorb && castTarget.healAbsorb > 0) {
+              if (echoTargetHealAmount <= castTarget.healAbsorb) {
+                castTarget.healAbsorb -= echoTargetHealAmount;
+                echoTargetHealAmount = 0;
+              } else {
+                echoTargetHealAmount -= castTarget.healAbsorb;
+                castTarget.healAbsorb = 0;
+              }
+            }
+            
+            const echoActualHeal = Math.min(castTarget.maxHealth - castTarget.health, echoTargetHealAmount);
+            const safeCurrentHealth = isNaN(castTarget.health) || !isFinite(castTarget.health) ? castTarget.maxHealth : castTarget.health;
+            const safeEchoHealAmount = isNaN(echoTargetHealAmount) || !isFinite(echoTargetHealAmount) ? 0 : echoTargetHealAmount;
+            safeSetHealth(castTarget, safeCurrentHealth + safeEchoHealAmount);
+            
+            if (echoActualHeal > 0) {
+              currentHealer.totalHealing = (currentHealer.totalHealing || 0) + echoActualHeal;
+              currentHealer.healingBySpell[abilityName] = (currentHealer.healingBySpell[abilityName] || 0) + echoActualHeal;
+              
+              processOnHealEffects(currentHealer, castTarget, echoTargetHealAmount, currentTick, teamStates);
+              
+              const jitterX = (Math.random() * 80) - 40;
+              const jitterY = (Math.random() * 60) - 30;
+              const echoFloatNum = createFloatingNumber(echoHealAmount, 'heal', currentCombatState.teamPosition.x + jitterX + 15, currentCombatState.teamPosition.y - 50 + jitterY);
+              updateCombatState(prev => ({ 
+                ...prev, 
+                floatingNumbers: [...prev.floatingNumbers.slice(-20), echoFloatNum],
+                combatLog: [...prev.combatLog, { 
+                  timestamp: totalTime, 
+                  type: 'heal', 
+                  source: currentHealer.name, 
+                  target: castTarget.name, 
+                  message: `⟳ ${currentHealer.name}'s ${abilityName} echoes on ${castTarget.name} for ${echoHealAmount}!` 
+                }] 
+              }));
+            }
           }
         }
-        
-        // Capture state before healing
-        const healthBefore = castTarget.health;
-        
-        const actualHeal = Math.min(castTarget.maxHealth - castTarget.health, finalHealAmount);
-        const safeCurrentHealth = isNaN(castTarget.health) || !isFinite(castTarget.health) ? castTarget.maxHealth : castTarget.health;
-        const safeFinalHealAmount = isNaN(finalHealAmount) || !isFinite(finalHealAmount) ? 0 : finalHealAmount;
-        safeSetHealth(castTarget, safeCurrentHealth + safeFinalHealAmount);
-        
-        // Capture state after healing
-        const healthAfter = castTarget.health;
-        
-        const healTimestamp = Date.now();
-        castTarget.lastHealTime = healTimestamp;
-        castTarget.lastHealAmount = actualHeal;
-        castTarget.lastHealCrit = isCritHeal;
-        if (isCritHeal) setScreenShake(prev => prev + 1);
-        currentHealer.mana -= effectiveManaCost;
-        currentHealer.totalHealing = (currentHealer.totalHealing || 0) + actualHeal;
-        currentHealer.healingBySpell = currentHealer.healingBySpell || {};
-        currentHealer.healingBySpell[abilityName] = (currentHealer.healingBySpell[abilityName] || 0) + actualHeal;
-        
-        // Process onHeal effects
-        processOnHealEffects(currentHealer, castTarget, finalHealAmount, currentTick, teamStates);
-        
-        const jitterX = (Math.random() * 80) - 40;
-        const jitterY = (Math.random() * 60) - 30;
-        const floatNum = createFloatingNumber(healAmount, 'heal', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 50 + jitterY);
-        
-        // Create verbose heal log with full stats
-        const verboseHealLog = createVerboseHealLog(
-          totalTime,
-          currentHealer.name,
-          castTarget.name,
-          actualHeal,
-          castTarget,
-          {
-            healthBefore,
-            healthAfter,
-            maxHealth: castTarget.maxHealth,
-            crit: isCritHeal,
-            abilityName
-          },
-          currentHealer, // sourceState
-          teamStates, // allTeamStates
-          currentCombatState?.enemies || [] // allEnemies
-        );
-        
-        updateCombatState(prev => ({ 
-          ...prev, 
-          teamStates: prev.teamStates.map(m => 
-            m.id === castTarget.id 
-              ? { ...m, lastHealTime: healTimestamp, lastHealAmount: actualHeal, lastHealCrit: isCritHeal, health: castTarget.health }
-              : m.id === currentHealer.id
-              ? { ...m, mana: currentHealer.mana, totalHealing: currentHealer.totalHealing, healingBySpell: currentHealer.healingBySpell }
-              : m
-          ),
-          floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum],
-          combatLog: [...prev.combatLog, verboseHealLog] 
-        }));
       }
+      // Clear all cast-related fields when cast completes
       currentHealer.isCasting = false;
       currentHealer.castTargetId = undefined;
+      currentHealer.castAbility = undefined;
+      currentHealer.castStartTick = undefined;
+      currentHealer.castEndTick = undefined;
+      currentHealer.castTotalTicks = undefined;
+      currentHealer.castStartTime = undefined;
+      currentHealer.castTotalTime = undefined;
     }
   }
   
   // Check if healer can start a new action
-  if (!canStartAction(currentHealer, currentTick)) return;
+  // Healing spells should be allowed even when silenced (silence only blocks offensive spells)
+  if (!canStartAction(currentHealer, currentTick, true)) return;
   
   const aliveTeam = teamStates.filter(m => !m.isDead);
   const tank = aliveTeam.find(m => team.find(c => c.id === m.id)?.role === 'tank');
@@ -482,136 +798,155 @@ function processHealerHealing(
   
   const selectedHealerSkill = validHealerSkills[0];
   
-  // Legacy Pain Suppression check
-  const equippedSkillIds = healerChar?.skillGems?.map((sg: any) => sg.skillGemId) || [];
-  const hasPainSuppression = equippedSkillIds.includes('pain_suppression');
-  const painSuppSkill = hasPainSuppression ? getSkillGemById('pain_suppression') : undefined;
-  const heavyDamageTarget = aliveTeam.find(m => 
-    (m.recentDamageTaken || 0) > m.maxHealth * 0.15 && 
-    !m.damageReduction
-  );
-  
   // Use player-configured skill selection
-  // Apply talent mana cost reduction
-  const talentManaCostReduction = currentHealer.talentBonuses?.manaCostReduction || 0;
-  const effectivePainSuppManaCost = painSuppSkill ? Math.max(0, painSuppSkill.manaCost * (1 - talentManaCostReduction / 100)) : 0;
-  
-  if (selectedHealerSkill && selectedHealerSkill.skill.id === 'pain_suppression' && painSuppSkill && currentTick >= healerCooldowns.painSuppressionEndTick && heavyDamageTarget && currentHealer.mana >= effectivePainSuppManaCost) {
-    const damageReductionValue = painSuppSkill.effects.find(e => e.type === 'damageReduction')?.value || 40;
-    const durationSeconds = painSuppSkill.effects.find(e => e.type === 'damageReduction')?.duration || 6;
-    heavyDamageTarget.damageReduction = damageReductionValue;
-    heavyDamageTarget.damageReductionEndTick = currentTick + secondsToTicks(durationSeconds);
-    heavyDamageTarget.lastExternalTime = Date.now();
-    heavyDamageTarget.lastExternalName = 'Pain Supp';
-    currentHealer.mana -= effectivePainSuppManaCost;
-    healerCooldowns.painSuppressionEndTick = currentTick + secondsToTicks(painSuppSkill.cooldown || 30);
-    // Pain Suppression is instant, triggers GCD
-    currentHealer.gcdEndTick = currentTick + GCD_TICKS;
-    updateCombatState(prev => ({ 
-      ...prev, 
-      combatLog: [...prev.combatLog, { 
-        timestamp: totalTime, 
-        type: 'buff', 
-        source: currentHealer.name, 
-        target: heavyDamageTarget.name, 
-        message: `${getSkillIconString(painSuppSkill)} ${currentHealer.name} casts Pain Suppression on ${heavyDamageTarget.name}! (-${damageReductionValue}% damage for ${durationSeconds}s)` 
-      }] 
-    }));
-  } else {
-    const hasMassiveHeal = equippedSkillIds.includes('massive_heal');
-    const massiveHealSkill = hasMassiveHeal ? getSkillGemById('massive_heal') : undefined;
-    const criticalTarget = aliveTeam.find(m => m.health <= m.maxHealth * 0.5);
-    
+  if (selectedHealerSkill) {
+    const { skill, config } = selectedHealerSkill;
     const talentManaCostReduction = currentHealer.talentBonuses?.manaCostReduction || 0;
-    const effectiveMassiveHealManaCost = massiveHealSkill ? Math.max(0, massiveHealSkill.manaCost * (1 - talentManaCostReduction / 100)) : 0;
+    const effectiveManaCost = Math.max(0, skill.manaCost * (1 - talentManaCostReduction / 100));
     
-    if (hasMassiveHeal && massiveHealSkill && criticalTarget && currentHealer.mana >= effectiveMassiveHealManaCost) {
-      // Apply cast speed bonus
-      const castSpeedBonus = currentHealer.talentBonuses?.castSpeedBonus || 0;
-      const castSpeedMultiplier = 1 + (castSpeedBonus / 100);
-      const castTimeTicks = Math.max(1, Math.floor(secondsToTicks(massiveHealSkill.castTime) / castSpeedMultiplier));
-      startCast(currentHealer, castTimeTicks, currentTick, criticalTarget.id, massiveHealSkill.name);
-      updateCombatState(prev => ({ 
-        ...prev, 
-        combatLog: [...prev.combatLog, { 
-          timestamp: totalTime, 
-          type: 'ability', 
-          source: currentHealer.name, 
-          target: criticalTarget.name, 
-          message: `${getSkillIconString(massiveHealSkill)} ${currentHealer.name} begins casting ${massiveHealSkill.name} on ${criticalTarget.name}...` 
-        }] 
-      }));
-    } else {
-      const hasRejuvenation = equippedSkillIds.includes('rejuvenation');
-      const rejuvSkill = hasRejuvenation ? getSkillGemById('rejuvenation') : undefined;
-      const rejuvTarget = aliveTeam.find(m => 
-        m.health < m.maxHealth * 0.85 && 
-        m.health > m.maxHealth * 0.5 && 
-        !m.hasRejuv
-      );
+    // Handle instant skills (no cast time) vs cast skills
+    if (skill.castTime === 0 || skill.castTime === undefined) {
+      // Instant skill - apply immediately
       
-      const effectiveRejuvManaCost = rejuvSkill ? Math.max(0, rejuvSkill.manaCost * (1 - talentManaCostReduction / 100)) : 0;
-      
-      if (hasRejuvenation && rejuvSkill && rejuvTarget && currentHealer.mana >= effectiveRejuvManaCost) {
-        const spellPower = (healerChar?.baseStats?.intelligence || 20) * 2.5;
-        const spellPowerMultiplier = (rejuvSkill.damageEffectiveness || 30) / 100;
-        const baseHeal = rejuvSkill.baseHealing || 40;
-        const hotHealPerTick = Math.floor(baseHeal * (1 + (spellPower * spellPowerMultiplier) / 100));
-        const durationSeconds = rejuvSkill.effects.find(e => e.type === 'hot')?.duration || 12;
-        const tickIntervalSeconds = 2;
-        rejuvTarget.hotEffects = rejuvTarget.hotEffects || [];
-        rejuvTarget.hotEffects.push({
-          name: rejuvSkill.name,
-          icon: getSkillIconString(rejuvSkill),
-          healPerTick: hotHealPerTick,
-          expiresAtTick: currentTick + secondsToTicks(durationSeconds),
-          tickIntervalTicks: secondsToTicks(tickIntervalSeconds),
-          nextTickAtTick: currentTick + secondsToTicks(tickIntervalSeconds),
-          sourceId: currentHealer.id
-        });
-        rejuvTarget.hasRejuv = true;
-        currentHealer.mana -= effectiveRejuvManaCost;
-        // Rejuvenation is instant, triggers GCD
-        currentHealer.gcdEndTick = currentTick + GCD_TICKS;
-        updateCombatState(prev => ({ 
-          ...prev, 
-          combatLog: [...prev.combatLog, { 
-            timestamp: totalTime, 
-            type: 'heal', 
-            source: currentHealer.name, 
-            target: rejuvTarget.name, 
-            message: `${getSkillIconString(rejuvSkill)} ${currentHealer.name} casts ${rejuvSkill.name} on ${rejuvTarget.name}!` 
-          }] 
-        }));
-      } else {
-        const hasHealingWave = equippedSkillIds.includes('healing_wave');
-        const healingWaveSkill = hasHealingWave ? getSkillGemById('healing_wave') : undefined;
-        const hurtMembers = aliveTeam.filter(m => m.health < m.maxHealth * 0.95);
-        
-        const effectiveHealingWaveManaCost = healingWaveSkill ? Math.max(0, healingWaveSkill.manaCost * (1 - talentManaCostReduction / 100)) : 0;
-        
-        if (hasHealingWave && healingWaveSkill && hurtMembers.length > 0 && currentHealer.mana >= effectiveHealingWaveManaCost) {
-          const tankMember = hurtMembers.find(m => m.role === 'tank');
-          const healTarget = tankMember || hurtMembers.reduce((lowest, m) => 
-            (!lowest || m.health / m.maxHealth < lowest.health / lowest.maxHealth) ? m : lowest, 
-            hurtMembers[0]
+      // Pain Suppression (buff)
+      if (skill.id === 'pain_suppression') {
+        if (currentTick >= healerCooldowns.painSuppressionEndTick) {
+          const heavyDamageTarget = aliveTeam.find(m => 
+            (m.recentDamageTaken || 0) > m.maxHealth * 0.15 && 
+            !m.damageReduction
           );
-          // Apply cast speed bonus
-          const castSpeedBonus = currentHealer.talentBonuses?.castSpeedBonus || 0;
-          const castSpeedMultiplier = 1 + (castSpeedBonus / 100);
-          const castTimeTicks = Math.max(1, Math.floor(secondsToTicks(healingWaveSkill.castTime) / castSpeedMultiplier));
-          startCast(currentHealer, castTimeTicks, currentTick, healTarget.id, healingWaveSkill.name);
+          
+          if (heavyDamageTarget && currentHealer.mana >= effectiveManaCost) {
+            const damageReductionValue = skill.effects.find(e => e.type === 'damageReduction')?.value || 40;
+            const durationSeconds = skill.effects.find(e => e.type === 'damageReduction')?.duration || 6;
+            heavyDamageTarget.damageReduction = damageReductionValue;
+            heavyDamageTarget.damageReductionEndTick = currentTick + secondsToTicks(durationSeconds);
+            heavyDamageTarget.lastExternalTime = Date.now();
+            heavyDamageTarget.lastExternalName = 'Pain Supp';
+            currentHealer.mana -= effectiveManaCost;
+            healerCooldowns.painSuppressionEndTick = currentTick + secondsToTicks(skill.cooldown || 30);
+            currentHealer.gcdEndTick = currentTick + GCD_TICKS;
+            updateCombatState(prev => ({ 
+              ...prev, 
+              combatLog: [...prev.combatLog, { 
+                timestamp: totalTime, 
+                type: 'buff', 
+                source: currentHealer.name, 
+                target: heavyDamageTarget.name, 
+                message: `${getSkillIconString(skill)} ${currentHealer.name} casts ${skill.name} on ${heavyDamageTarget.name}! (-${damageReductionValue}% damage for ${durationSeconds}s)` 
+              }] 
+            }));
+          }
+        }
+      }
+      // Rejuvenation (HoT)
+      else if (skill.id === 'rejuvenation') {
+        // Find target based on config (lowest ally or specific target)
+        let rejuvTarget: TeamMemberState | undefined;
+        if (config.allyHealth.enabled && config.allyHealth.target === 'lowest_ally') {
+          const candidates = aliveTeam.filter(m => m.health < m.maxHealth * (config.allyHealth.threshold / 100) && !m.hasRejuv);
+          if (candidates.length > 0) {
+            rejuvTarget = candidates.reduce((lowest, m) => 
+              (m.health / m.maxHealth < lowest.health / lowest.maxHealth) ? m : lowest,
+              candidates[0]
+            );
+          }
+        } else {
+          // Default: find someone who needs rejuv
+          rejuvTarget = aliveTeam.find(m => 
+            m.health < m.maxHealth * 0.85 && 
+            m.health > m.maxHealth * 0.5 && 
+            !m.hasRejuv
+          );
+        }
+        
+        if (rejuvTarget && currentHealer.mana >= effectiveManaCost) {
+          const spellPower = (healerChar?.baseStats?.intelligence || 20) * 2.5;
+          const spellPowerMultiplier = (skill.damageEffectiveness || 30) / 100;
+          const baseHeal = skill.baseHealing || 40;
+          const hotHealPerTick = Math.floor(baseHeal * (1 + (spellPower * spellPowerMultiplier) / 100));
+          const durationSeconds = skill.effects.find(e => e.type === 'hot')?.duration || 12;
+          const tickIntervalSeconds = 2;
+          rejuvTarget.hotEffects = rejuvTarget.hotEffects || [];
+          rejuvTarget.hotEffects.push({
+            name: skill.name,
+            icon: getSkillIconString(skill),
+            healPerTick: hotHealPerTick,
+            expiresAtTick: currentTick + secondsToTicks(durationSeconds),
+            tickIntervalTicks: secondsToTicks(tickIntervalSeconds),
+            nextTickAtTick: currentTick + secondsToTicks(tickIntervalSeconds),
+            sourceId: currentHealer.id
+          });
+          rejuvTarget.hasRejuv = true;
+          currentHealer.mana -= effectiveManaCost;
+          currentHealer.gcdEndTick = currentTick + GCD_TICKS;
           updateCombatState(prev => ({ 
             ...prev, 
             combatLog: [...prev.combatLog, { 
               timestamp: totalTime, 
-              type: 'ability', 
+              type: 'heal', 
               source: currentHealer.name, 
-              target: healTarget.name, 
-              message: `${healingWaveSkill.icon} ${currentHealer.name} begins casting ${healingWaveSkill.name} on ${healTarget.name}...` 
+              target: rejuvTarget.name, 
+              message: `${getSkillIconString(skill)} ${currentHealer.name} casts ${skill.name} on ${rejuvTarget.name}!` 
             }] 
           }));
         }
+      }
+    } else {
+      // Cast skill - start casting
+      let targetId: string | undefined;
+      let targetName = '';
+      
+      // Determine target based on skill target type
+      if (skill.targetType === 'allAllies') {
+        // No specific target needed for allAllies
+        targetId = undefined;
+        targetName = 'all allies';
+      } else if (skill.targetType === 'ally') {
+        // Single target ally - find based on config
+        if (config.allyHealth.enabled && config.allyHealth.target === 'lowest_ally') {
+          const hurtMembers = aliveTeam.filter(m => m.health < m.maxHealth * (config.allyHealth.threshold / 100));
+          if (hurtMembers.length > 0) {
+            const tankMember = hurtMembers.find(m => m.role === 'tank');
+            const target = tankMember || hurtMembers.reduce((lowest, m) => 
+              (!lowest || m.health / m.maxHealth < lowest.health / lowest.maxHealth) ? m : lowest, 
+              hurtMembers[0]
+            );
+            targetId = target.id;
+            targetName = target.name;
+          }
+        } else {
+          // Default: lowest health ally
+          const target = aliveTeam.reduce((lowest, m) => 
+            (!lowest || m.health / m.maxHealth < lowest.health / lowest.maxHealth) ? m : lowest, 
+            aliveTeam[0]
+          );
+          targetId = target.id;
+          targetName = target.name;
+        }
+      }
+      
+      if (targetId || skill.targetType === 'allAllies') {
+        // Apply cast speed bonus
+        const castSpeedBonus = currentHealer.talentBonuses?.castSpeedBonus || 0;
+        const castSpeedMultiplier = 1 + (castSpeedBonus / 100);
+        // Apply support gem cast time multiplier (faster casting)
+        const equippedSkill = healerChar?.skillGems?.find(sg => sg.skillGemId === skill.id);
+        const supportGemIds = equippedSkill?.supportGemIds || [];
+        const supportResult = applySupportGems(skill, supportGemIds);
+        const effectiveCastSpeedMultiplier = castSpeedMultiplier * supportResult.castTimeMultiplier;
+        const castTimeTicks = Math.max(1, Math.floor(secondsToTicks(skill.castTime) / effectiveCastSpeedMultiplier));
+        startCast(currentHealer, castTimeTicks, currentTick, targetId, skill.name);
+        updateCombatState(prev => ({ 
+          ...prev, 
+          combatLog: [...prev.combatLog, { 
+            timestamp: totalTime, 
+            type: 'ability', 
+            source: currentHealer.name, 
+            target: targetName, 
+            message: `${getSkillIconString(skill)} ${currentHealer.name} begins casting ${skill.name}${targetName ? ` on ${targetName}` : '...'}...` 
+          }] 
+        }));
       }
     }
   }
@@ -784,21 +1119,29 @@ function processDpsActions(
         member.maxChannelStacks = skill.maxChannelStacks;
       }
       
-      // Calculate damage
+      // Calculate damage with support gems
+      // Get support gem IDs for this skill
+      const equippedSkill = char.skillGems?.find(sg => sg.skillGemId === skill.id);
+      const supportGemIds = equippedSkill?.supportGemIds || [];
+      const supportResult = applySupportGems(skill, supportGemIds);
+      
       // Reduced spell power scaling: int * 2.5 instead of * 5
       const spellPower = (char.baseStats?.intelligence || 20) * 2.5;
       const baseCritChance = skill.baseCriticalStrikeChance || 8;
       const increasedCritChance = char.baseStats?.criticalStrikeChance || 0;
-      const finalCritChance = calculateCriticalStrikeChance(baseCritChance, increasedCritChance);
+      // Apply support gem crit chance multiplier
+      const finalCritChance = calculateCriticalStrikeChance(baseCritChance, increasedCritChance) * supportResult.critChanceMultiplier;
       const isCrit = Math.random() < (finalCritChance / 100);
       const spellPowerMultiplier = (skill.damageEffectiveness || 100) / 100;
       // Reduced base damage fallback from 30 to 15 for channeled skills
       const baseDmg = skill.baseDamage || 15;
       const rampBonus = skill.channelRampUp ? 1 + ((member.channelStacks || 0) * (skill.channelRampUp / 100)) : 1;
-      // Apply talent damage multiplier
+      // Apply talent damage multiplier and support gem damage multiplier
       const talentDamageMultiplier = 1 + ((member.talentBonuses?.damageMultiplier || 0) / 100);
       // Reduced spell power effectiveness: divide by 200 instead of 100 for gentler scaling
-      const damage = Math.floor(baseDmg * (1 + (spellPower * spellPowerMultiplier) / 200) * talentDamageMultiplier * (bloodlustActive ? 1.3 : 1) * rampBonus);
+      let damage = Math.floor(baseDmg * (1 + (spellPower * spellPowerMultiplier) / 200) * talentDamageMultiplier * (bloodlustActive ? 1.3 : 1) * rampBonus * supportResult.damageMultiplier);
+      // Add flat damage from support gems
+      damage += supportResult.addedDamage;
       const critMultiplier = (char.baseStats?.criticalStrikeMultiplier || 150) / 100;
       const finalDamage = isCrit ? Math.floor(damage * critMultiplier) : damage;
       
@@ -808,7 +1151,7 @@ function processDpsActions(
       
       // Deal damage based on skill type
       const currentAlive = tickAliveEnemies;
-      const { damageType } = calculateSkillDamage(skill, member, char, bloodlustActive);
+      const { damageType } = calculateSkillDamage(skill, member, char, bloodlustActive, supportGemIds);
       if (skill.targetType === 'allEnemies') {
         let totalDamage = 0;
         currentAlive.forEach(enemy => {
@@ -1047,15 +1390,27 @@ function processDpsActions(
     
     // Regular cast complete - deal damage (uses weapon for attacks, spell base for spells)
     const isAttackSkill = skill.tags?.includes('attack');
+    
+    // Update weapon damage for dual wielding (alternates between weapons)
+    if (isAttackSkill && member.isDualWielding) {
+      updateWeaponDamageForDualWielding(member, context.inventory, char);
+    }
+    
     let baseCritChance = skill.baseCriticalStrikeChance || 8;
     // Attack skills can use weapon crit chance if higher
     if (isAttackSkill && member.weaponDamage && member.weaponDamage.criticalStrikeChance > baseCritChance) {
       baseCritChance = member.weaponDamage.criticalStrikeChance;
     }
+    // Get support gem IDs for this skill
+    const equippedSkill = char.skillGems?.find(sg => sg.skillGemId === skill.id);
+    const supportGemIds = equippedSkill?.supportGemIds || [];
+    
     const increasedCritChance = char.baseStats?.criticalStrikeChance || 0;
-    const finalCritChance = calculateCriticalStrikeChance(baseCritChance, increasedCritChance);
+    // Apply support gem crit chance multiplier
+    const supportResult = applySupportGems(skill, supportGemIds);
+    const finalCritChance = calculateCriticalStrikeChance(baseCritChance, increasedCritChance) * supportResult.critChanceMultiplier;
     const isCrit = Math.random() < (finalCritChance / 100);
-    const { damage } = calculateSkillDamage(skill, member, char, bloodlustActive);
+    const { damage } = calculateSkillDamage(skill, member, char, bloodlustActive, supportGemIds);
     const critMultiplier = (char.baseStats?.criticalStrikeMultiplier || 150) / 100;
     const finalDamage = isCrit ? Math.floor(damage * critMultiplier) : damage;
     
@@ -1064,23 +1419,60 @@ function processDpsActions(
     const jitterX = (Math.random() * 100) - 50 + (dpsIndex * 40);
     const jitterY = (Math.random() * 70) - 35 - (dpsIndex * 15);
     
-    // Apply talent mana cost reduction
+    // Apply talent mana cost reduction and support gem mana cost multiplier
+    // Lifetap support: use life instead of mana
     const talentManaCostReduction = member.talentBonuses?.manaCostReduction || 0;
-    const effectiveManaCost = Math.max(0, skill.manaCost * (1 - talentManaCostReduction / 100));
+    const baseManaCost = skill.manaCost * supportResult.manaCostMultiplier;
+    const effectiveManaCost = Math.max(0, baseManaCost * (1 - talentManaCostReduction / 100));
     
-    if (member.mana < effectiveManaCost) {
-      member.isCasting = false;
-      member.castAbility = undefined;
-      member.castTargetId = undefined;
-      return null;
+    // Check if lifetap is active (manaCostMultiplier = 0 means lifetap)
+    const hasLifetap = supportResult.manaCostMultiplier === 0;
+    
+    if (hasLifetap) {
+      // Lifetap: use life instead of mana
+      if (member.health <= effectiveManaCost) {
+        member.isCasting = false;
+        member.castAbility = undefined;
+        member.castTargetId = undefined;
+        return null;
+      }
+      const safeCurrentHealth = isNaN(member.health) || !isFinite(member.health) ? member.maxHealth : member.health;
+      const safeLifeCost = isNaN(effectiveManaCost) || !isFinite(effectiveManaCost) ? 0 : Math.min(effectiveManaCost, safeCurrentHealth - 1); // Leave at least 1 HP
+      safeSetHealth(member, safeCurrentHealth - safeLifeCost);
+      logEntries.push({
+        timestamp: totalTime,
+        type: 'system',
+        source: char.name,
+        target: '',
+        value: 0,
+        message: `💉 ${char.name} pays ${safeLifeCost} life to cast ${abilityName}`
+      });
+    } else {
+      // Normal mana cost
+      if (member.mana < effectiveManaCost) {
+        member.isCasting = false;
+        member.castAbility = undefined;
+        member.castTargetId = undefined;
+        return null;
+      }
+      member.mana -= effectiveManaCost;
     }
-    
-    member.mana -= effectiveManaCost;
     
     if (skill.targetType === 'allEnemies') {
       let totalDamage = 0;
       const allEnemiesDamageType = skill.damageType || 'fire';
-      currentAlive.forEach(enemy => {
+      
+      // Greater Multiple Projectiles: If this is a projectile skill with GMP, hit multiple targets
+      const effectiveProjectileCount = supportResult?.hasGMP && skill.tags?.includes('projectile')
+        ? (skill.projectileCount || 1) + supportResult.projectileCount
+        : (skill.projectileCount || 1);
+      
+      // For GMP, we hit up to effectiveProjectileCount enemies
+      const targetsToHit = supportResult?.hasGMP && skill.tags?.includes('projectile')
+        ? currentAlive.slice(0, Math.min(effectiveProjectileCount, currentAlive.length))
+        : currentAlive;
+      
+      targetsToHit.forEach(enemy => {
         const damageResult = calculatePlayerDamageToEnemy(
           finalDamage,
           mapDamageType(allEnemiesDamageType),
@@ -1110,6 +1502,41 @@ function processDpsActions(
         value: totalDamage, 
         message: `${getSkillIconString(skill)} ${char.name} casts ${abilityName} hitting ${currentAlive.length} enemies for ${finalDamage} each${isCrit ? ' CRIT!' : ''}!` 
       });
+      
+      // Spell Echo for allEnemies spells
+      if (supportResult?.hasSpellEcho && skill.tags?.includes('spell')) {
+        const echoDamage = Math.floor(finalDamage * 0.8); // Echo does 80% damage
+        let echoTotalDamage = 0;
+        currentAlive.forEach(enemy => {
+          const echoDamageResult = calculatePlayerDamageToEnemy(
+            echoDamage,
+            mapDamageType(allEnemiesDamageType),
+            enemy,
+            member.accuracy
+          );
+          if (!echoDamageResult.evaded) {
+            const safeESRemaining = isNaN(echoDamageResult.esRemaining) || !isFinite(echoDamageResult.esRemaining) ? (enemy.energyShield || 0) : Math.max(0, echoDamageResult.esRemaining);
+            const safeLifeRemaining = isNaN(echoDamageResult.lifeRemaining) || !isFinite(echoDamageResult.lifeRemaining) ? enemy.maxHealth : Math.max(0, echoDamageResult.lifeRemaining);
+            enemy.energyShield = safeESRemaining;
+            safeSetEnemyHealth(enemy, safeLifeRemaining);
+            echoTotalDamage += echoDamageResult.damage;
+            setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 }));
+          }
+        });
+        if (echoTotalDamage > 0) {
+          member.totalDamage = (member.totalDamage || 0) + echoTotalDamage;
+          member.damageBySpell[abilityName] = (member.damageBySpell[abilityName] || 0) + echoTotalDamage;
+          floatNumbers.push(createFloatingNumber(echoTotalDamage, 'player', currentCombatState.teamPosition.x + jitterX + 15, currentCombatState.teamPosition.y - 50 + jitterY));
+          logEntries.push({ 
+            timestamp: totalTime, 
+            type: 'damage', 
+            source: char.name, 
+            target: `${currentAlive.length} enemies`, 
+            value: echoTotalDamage, 
+            message: `⟳ ${char.name}'s ${abilityName} echoes hitting ${currentAlive.length} enemies for ${echoDamage} each!` 
+          });
+        }
+      }
     } else if (skill.targetType === 'enemy' && (skill.chainCount && skill.chainCount > 0)) {
       const chainTargets = Math.min(1 + skill.chainCount, currentAlive.length);
       const chainBonus = skill.chainDamageBonus || 0;
@@ -1147,12 +1574,51 @@ function processDpsActions(
         value: totalDamage, 
         message: `⚡ ${char.name} casts ${abilityName} chaining to ${targetNames} for ${totalDamage} total${isCrit ? ' CRIT!' : ''}!` 
       });
+      
+      // Spell Echo for chain spells
+      if (supportResult?.hasSpellEcho && skill.tags?.includes('spell')) {
+        const echoDamage = Math.floor(finalDamage * 0.8); // Echo does 80% damage
+        let echoTotalDamage = 0;
+        targets.forEach((enemy, index) => {
+          const chainsRemaining = chainTargets - 1 - index;
+          const chainMultiplier = 1 + (chainsRemaining * chainBonus / 100);
+          const echoChainDamage = Math.floor(echoDamage * chainMultiplier);
+          const echoDamageResult = calculatePlayerDamageToEnemy(
+            echoChainDamage,
+            mapDamageType(skill.damageType || 'fire'),
+            enemy,
+            member.accuracy
+          );
+          if (!echoDamageResult.evaded) {
+            const safeCurrentHealth = isNaN(enemy.health) || !isFinite(enemy.health) ? enemy.maxHealth : enemy.health;
+            const safeEchoChainDamage = isNaN(echoChainDamage) || !isFinite(echoChainDamage) ? 0 : echoChainDamage;
+            safeSetEnemyHealth(enemy, safeCurrentHealth - safeEchoChainDamage);
+            echoTotalDamage += echoChainDamage;
+            setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 }));
+          }
+        });
+        if (echoTotalDamage > 0) {
+          member.totalDamage = (member.totalDamage || 0) + echoTotalDamage;
+          member.damageBySpell[abilityName] = (member.damageBySpell[abilityName] || 0) + echoTotalDamage;
+          floatNumbers.push(createFloatingNumber(echoTotalDamage, 'player', currentCombatState.teamPosition.x + jitterX + 15, currentCombatState.teamPosition.y - 50 + jitterY));
+          logEntries.push({ 
+            timestamp: totalTime, 
+            type: 'damage', 
+            source: char.name, 
+            target: targetNames, 
+            value: echoTotalDamage, 
+            message: `⟳ ${char.name}'s ${abilityName} echoes chaining to ${targetNames} for ${echoTotalDamage} total!` 
+          });
+        }
+      }
     } else {
       if (currentAlive.length > 0) {
         let target = member.castTargetId ? currentAlive.find(e => e.id === member.castTargetId) : null;
         if (!target) {
           target = currentAlive.reduce((lowest, e) => e.health < lowest.health ? e : lowest, currentAlive[0]);
         }
+        
+        let totalDamage = 0;
         
         // Apply enemy armor and defensive stats
         const damageResult = calculatePlayerDamageToEnemy(
@@ -1177,29 +1643,97 @@ function processDpsActions(
         target.energyShield = damageResult.esRemaining;
         target.health = damageResult.lifeRemaining;
         const actualDamage = damageResult.damage;
+        totalDamage += actualDamage;
         
-        member.totalDamage = (member.totalDamage || 0) + actualDamage;
-        member.damageBySpell = member.damageBySpell || {};
-        member.damageBySpell[abilityName] = (member.damageBySpell[abilityName] || 0) + actualDamage;
-        
-        // Process onHit effects
-        processOnHitEffects(member, actualDamage, currentTick, teamStates);
-        
-        // Apply lifesteal after damage is dealt
-        applyLifesteal(member, actualDamage, floatNumbers, currentCombatState);
-        
-        if (isCrit) setScreenShake(prev => prev + 1);
-        setTeamFightAnim(prev => prev + 1);
         setEnemyFightAnims(prev => ({ ...prev, [target.id]: (prev[target.id] || 0) + 1 }));
-        floatNumbers.push(createFloatingNumber(actualDamage, isCrit ? 'crit' : 'player', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 40 + jitterY));
-        logEntries.push({ 
-          timestamp: totalTime, 
-          type: 'damage', 
-          source: char.name, 
-          target: target.name, 
-          value: finalDamage, 
-          message: `${getSkillIconString(skill)} ${char.name} casts ${abilityName} on ${target.name} for ${finalDamage}${isCrit ? ' CRIT!' : ''}!` 
-        });
+        
+        // Melee Splash: If this is a melee attack with melee splash support, deal splash damage to nearby enemies
+        if (supportResult?.hasMeleeSplash && isAttackSkill && skill.tags?.includes('melee')) {
+          // Only apply splash from first hit
+          const splashTargets = currentAlive.filter(enemy => {
+            if (enemy.id === target.id) return false; // Don't splash to main target
+            return true;
+          }).slice(0, 3); // Limit to 3 splash targets
+          
+          splashTargets.forEach(splashTarget => {
+            const splashDmg = Math.floor(finalDamage * 0.5); // Splash deals 50% of main damage
+            const splashDamageResult = calculatePlayerDamageToEnemy(
+              splashDmg,
+              mapDamageType(skill.damageType || 'physical'),
+              splashTarget,
+              member.accuracy
+            );
+            if (!splashDamageResult.evaded) {
+              splashTarget.energyShield = splashDamageResult.esRemaining;
+              splashTarget.health = splashDamageResult.lifeRemaining;
+              totalDamage += splashDamageResult.damage;
+              setEnemyFightAnims(prev => ({ ...prev, [splashTarget.id]: (prev[splashTarget.id] || 0) + 1 }));
+            }
+          });
+        }
+        
+        if (totalDamage > 0) {
+          member.totalDamage = (member.totalDamage || 0) + totalDamage;
+          member.damageBySpell = member.damageBySpell || {};
+          member.damageBySpell[abilityName] = (member.damageBySpell[abilityName] || 0) + totalDamage;
+          
+          // Process onHit effects
+          processOnHitEffects(member, totalDamage, currentTick, teamStates);
+          
+          // Apply lifesteal after damage is dealt
+          applyLifesteal(member, totalDamage, floatNumbers, currentCombatState);
+          
+          if (isCrit) setScreenShake(prev => prev + 1);
+          setTeamFightAnim(prev => prev + 1);
+          const targetNames = target.name;
+          floatNumbers.push(createFloatingNumber(totalDamage, isCrit ? 'crit' : 'player', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 40 + jitterY));
+          logEntries.push({ 
+            timestamp: totalTime, 
+            type: 'damage', 
+            source: char.name, 
+            target: targetNames, 
+            value: totalDamage, 
+            message: `${getSkillIconString(skill)} ${char.name} casts ${abilityName} on ${targetNames} for ${totalDamage}${isCrit ? ' CRIT!' : ''}!` 
+          });
+          
+          // Spell Echo: If this spell has echo support, repeat it once immediately
+          if (supportResult?.hasSpellEcho && skill.tags?.includes('spell')) {
+          // Echo cast - apply 20% less damage (already in supportResult.damageMultiplier)
+          const echoDamage = Math.floor(finalDamage * 0.8); // Echo does 80% damage
+          const echoDamageResult = calculatePlayerDamageToEnemy(
+            echoDamage,
+            mapDamageType(skill.damageType || 'fire'),
+            target,
+            member.accuracy
+          );
+          
+          if (!echoDamageResult.evaded) {
+            target.energyShield = echoDamageResult.esRemaining;
+            target.health = echoDamageResult.lifeRemaining;
+            const echoActualDamage = echoDamageResult.damage;
+            
+            member.totalDamage = (member.totalDamage || 0) + echoActualDamage;
+            member.damageBySpell[abilityName] = (member.damageBySpell[abilityName] || 0) + echoActualDamage;
+            
+            // Process onHit effects for echo
+            processOnHitEffects(member, echoActualDamage, currentTick, teamStates);
+            
+            // Apply lifesteal for echo
+            applyLifesteal(member, echoActualDamage, floatNumbers, currentCombatState);
+            
+            setEnemyFightAnims(prev => ({ ...prev, [target.id]: (prev[target.id] || 0) + 1 }));
+            floatNumbers.push(createFloatingNumber(echoActualDamage, 'player', currentCombatState.teamPosition.x + jitterX + 15, currentCombatState.teamPosition.y - 50 + jitterY));
+            logEntries.push({ 
+              timestamp: totalTime, 
+              type: 'damage', 
+              source: char.name, 
+              target: target.name, 
+              value: echoDamage, 
+              message: `⟳ ${char.name}'s ${abilityName} echoes for ${echoDamage}!` 
+            });
+          }
+        }
+        }
       }
     }
     
@@ -1320,10 +1854,14 @@ function processDpsActions(
     const selectedConfig = selectedEntry.config;
     
     const spellChoice = selectedSkill.name;
-    // Apply cast speed bonus
+    // Apply cast speed bonus and support gem cast time multiplier
     const castSpeedBonus = member.talentBonuses?.castSpeedBonus || 0;
     const castSpeedMultiplier = 1 + (castSpeedBonus / 100);
-    const castTimeTicks = Math.max(1, Math.floor(secondsToTicks(selectedSkill.castTime || 0) / castSpeedMultiplier));
+    const equippedSkill = char.skillGems?.find(sg => sg.skillGemId === selectedSkill.id);
+    const supportGemIds = equippedSkill?.supportGemIds || [];
+    const supportResult = applySupportGems(selectedSkill, supportGemIds);
+    const effectiveCastSpeedMultiplier = castSpeedMultiplier * supportResult.castTimeMultiplier;
+    const castTimeTicks = Math.max(1, Math.floor(secondsToTicks(selectedSkill.castTime || 0) / effectiveCastSpeedMultiplier));
     let targetId: string | undefined = undefined;
     if (selectedSkill.targetType === 'enemy' && selectedSkill.id !== 'shadow_bolt') {
       const alreadyTargeted = new Set(
@@ -1366,7 +1904,7 @@ function processTankActions(
   member: TeamMemberState,
   teamStates: TeamMemberState[],
   tickAliveEnemies: AnimatedEnemy[],
-  tankCooldowns: { shieldSlamEndTick: number; defensiveStanceEndTick: number; shieldBlockEndTick: number },
+  tankCooldowns: { shieldSlamEndTick: number; defensiveStanceEndTick: number; shieldBlockEndTick: number; thunderClapEndTick: number },
   bloodlustActive: boolean,
   currentTick: number
 ): void {
@@ -1504,56 +2042,68 @@ function processTankActions(
       }
     }
     
-    // Thunder Clap (filler ability)
-    // Apply talent damage multiplier
-    const talentDamageMultiplier = 1 + ((member.talentBonuses?.damageMultiplier || 0) / 100);
-    const thunderClapDmg = Math.floor(50 * (1 + strength / 150) * talentDamageMultiplier * (bloodlustActive ? 1.3 : 1));
-    const finalDamage = isCrit ? Math.floor(thunderClapDmg * 1.5) : thunderClapDmg;
-    let totalDamageDealt = 0;
-    tickAliveEnemies.forEach(enemy => {
-      // Apply enemy armor and defensive stats
-      const damageResult = calculatePlayerDamageToEnemy(
-        finalDamage,
-        'physical', // Thunder Clap is physical AoE
-        enemy,
-        member.accuracy
-      );
-      
-      if (!damageResult.evaded) {
-        enemy.energyShield = damageResult.esRemaining;
-        enemy.health = damageResult.lifeRemaining;
-        totalDamageDealt += damageResult.damage;
-        setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 }));
+    // Thunder Clap (filler ability) - only if cooldown is ready
+    if (currentTick >= tankCooldowns.thunderClapEndTick) {
+      const thunderClapSkill = getSkillGemById('thunder_clap');
+      if (thunderClapSkill && member.mana >= thunderClapSkill.manaCost) {
+        // Apply talent damage multiplier
+        const talentDamageMultiplier = 1 + ((member.talentBonuses?.damageMultiplier || 0) / 100);
+        const thunderClapDmg = Math.floor(50 * (1 + strength / 150) * talentDamageMultiplier * (bloodlustActive ? 1.3 : 1));
+        const finalDamage = isCrit ? Math.floor(thunderClapDmg * 1.5) : thunderClapDmg;
+        let totalDamageDealt = 0;
+        tickAliveEnemies.forEach(enemy => {
+          // Apply enemy armor and defensive stats
+          const damageResult = calculatePlayerDamageToEnemy(
+            finalDamage,
+            'physical', // Thunder Clap is physical AoE
+            enemy,
+            member.accuracy
+          );
+          
+          if (!damageResult.evaded) {
+            enemy.energyShield = damageResult.esRemaining;
+            enemy.health = damageResult.lifeRemaining;
+            totalDamageDealt += damageResult.damage;
+            setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 }));
+          }
+        });
+        member.totalDamage = (member.totalDamage || 0) + totalDamageDealt;
+        member.damageBySpell = member.damageBySpell || {};
+        member.damageBySpell['Thunder Clap'] = (member.damageBySpell['Thunder Clap'] || 0) + totalDamageDealt;
+        
+        // Apply talent mana cost reduction
+        const talentManaCostReduction = member.talentBonuses?.manaCostReduction || 0;
+        const effectiveManaCost = Math.max(0, thunderClapSkill.manaCost * (1 - talentManaCostReduction / 100));
+        member.mana -= effectiveManaCost;
+        
+        // Process onHit effects
+        processOnHitEffects(member, totalDamageDealt, currentTick, teamStates);
+        
+        // Apply lifesteal after damage is dealt
+        applyLifesteal(member, totalDamageDealt, floatNumbers, currentCombatState);
+        tankCooldowns.thunderClapEndTick = currentTick + secondsToTicks(thunderClapSkill.cooldown || 4);
+        member.gcdEndTick = currentTick + GCD_TICKS;
+        const jitterX = (Math.random() * 80) - 40;
+        const jitterY = (Math.random() * 60) - 30;
+        if (isCrit) setScreenShake(prev => prev + 1);
+        setTeamFightAnim(prev => prev + 1);
+        const floatNum = createFloatingNumber(totalDamageDealt, isCrit ? 'crit' : 'player', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 40 + jitterY);
+        const lifestealFloats: FloatingNumber[] = [];
+        applyLifesteal(member, totalDamageDealt, lifestealFloats, currentCombatState);
+        updateCombatState(prev => ({ 
+          ...prev, 
+          floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum, ...lifestealFloats],
+          combatLog: [...prev.combatLog, { 
+            timestamp: totalTime, 
+            type: 'damage', 
+            source: char.name, 
+            target: tickAliveEnemies.length > 1 ? `${tickAliveEnemies.length} enemies` : tickAliveEnemies[0].name, 
+            value: totalDamageDealt, 
+            message: `⚡ ${char.name} Thunder Claps ${tickAliveEnemies.length > 1 ? tickAliveEnemies.length + ' enemies' : tickAliveEnemies[0].name} for ${finalDamage}${isCrit ? ' CRIT!' : ''} each!` 
+          }] 
+        }));
+        return;
       }
-    });
-    member.totalDamage = (member.totalDamage || 0) + totalDamageDealt;
-    member.damageBySpell = member.damageBySpell || {};
-    member.damageBySpell['Thunder Clap'] = (member.damageBySpell['Thunder Clap'] || 0) + totalDamageDealt;
-    
-    // Process onHit effects
-    processOnHitEffects(member, totalDamageDealt, currentTick, teamStates);
-    
-    // Apply lifesteal after damage is dealt
-    applyLifesteal(member, totalDamageDealt, floatNumbers, currentCombatState);
-    member.gcdEndTick = currentTick + GCD_TICKS;
-    const jitterX = (Math.random() * 80) - 40;
-    const jitterY = (Math.random() * 60) - 30;
-    if (isCrit) setScreenShake(prev => prev + 1);
-    setTeamFightAnim(prev => prev + 1);
-    const floatNum = createFloatingNumber(totalDamageDealt, isCrit ? 'crit' : 'player', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 40 + jitterY);
-    const lifestealFloats: FloatingNumber[] = [];
-    applyLifesteal(member, totalDamageDealt, lifestealFloats, currentCombatState);
-    updateCombatState(prev => ({ 
-      ...prev, 
-      floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum, ...lifestealFloats],
-      combatLog: [...prev.combatLog, { 
-        timestamp: totalTime, 
-        type: 'damage', 
-        source: char.name, 
-        target: tickAliveEnemies.length > 1 ? `${tickAliveEnemies.length} enemies` : tickAliveEnemies[0].name, 
-        value: totalDamageDealt, 
-        message: `⚡ ${char.name} Thunder Claps ${tickAliveEnemies.length > 1 ? tickAliveEnemies.length + ' enemies' : tickAliveEnemies[0].name} for ${finalDamage}${isCrit ? ' CRIT!' : ''} each!` 
-      }] 
-    }));
-  }
+    }
+}
 }

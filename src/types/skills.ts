@@ -30,16 +30,23 @@ import {
   
   // Channeling skill icons
   GiLaserBurst,           // Disintegrate
-  GiVortex,               // Soul Siphon
+  GiVortex,               // Soul Siphon, Tornado Shot
   GiLightningStorm,       // Storm Call
-  GiFlameSpin,            // Incinerate
+  GiFlameSpin,            // Incinerate, Cyclone
+  
+  // Bow skill icons (reusing existing icons)
+  GiTripleScratches,      // Split Arrow, Greater Multiple Projectiles
+  // GiSnowflake1, GiMagicSwirl, GiIceBolt, GiLightningTear - reused from above
+  
+  // Melee skill icons (reusing existing icons)
+  GiSwordsPower,          // Cleave, Increased Damage
+  // GiShieldBash - reused from above
+  GiEchoRipples,          // Double Strike, Spell Echo
+  GiWaterSplash,          // Reave, Melee Splash
+  // GiSonicShout - reused from above
   
   // Support gem icons
-  GiSwordsPower,          // Increased Damage
   GiSpeedometer,          // Faster Casting
-  GiEchoRipples,          // Spell Echo
-  GiTripleScratches,      // Greater Multiple Projectiles
-  GiWaterSplash,          // Melee Splash
   GiFire,                 // Added Fire Damage
   GiDrop,                 // Lifetap
   GiBullseye,             // Critical Strikes
@@ -283,7 +290,7 @@ export const SKILL_GEMS: SkillGem[] = [
     baseDamage: 10,
     baseDamageMax: 15,
     manaCost: 4,
-    cooldown: 0,
+    cooldown: 4,
     castTime: 0,
     maxSupportSlots: 4,
     supportTags: ['attack', 'melee', 'physical', 'aoe', 'hit'],
@@ -880,6 +887,314 @@ export const SKILL_GEMS: SkillGem[] = [
       { type: 'dot', value: 8, duration: 4 }
     ],
     levelRequirement: 10
+  },
+
+  // ===== BOW ATTACK SKILLS =====
+  {
+    id: 'split_arrow',
+    name: 'Split Arrow',
+    description: 'Fires multiple arrows in a cone, hitting multiple enemies. Lower damage effectiveness per target due to multi-hit nature, but excellent for clearing packs.',
+    icon: React.createElement(GiTripleScratches),
+    category: 'attack',
+    damageType: 'physical',
+    targetType: 'enemy',
+    allowedRoles: ['dps'],
+    baseDamage: 0, // Uses weapon damage
+    baseDamageMax: 0,
+    manaCost: 6,
+    cooldown: 0,
+    castTime: 0,
+    maxSupportSlots: 5,
+    supportTags: ['attack', 'ranged', 'projectile', 'physical', 'hit'],
+    tags: ['attack', 'ranged', 'projectile', 'physical', 'hit'],
+    damageEffectiveness: 85,
+    projectileCount: 5,
+    baseCriticalStrikeChance: 5,
+    effects: [
+      { type: 'damage', value: 100 }
+    ],
+    levelRequirement: 1
+  },
+  {
+    id: 'rain_of_arrows',
+    name: 'Rain of Arrows',
+    description: 'Launches a volley of arrows into the air that rain down on a targeted area, hitting ALL enemies in range. Lower effectiveness per target due to AoE nature.',
+    icon: React.createElement(GiSnowflake1),
+    category: 'attack',
+    damageType: 'physical',
+    targetType: 'allEnemies',
+    allowedRoles: ['dps'],
+    baseDamage: 0,
+    baseDamageMax: 0,
+    manaCost: 8,
+    cooldown: 0,
+    castTime: 0.8,
+    maxSupportSlots: 5,
+    supportTags: ['attack', 'ranged', 'aoe', 'physical', 'hit'],
+    tags: ['attack', 'ranged', 'aoe', 'physical', 'hit'],
+    damageEffectiveness: 70,
+    baseCriticalStrikeChance: 5,
+    effects: [
+      { type: 'damage', value: 100 }
+    ],
+    levelRequirement: 4
+  },
+  {
+    id: 'barrage',
+    name: 'Barrage',
+    description: 'Rapidly fires a stream of arrows at a single target. High damage effectiveness due to single-target focus. Each arrow hits the same target.',
+    icon: React.createElement(GiMagicSwirl),
+    category: 'attack',
+    damageType: 'physical',
+    targetType: 'enemy',
+    allowedRoles: ['dps'],
+    baseDamage: 0,
+    baseDamageMax: 0,
+    manaCost: 7,
+    cooldown: 0,
+    castTime: 0,
+    maxSupportSlots: 5,
+    supportTags: ['attack', 'ranged', 'projectile', 'physical', 'hit'],
+    tags: ['attack', 'ranged', 'projectile', 'physical', 'hit'],
+    damageEffectiveness: 130,
+    projectileCount: 3,
+    hitCount: 3,
+    baseCriticalStrikeChance: 6,
+    effects: [
+      { type: 'damage', value: 100 }
+    ],
+    levelRequirement: 6
+  },
+  {
+    id: 'tornado_shot',
+    name: 'Tornado Shot',
+    description: 'Fires an arrow that splits into multiple projectiles in a spiral pattern, chaining to nearby enemies. Medium effectiveness due to multi-target nature.',
+    icon: React.createElement(GiVortex),
+    category: 'attack',
+    damageType: 'physical',
+    targetType: 'enemy',
+    allowedRoles: ['dps'],
+    baseDamage: 0,
+    baseDamageMax: 0,
+    manaCost: 8,
+    cooldown: 0,
+    castTime: 0,
+    maxSupportSlots: 5,
+    supportTags: ['attack', 'ranged', 'projectile', 'physical', 'hit', 'chaining'],
+    tags: ['attack', 'ranged', 'projectile', 'physical', 'hit', 'chaining'],
+    damageEffectiveness: 95,
+    projectileCount: 3,
+    chainCount: 2,
+    chainDamageBonus: 10,
+    baseCriticalStrikeChance: 6,
+    effects: [
+      { type: 'damage', value: 100 }
+    ],
+    levelRequirement: 8
+  },
+  {
+    id: 'ice_shot',
+    name: 'Ice Shot',
+    description: 'Fires a freezing arrow that deals cold damage and has a chance to slow enemies. The arrow creates a small cold explosion on impact.',
+    icon: React.createElement(GiIceBolt),
+    category: 'attack',
+    damageType: 'cold',
+    targetType: 'enemy',
+    allowedRoles: ['dps'],
+    baseDamage: 0,
+    baseDamageMax: 0,
+    manaCost: 6,
+    cooldown: 0,
+    castTime: 0,
+    maxSupportSlots: 5,
+    supportTags: ['attack', 'ranged', 'projectile', 'cold', 'hit', 'elemental'],
+    tags: ['attack', 'ranged', 'projectile', 'cold', 'hit', 'elemental'],
+    damageEffectiveness: 110,
+    baseCriticalStrikeChance: 6,
+    effects: [
+      { type: 'damage', value: 100 },
+      { type: 'slow', value: 25, duration: 3, chance: 40 }
+    ],
+    levelRequirement: 3
+  },
+  {
+    id: 'lightning_arrow',
+    name: 'Lightning Arrow',
+    description: 'Fires a lightning-charged arrow that chains to nearby enemies after impact. Deals lightning damage and has a chance to shock targets.',
+    icon: React.createElement(GiLightningTear),
+    category: 'attack',
+    damageType: 'lightning',
+    targetType: 'enemy',
+    allowedRoles: ['dps'],
+    baseDamage: 0,
+    baseDamageMax: 0,
+    manaCost: 7,
+    cooldown: 0,
+    castTime: 0,
+    maxSupportSlots: 5,
+    supportTags: ['attack', 'ranged', 'projectile', 'lightning', 'hit', 'chaining', 'elemental'],
+    tags: ['attack', 'ranged', 'projectile', 'lightning', 'hit', 'chaining', 'elemental'],
+    damageEffectiveness: 100,
+    chainCount: 2,
+    chainDamageBonus: 15,
+    baseCriticalStrikeChance: 7,
+    effects: [
+      { type: 'damage', value: 100 }
+    ],
+    levelRequirement: 5
+  },
+
+  // ===== MELEE ATTACK SKILLS =====
+  {
+    id: 'cleave',
+    name: 'Cleave',
+    description: 'Performs a wide horizontal swing that hits multiple enemies in front of you. Lower effectiveness per target due to AoE nature, but excellent for clearing packs.',
+    icon: React.createElement(GiSwordsPower),
+    category: 'attack',
+    damageType: 'physical',
+    targetType: 'allEnemies',
+    allowedRoles: ['dps'],
+    baseDamage: 0,
+    baseDamageMax: 0,
+    manaCost: 5,
+    cooldown: 0,
+    castTime: 0,
+    maxSupportSlots: 5,
+    supportTags: ['attack', 'melee', 'physical', 'aoe', 'hit'],
+    tags: ['attack', 'melee', 'physical', 'aoe', 'hit'],
+    damageEffectiveness: 80,
+    baseCriticalStrikeChance: 5,
+    effects: [
+      { type: 'damage', value: 100 }
+    ],
+    levelRequirement: 1
+  },
+  {
+    id: 'heavy_strike',
+    name: 'Heavy Strike',
+    description: 'A powerful single-target melee attack with high damage effectiveness. Slower but devastating against single enemies. Has a chance to stun.',
+    icon: React.createElement(GiShieldBash),
+    category: 'attack',
+    damageType: 'physical',
+    targetType: 'enemy',
+    allowedRoles: ['dps'],
+    baseDamage: 0,
+    baseDamageMax: 0,
+    manaCost: 6,
+    cooldown: 0,
+    castTime: 0.3,
+    maxSupportSlots: 5,
+    supportTags: ['attack', 'melee', 'physical', 'strike', 'hit'],
+    tags: ['attack', 'melee', 'physical', 'strike', 'hit'],
+    damageEffectiveness: 140,
+    baseCriticalStrikeChance: 5,
+    effects: [
+      { type: 'damage', value: 100 }
+    ],
+    levelRequirement: 1
+  },
+  {
+    id: 'double_strike',
+    name: 'Double Strike',
+    description: 'Rapidly strikes twice with your weapon, dealing two hits to a single target. Fast and efficient for single-target damage.',
+    icon: React.createElement(GiEchoRipples),
+    category: 'attack',
+    damageType: 'physical',
+    targetType: 'enemy',
+    allowedRoles: ['dps'],
+    baseDamage: 0,
+    baseDamageMax: 0,
+    manaCost: 4,
+    cooldown: 0,
+    castTime: 0,
+    maxSupportSlots: 5,
+    supportTags: ['attack', 'melee', 'physical', 'strike', 'hit'],
+    tags: ['attack', 'melee', 'physical', 'strike', 'hit'],
+    damageEffectiveness: 100,
+    hitCount: 2,
+    baseCriticalStrikeChance: 6,
+    effects: [
+      { type: 'damage', value: 100 }
+    ],
+    levelRequirement: 2
+  },
+  {
+    id: 'cyclone',
+    name: 'Cyclone',
+    description: 'Channel a spinning attack that hits all enemies around you repeatedly. Lower effectiveness per hit but hits many times. Can be interrupted.',
+    icon: React.createElement(GiFlameSpin),
+    category: 'attack',
+    damageType: 'physical',
+    targetType: 'allEnemies',
+    allowedRoles: ['dps'],
+    baseDamage: 0,
+    baseDamageMax: 0,
+    manaCost: 8,
+    cooldown: 0,
+    castTime: 0.2,
+    maxSupportSlots: 5,
+    supportTags: ['attack', 'melee', 'physical', 'aoe', 'hit', 'channelling'],
+    tags: ['attack', 'melee', 'physical', 'aoe', 'hit', 'channelling'],
+    damageEffectiveness: 50,
+    isChanneled: true,
+    channelTickRate: 0.4,
+    channelDuration: 0,
+    manaPerTick: 2,
+    baseCriticalStrikeChance: 5,
+    effects: [
+      { type: 'damage', value: 100 }
+    ],
+    levelRequirement: 7
+  },
+  {
+    id: 'reave',
+    name: 'Reave',
+    description: 'Slashes in a wide arc in front of you, hitting multiple enemies in a cone. Gains increased area of effect with each consecutive use.',
+    icon: React.createElement(GiWaterSplash),
+    category: 'attack',
+    damageType: 'physical',
+    targetType: 'allEnemies',
+    allowedRoles: ['dps'],
+    baseDamage: 0,
+    baseDamageMax: 0,
+    manaCost: 6,
+    cooldown: 0,
+    castTime: 0,
+    maxSupportSlots: 5,
+    supportTags: ['attack', 'melee', 'physical', 'aoe', 'hit'],
+    tags: ['attack', 'melee', 'physical', 'aoe', 'hit'],
+    damageEffectiveness: 85,
+    baseCriticalStrikeChance: 5,
+    effects: [
+      { type: 'damage', value: 100 }
+    ],
+    levelRequirement: 4
+  },
+  {
+    id: 'lacerate',
+    name: 'Lacerate',
+    description: 'Slashes twice in a cross pattern, dealing physical damage and applying a bleeding DoT. Good for sustained damage over time.',
+    icon: React.createElement(GiSonicShout),
+    category: 'attack',
+    damageType: 'physical',
+    targetType: 'enemy',
+    allowedRoles: ['dps'],
+    baseDamage: 0,
+    baseDamageMax: 0,
+    manaCost: 7,
+    cooldown: 0,
+    castTime: 0,
+    maxSupportSlots: 5,
+    supportTags: ['attack', 'melee', 'physical', 'hit', 'dot'],
+    tags: ['attack', 'melee', 'physical', 'hit', 'dot'],
+    damageEffectiveness: 90,
+    hitCount: 2,
+    baseCriticalStrikeChance: 6,
+    effects: [
+      { type: 'damage', value: 100 },
+      { type: 'dot', value: 20, duration: 8 }
+    ],
+    levelRequirement: 5
   }
 ];
 
@@ -1082,6 +1397,25 @@ export function getSkillsForRole(role: CharacterRole): SkillGem[] {
 }
 
 export function canSupportApplyToSkill(support: SupportGem, skill: SkillGem): boolean {
+  // Healing spells should NOT accept damage-only supports
+  const isHealingSkill = skill.supportTags.includes('heal') || skill.category === 'heal';
+  
+  // Damage-only supports that should NOT work with healing spells
+  const damageOnlySupports = [
+    'increased_damage', // Only increases damage, not healing
+    'added_fire_damage', // Adds damage, not healing
+    'controlled_destruction', // Only affects spell damage
+    'greater_multiple_projectiles', // Projectiles don't make sense for healing
+    'melee_splash' // Melee splash doesn't make sense for healing
+  ];
+  
+  if (isHealingSkill && damageOnlySupports.includes(support.id)) {
+    return false;
+  }
+  
+  // Non-healing skills should NOT accept healing-only supports (if we add any in the future)
+  // For now, all supports that work with healing also work with damage spells
+  
   if (support.requiredTags.length === 0) return true;
   
   // Special case for efficacy: requires spell AND (dot OR hot)
@@ -1099,5 +1433,143 @@ export function canSupportApplyToSkill(support: SupportGem, skill: SkillGem): bo
   
   // Default: skill must have at least one of the required tags
   return support.requiredTags.some(tag => skill.supportTags.includes(tag));
+}
+
+// Get a default support gem for a skill (first compatible support gem)
+export function getDefaultSupportGemForSkill(skill: SkillGem): string | null {
+  // Try to find a compatible support gem, prioritizing common ones
+  const defaultSupports = ['increased_damage', 'faster_casting', 'added_fire_damage'];
+  
+  for (const supportId of defaultSupports) {
+    const support = getSupportGemById(supportId);
+    if (support && canSupportApplyToSkill(support, skill)) {
+      return supportId;
+    }
+  }
+  
+  // If no default support matches, find any compatible support
+  for (const support of SUPPORT_GEMS) {
+    if (canSupportApplyToSkill(support, skill)) {
+      return support.id;
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Result of applying support gems to a skill
+ */
+export interface SupportGemResult {
+  damageMultiplier: number; // Combined multiplier for damage (more multipliers are multiplicative, increased are additive)
+  healingMultiplier: number; // Combined multiplier for healing
+  castTimeMultiplier: number; // Combined multiplier for cast time (lower = faster)
+  critChanceMultiplier: number; // Combined multiplier for crit chance
+  manaCostMultiplier: number; // Combined multiplier for mana cost
+  addedDamage: number; // Flat added damage
+  addedHealing: number; // Flat added healing
+  hasMeleeSplash: boolean; // Whether melee splash is active
+  hasSpellEcho: boolean; // Whether spell echo is active
+  hasGMP: boolean; // Whether Greater Multiple Projectiles is active
+  projectileCount: number; // Additional projectiles from GMP
+  levelBonus: number; // Level bonus from Empower support
+}
+
+/**
+ * Apply support gems to a skill and return the combined modifiers
+ */
+export function applySupportGems(
+  skill: SkillGem,
+  supportGemIds: string[],
+  _inventory: any[] = []
+): SupportGemResult {
+  const result: SupportGemResult = {
+    damageMultiplier: 1.0,
+    healingMultiplier: 1.0,
+    castTimeMultiplier: 1.0,
+    critChanceMultiplier: 1.0,
+    manaCostMultiplier: 1.0,
+    addedDamage: 0,
+    addedHealing: 0,
+    hasMeleeSplash: false,
+    hasSpellEcho: false,
+    hasGMP: false,
+    projectileCount: 0,
+    levelBonus: 0
+  };
+  
+  // Separate "more" and "increased" multipliers
+  let increasedDamageMultiplier = 1.0;
+  let moreDamageMultiplier = 1.0;
+  let increasedHealingMultiplier = 1.0;
+  let moreHealingMultiplier = 1.0;
+  
+  for (const supportId of supportGemIds) {
+    if (!supportId) continue;
+    
+    const support = getSupportGemById(supportId);
+    if (!support) continue;
+    
+    // Check compatibility
+    if (!canSupportApplyToSkill(support, skill)) continue;
+    
+    // Apply multipliers
+    for (const mult of support.multipliers) {
+      if (mult.stat === 'damage') {
+        if (mult.isMore) {
+          moreDamageMultiplier *= mult.multiplier;
+        } else {
+          increasedDamageMultiplier += (mult.multiplier - 1.0);
+        }
+      } else if (mult.stat === 'healing') {
+        if (mult.isMore) {
+          moreHealingMultiplier *= mult.multiplier;
+        } else {
+          increasedHealingMultiplier += (mult.multiplier - 1.0);
+        }
+      } else if (mult.stat === 'castTime') {
+        result.castTimeMultiplier *= mult.multiplier;
+      } else if (mult.stat === 'criticalStrikeChance' || mult.stat === 'critChance') {
+        if (mult.isMore) {
+          result.critChanceMultiplier *= mult.multiplier;
+        } else {
+          result.critChanceMultiplier += (mult.multiplier - 1.0);
+        }
+      } else if (mult.stat === 'level') {
+        // Empower support - adds level to skill
+        result.levelBonus += mult.multiplier;
+      }
+    }
+    
+    // Apply added effects
+    for (const effect of support.addedEffects) {
+      if (effect.type === 'damage') {
+        result.addedDamage += effect.value || 0;
+      } else if (effect.type === 'heal') {
+        result.addedHealing += effect.value || 0;
+      }
+    }
+    
+    // Apply mana cost multiplier
+    if (support.manaCostMultiplier !== undefined) {
+      result.manaCostMultiplier *= support.manaCostMultiplier;
+    }
+    
+    // Check for special support gems
+    if (support.id === 'melee_splash') {
+      result.hasMeleeSplash = true;
+    } else if (support.id === 'spell_echo') {
+      result.hasSpellEcho = true;
+    } else if (support.id === 'greater_multiple_projectiles') {
+      result.hasGMP = true;
+      result.projectileCount = 4; // GMP adds 4 projectiles
+    }
+  }
+  
+  // Combine increased and more multipliers (increased are additive, more are multiplicative)
+  result.damageMultiplier = (1.0 + increasedDamageMultiplier - 1.0) * moreDamageMultiplier;
+  result.healingMultiplier = (1.0 + increasedHealingMultiplier - 1.0) * moreHealingMultiplier;
+  
+  return result;
 }
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Character } from '../../types/character';
+import { getEnabledSkillSlots } from '../../types/character';
 import { GiShieldBash, GiHealthPotion, GiBroadsword, GiWizardStaff } from 'react-icons/gi';
 import { getExperienceProgress } from '../../utils/leveling';
 import { getClassById } from '../../types/classes';
@@ -243,7 +244,7 @@ export function CharacterDetails({ character, onEdit, onRemove }: CharacterDetai
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
               <span>💎 Skills Equipped</span>
-              <span style={{ color: 'var(--accent-blue)' }}>{character.skillGems.filter(s => s.skillGemId).length} / 5</span>
+              <span style={{ color: 'var(--accent-blue)' }}>{character.skillGems.filter(s => s.skillGemId).length} / {getEnabledSkillSlots(character.level)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
               <span>⚔️ Gear Equipped</span>

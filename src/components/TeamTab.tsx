@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, memo } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
 import type { Character, CharacterRole, GearSlot } from '../types/character';
+import { getEnabledSkillSlots } from '../types/character';
 import { getExperienceProgress } from '../utils/leveling';
 import { getSkillGemById, getSupportGemById } from '../types/skills';
 import type { Item } from '../types/items';
@@ -14,6 +15,7 @@ import { ItemTooltip } from './shared/ItemTooltip';
 import { calculateTotalCharacterStats } from '../systems/equipmentStats';
 import { calculateArmorReduction, calculateEvasionChance } from '../types/character';
 import { getMonsterStatsForLevel } from '../utils/monsterStats';
+import { generateRandomCharacterName } from '../utils/characterNames';
 import { 
   GiShieldBash, GiHealthPotion, GiBroadsword, GiWizardStaff,
   GiHelmet, GiChestArmor, GiGloves, GiBelt, GiBoots,
@@ -265,7 +267,7 @@ function SkillGemDisplay({
 }
 
 // Character Card Component with Enhanced Animations
-function CharacterCard({
+const CharacterCard = memo(function CharacterCard({
   character,
   isSelected,
   onSelect,
@@ -280,7 +282,6 @@ function CharacterCard({
   onRemove: () => void;
   inventory: Item[];
 }) {
-  const [isRemoving, setIsRemoving] = useState(false);
   
   // Get class data and colors
   const classId = character.classId;
@@ -311,50 +312,36 @@ function CharacterCard({
     return calculateTotalCharacterStats(character, inventory);
   }, [character, inventory]);
   
-  // Get enemy damage for this character's level (for Phys DR display)
-  const enemyDamageForLevel = useMemo(() => {
-    const monsterStats = getMonsterStatsForLevel(character.level);
-    return monsterStats.physical_damage;
+  // Get enemy stats for this character's level (for Phys DR and Evasion display)
+  const enemyStatsForLevel = useMemo(() => {
+    return getMonsterStatsForLevel(character.level);
   }, [character.level]);
+  const enemyDamageForLevel = enemyStatsForLevel.physical_damage;
+  const enemyAccuracyForLevel = enemyStatsForLevel.accuracy;
 
-  // Handle remove with simple fade animation
+  // Handle remove - instant swap
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsRemoving(true);
-    
-    // Remove after quick animation
-    setTimeout(() => {
-      onRemove();
-    }, 200);
+    onRemove();
   };
 
   return (
     <motion.div
-      layout
-      initial={{ 
-        opacity: 0, 
-        scale: 0.95,
-        y: 20,
-      }}
       animate={{ 
-        opacity: isRemoving ? 0 : 1, 
-        scale: isRemoving ? 0.9 : 1,
-        y: 0,
+        opacity: 1,
       }}
-      whileHover={!isRemoving ? { 
+      whileHover={{ 
         y: -4, 
         transition: { duration: 0.2, ease: 'easeOut' }
-      } : undefined}
-      whileTap={!isRemoving ? { scale: 0.98 } : undefined}
+      }}
+      whileTap={{ scale: 0.98 }}
       transition={{ 
-        duration: 0.3,
-        ease: 'easeOut',
-        layout: { duration: 0.3 }
+        opacity: { duration: 0 }
       }}
       style={{
-        flex: '1 1 0',
-        minWidth: '280px',
-        maxWidth: '400px',
+        flex: '0 0 auto',
+        width: '320px',
+        height: '100%',
         minHeight: '520px',
         background: 'var(--bg-dark)',
         border: `2px solid ${isSelected ? primaryColor : 'var(--border-color)'}`,
@@ -374,7 +361,7 @@ function CharacterCard({
       onClick={onSelect}
     >
       {/* Selection glow ring - simplified */}
-      {isSelected && !isRemoving && (
+      {isSelected && (
         <div
           className="glow-pulse"
           style={{
@@ -692,7 +679,7 @@ function CharacterCard({
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
             <span>Evade</span>
-            <span style={{ color: 'var(--text-primary)' }}>{Math.round(calculateEvasionChance(totalStats.evasion, 500) * 100)}%</span>
+            <span style={{ color: 'var(--text-primary)' }}>{Math.round(calculateEvasionChance(totalStats.evasion, enemyAccuracyForLevel) * 100)}%</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
             <span>Block</span>
@@ -739,7 +726,7 @@ function CharacterCard({
         {/* Skills */}
         <div>
           <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', marginBottom: '6px', fontWeight: 600 }}>
-            SKILLS ({character.skillGems.filter(s => s.skillGemId).length}/5)
+            SKILLS ({character.skillGems.filter(s => s.skillGemId).length}/{getEnabledSkillSlots(character.level)})
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
             {character.skillGems.filter(s => s.skillGemId).map((gem, idx) => (
@@ -775,7 +762,17 @@ function CharacterCard({
       </div>
     </motion.div>
   );
-}
+}, (prevProps, nextProps) => {
+  // Return true if props are equal (skip re-render), false if different (re-render)
+  // Only re-render if character data, selection, or inventory actually changed
+  if (prevProps.character.id !== nextProps.character.id) return false;
+  if (prevProps.character !== nextProps.character) return false;
+  if (prevProps.isSelected !== nextProps.isSelected) return false;
+  if (prevProps.inventory !== nextProps.inventory) return false;
+  // Callbacks are stable, so we can ignore them
+  // All props are equal, skip re-render
+  return true;
+});
 
 // Slot role configuration
 const TEAM_SLOTS: { role: CharacterRole; label: string }[] = [
@@ -794,9 +791,9 @@ const SLOT_COLORS: Record<CharacterRole, { primary: string; secondary: string }>
 
 
 // Empty Slot Card with role specification and enhanced animations
-function EmptySlotCard({ 
+const EmptySlotCard = memo(function EmptySlotCard({ 
   onClick, 
-  index = 0, 
+  index: _index = 0,
   role,
   label,
 }: { 
@@ -811,20 +808,8 @@ function EmptySlotCard({
   
   return (
     <motion.div
-      initial={{ 
-        opacity: 0, 
-        scale: 0.95,
-        y: 10,
-      }}
       animate={{ 
-        opacity: 1, 
-        scale: 1,
-        y: 0,
-      }}
-      exit={{ 
-        opacity: 0,
-        scale: 0.95,
-        transition: { duration: 0.2, ease: 'easeIn' }
+        opacity: 1,
       }}
       whileHover={{ 
         y: -4,
@@ -832,16 +817,13 @@ function EmptySlotCard({
       }}
       whileTap={{ scale: 0.98 }}
       transition={{ 
-        delay: index * 0.05,
-        duration: 0.3,
-        ease: 'easeOut',
+        opacity: { duration: 0 }
       }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       style={{
-        flex: '1 1 0',
-        minWidth: '280px',
-        maxWidth: '400px',
+        flex: '0 0 auto',
+        width: '320px',
         background: `linear-gradient(135deg, rgba(20, 18, 15, 0.9) 0%, rgba(10, 8, 5, 0.95) 100%)`,
         border: `2px dashed ${colors.primary}50`,
         borderRadius: '16px',
@@ -850,6 +832,7 @@ function EmptySlotCard({
         alignItems: 'center',
         justifyContent: 'center',
         cursor: 'pointer',
+        height: '100%',
         minHeight: '520px',
         position: 'relative',
         overflow: 'hidden',
@@ -983,17 +966,27 @@ function EmptySlotCard({
       }} />
     </motion.div>
   );
-}
+}, (prevProps, nextProps) => {
+  // Only re-render if slot index or role changed
+  if (prevProps.index !== nextProps.index) return false;
+  if (prevProps.role !== nextProps.role) return false;
+  if (prevProps.label !== nextProps.label) return false;
+  // onClick callback is stable, ignore it
+  return true;
+});
 
 export function TeamTab() {
   const { 
     team, 
+    teamSlotAssignments,
     inventory,
     selectedCharacterId, 
     selectCharacter, 
     addCharacter, 
     removeCharacter
   } = useGameStore();
+  
+  const [pendingSlotIndex, setPendingSlotIndex] = useState<number | undefined>(undefined);
   
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -1002,35 +995,23 @@ export function TeamTab() {
 
   const selectedCharacter = team.find(c => c.id === selectedCharacterId);
   
-  // Build a slot-ordered team array: map characters to their slots by role and order
-  // This ensures stable slot assignments - characters don't move between slots when new ones are added
+  // Build a slot-ordered team array: use slot assignments to maintain specific slot positions
   const slotOrderedTeam = useMemo(() => {
     const ordered: (Character | null)[] = Array(5).fill(null);
     
-    // Group characters by role
-    const byRole = {
-      tank: team.filter(c => c.role === 'tank'),
-      healer: team.filter(c => c.role === 'healer'),
-      dps: team.filter(c => c.role === 'dps')
-    };
-    
-    // Assign characters to slots in order
-    let tankIdx = 0, healerIdx = 0, dpsIdx = 0;
-    
+    // First, assign characters to their specific slots based on assignments
     for (let slotIdx = 0; slotIdx < TEAM_SLOTS.length; slotIdx++) {
-      const slotRole = TEAM_SLOTS[slotIdx].role;
-      
-      if (slotRole === 'tank' && tankIdx < byRole.tank.length) {
-        ordered[slotIdx] = byRole.tank[tankIdx++];
-      } else if (slotRole === 'healer' && healerIdx < byRole.healer.length) {
-        ordered[slotIdx] = byRole.healer[healerIdx++];
-      } else if (slotRole === 'dps' && dpsIdx < byRole.dps.length) {
-        ordered[slotIdx] = byRole.dps[dpsIdx++];
+      const charId = teamSlotAssignments[slotIdx];
+      if (charId) {
+        const char = team.find(c => c.id === charId);
+        if (char) {
+          ordered[slotIdx] = char;
+        }
       }
     }
     
     return ordered;
-  }, [team]);
+  }, [team, teamSlotAssignments]);
   
   // Get character for a specific slot (direct index access to slot-ordered array)
   const getCharacterForSlot = (slotIndex: number): Character | null => {
@@ -1050,34 +1031,48 @@ export function TeamTab() {
     }
     
     if (slotRole === 'dps') {
-      // Automatically generate a temp DPS character (same as dialogue does)
-      const timestamp = Date.now().toString().slice(-4); // Last 4 digits of timestamp for uniqueness
-      const placeholderName = `DPS Fighter ${timestamp}`;
-      addCharacter(placeholderName, 'dps');
+      // Automatically generate a temp DPS character with random unique name
+      const placeholderName = generateRandomCharacterName();
+      addCharacter(placeholderName, 'dps', undefined, slotIndex);
     } else {
       // For tank and healer, open the modal to select a class
       setNewCharRole(slotRole);
       setNewCharClassId(null);
+      setPendingSlotIndex(slotIndex);
       setShowAddModal(true);
     }
   };
 
-  const handleAddCharacter = () => {
-    if (newCharClassId) {
+  const handleAddCharacter = useCallback(() => {
+    console.log('handleAddCharacter called', { newCharClassId, pendingSlotIndex, newCharRole });
+    if (newCharClassId && pendingSlotIndex !== undefined) {
       const classData = getClassById(newCharClassId);
       const characterName = classData?.name || newCharRole.toUpperCase();
-      addCharacter(characterName, newCharRole, newCharClassId);
+      console.log('Adding character:', { characterName, newCharRole, newCharClassId, pendingSlotIndex });
+      addCharacter(characterName, newCharRole, newCharClassId, pendingSlotIndex);
       setNewCharClassId(null);
+      setPendingSlotIndex(undefined);
       setShowAddModal(false);
+    } else {
+      console.warn('Cannot add character: missing classId or slotIndex', { newCharClassId, pendingSlotIndex });
     }
-  };
+  }, [newCharClassId, pendingSlotIndex, newCharRole, addCharacter]);
 
 
-  const openEditModal = () => {
+  const openEditModal = useCallback(() => {
     if (selectedCharacter) {
       setShowEditModal(true);
     }
-  };
+  }, [selectedCharacter]);
+
+  // Stable callbacks for character cards
+  const handleSelectCharacter = useCallback((id: string) => {
+    selectCharacter(id);
+  }, [selectCharacter]);
+
+  const handleRemoveCharacter = useCallback((id: string) => {
+    removeCharacter(id);
+  }, [removeCharacter]);
 
   return (
     <div style={{ 
@@ -1102,47 +1097,6 @@ export function TeamTab() {
       {/* Animation CSS Styles */}
       <AnimationStyles />
       
-      {/* Header - Compact */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '0 0 8px 0',
-        borderBottom: '1px solid var(--border-color)',
-        marginBottom: '10px',
-        flexShrink: 0,
-        position: 'relative',
-        zIndex: 1,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <h2 style={{ 
-            margin: 0, 
-            fontSize: '1.25rem',
-            background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-blue) 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}>
-            ⚔️ Your Party
-          </h2>
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>
-            {team.length}/5 Heroes
-          </span>
-        </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <div style={{ 
-            display: 'flex', 
-            gap: '4px', 
-            fontSize: '0.75rem',
-            color: 'var(--text-dim)',
-          }}>
-            <span style={{ color: SLOT_COLORS.tank.primary }}>● Tank</span>
-            <span style={{ color: SLOT_COLORS.healer.primary }}>● Healer</span>
-            <span style={{ color: SLOT_COLORS.dps.primary }}>● 3 DPS</span>
-          </div>
-        </div>
-      </div>
-
       {/* Character Cards - Fixed 5 slots */}
       <div style={{
         flex: 1,
@@ -1156,35 +1110,39 @@ export function TeamTab() {
         position: 'relative',
         zIndex: 1,
       }}>
-        <AnimatePresence mode="wait">
-          {TEAM_SLOTS.map((slot, slotIndex) => {
-            const character = getCharacterForSlot(slotIndex);
-            
-            if (character) {
-              return (
+        {TEAM_SLOTS.map((slot, slotIndex) => {
+          const character = getCharacterForSlot(slotIndex);
+          
+          return (
+            <div 
+              key={`slot-${slotIndex}`} 
+              style={{ 
+                flex: '0 0 auto', 
+                width: '320px',
+                minHeight: '520px',
+                position: 'relative'
+              }}
+            >
+              {character ? (
                 <CharacterCard
-                  key={character.id}
                   character={character}
                   isSelected={character.id === selectedCharacterId}
-                  onSelect={() => selectCharacter(character.id)}
+                  onSelect={() => handleSelectCharacter(character.id)}
                   onEdit={openEditModal}
-                  onRemove={() => removeCharacter(character.id)}
+                  onRemove={() => handleRemoveCharacter(character.id)}
                   inventory={inventory}
                 />
-              );
-            } else {
-              return (
+              ) : (
                 <EmptySlotCard 
-                  key={`empty-${slotIndex}`} 
                   onClick={() => handleSlotClick(slotIndex)}
                   index={slotIndex}
                   role={slot.role}
                   label={slot.label}
                 />
-              );
-            }
-          })}
-        </AnimatePresence>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       <AddCharacterModal
@@ -1198,6 +1156,7 @@ export function TeamTab() {
           setShowAddModal(false);
           setNewCharRole('tank');
           setNewCharClassId(null);
+          setPendingSlotIndex(undefined);
         }}
       />
 

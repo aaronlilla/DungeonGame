@@ -212,6 +212,7 @@ export interface VerboseLogData {
   healingDone?: number;
   crit?: boolean;
   abilityName?: string;
+  skillIcon?: string;
   damageType?: string;
   resistances?: {
     fire?: number;
@@ -322,10 +323,11 @@ export function createVerboseHealLog(
   const healthAfter = data?.healthAfter ?? Math.min(targetState.maxHealth, targetState.health + healing);
   const maxHealth = data?.maxHealth ?? targetState.maxHealth;
   
-  let message = `${source} heals ${target} for ${healing}`;
-  if (data?.abilityName) {
-    message += ` with ${data.abilityName}`;
-  }
+  const skillIcon = data?.skillIcon || '';
+  const abilityName = data?.abilityName || 'heal';
+  let message = skillIcon 
+    ? `${skillIcon} ${source} casts ${abilityName} on ${target} for ${healing}`
+    : `${source} heals ${target} for ${healing}${abilityName !== 'heal' ? ` with ${abilityName}` : ''}`;
   if (data?.crit) {
     message += ` (CRIT!)`;
   }

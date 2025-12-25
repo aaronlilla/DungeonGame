@@ -2,7 +2,7 @@ import type { CharacterClassId } from './classes';
 import type { BaseStats } from './character';
 
 // Talent tier levels - 6 rows unlocking as you level
-export const TALENT_TIER_LEVELS = [10, 25, 40, 55, 70, 85] as const;
+export const TALENT_TIER_LEVELS = [1, 15, 30, 45, 60, 75] as const;
 export type TalentTierLevel = typeof TALENT_TIER_LEVELS[number];
 
 // Talent effect types
@@ -138,7 +138,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
   tiers: [
     // ROW 1 — Core Mitigation Axis
     {
-      level: 10,
+      level: 1,
       rowName: 'Core Mitigation Axis',
       rowTheme: 'What kind of tank are you fundamentally?',
       rowIcon: 'GiChestArmor',
@@ -149,7 +149,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiChestArmor',
           shortDesc: 'You have 15% more Armor',
           fullDesc: 'You have 15% more Armor',
-          tier: 10,
+          tier: 1,
           classId: 'bastion_knight',
           effects: [
             { type: 'armorBonus', value: 15, description: '15% more Armor' }
@@ -161,7 +161,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiVikingShield',
           shortDesc: '+10% Chance to Block Attack Damage',
           fullDesc: '+10% Chance to Block Attack Damage',
-          tier: 10,
+          tier: 1,
           classId: 'bastion_knight',
           effects: [
             { type: 'blockBonus', value: 10, description: '+10% Chance to Block Attack Damage' }
@@ -173,7 +173,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiShieldReflect',
           shortDesc: '8% reduced Physical Damage Taken',
           fullDesc: '8% reduced Physical Damage Taken',
-          tier: 10,
+          tier: 1,
           classId: 'bastion_knight',
           effects: [
             { type: 'damageReduction', value: 8, description: '8% reduced Physical Damage Taken', condition: 'physical' }
@@ -183,7 +183,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
     },
     // ROW 2 — Block Specialization
     {
-      level: 25,
+      level: 15,
       rowName: 'Block Specialization',
       rowTheme: 'How block contributes to survival',
       rowIcon: 'GiShieldBash',
@@ -192,12 +192,12 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           id: 'bk_r2_reinforced_guard',
           name: 'Reinforced Guard',
           icon: 'GiShieldBash',
-          shortDesc: 'Your Blocks reduce damage by 50% instead of 30%',
-          fullDesc: 'Your Block Damage Reduction is increased by 20% (30% → 50% damage reduction on block)',
-          tier: 25,
+          shortDesc: 'Your Blocks reduce damage by 90% instead of 80%',
+          fullDesc: 'Your Block Damage Reduction is increased by 20% (80% → 90% damage reduction on block)',
+          tier: 15,
           classId: 'bastion_knight',
           effects: [
-            { type: 'blockEffectiveness', value: 20, description: 'Block Damage Reduction increased by 20% (30% → 50%)' }
+            { type: 'blockEffectiveness', value: 20, description: 'Block Damage Reduction increased by 20% (80% → 90%)' }
           ]
         },
         {
@@ -206,7 +206,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiMagicShield',
           shortDesc: '+10% Chance to Block Spell Damage',
           fullDesc: '+10% Chance to Block Spell Damage',
-          tier: 25,
+          tier: 15,
           classId: 'bastion_knight',
           effects: [
             { type: 'blockBonus', value: 10, stat: 'spellBlockChance', description: '+10% Chance to Block Spell Damage' }
@@ -218,7 +218,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiCheckedShield',
           shortDesc: 'You take 5% reduced Damage if you blocked recently',
           fullDesc: 'You take 5% reduced Damage if you have blocked in the past 4 seconds',
-          tier: 25,
+          tier: 15,
           classId: 'bastion_knight',
           effects: [
             { type: 'onBlockEffect', value: 5, description: '5% reduced Damage Taken if blocked in past 4 seconds' }
@@ -228,7 +228,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
     },
     // ROW 3 — Physical Damage Control
     {
-      level: 40,
+      level: 30,
       rowName: 'Physical Damage Control',
       rowTheme: 'Smoothing incoming melee pressure',
       rowIcon: 'GiCrossedSwords',
@@ -239,7 +239,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiBoltShield',
           shortDesc: 'You take 10% reduced Damage from Enemy Hits',
           fullDesc: 'You take 10% reduced Damage from Enemy Hits (hits only, not DoTs)',
-          tier: 40,
+          tier: 30,
           classId: 'bastion_knight',
           effects: [
             { type: 'damageReduction', value: 10, description: '10% reduced Damage from Enemy Hits', condition: 'hits' }
@@ -251,7 +251,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiPoisonBottle',
           shortDesc: 'Your Armor applies to Chaos Damage at 50% effectiveness',
           fullDesc: 'Your Armor applies to Chaos Damage at 50% of its value',
-          tier: 40,
+          tier: 30,
           classId: 'bastion_knight',
           effects: [
             { type: 'armorBonus', value: 50, description: 'Armor applies to Chaos Damage at 50% effectiveness', condition: 'chaos' }
@@ -263,7 +263,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiAnvil',
           shortDesc: 'You take 20% reduced Extra Damage from Critical Strikes',
           fullDesc: 'You take 20% reduced Extra Damage from Critical Strikes',
-          tier: 40,
+          tier: 30,
           classId: 'bastion_knight',
           effects: [
             { type: 'critImmunity', value: 20, description: '20% reduced Extra Damage from Critical Strikes' }
@@ -273,7 +273,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
     },
     // ROW 4 — Party Defensive Identity
     {
-      level: 55,
+      level: 45,
       rowName: 'Party Defensive Identity',
       rowTheme: 'How you help your team survive',
       rowIcon: 'GiTwoShadows',
@@ -284,7 +284,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiShieldEchoes',
           shortDesc: 'Allies take 8% reduced Physical Damage',
           fullDesc: 'Allies take 8% reduced Physical Damage Taken',
-          tier: 55,
+          tier: 45,
           classId: 'bastion_knight',
           effects: [
             { type: 'allyProtection', value: 8, description: 'Allies: 8% reduced Physical Damage Taken', condition: 'physical' }
@@ -296,7 +296,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiVikingShield',
           shortDesc: 'Allies gain +6% Attack Block Chance',
           fullDesc: 'Allies gain +6% Chance to Block Attack Damage',
-          tier: 55,
+          tier: 45,
           classId: 'bastion_knight',
           effects: [
             { type: 'allyProtection', value: 6, description: 'Allies: +6% Chance to Block Attack Damage', condition: 'block' }
@@ -308,7 +308,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiChestArmor',
           shortDesc: 'Allies gain +10% increased Armor',
           fullDesc: 'Allies gain +10% increased Armor',
-          tier: 55,
+          tier: 45,
           classId: 'bastion_knight',
           effects: [
             { type: 'allyProtection', value: 10, description: 'Allies: +10% increased Armor', condition: 'armor' }
@@ -318,7 +318,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
     },
     // ROW 5 — Scaling & Reliability
     {
-      level: 70,
+      level: 60,
       rowName: 'Scaling & Reliability',
       rowTheme: 'How mitigation scales into harder content',
       rowIcon: 'GiMountaintop',
@@ -329,7 +329,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiShieldBounces',
           shortDesc: 'You take 10% reduced Damage if you blocked recently',
           fullDesc: 'You take 10% reduced Damage if you have blocked recently (last 4 seconds)',
-          tier: 70,
+          tier: 60,
           classId: 'bastion_knight',
           effects: [
             { type: 'onBlockEffect', value: 10, description: '10% reduced Damage Taken if blocked in last 4 seconds' }
@@ -341,7 +341,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiCrownedSkull',
           shortDesc: '20% reduced Enemy Physical Damage Modifiers',
           fullDesc: '20% reduced Effect of Enemy Physical Damage Modifiers (e.g. Vulnerability-style effects)',
-          tier: 70,
+          tier: 60,
           classId: 'bastion_knight',
           effects: [
             { type: 'damageReduction', value: 20, description: '20% reduced Effect of Enemy Physical Damage Modifiers', condition: 'enemyModifiers' }
@@ -353,7 +353,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiCheckedShield',
           shortDesc: 'Block Chance cannot go below 50%',
           fullDesc: 'Your Block Chance cannot be lowered below 50%',
-          tier: 70,
+          tier: 60,
           classId: 'bastion_knight',
           effects: [
             { type: 'blockBonus', value: 50, description: 'Block Chance floor: 50%', condition: 'floor' }
@@ -363,7 +363,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
     },
     // ROW 6 — Endgame Identity
     {
-      level: 85,
+      level: 75,
       rowName: 'Endgame Identity',
       rowTheme: 'One big defining choice',
       rowIcon: 'GiCrown',
@@ -374,7 +374,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiCastle',
           shortDesc: 'You take 15% reduced Damage while you have Block Chance',
           fullDesc: 'You take 15% reduced Damage while you have Block Chance',
-          tier: 85,
+          tier: 75,
           classId: 'bastion_knight',
           effects: [
             { type: 'damageReduction', value: 15, description: '15% reduced Damage Taken while you have Block Chance', condition: 'hasBlock' }
@@ -386,7 +386,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiPoisonBottle',
           shortDesc: 'Your Armor applies to Chaos Damage at 100% effectiveness',
           fullDesc: 'Your Armor applies to Chaos Damage at 100% of its value',
-          tier: 85,
+          tier: 75,
           classId: 'bastion_knight',
           effects: [
             { type: 'armorBonus', value: 100, description: 'Armor applies to Chaos Damage at 100% effectiveness', condition: 'chaos' }
@@ -398,7 +398,7 @@ const BASTION_KNIGHT_TALENTS: ClassTalentTree = {
           icon: 'GiAnvil',
           shortDesc: 'Hits dealing >50% of your max Life deal 20% less Damage to you',
           fullDesc: 'Hits dealing more than 50% of your Maximum Life deal 20% less Damage to you',
-          tier: 85,
+          tier: 75,
           classId: 'bastion_knight',
           effects: [
             { type: 'bigHitReduction', value: 20, description: 'Hits >50% max Life deal 20% less Damage', condition: 'threshold:50' }
@@ -417,7 +417,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
   tiers: [
     // ROW 1 — Baseline Magic Mitigation
     {
-      level: 10,
+      level: 1,
       rowName: 'Baseline Magic Mitigation',
       rowTheme: 'How you personally reduce spell damage',
       rowIcon: 'GiFireShield',
@@ -428,7 +428,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiFireShield',
           shortDesc: 'You take 10% reduced Elemental Damage',
           fullDesc: 'You take 10% reduced Elemental Damage.',
-          tier: 10,
+          tier: 1,
           classId: 'wardbreaker',
           effects: [
             { type: 'damageReduction', value: 10, description: '10% reduced Elemental Damage taken', condition: 'elemental' }
@@ -440,7 +440,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiBrokenShield',
           shortDesc: 'You have +20% chance to Suppress Spell Damage',
           fullDesc: 'You have +20% chance to Suppress Spell Damage.',
-          tier: 10,
+          tier: 1,
           classId: 'wardbreaker',
           effects: [
             { type: 'statBonus', value: 20, stat: 'spellSuppression', description: '+20% chance to Suppress Spell Damage' }
@@ -452,7 +452,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiMagicShield',
           shortDesc: 'You have +10% Spell Block Chance',
           fullDesc: 'You have +10% Spell Block Chance.',
-          tier: 10,
+          tier: 1,
           classId: 'wardbreaker',
           effects: [
             { type: 'blockBonus', value: 10, stat: 'spellBlockChance', description: '+10% Spell Block Chance' }
@@ -462,7 +462,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
     },
     // ROW 2 — Spell Hit Conversion
     {
-      level: 25,
+      level: 15,
       rowName: 'Spell Hit Conversion',
       rowTheme: 'What happens when spells actually hit you',
       rowIcon: 'GiMagicShield',
@@ -473,7 +473,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiShieldBounces',
           shortDesc: 'Suppressed Spells deal only 45% Damage to you instead of 50%',
           fullDesc: 'Suppressed Spell Damage deals only 45% of Damage to you instead of 50%.',
-          tier: 25,
+          tier: 15,
           classId: 'wardbreaker',
           effects: [
             { type: 'blockEffectiveness', value: 5, description: 'Suppressed Spell Damage deals 55% instead of 50%', condition: 'suppression' }
@@ -483,12 +483,12 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           id: 'wb_r2_arcane_weight',
           name: 'Arcane Weight',
           icon: 'GiShieldReflect',
-          shortDesc: 'Blocked Spell Hits deal 40% Damage to you instead of 70%',
-          fullDesc: 'Blocked Spell Hits deal 40% of Damage to you instead of 70%.',
-          tier: 25,
+          shortDesc: 'Blocked Spell Hits deal 10% Damage to you instead of 20%',
+          fullDesc: 'Blocked Spell Hits deal 10% of Damage to you instead of 20%.',
+          tier: 15,
           classId: 'wardbreaker',
           effects: [
-            { type: 'blockEffectiveness', value: 30, description: 'Blocked Spell Hits deal 40% instead of 70%', condition: 'spellBlock' }
+            { type: 'blockEffectiveness', value: 30, description: 'Blocked Spell Hits deal 10% instead of 20%', condition: 'spellBlock' }
           ]
         },
         {
@@ -497,7 +497,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiSwapBag',
           shortDesc: '15% of Elemental Damage you take is taken as Physical instead',
           fullDesc: '15% of Elemental Damage you take is taken as Physical Damage instead.',
-          tier: 25,
+          tier: 15,
           classId: 'wardbreaker',
           effects: [
             { type: 'damageReduction', value: 15, description: '15% of Elemental Damage taken as Physical', condition: 'elementalToPhysical' }
@@ -507,7 +507,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
     },
     // ROW 3 — Armor vs Magic Interaction
     {
-      level: 40,
+      level: 30,
       rowName: 'Armor vs Magic',
       rowTheme: 'How armor helps against magic (Wardbreaker specialty)',
       rowIcon: 'GiChestArmor',
@@ -518,7 +518,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiChestArmor',
           shortDesc: 'Your Armor applies to Spell Hits at 30% effectiveness',
           fullDesc: 'Your Armor applies to Spell Hits at 30% of its value.',
-          tier: 40,
+          tier: 30,
           classId: 'wardbreaker',
           effects: [
             { type: 'armorBonus', value: 30, description: 'Armor applies to Spell Hits at 30% effectiveness', condition: 'spellHits' }
@@ -530,7 +530,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiAnvil',
           shortDesc: 'You have 10% more Armor while taking Spell Damage',
           fullDesc: 'You have 10% more Armor while taking Spell Damage.',
-          tier: 40,
+          tier: 30,
           classId: 'wardbreaker',
           effects: [
             { type: 'armorBonus', value: 10, description: '10% more Armor while taking Spell Damage', condition: 'takingSpellDamage' }
@@ -542,7 +542,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiEnergyShield',
           shortDesc: 'You take 15% reduced Damage from Hits while you have Energy Shield',
           fullDesc: 'You take 15% reduced Damage from Hits while you have Energy Shield.',
-          tier: 40,
+          tier: 30,
           classId: 'wardbreaker',
           effects: [
             { type: 'damageReduction', value: 15, description: '15% reduced Damage from Hits while you have ES', condition: 'hasES' }
@@ -552,7 +552,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
     },
     // ROW 4 — Party Magic Defense
     {
-      level: 55,
+      level: 45,
       rowName: 'Party Magic Defense',
       rowTheme: 'How you protect the group',
       rowIcon: 'GiTwoShadows',
@@ -563,7 +563,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiAura',
           shortDesc: 'Allies take 8% reduced Elemental Damage',
           fullDesc: 'Nearby Allies take 8% reduced Elemental Damage.',
-          tier: 55,
+          tier: 45,
           classId: 'wardbreaker',
           effects: [
             { type: 'allyProtection', value: 8, description: 'Allies: 8% reduced Elemental Damage', condition: 'elemental' }
@@ -575,7 +575,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiMagicShield',
           shortDesc: 'Allies gain +10% Spell Suppression',
           fullDesc: 'Nearby Allies gain +10% chance to Suppress Spell Damage.',
-          tier: 55,
+          tier: 45,
           classId: 'wardbreaker',
           effects: [
             { type: 'allyProtection', value: 10, description: 'Allies: +10% Spell Suppression Chance', condition: 'suppression' }
@@ -587,7 +587,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiShieldEchoes',
           shortDesc: 'Enemies deal 10% reduced Spell Damage to allies',
           fullDesc: 'Enemies deal 10% reduced Spell Damage to allies they are hitting.',
-          tier: 55,
+          tier: 45,
           classId: 'wardbreaker',
           effects: [
             { type: 'allyProtection', value: 10, description: 'Enemies: –10% Spell Damage to allies', condition: 'enemySpellDebuff' }
@@ -597,7 +597,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
     },
     // ROW 5 — Chaos & Bypass Control
     {
-      level: 70,
+      level: 60,
       rowName: 'Chaos & Bypass Control',
       rowTheme: 'Handling the one damage type ES doesn\'t stop',
       rowIcon: 'GiPoisonBottle',
@@ -608,7 +608,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiPoisonBottle',
           shortDesc: 'You take 10% reduced Chaos Damage',
           fullDesc: 'You take 10% reduced Chaos Damage.',
-          tier: 70,
+          tier: 60,
           classId: 'wardbreaker',
           effects: [
             { type: 'damageReduction', value: 10, description: '10% reduced Chaos Damage taken', condition: 'chaos' }
@@ -620,7 +620,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiChestArmor',
           shortDesc: 'Your Armor applies to Chaos Damage at 25% effectiveness',
           fullDesc: 'Your Armor applies to Chaos Damage at 25% of its value.',
-          tier: 70,
+          tier: 60,
           classId: 'wardbreaker',
           effects: [
             { type: 'armorBonus', value: 25, description: 'Armor applies to Chaos Damage at 25% effectiveness', condition: 'chaos' }
@@ -632,7 +632,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiDeathSkull',
           shortDesc: 'You take 15% reduced Damage from Damage over Time',
           fullDesc: 'You take 15% reduced Damage from Damage over Time.',
-          tier: 70,
+          tier: 60,
           classId: 'wardbreaker',
           effects: [
             { type: 'damageReduction', value: 15, description: '15% reduced Damage from DoT', condition: 'dot' }
@@ -642,7 +642,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
     },
     // ROW 6 — Endgame Identity
     {
-      level: 85,
+      level: 75,
       rowName: 'Endgame Identity',
       rowTheme: 'Defines what kind of Wardbreaker you are',
       rowIcon: 'GiCrown',
@@ -653,7 +653,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiMagicShield',
           shortDesc: 'You have +15% to maximum Spell Suppression Chance',
           fullDesc: 'You have +15% to maximum Spell Suppression Chance.',
-          tier: 85,
+          tier: 75,
           classId: 'wardbreaker',
           effects: [
             { type: 'statBonus', value: 15, stat: 'maxSpellSuppression', description: '+15% to maximum Spell Suppression Chance' }
@@ -665,7 +665,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiVikingShield',
           shortDesc: 'You have +10% to maximum Spell Block Chance',
           fullDesc: 'You have +10% to maximum Spell Block Chance.',
-          tier: 85,
+          tier: 75,
           classId: 'wardbreaker',
           effects: [
             { type: 'statBonus', value: 10, stat: 'maxSpellBlockChance', description: '+10% to maximum Spell Block Chance' }
@@ -677,7 +677,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           icon: 'GiCastle',
           shortDesc: 'Enemies you tank deal 10% less Spell Damage to party',
           fullDesc: 'Enemies you are tanking deal 10% less Spell Damage to the entire party.',
-          tier: 85,
+          tier: 75,
           classId: 'wardbreaker',
           effects: [
             { type: 'allyProtection', value: 10, description: 'Tanked enemies: –10% Spell Damage to party', condition: 'tankedEnemies' }
@@ -696,7 +696,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
   tiers: [
     // ROW 1 — Core Defense Profile
     {
-      level: 10,
+      level: 1,
       rowName: 'Core Defense Profile',
       rowTheme: 'How you avoid vs absorb attacks',
       rowIcon: 'GiChestArmor',
@@ -708,7 +708,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           shortDesc: '+25% more Evasion Rating, but –10% reduced Armor',
           fullDesc: 'You have +25% more Evasion Rating\nYou have –10% reduced Armor',
           flavorNote: 'Lean harder into avoidance, accept thinner armor.',
-          tier: 10,
+          tier: 1,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'evasionBonus', value: 25, description: 'You have +25% more Evasion Rating' },
@@ -722,7 +722,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           shortDesc: '+15% more Armor and +15% more Evasion Rating',
           fullDesc: 'You have +15% more Armor\nYou have +15% more Evasion Rating',
           flavorNote: 'Safe, consistent hybrid baseline.',
-          tier: 10,
+          tier: 1,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'armorBonus', value: 15, description: 'You have +15% more Armor' },
@@ -736,7 +736,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           shortDesc: '+25% more Armor, but –10% reduced Evasion Rating',
           fullDesc: 'You have +25% more Armor\nYou have –10% reduced Evasion Rating',
           flavorNote: 'Accept more hits, smooth them harder.',
-          tier: 10,
+          tier: 1,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'armorBonus', value: 25, description: 'You have +25% more Armor' },
@@ -747,7 +747,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
     },
     // ROW 2 — Incoming Attack Control
     {
-      level: 25,
+      level: 15,
       rowName: 'Incoming Attack Control',
       rowTheme: 'How enemy attacks behave against you',
       rowIcon: 'GiCrossedSwords',
@@ -758,7 +758,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           icon: 'GiShieldBounces',
           shortDesc: 'Enemies have 10% reduced Attack Speed',
           fullDesc: 'Enemies have 10% reduced Attack Speed against you',
-          tier: 25,
+          tier: 15,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'enemyAttackSpeed', value: 10, description: 'Enemies have 10% reduced Attack Speed against you' }
@@ -771,7 +771,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           shortDesc: 'Enemies have 15% reduced Accuracy',
           fullDesc: 'Enemies have 15% reduced Accuracy against you',
           flavorNote: 'Strong synergy with evasion, weak vs spells (intentional).',
-          tier: 25,
+          tier: 15,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'enemyAccuracy', value: 15, description: 'Enemies have 15% reduced Accuracy against you' }
@@ -784,7 +784,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           shortDesc: 'You take 10% reduced Damage from Attacks',
           fullDesc: 'You take 10% reduced Damage from Attacks',
           flavorNote: 'Simple, reliable, always useful.',
-          tier: 25,
+          tier: 15,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'attackDamageReduction', value: 10, description: 'You take 10% reduced Damage from Attacks' }
@@ -794,7 +794,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
     },
     // ROW 3 — Damage Smoothing
     {
-      level: 40,
+      level: 30,
       rowName: 'Damage Smoothing',
       rowTheme: 'How hits feel when they connect',
       rowIcon: 'GiShieldReflect',
@@ -806,7 +806,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           shortDesc: 'You take 10% reduced Physical Damage from Attacks',
           fullDesc: 'You take 10% reduced Physical Damage from Attacks',
           flavorNote: 'Effectively multiplicative with armor.',
-          tier: 40,
+          tier: 30,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'damageReduction', value: 10, description: 'You take 10% reduced Physical Damage from Attacks', condition: 'physicalAttacks' }
@@ -819,7 +819,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           shortDesc: 'Enemies deal 10% reduced Attack Damage to you',
           fullDesc: 'Enemies deal 10% reduced Attack Damage to you',
           flavorNote: 'Applies before armor, excellent against fast hitters.',
-          tier: 40,
+          tier: 30,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'attackDamageReduction', value: 10, description: 'Enemies deal 10% reduced Attack Damage to you', condition: 'preArmor' }
@@ -832,7 +832,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           shortDesc: 'Your Armor provides +15% increased Physical Damage Reduction',
           fullDesc: 'You have +15% increased Physical Damage Reduction from Armor',
           flavorNote: 'Scales armor math directly without flat values.',
-          tier: 40,
+          tier: 30,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'physicalDamageReductionFromArmor', value: 15, description: 'You have +15% increased Physical Damage Reduction from Armor' }
@@ -842,7 +842,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
     },
     // ROW 4 — Party Defense Utility
     {
-      level: 55,
+      level: 45,
       rowName: 'Party Defense Utility',
       rowTheme: 'How you help the group survive',
       rowIcon: 'GiTwoShadows',
@@ -853,7 +853,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           icon: 'GiShieldEchoes',
           shortDesc: 'Nearby enemies deal 8% reduced Damage to allies',
           fullDesc: 'Nearby enemies deal 8% reduced Damage to allies',
-          tier: 55,
+          tier: 45,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'allyProtection', value: 8, description: 'Nearby enemies deal 8% reduced Damage to allies', condition: 'nearbyEnemies' }
@@ -866,7 +866,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           shortDesc: 'Allies gain 10% increased Evasion Rating',
           fullDesc: 'Allies gain 10% increased Evasion Rating',
           flavorNote: 'Synergizes with dex / evasion DPS & healers.',
-          tier: 55,
+          tier: 45,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'allyProtection', value: 10, description: 'Allies: +10% increased Evasion Rating', condition: 'evasion' }
@@ -879,7 +879,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           shortDesc: 'Enemies attacking you deal 10% reduced Damage to allies',
           fullDesc: 'Enemies attacking you deal 10% reduced Damage to allies',
           flavorNote: 'Encourages proper tank targeting without AI tricks.',
-          tier: 55,
+          tier: 45,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'allyProtection', value: 10, description: 'Enemies attacking you deal 10% reduced Damage to allies', condition: 'tankingEnemies' }
@@ -889,7 +889,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
     },
     // ROW 5 — Scaling Against Content
     {
-      level: 70,
+      level: 60,
       rowName: 'Scaling Against Content',
       rowTheme: 'How you handle harder enemies',
       rowIcon: 'GiMountaintop',
@@ -900,7 +900,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           icon: 'GiUpgrade',
           shortDesc: 'You take 10% reduced Damage from Rare and Boss enemies',
           fullDesc: 'You take 10% reduced Damage from Rare and Boss enemies',
-          tier: 70,
+          tier: 60,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'damageReduction', value: 10, description: 'You take 10% reduced Damage from Rare and Boss enemies', condition: 'rareAndBoss' }
@@ -913,7 +913,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           shortDesc: 'Enemies deal 15% reduced Attack Damage to you if they attacked recently',
           fullDesc: 'Enemies deal 15% reduced Attack Damage to you if they have attacked recently',
           flavorNote: 'Works naturally in auto-battler combat loops.',
-          tier: 70,
+          tier: 60,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'attackDamageReduction', value: 15, description: 'Enemies deal 15% reduced Attack Damage to you if they attacked recently', condition: 'enemyAttackedRecently' }
@@ -926,7 +926,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           shortDesc: '+20% increased Armor and Evasion Rating',
           fullDesc: 'You have +20% increased Armor and Evasion Rating',
           flavorNote: 'Simple, scaling, always good.',
-          tier: 70,
+          tier: 60,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'armorBonus', value: 20, description: 'You have +20% increased Armor' },
@@ -937,7 +937,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
     },
     // ROW 6 — Keystone Identity
     {
-      level: 85,
+      level: 75,
       rowName: 'Keystone Identity',
       rowTheme: 'Defines how the Iron Skirmisher feels endgame',
       rowIcon: 'GiCrown',
@@ -949,7 +949,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           shortDesc: '+20% more Evasion; Evasion also grants Physical Damage Reduction',
           fullDesc: 'You have +20% more Evasion Rating\nYour Evasion applies at 50% effectiveness to Physical Damage Reduction',
           flavorNote: 'Evasion partially converts into mitigation instead of avoidance.',
-          tier: 85,
+          tier: 75,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'evasionBonus', value: 20, description: 'You have +20% more Evasion Rating' },
@@ -963,7 +963,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           shortDesc: 'Your Armor is 120% effective vs Attacks, but –20% Evasion',
           fullDesc: 'Your Armor applies to Attacks at 120% effectiveness\nYou have –20% reduced Evasion Rating',
           flavorNote: 'Turns the Skirmisher into a fast-hit armor tank.',
-          tier: 85,
+          tier: 75,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'armorEffectiveness', value: 120, description: 'Your Armor applies to Attacks at 120% effectiveness', condition: 'attacks' },
@@ -977,7 +977,7 @@ const IRON_SKIRMISHER_TALENTS: ClassTalentTree = {
           shortDesc: 'Enemies deal 15% less Damage to you, but you deal 10% less',
           fullDesc: 'Enemies attacking you deal 15% reduced Damage to you\nYou deal 10% reduced Damage',
           flavorNote: 'Pure survivability + party safety tradeoff.',
-          tier: 85,
+          tier: 75,
           classId: 'iron_skirmisher',
           effects: [
             { type: 'attackDamageReduction', value: 15, description: 'Enemies attacking you deal 15% reduced Damage to you' },
@@ -997,7 +997,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
   tiers: [
     // ROW 1 — How attacks fail
     {
-      level: 10,
+      level: 1,
       rowName: 'How Attacks Fail',
       rowTheme: 'Choose: scale evasion, lean into block, or globally reduce enemy hit chance',
       rowIcon: 'GiDodging',
@@ -1008,7 +1008,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiRunningNinja',
           shortDesc: 'You have 15% more Evasion Rating',
           fullDesc: 'You have 15% more Evasion Rating',
-          tier: 10,
+          tier: 1,
           classId: 'duel_warden',
           effects: [
             { type: 'evasionBonus', value: 15, description: 'You have 15% more Evasion Rating' }
@@ -1020,7 +1020,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiVikingShield',
           shortDesc: '+10% Attack Block Chance, but –10% Spell Block Chance',
           fullDesc: 'You have +10% Attack Block Chance\nYou have –10% Spell Block Chance',
-          tier: 10,
+          tier: 1,
           classId: 'duel_warden',
           effects: [
             { type: 'blockBonus', value: 10, description: 'You have +10% Attack Block Chance' },
@@ -1033,7 +1033,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiEyelashes',
           shortDesc: 'Enemies have 10% reduced Accuracy Rating',
           fullDesc: 'Enemies have 10% reduced Accuracy Rating against you',
-          tier: 10,
+          tier: 1,
           classId: 'duel_warden',
           effects: [
             { type: 'enemyAccuracy', value: 10, description: 'Enemies have 10% reduced Accuracy Rating against you' }
@@ -1043,7 +1043,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
     },
     // ROW 2 — What happens when attacks miss
     {
-      level: 25,
+      level: 15,
       rowName: 'What Happens When Attacks Miss',
       rowTheme: 'Misses protect you, your mitigation, or the party',
       rowIcon: 'GiShieldBounces',
@@ -1054,7 +1054,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiPunchBlast',
           shortDesc: 'Enemies that miss you deal 10% reduced damage to all targets for 4s',
           fullDesc: 'When an enemy attack misses you:\nThat enemy deals 10% reduced damage to all targets for 4 seconds',
-          tier: 25,
+          tier: 15,
           classId: 'duel_warden',
           effects: [
             { type: 'onMissEffect', value: 10, description: 'Enemies that miss you deal 10% reduced damage for 4 seconds', condition: 'duration:4' }
@@ -1066,7 +1066,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiSandsOfTime',
           shortDesc: 'When you evade, gain +5% Block Chance for 3s (stacks 3x)',
           fullDesc: 'Each time you evade an attack:\nYou gain 5% increased Attack Block Chance for 3 seconds\nStacks up to 3 times',
-          tier: 25,
+          tier: 15,
           classId: 'duel_warden',
           effects: [
             { type: 'onEvadeEffect', value: 5, description: 'When you evade: +5% Attack Block Chance for 3s (stacks 3x)', condition: 'stacks:3,duration:3' }
@@ -1078,7 +1078,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiShieldEchoes',
           shortDesc: 'Enemies that miss you deal 10% reduced damage to allies',
           fullDesc: 'Enemies that miss you deal 10% reduced damage to allies',
-          tier: 25,
+          tier: 15,
           classId: 'duel_warden',
           effects: [
             { type: 'allyProtection', value: 10, description: 'Enemies that miss you deal 10% reduced damage to allies', condition: 'onMiss' }
@@ -1088,7 +1088,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
     },
     // ROW 3 — Handling successful hits
     {
-      level: 40,
+      level: 30,
       rowName: 'Handling Successful Hits',
       rowTheme: 'Smooths damage intake without relying on "sometimes" conditions',
       rowIcon: 'GiShieldReflect',
@@ -1097,12 +1097,12 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           id: 'dw_r3_perfect_parry',
           name: 'Perfect Parry',
           icon: 'GiSwordClash',
-          shortDesc: 'Blocked attacks deal 40% less damage to you instead of 30%',
-          fullDesc: 'Blocked attacks deal 40% less damage to you instead of 30%',
-          tier: 40,
+          shortDesc: 'Blocked attacks deal 90% less damage to you instead of 80%',
+          fullDesc: 'Blocked attacks deal 90% less damage to you instead of 80%',
+          tier: 30,
           classId: 'duel_warden',
           effects: [
-            { type: 'blockEffectiveness', value: 10, description: 'Blocked attacks deal 40% less damage instead of 30%' }
+            { type: 'blockEffectiveness', value: 10, description: 'Blocked attacks deal 90% less damage instead of 80%' }
           ]
         },
         {
@@ -1111,7 +1111,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiShieldBash',
           shortDesc: 'Blocking grants you 10% less Physical Damage Taken for 2s',
           fullDesc: 'Blocking an attack grants you 10% less Physical Damage Taken for 2 seconds',
-          tier: 40,
+          tier: 30,
           classId: 'duel_warden',
           effects: [
             { type: 'onBlockEffect', value: 10, description: 'Blocking grants you 10% less Physical Damage Taken for 2 seconds', condition: 'duration:2' }
@@ -1123,7 +1123,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiDodging',
           shortDesc: 'Hits that are not blocked deal 10% reduced damage to you',
           fullDesc: 'Hits that are not blocked deal 10% reduced damage to you',
-          tier: 40,
+          tier: 30,
           classId: 'duel_warden',
           effects: [
             { type: 'nonBlockedDamageReduction', value: 10, description: 'Hits that are not blocked deal 10% reduced damage to you' }
@@ -1133,7 +1133,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
     },
     // ROW 4 — Consistency vs variance
     {
-      level: 55,
+      level: 45,
       rowName: 'Consistency vs Variance',
       rowTheme: 'A hard identity row that meaningfully reshapes your stat profile',
       rowIcon: 'GiScales',
@@ -1144,7 +1144,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiRunningNinja',
           shortDesc: '20% more Evasion Rating, but –10% Attack Block Chance',
           fullDesc: 'You have 20% more Evasion Rating\nYou have –10% Attack Block Chance',
-          tier: 55,
+          tier: 45,
           classId: 'duel_warden',
           effects: [
             { type: 'evasionBonus', value: 20, description: 'You have 20% more Evasion Rating' },
@@ -1157,7 +1157,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiVikingShield',
           shortDesc: '15% more Attack Block Chance, but –10% Evasion Rating',
           fullDesc: 'You have 15% more Attack Block Chance\nYou have –10% Evasion Rating',
-          tier: 55,
+          tier: 45,
           classId: 'duel_warden',
           effects: [
             { type: 'blockBonus', value: 15, description: 'You have 15% more Attack Block Chance' },
@@ -1170,7 +1170,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiScales',
           shortDesc: 'You have 10% more Evasion and Attack Block',
           fullDesc: 'You have 10% more Evasion Rating\nYou have 10% more Attack Block Chance',
-          tier: 55,
+          tier: 45,
           classId: 'duel_warden',
           effects: [
             { type: 'evasionBonus', value: 10, description: 'You have 10% more Evasion Rating' },
@@ -1181,7 +1181,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
     },
     // ROW 5 — Party mitigation identity
     {
-      level: 70,
+      level: 60,
       rowName: 'Party Mitigation Identity',
       rowTheme: 'Helps the party by attacking accuracy and physical hit reliability, not spells',
       rowIcon: 'GiTwoShadows',
@@ -1192,7 +1192,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiDodging',
           shortDesc: 'Allies gain 10% increased Evasion Rating',
           fullDesc: 'Allies gain 10% increased Evasion Rating',
-          tier: 70,
+          tier: 60,
           classId: 'duel_warden',
           effects: [
             { type: 'allyProtection', value: 10, description: 'Allies gain 10% increased Evasion Rating', condition: 'evasion' }
@@ -1204,7 +1204,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiShieldEchoes',
           shortDesc: 'Enemies deal 8% reduced Attack Damage to allies',
           fullDesc: 'Enemies deal 8% reduced Attack Damage to allies',
-          tier: 70,
+          tier: 60,
           classId: 'duel_warden',
           effects: [
             { type: 'allyProtection', value: 8, description: 'Enemies deal 8% reduced Attack Damage to allies', condition: 'attackDamage' }
@@ -1216,7 +1216,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiVikingShield',
           shortDesc: 'Allies gain +5% Attack Block Chance',
           fullDesc: 'Allies gain +5% Attack Block Chance',
-          tier: 70,
+          tier: 60,
           classId: 'duel_warden',
           effects: [
             { type: 'allyProtection', value: 5, description: 'Allies gain +5% Attack Block Chance', condition: 'block' }
@@ -1226,7 +1226,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
     },
     // ROW 6 — Capstone philosophy
     {
-      level: 85,
+      level: 75,
       rowName: 'Capstone Philosophy',
       rowTheme: 'No gimmicks. No "brief immunity." Just powerful, always-relevant mitigation',
       rowIcon: 'GiCrown',
@@ -1237,7 +1237,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiSpinningSword',
           shortDesc: 'While evading regularly, you take 15% less Physical Damage',
           fullDesc: 'If you evade at least one attack every second:\nYou take 15% less Physical Damage',
-          tier: 85,
+          tier: 75,
           classId: 'duel_warden',
           effects: [
             { type: 'damageReduction', value: 15, description: 'You take 15% less Physical Damage while evading regularly', condition: 'evadePerSecond' }
@@ -1249,7 +1249,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiMagicShield',
           shortDesc: 'Your Attack Block Chance also applies to Spell Block at 75%',
           fullDesc: 'Your Attack Block Chance applies at 75% effectiveness to Spell Block',
-          tier: 85,
+          tier: 75,
           classId: 'duel_warden',
           effects: [
             { type: 'blockToSpellBlock', value: 75, description: 'Your Attack Block Chance applies at 75% effectiveness to Spell Block' }
@@ -1261,7 +1261,7 @@ const DUEL_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiSwordClash',
           shortDesc: 'Enemies that miss or are blocked by you deal 15% reduced damage to all targets',
           fullDesc: 'Enemies that miss or are blocked by you deal 15% reduced damage to all targets',
-          tier: 85,
+          tier: 75,
           classId: 'duel_warden',
           effects: [
             { type: 'onMissEffect', value: 15, description: 'Enemies that miss you deal 15% reduced damage', condition: 'permanent' },
@@ -1281,7 +1281,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
   tiers: [
     // ROW 1 — How you avoid attacks
     {
-      level: 10,
+      level: 1,
       rowName: 'How You Avoid Attacks',
       rowTheme: 'Choose your primary avoidance method',
       rowIcon: 'GiCloakDagger',
@@ -1292,7 +1292,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiMoon',
           shortDesc: '+20% Evasion Rating; Enemies have 10% reduced Accuracy',
           fullDesc: 'You have +20% increased Evasion Rating\nEnemies have 10% reduced Accuracy against you',
-          tier: 10,
+          tier: 1,
           classId: 'shadow_warden',
           effects: [
             { type: 'evasionBonus', value: 20, description: 'You have +20% increased Evasion Rating' },
@@ -1305,7 +1305,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiCloak',
           shortDesc: '+10% chance to Evade Attacks, but –10% Block Chance',
           fullDesc: 'You have +10% chance to Evade Attacks\nYou have –10% Block Chance',
-          tier: 10,
+          tier: 1,
           classId: 'shadow_warden',
           effects: [
             { type: 'evadeChance', value: 10, description: 'You have +10% chance to Evade Attacks' },
@@ -1318,7 +1318,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiMist',
           shortDesc: '15% of your Evade Chance is added as Spell Suppression',
           fullDesc: '15% of your chance to Evade Attacks is added as Spell Suppression Chance',
-          tier: 10,
+          tier: 1,
           classId: 'shadow_warden',
           effects: [
             { type: 'evadeChanceToSuppression', value: 15, description: '15% of your chance to Evade Attacks is added as Spell Suppression Chance' }
@@ -1328,7 +1328,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
     },
     // ROW 2 — How you handle spell damage
     {
-      level: 25,
+      level: 15,
       rowName: 'How You Handle Spell Damage',
       rowTheme: 'Choose your spell mitigation strategy',
       rowIcon: 'GiMagicShield',
@@ -1339,7 +1339,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiFireShield',
           shortDesc: 'You take 10% reduced Elemental Damage',
           fullDesc: 'You take 10% reduced Elemental Damage',
-          tier: 25,
+          tier: 15,
           classId: 'shadow_warden',
           effects: [
             { type: 'elementalDamageReduction', value: 10, description: 'You take 10% reduced Elemental Damage' }
@@ -1351,7 +1351,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiSpellBook',
           shortDesc: 'You have +15% chance to Suppress Spell Damage',
           fullDesc: 'You have +15% chance to Suppress Spell Damage',
-          tier: 25,
+          tier: 15,
           classId: 'shadow_warden',
           effects: [
             { type: 'spellSuppressionChance', value: 15, description: 'You have +15% chance to Suppress Spell Damage' }
@@ -1363,7 +1363,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiShieldBounces',
           shortDesc: 'Suppressed Spells deal 55% reduced Damage to you instead of 50%',
           fullDesc: 'Suppressed Spell Damage is reduced by 55% instead of 50%',
-          tier: 25,
+          tier: 15,
           classId: 'shadow_warden',
           effects: [
             { type: 'spellSuppressionEffect', value: 5, description: 'Suppressed Spell Damage is reduced by 55% instead of 50%' }
@@ -1373,7 +1373,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
     },
     // ROW 3 — Party-wide defensive influence
     {
-      level: 40,
+      level: 30,
       rowName: 'Party-Wide Defensive Influence',
       rowTheme: 'How you protect your allies',
       rowIcon: 'GiTwoShadows',
@@ -1384,7 +1384,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiBlindness',
           shortDesc: 'Nearby enemies have 10% reduced Accuracy against all targets',
           fullDesc: 'Nearby enemies have 10% reduced Accuracy\nThis effect applies to enemies attacking allies',
-          tier: 40,
+          tier: 30,
           classId: 'shadow_warden',
           effects: [
             { type: 'enemyAccuracy', value: 10, description: 'Nearby enemies have 10% reduced Accuracy against all targets', condition: 'aura' }
@@ -1396,7 +1396,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiDodging',
           shortDesc: 'Allies gain 5% chance to Evade Attacks',
           fullDesc: 'Allies gain 5% chance to Evade Attacks',
-          tier: 40,
+          tier: 30,
           classId: 'shadow_warden',
           effects: [
             { type: 'allyProtection', value: 5, description: 'Allies gain 5% chance to Evade Attacks', condition: 'evade' }
@@ -1408,7 +1408,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiShieldEchoes',
           shortDesc: 'Allies take 5% reduced Elemental Damage',
           fullDesc: 'Allies take 5% reduced Elemental Damage',
-          tier: 40,
+          tier: 30,
           classId: 'shadow_warden',
           effects: [
             { type: 'allyProtection', value: 5, description: 'Allies take 5% reduced Elemental Damage', condition: 'elemental' }
@@ -1418,7 +1418,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
     },
     // ROW 4 — How you scale under pressure
     {
-      level: 55,
+      level: 45,
       rowName: 'How You Scale Under Pressure',
       rowTheme: 'Always-relevant defensive scaling',
       rowIcon: 'GiMountaintop',
@@ -1430,7 +1430,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           shortDesc: 'You always have +20% increased Evasion Rating',
           fullDesc: 'You have 20% increased Evasion Rating while on Full Life\nYou have 20% increased Evasion Rating while not on Full Life\n(Always active)',
           flavorNote: 'No trap condition — always on.',
-          tier: 55,
+          tier: 45,
           classId: 'shadow_warden',
           effects: [
             { type: 'evasionBonus', value: 20, description: 'You always have +20% increased Evasion Rating' }
@@ -1442,7 +1442,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiShieldReflect',
           shortDesc: 'You take 10% reduced Damage from Hits (attacks and spells)',
           fullDesc: 'You take 10% reduced Damage from Hits\nApplies to both attacks and spells',
-          tier: 55,
+          tier: 45,
           classId: 'shadow_warden',
           effects: [
             { type: 'hitDamageReduction', value: 10, description: 'You take 10% reduced Damage from Hits' }
@@ -1454,7 +1454,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiPiercedHeart',
           shortDesc: 'Enemies have –5% Critical Strike Chance against all targets',
           fullDesc: 'Enemies have –5% to all Critical Strike Chance',
-          tier: 55,
+          tier: 45,
           classId: 'shadow_warden',
           effects: [
             { type: 'enemyCritChance', value: 5, description: 'Enemies have –5% to Critical Strike Chance' }
@@ -1464,7 +1464,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
     },
     // ROW 5 — Anti-spike mechanics
     {
-      level: 70,
+      level: 60,
       rowName: 'Anti-Spike Mechanics',
       rowTheme: 'Prevent sudden deaths from big hits',
       rowIcon: 'GiHeartShield',
@@ -1475,7 +1475,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiCrownedSkull',
           shortDesc: 'Enemy Critical Strikes deal 20% less Damage to you',
           fullDesc: 'Enemy Critical Strikes deal 20% less Damage to you',
-          tier: 70,
+          tier: 60,
           classId: 'shadow_warden',
           effects: [
             { type: 'enemyCritDamageReduction', value: 20, description: 'Enemy Critical Strikes deal 20% less Damage to you' }
@@ -1485,12 +1485,12 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           id: 'sw_r5_veiled_deflection',
           name: 'Veiled Deflection',
           icon: 'GiShieldBash',
-          shortDesc: 'Blocked Hits deal 40% reduced Damage to you instead of 30%',
-          fullDesc: 'Blocked Hits deal 40% reduced Damage to you instead of 30%',
-          tier: 70,
+          shortDesc: 'Blocked Hits deal 90% reduced Damage to you instead of 80%',
+          fullDesc: 'Blocked Hits deal 90% reduced Damage to you instead of 80%',
+          tier: 60,
           classId: 'shadow_warden',
           effects: [
-            { type: 'blockEffectiveness', value: 10, description: 'Blocked Hits deal 40% reduced Damage to you instead of 30%' }
+            { type: 'blockEffectiveness', value: 10, description: 'Blocked Hits deal 90% reduced Damage to you instead of 80%' }
           ]
         },
         {
@@ -1499,7 +1499,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiMagicShield',
           shortDesc: 'Suppressed Spell Damage cannot Critically Strike you',
           fullDesc: 'Suppressed Spell Damage cannot Critically Strike you',
-          tier: 70,
+          tier: 60,
           classId: 'shadow_warden',
           effects: [
             { type: 'suppressedNoCrit', value: 1, description: 'Suppressed Spell Damage cannot Critically Strike you' }
@@ -1509,7 +1509,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
     },
     // ROW 6 — Capstone identity
     {
-      level: 85,
+      level: 75,
       rowName: 'Capstone Identity',
       rowTheme: 'Defines your endgame Shadow Warden fantasy',
       rowIcon: 'GiCrown',
@@ -1520,7 +1520,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiNinjaHeroicStance',
           shortDesc: 'Enemies have –15% Accuracy and –10% Crit Chance',
           fullDesc: 'Enemies have 15% reduced Accuracy against you\nEnemies have –10% Critical Strike Chance',
-          tier: 85,
+          tier: 75,
           classId: 'shadow_warden',
           effects: [
             { type: 'enemyAccuracy', value: 15, description: 'Enemies have 15% reduced Accuracy against you' },
@@ -1533,7 +1533,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiSpellBook',
           shortDesc: 'At 100% Suppression, suppressed spells deal 60% reduced Damage',
           fullDesc: 'If you have 100% chance to Suppress Spell Damage, suppressed spells deal 60% reduced Damage to you instead of 50%',
-          tier: 85,
+          tier: 75,
           classId: 'shadow_warden',
           effects: [
             { type: 'spellSuppressionEffect', value: 10, description: 'At 100% Suppression Chance, suppressed spells deal 60% reduced Damage', condition: 'fullSuppression' }
@@ -1545,7 +1545,7 @@ const SHADOW_WARDEN_TALENTS: ClassTalentTree = {
           icon: 'GiShadowGrasp',
           shortDesc: 'Allies gain half your Suppression and Accuracy debuff effects',
           fullDesc: 'Allies gain half of your Spell Suppression Chance\nAllies gain half of your reduced Enemy Accuracy effects',
-          tier: 85,
+          tier: 75,
           classId: 'shadow_warden',
           effects: [
             { type: 'allySuppressionShare', value: 50, description: 'Allies gain half of your Spell Suppression Chance' },
@@ -1565,7 +1565,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
   tiers: [
     // ROW 1 — Evasion Scaling
     {
-      level: 10,
+      level: 1,
       rowName: 'Evasion Scaling',
       rowTheme: 'How far you push avoidance',
       rowIcon: 'GiGhost',
@@ -1576,7 +1576,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           icon: 'GiSpeedometer',
           shortDesc: 'You have 20% more Evasion Rating',
           fullDesc: 'You have 20% more Evasion Rating',
-          tier: 10,
+          tier: 1,
           classId: 'ghostblade',
           effects: [
             { type: 'evasionBonus', value: 20, description: 'You have 20% more Evasion Rating' }
@@ -1588,7 +1588,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           icon: 'GiReflexes',
           shortDesc: 'You have +15% chance to Evade Attacks (cap: 95%)',
           fullDesc: 'You have +15% increased chance to Evade Attacks\n(Subject to the global 95% cap)',
-          tier: 10,
+          tier: 1,
           classId: 'ghostblade',
           effects: [
             { type: 'evadeChance', value: 15, description: 'You have +15% increased chance to Evade Attacks' }
@@ -1601,7 +1601,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           shortDesc: '+30% Evasion Rating, but –10% Armour',
           fullDesc: 'You have +30% increased Evasion Rating\nYou have –10% reduced Armour',
           flavorNote: 'Pure evasion choice vs hybrid stat trade',
-          tier: 10,
+          tier: 1,
           classId: 'ghostblade',
           effects: [
             { type: 'evasionBonus', value: 30, description: 'You have +30% increased Evasion Rating' },
@@ -1612,7 +1612,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
     },
     // ROW 2 — What Happens When You Evade
     {
-      level: 25,
+      level: 15,
       rowName: 'When You Evade',
       rowTheme: 'Rewards for avoiding hits',
       rowIcon: 'GiDodge',
@@ -1623,7 +1623,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           icon: 'GiShield',
           shortDesc: 'After evading, you take 10% less Damage for 1s',
           fullDesc: 'After Evading an attack:\nYou take 10% less Damage Taken for 1 second',
-          tier: 25,
+          tier: 15,
           classId: 'ghostblade',
           effects: [
             { type: 'onEvadeEffect', value: 10, description: 'After Evading, you take 10% less Damage for 1s' }
@@ -1635,7 +1635,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           icon: 'GiRunningNinja',
           shortDesc: 'After evading, +20% Attack and Cast Speed for 1s',
           fullDesc: 'After Evading an attack:\nYou gain 20% increased Attack and Cast Speed for 1 second',
-          tier: 25,
+          tier: 15,
           classId: 'ghostblade',
           effects: [
             { type: 'onEvadeEffect', value: 20, description: 'After Evading, you gain 20% increased Attack and Cast Speed for 1s' }
@@ -1647,7 +1647,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           icon: 'GiFog',
           shortDesc: 'After evading, that enemy deals 10% reduced Damage for 1.5s',
           fullDesc: 'After Evading an attack:\nThe attacker deals 10% reduced Damage for 1.5 seconds',
-          tier: 25,
+          tier: 15,
           classId: 'ghostblade',
           effects: [
             { type: 'onEvadeEffect', value: 10, description: 'After Evading, that enemy deals 10% reduced Damage for 1.5s' }
@@ -1657,7 +1657,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
     },
     // ROW 3 — What Happens When You Get Hit
     {
-      level: 40,
+      level: 30,
       rowName: 'When You Get Hit',
       rowTheme: 'The "oh shit" layer',
       rowIcon: 'GiHeartBeats',
@@ -1668,7 +1668,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           icon: 'GiEvasion',
           shortDesc: 'After taking a Hit, +25% Evade chance for 2s',
           fullDesc: 'After taking a Hit:\nYou have +25% increased chance to Evade Attacks for 2 seconds',
-          tier: 40,
+          tier: 30,
           classId: 'ghostblade',
           effects: [
             { type: 'afterHitEffect', value: 25, description: 'After taking a Hit, you have +25% Evade chance for 2s' }
@@ -1680,7 +1680,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           icon: 'GiShieldReflect',
           shortDesc: 'After taking a Hit, you take 20% less Damage for 1s',
           fullDesc: 'After taking a Hit:\nYou take 20% less Damage Taken from Hits for 1 second',
-          tier: 40,
+          tier: 30,
           classId: 'ghostblade',
           effects: [
             { type: 'afterHitEffect', value: 20, description: 'After taking a Hit, you take 20% less Damage for 1s' }
@@ -1693,7 +1693,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           shortDesc: 'After taking a Hit, regenerate 15% of Max Life over 2s',
           fullDesc: 'After taking a Hit:\nYou gain 15% of Maximum Life as Life over 2 seconds',
           flavorNote: 'Ensures Ghostblade doesn\'t explode to one bad roll',
-          tier: 40,
+          tier: 30,
           classId: 'ghostblade',
           effects: [
             { type: 'afterHitEffect', value: 15, description: 'After taking a Hit, regenerate 15% of Max Life over 2s' }
@@ -1703,7 +1703,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
     },
     // ROW 4 — Anti-Burst Identity
     {
-      level: 55,
+      level: 45,
       rowName: 'Anti-Burst Identity',
       rowTheme: 'How you survive tank busters',
       rowIcon: 'GiShieldBounces',
@@ -1714,7 +1714,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           icon: 'GiChainLightning',
           shortDesc: 'Evading 2 hits in a row: next hit deals 30% less Damage',
           fullDesc: 'If you Evade 2 consecutive Hits:\nYou take 30% less Damage from the next Hit',
-          tier: 55,
+          tier: 45,
           classId: 'ghostblade',
           effects: [
             { type: 'consecutiveEvadeBonus', value: 30, description: 'After evading 2 consecutive hits, next hit deals 30% less Damage' }
@@ -1726,7 +1726,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           icon: 'GiHealthDecrease',
           shortDesc: 'Hits dealing >40% of your Max Life deal 20% less Damage',
           fullDesc: 'Hits that deal more than 40% of your Maximum Life\nDeal 20% less Damage to you',
-          tier: 55,
+          tier: 45,
           classId: 'ghostblade',
           effects: [
             { type: 'bigHitReduction', value: 20, description: 'Hits dealing >40% Max Life deal 20% less Damage', condition: 'bigHit40' }
@@ -1738,7 +1738,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           icon: 'GiCrystalWand',
           shortDesc: 'Enemy Critical Strikes deal 25% reduced Crit Damage to you',
           fullDesc: 'Critical Strikes against you deal\n25% reduced Critical Strike Damage',
-          tier: 55,
+          tier: 45,
           classId: 'ghostblade',
           effects: [
             { type: 'enemyCritDamageReduction', value: 25, description: 'Enemy crits deal 25% reduced Critical Damage to you' }
@@ -1748,7 +1748,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
     },
     // ROW 5 — Party Utility
     {
-      level: 70,
+      level: 60,
       rowName: 'Party Utility',
       rowTheme: 'Ghostblade helps the group indirectly',
       rowIcon: 'GiTwoShadows',
@@ -1759,7 +1759,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           icon: 'GiSmokeBomb',
           shortDesc: 'Enemies you Evade deal 10% less Damage to Allies for 2s',
           fullDesc: 'Enemies you Evade deal\n10% reduced Damage to Allies for 2 seconds',
-          tier: 70,
+          tier: 60,
           classId: 'ghostblade',
           effects: [
             { type: 'onEvadeEffect', value: 10, description: 'Enemies you Evade deal 10% reduced Damage to Allies for 2s' }
@@ -1771,7 +1771,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           icon: 'GiPressureCooker',
           shortDesc: 'Nearby enemies have 15% reduced Accuracy Rating',
           fullDesc: 'Enemies near you have\n15% reduced Accuracy Rating',
-          tier: 70,
+          tier: 60,
           classId: 'ghostblade',
           effects: [
             { type: 'enemyAccuracy', value: 15, description: 'Nearby enemies have 15% reduced Accuracy Rating' }
@@ -1784,7 +1784,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           shortDesc: 'Allies gain +10% chance to Evade Attacks',
           fullDesc: 'Allies gain\n10% increased chance to Evade Attacks',
           flavorNote: 'Makes Ghostblade valuable even if RNG is being cruel',
-          tier: 70,
+          tier: 60,
           classId: 'ghostblade',
           effects: [
             { type: 'allyEvadeChance', value: 10, description: 'Allies gain +10% chance to Evade Attacks' }
@@ -1794,7 +1794,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
     },
     // ROW 6 — Capstone Identity
     {
-      level: 85,
+      level: 75,
       rowName: 'Capstone Identity',
       rowTheme: 'Defines the endgame feel',
       rowIcon: 'GiCrown',
@@ -1805,7 +1805,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           icon: 'GiAura',
           shortDesc: 'While above 75% Life, you have 20% more Evasion Rating',
           fullDesc: 'While above 75% Life:\nYou have 20% more Evasion Rating',
-          tier: 85,
+          tier: 75,
           classId: 'ghostblade',
           effects: [
             { type: 'conditionalEvasion', value: 20, description: 'While above 75% Life, you have 20% more Evasion Rating', condition: 'above75Life' }
@@ -1817,7 +1817,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           icon: 'GiPhantom',
           shortDesc: 'If you Evaded recently, you take 15% less Damage',
           fullDesc: 'If you have Evaded a Hit Recently:\nYou take 15% less Damage',
-          tier: 85,
+          tier: 75,
           classId: 'ghostblade',
           effects: [
             { type: 'lessDamageIfEvadedRecently', value: 15, description: 'If you Evaded recently, you take 15% less Damage' }
@@ -1830,7 +1830,7 @@ const GHOSTBLADE_TALENTS: ClassTalentTree = {
           shortDesc: 'Enemies cannot hit you more than once every 0.5 seconds',
           fullDesc: 'Enemies cannot hit you more than\nonce every 0.5 seconds',
           flavorNote: 'Hard cap smoothing without breaking PoE rules',
-          tier: 85,
+          tier: 75,
           classId: 'ghostblade',
           effects: [
             { type: 'enemyHitCooldown', value: 0.5, description: 'Enemies cannot hit you more than once every 0.5s' }
@@ -1849,7 +1849,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
   tiers: [
     // ROW 1 — How your Energy Shield behaves
     {
-      level: 10,
+      level: 1,
       rowName: 'Energy Shield Behavior',
       rowTheme: 'Big ES pool vs faster recovery vs consistency under pressure',
       rowIcon: 'GiEnergyShield',
@@ -1860,7 +1860,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiShieldBounces',
           shortDesc: 'You have 30% more Energy Shield',
           fullDesc: 'You have 30% more Energy Shield',
-          tier: 10,
+          tier: 1,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'maxESBonus', value: 30, description: 'You have 30% more Energy Shield' }
@@ -1872,7 +1872,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiSpeedometer',
           shortDesc: '+40% ES Recharge Rate, –30% Recharge Delay',
           fullDesc: 'You have 40% increased Energy Shield Recharge Rate\nYou have 30% reduced Energy Shield Recharge Delay',
-          tier: 10,
+          tier: 1,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'esRechargeRate', value: 40, description: 'You have 40% increased ES Recharge Rate' },
@@ -1885,7 +1885,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiCrystalGrowth',
           shortDesc: 'ES Recharge is not interrupted by blocked hits',
           fullDesc: 'Your Energy Shield Recharge is not interrupted by blocked hits',
-          tier: 10,
+          tier: 1,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'esRechargeNotInterruptedByBlock', value: 1, description: 'ES Recharge is not interrupted by blocked hits' }
@@ -1895,7 +1895,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
     },
     // ROW 2 — Block interaction with Energy Shield
     {
-      level: 25,
+      level: 15,
       rowName: 'Block & ES Interaction',
       rowTheme: 'Redirect damage, reduce damage, or block more often',
       rowIcon: 'GiShieldBash',
@@ -1906,7 +1906,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiShieldReflect',
           shortDesc: 'Blocked hits deal damage to ES before Life',
           fullDesc: 'Blocked hits deal damage to Energy Shield before Life\n(Even if Life would normally be hit)',
-          tier: 25,
+          tier: 15,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'blockedDamageToESFirst', value: 1, description: 'Blocked hits deal damage to ES before Life' }
@@ -1918,7 +1918,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiRuneStone',
           shortDesc: 'Blocked hits deal 20% less damage',
           fullDesc: 'Blocked hits deal 20% less damage',
-          tier: 25,
+          tier: 15,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'blockEffectiveness', value: 20, description: 'Blocked hits deal 20% less damage' }
@@ -1930,7 +1930,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiMagicShield',
           shortDesc: '+15% Attack Block, +15% Spell Block',
           fullDesc: 'You have +15% chance to Block Attack Damage\nYou have +15% chance to Block Spell Damage',
-          tier: 25,
+          tier: 15,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'blockBonus', value: 15, description: 'You have +15% chance to Block Attack Damage' },
@@ -1941,7 +1941,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
     },
     // ROW 3 — Elemental pressure handling
     {
-      level: 40,
+      level: 30,
       rowName: 'Elemental Pressure',
       rowTheme: 'General reduction vs higher caps vs ES-gated mitigation',
       rowIcon: 'GiMagicSwirl',
@@ -1952,7 +1952,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiWaveCrest',
           shortDesc: 'You take 10% reduced Elemental Damage',
           fullDesc: 'You take 10% reduced Elemental Damage',
-          tier: 40,
+          tier: 30,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'elementalDamageReduction', value: 10, description: 'You take 10% reduced Elemental Damage' }
@@ -1964,7 +1964,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiFireShield',
           shortDesc: '+5% to all Elemental Resistances (can exceed cap)',
           fullDesc: 'You have +5% to all Elemental Resistances\n(Can exceed the normal cap)',
-          tier: 40,
+          tier: 30,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'elementalResistanceBonus', value: 5, description: '+5% to all Elemental Resistances (can exceed cap)' }
@@ -1976,7 +1976,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiPrism',
           shortDesc: 'While ES > 0, you take 15% less Elemental Damage',
           fullDesc: 'While on Energy Shield, you take 15% less Elemental Damage\n(Applies as long as ES > 0)',
-          tier: 40,
+          tier: 30,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'elementalDRWhileES', value: 15, description: 'While ES > 0, you take 15% less Elemental Damage' }
@@ -1986,7 +1986,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
     },
     // ROW 4 — Energy Shield sustain model
     {
-      level: 55,
+      level: 45,
       rowName: 'ES Sustain Model',
       rowTheme: 'Block sustain vs always-on recharge vs offensive sustain',
       rowIcon: 'GiHealing',
@@ -1997,7 +1997,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiRecycle',
           shortDesc: '10% of damage blocked is recovered as ES',
           fullDesc: '10% of damage blocked is recovered as Energy Shield',
-          tier: 55,
+          tier: 45,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'blockDamageToES', value: 10, description: '10% of damage blocked is recovered as ES' }
@@ -2009,7 +2009,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiWaterfall',
           shortDesc: 'ES Recharge continues while taking damage (50% slower)',
           fullDesc: 'Your Energy Shield Recharge continues while taking damage\nYour Recharge Rate is 50% less',
-          tier: 55,
+          tier: 45,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'esRechargeNotInterrupted', value: 1, description: 'ES Recharge continues while taking damage' },
@@ -2022,7 +2022,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiVampireDracula',
           shortDesc: '1% of Damage dealt is Leeched as Energy Shield',
           fullDesc: '1% of Damage dealt is Leeched as Energy Shield',
-          tier: 55,
+          tier: 45,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'esLeech', value: 1, description: '1% of Damage dealt is Leeched as ES' }
@@ -2032,7 +2032,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
     },
     // ROW 5 — Party utility
     {
-      level: 70,
+      level: 60,
       rowName: 'Party Utility',
       rowTheme: 'Shield sharing vs elemental protection vs reactive DR',
       rowIcon: 'GiTwoShadows',
@@ -2043,7 +2043,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiShieldEchoes',
           shortDesc: 'Allies gain 10% of your ES as additional ES',
           fullDesc: 'Nearby allies gain 10% of your Energy Shield as additional Energy Shield',
-          tier: 70,
+          tier: 60,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'allyESFromYours', value: 10, description: 'Allies gain 10% of your ES as additional ES' }
@@ -2055,7 +2055,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiCastle',
           shortDesc: 'Nearby allies take 8% reduced Elemental Damage',
           fullDesc: 'Nearby allies take 8% reduced Elemental Damage',
-          tier: 70,
+          tier: 60,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'allyElementalDamageReduction', value: 8, description: 'Nearby allies take 8% reduced Elemental Damage' }
@@ -2067,7 +2067,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiShieldBounces',
           shortDesc: 'When you block, allies gain 5% reduced Damage for 3s',
           fullDesc: 'When you block, allies gain 5% reduced Damage taken for 3 seconds',
-          tier: 70,
+          tier: 60,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'onBlockAllyDR', value: 5, description: 'When you block, allies gain 5% reduced Damage for 3s' }
@@ -2077,7 +2077,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
     },
     // ROW 6 — Capstone Identity
     {
-      level: 85,
+      level: 75,
       rowName: 'Capstone Identity',
       rowTheme: 'Chaos solution vs ES buffer vs high-risk high-reward stability',
       rowIcon: 'GiCrown',
@@ -2088,7 +2088,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiMagicShield',
           shortDesc: 'Chaos Damage no longer bypasses Energy Shield',
           fullDesc: 'Damage taken cannot bypass Energy Shield\n(Chaos damage no longer bypasses ES)',
-          tier: 85,
+          tier: 75,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'chaosDoesNotBypassES', value: 1, description: 'Chaos Damage no longer bypasses Energy Shield' }
@@ -2100,7 +2100,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiLightningShield',
           shortDesc: 'ES can exceed maximum by 20% (excess decays)',
           fullDesc: 'Energy Shield can exceed maximum by 20%\nExcess ES decays over time',
-          tier: 85,
+          tier: 75,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'esOvercharge', value: 20, description: 'ES can exceed maximum by 20% (excess decays)' }
@@ -2112,7 +2112,7 @@ const ARCANE_BULWARK_TALENTS: ClassTalentTree = {
           icon: 'GiCrystalBars',
           shortDesc: 'Full ES: 25% less Damage; Not full: 10% more Damage',
           fullDesc: 'While on full Energy Shield, you take 25% less Damage\nWhile not on full Energy Shield, you take 10% more Damage',
-          tier: 85,
+          tier: 75,
           classId: 'arcane_bulwark',
           effects: [
             { type: 'crystalCitadelEffect', value: 25, description: 'Full ES: 25% less Damage; Not full: 10% more Damage' }
@@ -2131,7 +2131,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
   tiers: [
     // ROW 1 — How You Handle Chaos Damage
     {
-      level: 10,
+      level: 1,
       rowName: 'Chaos Damage Control',
       rowTheme: 'Chaos is the defining weakness of ES tanks. Pick how you address it.',
       rowIcon: 'GiVortex',
@@ -2142,7 +2142,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           icon: 'GiAnvil',
           shortDesc: 'Your Armour applies to Chaos Damage at 50% effectiveness',
           fullDesc: 'Armour applies to Chaos Damage at 50% effectiveness',
-          tier: 10,
+          tier: 1,
           classId: 'null_templar',
           effects: [
             { type: 'armorToChaosDamage', value: 50, description: 'Your Armour applies to Chaos Damage at 50% effectiveness' }
@@ -2154,7 +2154,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           icon: 'GiPentacle',
           shortDesc: '+15% Chaos Resistance, +5% to maximum Chaos Resistance',
           fullDesc: 'You have +15% Chaos Resistance\nYou have +5% to maximum Chaos Resistance',
-          tier: 10,
+          tier: 1,
           classId: 'null_templar',
           effects: [
             { type: 'chaosResistance', value: 15, description: 'You have +15% Chaos Resistance' },
@@ -2167,7 +2167,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           icon: 'GiAbsorb',
           shortDesc: '25% of Chaos Damage is prevented, but lost as ES instead',
           fullDesc: '25% of Chaos Damage taken is prevented\nPrevented damage is lost as Energy Shield instead',
-          tier: 10,
+          tier: 1,
           classId: 'null_templar',
           effects: [
             { type: 'chaosDamagePrevention', value: 25, description: '25% of Chaos Damage is prevented, lost as ES instead' }
@@ -2177,7 +2177,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
     },
     // ROW 2 — Energy Shield Stability
     {
-      level: 25,
+      level: 15,
       rowName: 'Energy Shield Stability',
       rowTheme: 'You will always be taking hits. This defines how ES behaves under pressure.',
       rowIcon: 'GiEnergyShield',
@@ -2188,7 +2188,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           icon: 'GiCrystalGrowth',
           shortDesc: 'Your Energy Shield Recharge Delay is 30% shorter',
           fullDesc: 'Your Energy Shield Recharge Delay is reduced by 30%',
-          tier: 25,
+          tier: 15,
           classId: 'null_templar',
           effects: [
             { type: 'esRechargeDelay', value: 30, description: 'Your ES Recharge Delay is reduced by 30%' }
@@ -2200,7 +2200,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           icon: 'GiRecycle',
           shortDesc: '10% of Elemental Damage taken is recouped as ES',
           fullDesc: '10% of Elemental Damage taken is recouped as Energy Shield',
-          tier: 25,
+          tier: 15,
           classId: 'null_templar',
           effects: [
             { type: 'elementalDamageToES', value: 10, description: '10% of Elemental Damage taken is recouped as ES' }
@@ -2213,7 +2213,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           shortDesc: 'ES Recharge is 40% slower, but never interrupted by damage',
           fullDesc: 'Your Energy Shield Recharge Rate is 40% slower\nYour Energy Shield Recharge is not interrupted by damage',
           flavorNote: 'Very PoE. Very strong. Clear downside.',
-          tier: 25,
+          tier: 15,
           classId: 'null_templar',
           effects: [
             { type: 'esRechargeSlowed', value: 40, description: 'Your ES Recharge Rate is 40% slower' },
@@ -2224,7 +2224,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
     },
     // ROW 3 — Spell Pressure Smoothing
     {
-      level: 40,
+      level: 30,
       rowName: 'Spell Pressure Smoothing',
       rowTheme: 'Not avoidance — reduction and consistency',
       rowIcon: 'GiMagicSwirl',
@@ -2235,7 +2235,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           icon: 'GiWaveCrest',
           shortDesc: 'You take 10% reduced Elemental Damage',
           fullDesc: 'You take 10% reduced Elemental Damage',
-          tier: 40,
+          tier: 30,
           classId: 'null_templar',
           effects: [
             { type: 'elementalDamageReduction', value: 10, description: 'You take 10% reduced Elemental Damage' }
@@ -2247,7 +2247,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           icon: 'GiSpellBook',
           shortDesc: 'You take 8% reduced Spell Damage',
           fullDesc: 'Spell Damage taken is reduced by 8%',
-          tier: 40,
+          tier: 30,
           classId: 'null_templar',
           effects: [
             { type: 'spellDamageReduction', value: 8, description: 'You take 8% reduced Spell Damage' }
@@ -2259,7 +2259,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           icon: 'GiAbsorbtion',
           shortDesc: 'When you take Spell Damage, allies take 6% less Spell Damage for 3s',
           fullDesc: 'When you take Spell Damage, allies take 6% reduced Spell Damage\nDuration: 3 seconds\nEffect refreshes on spell hit',
-          tier: 40,
+          tier: 30,
           classId: 'null_templar',
           effects: [
             { type: 'allySpellDamageReductionOnHit', value: 6, description: 'When you take Spell Damage, allies take 6% less for 3s' }
@@ -2269,7 +2269,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
     },
     // ROW 4 — Party Protection
     {
-      level: 55,
+      level: 45,
       rowName: 'Party Protection',
       rowTheme: 'Null Templar should make caster-heavy fights easier for the whole group',
       rowIcon: 'GiTwoShadows',
@@ -2280,7 +2280,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           icon: 'GiCastle',
           shortDesc: 'Nearby allies gain +10% Chaos Resistance',
           fullDesc: 'Nearby allies gain +10% Chaos Resistance',
-          tier: 55,
+          tier: 45,
           classId: 'null_templar',
           effects: [
             { type: 'allyChaosResistance', value: 10, description: 'Nearby allies gain +10% Chaos Resistance' }
@@ -2292,7 +2292,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           icon: 'GiMagicShield',
           shortDesc: 'Nearby allies take 6% reduced Elemental Damage',
           fullDesc: 'Nearby allies take 6% reduced Elemental Damage',
-          tier: 55,
+          tier: 45,
           classId: 'null_templar',
           effects: [
             { type: 'allyElementalDamageReduction', value: 6, description: 'Nearby allies take 6% reduced Elemental Damage' }
@@ -2305,7 +2305,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           shortDesc: '5% of ally Spell Damage is redirected to you as Chaos Damage',
           fullDesc: '5% of Spell Damage taken by allies is redirected to you\nYou take this damage as Chaos Damage',
           flavorNote: 'Synergizes heavily with Row 1 choices.',
-          tier: 55,
+          tier: 45,
           classId: 'null_templar',
           effects: [
             { type: 'allySpellDamageRedirect', value: 5, description: '5% of ally Spell Damage is redirected to you as Chaos' }
@@ -2315,7 +2315,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
     },
     // ROW 5 — Scaling Defense Identity
     {
-      level: 70,
+      level: 60,
       rowName: 'Scaling Defense Identity',
       rowTheme: 'How the tank grows with gear and content',
       rowIcon: 'GiUpgrade',
@@ -2326,7 +2326,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           icon: 'GiChestArmor',
           shortDesc: 'You have 20% more Armour',
           fullDesc: 'You have 20% more Armour',
-          tier: 70,
+          tier: 60,
           classId: 'null_templar',
           effects: [
             { type: 'armorBonus', value: 20, description: 'You have 20% more Armour' }
@@ -2338,7 +2338,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           icon: 'GiEnergyShield',
           shortDesc: 'You have 15% more maximum Energy Shield',
           fullDesc: 'You have 15% more maximum Energy Shield',
-          tier: 70,
+          tier: 60,
           classId: 'null_templar',
           effects: [
             { type: 'maxESBonus', value: 15, description: 'You have 15% more maximum Energy Shield' }
@@ -2350,7 +2350,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           icon: 'GiPentarrowsTornado',
           shortDesc: 'Chaos Resistance also reduces Elemental Damage at 25% value',
           fullDesc: 'Chaos Resistance also applies to Elemental Damage at 25% of its value\n(Example: 60% Chaos Res → 15% Elemental DR)',
-          tier: 70,
+          tier: 60,
           classId: 'null_templar',
           effects: [
             { type: 'chaosResToElementalDR', value: 25, description: 'Chaos Res applies to Elemental Damage at 25% effectiveness' }
@@ -2360,7 +2360,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
     },
     // ROW 6 — Capstone: Encounter Warping
     {
-      level: 85,
+      level: 75,
       rowName: 'Capstone Identity',
       rowTheme: 'These should feel build-defining but not invincible',
       rowIcon: 'GiCrown',
@@ -2372,7 +2372,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           shortDesc: 'Spell Damage cannot exceed 50% of your maximum Life',
           fullDesc: 'Damage taken from Spells cannot exceed 50% of your maximum Life',
           flavorNote: 'Tank-buster protection without trivializing everything.',
-          tier: 85,
+          tier: 75,
           classId: 'null_templar',
           effects: [
             { type: 'spellDamageCap', value: 50, description: 'Spell Damage cannot exceed 50% of your maximum Life' }
@@ -2384,7 +2384,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           icon: 'GiDragonSpiral',
           shortDesc: '20% of Physical Damage taken as Chaos; 10% reduced Chaos Damage',
           fullDesc: '20% of Physical Damage taken is converted to Chaos Damage\nYou take 10% reduced Chaos Damage',
-          tier: 85,
+          tier: 75,
           classId: 'null_templar',
           effects: [
             { type: 'physicalToChaosDamage', value: 20, description: '20% of Physical Damage taken is converted to Chaos' },
@@ -2398,7 +2398,7 @@ const NULL_TEMPLAR_TALENTS: ClassTalentTree = {
           shortDesc: 'ES > 0: 10% reduced Damage; ES = 0: 10% increased Damage',
           fullDesc: 'While Energy Shield is above 0:\nYou take 10% reduced Damage\nWhile Energy Shield is 0:\nYou take 10% increased Damage',
           flavorNote: 'Strong, honest, risky.',
-          tier: 85,
+          tier: 75,
           classId: 'null_templar',
           effects: [
             { type: 'entropyAnchorEffect', value: 10, description: 'ES > 0: 10% reduced Damage; ES = 0: 10% increased Damage' }
@@ -2417,7 +2417,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
   tiers: [
     // ROW 1 — Avoidance Pattern
     {
-      level: 10,
+      level: 1,
       rowName: 'Avoidance Pattern',
       rowTheme: 'How do you avoid hits?',
       rowIcon: 'GiDodge',
@@ -2429,7 +2429,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: '+15% Dodge, but –20% ES Recharge Rate',
           fullDesc: 'You have +15% chance to Dodge Attacks\nYou have –20% Energy Shield Recharge Rate',
           flavorNote: 'Maximum avoidance, weaker sustain',
-          tier: 10,
+          tier: 1,
           classId: 'phase_guardian',
           effects: [
             { type: 'dodgeChance', value: 15, description: 'You have +15% chance to Dodge Attacks' },
@@ -2443,7 +2443,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: '–10% Dodge, but +40% ES Recharge Rate',
           fullDesc: 'You have –10% chance to Dodge Attacks\nYou have +40% Energy Shield Recharge Rate',
           flavorNote: 'More reliable ES uptime, fewer dodges',
-          tier: 10,
+          tier: 1,
           classId: 'phase_guardian',
           effects: [
             { type: 'dodgeChance', value: -10, description: 'You have –10% chance to Dodge Attacks' },
@@ -2457,7 +2457,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: '+10% Dodge, +10% Spell Suppression',
           fullDesc: 'You have +10% chance to Dodge Attacks\nYou have +10% chance to Suppress Spell Damage',
           flavorNote: 'Balanced attack + spell smoothing',
-          tier: 10,
+          tier: 1,
           classId: 'phase_guardian',
           effects: [
             { type: 'dodgeChance', value: 10, description: 'You have +10% chance to Dodge Attacks' },
@@ -2468,7 +2468,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
     },
     // ROW 2 — Energy Shield Stability
     {
-      level: 25,
+      level: 15,
       rowName: 'Energy Shield Stability',
       rowTheme: 'What happens when you do get hit?',
       rowIcon: 'GiEnergyShield',
@@ -2480,7 +2480,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: 'ES Recharge Delay is 30% shorter',
           fullDesc: 'Your Energy Shield Recharge Delay is reduced by 30%',
           flavorNote: 'ES comes back faster after hits',
-          tier: 25,
+          tier: 15,
           classId: 'phase_guardian',
           effects: [
             { type: 'esRechargeDelay', value: 30, description: 'ES Recharge Delay is reduced by 30%' }
@@ -2493,7 +2493,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: 'Hits that remove ES deal 15% less damage',
           fullDesc: 'Hits that remove Energy Shield deal 15% reduced damage',
           flavorNote: 'Smoother ES loss, better against fast hits',
-          tier: 25,
+          tier: 15,
           classId: 'phase_guardian',
           effects: [
             { type: 'esRemovalDamageReduction', value: 15, description: 'Hits that remove ES deal 15% less damage' }
@@ -2506,7 +2506,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: 'When ES Recharge starts, gain 10% DR for 2s',
           fullDesc: 'When Energy Shield Recharge starts, you gain 10% reduced damage taken for 2 seconds',
           flavorNote: 'Short defensive window during recharge',
-          tier: 25,
+          tier: 15,
           classId: 'phase_guardian',
           effects: [
             { type: 'onESRechargeStartDR', value: 10, description: 'When ES Recharge starts, gain 10% DR for 2s' }
@@ -2516,7 +2516,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
     },
     // ROW 3 — Spell Interaction
     {
-      level: 40,
+      level: 30,
       rowName: 'Spell Interaction',
       rowTheme: 'How do spells feel against you?',
       rowIcon: 'GiMagicSwirl',
@@ -2528,7 +2528,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: '+20% chance to Suppress Spell Damage',
           fullDesc: 'You have +20% chance to Suppress Spell Damage',
           flavorNote: 'Reliable spell smoothing',
-          tier: 40,
+          tier: 30,
           classId: 'phase_guardian',
           effects: [
             { type: 'spellSuppressionChance', value: 20, description: 'You have +20% chance to Suppress Spell Damage' }
@@ -2541,7 +2541,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: 'Suppressed Spell Damage deals 10% less damage',
           fullDesc: 'Suppressed Spell Damage deals 10% less damage',
           flavorNote: 'Makes suppression stronger, not more frequent',
-          tier: 40,
+          tier: 30,
           classId: 'phase_guardian',
           effects: [
             { type: 'spellSuppressionEffect', value: 10, description: 'Suppressed Spell Damage deals 10% less damage' }
@@ -2554,7 +2554,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: 'Spell Damage removes 10% less ES',
           fullDesc: 'Spell Damage taken from hits removes 10% less Energy Shield',
           flavorNote: 'Direct ES protection vs spells',
-          tier: 40,
+          tier: 30,
           classId: 'phase_guardian',
           effects: [
             { type: 'spellDamageESReduction', value: 10, description: 'Spell Damage removes 10% less ES' }
@@ -2564,7 +2564,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
     },
     // ROW 4 — Avoidance Payoff
     {
-      level: 55,
+      level: 45,
       rowName: 'Avoidance Payoff',
       rowTheme: 'What do dodges give you?',
       rowIcon: 'GiPerspectiveDiceSixFacesRandom',
@@ -2576,7 +2576,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: 'Dodging grants +20% ES Recharge Rate for 2s',
           fullDesc: 'Dodging an Attack grants 20% increased Energy Shield Recharge Rate for 2 seconds',
           flavorNote: 'Avoidance fuels sustain',
-          tier: 55,
+          tier: 45,
           classId: 'phase_guardian',
           effects: [
             { type: 'onDodgeESRecharge', value: 20, description: 'Dodging grants +20% ES Recharge Rate for 2s' }
@@ -2589,7 +2589,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: 'Dodging grants 8% reduced damage taken for 2s',
           fullDesc: 'Dodging an Attack grants 8% reduced damage taken for 2 seconds',
           flavorNote: 'Anti-RNG smoothing',
-          tier: 55,
+          tier: 45,
           classId: 'phase_guardian',
           effects: [
             { type: 'onDodgeDR', value: 8, description: 'Dodging grants 8% reduced damage taken for 2s' }
@@ -2602,7 +2602,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: 'Dodging restores 3% of maximum ES',
           fullDesc: 'Dodging an Attack restores 3% of maximum Energy Shield',
           flavorNote: 'Small but consistent recovery',
-          tier: 55,
+          tier: 45,
           classId: 'phase_guardian',
           effects: [
             { type: 'onDodgeESRestore', value: 3, description: 'Dodging restores 3% of maximum ES' }
@@ -2612,7 +2612,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
     },
     // ROW 5 — Party Utility
     {
-      level: 70,
+      level: 60,
       rowName: 'Party Utility',
       rowTheme: 'How do you help the team survive?',
       rowIcon: 'GiTwoShadows',
@@ -2624,7 +2624,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: 'Allies take 5% less damage while your ES is recharging',
           fullDesc: 'Allies take 5% reduced damage while your Energy Shield is recharging',
           flavorNote: 'Rewards successful avoidance play',
-          tier: 70,
+          tier: 60,
           classId: 'phase_guardian',
           effects: [
             { type: 'allyDRWhileRecharging', value: 5, description: 'Allies take 5% less damage while your ES is recharging' }
@@ -2637,7 +2637,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: 'Enemies have 10% reduced Accuracy targeting you',
           fullDesc: 'Enemies have 10% reduced Accuracy while targeting you',
           flavorNote: 'Indirect party mitigation',
-          tier: 70,
+          tier: 60,
           classId: 'phase_guardian',
           effects: [
             { type: 'enemyAccuracy', value: 10, description: 'Enemies have 10% reduced Accuracy targeting you' }
@@ -2650,7 +2650,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: 'Allies gain +10% increased Evasion Rating',
           fullDesc: 'Allies gain 10% increased Evasion Rating',
           flavorNote: 'Passive, always useful',
-          tier: 70,
+          tier: 60,
           classId: 'phase_guardian',
           effects: [
             { type: 'allyEvasionRating', value: 10, description: 'Allies gain +10% increased Evasion Rating' }
@@ -2660,7 +2660,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
     },
     // ROW 6 — Capstone Identity
     {
-      level: 85,
+      level: 75,
       rowName: 'Capstone Identity',
       rowTheme: 'What kind of Phase Guardian are you?',
       rowIcon: 'GiCrown',
@@ -2672,7 +2672,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: 'Dodging grants 50% DR for 1s (4s cooldown)',
           fullDesc: 'Dodging an Attack grants 50% reduced damage taken for 1 second\nCan only occur once every 4 seconds',
           flavorNote: 'Spike protection, controlled power',
-          tier: 85,
+          tier: 75,
           classId: 'phase_guardian',
           effects: [
             { type: 'untouchableWindowEffect', value: 50, description: 'Dodging grants 50% DR for 1s (4s cooldown)' }
@@ -2685,7 +2685,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: 'ES Recharge is 30% slower but cannot be interrupted',
           fullDesc: 'Your Energy Shield Recharge Rate is 30% slower\nYour Energy Shield Recharge cannot be interrupted by damage',
           flavorNote: 'Extremely consistent ES tank',
-          tier: 85,
+          tier: 75,
           classId: 'phase_guardian',
           effects: [
             { type: 'esRechargeSlowed', value: 30, description: 'ES Recharge Rate is 30% slower' },
@@ -2699,7 +2699,7 @@ const PHASE_GUARDIAN_TALENTS: ClassTalentTree = {
           shortDesc: '+20% Dodge, but –20% maximum ES',
           fullDesc: 'You have +20% chance to Dodge Attacks\nYou have –20% maximum Energy Shield',
           flavorNote: 'High-risk, high-avoidance archetype',
-          tier: 85,
+          tier: 75,
           classId: 'phase_guardian',
           effects: [
             { type: 'dodgeChance', value: 20, description: 'You have +20% chance to Dodge Attacks' },
@@ -2719,7 +2719,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
   tiers: [
     // ROW 1 — Single Target vs Area Focus
     {
-      level: 10,
+      level: 1,
       rowName: 'Healing Focus',
       rowTheme: 'Single target vs area healing trade-offs',
       rowIcon: 'GiHealthPotion',
@@ -2730,7 +2730,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiHealing',
           shortDesc: '+30% single-target Healing, –20% area Healing',
           fullDesc: 'Your single-target healing skills heal for 30% more\nYour area healing skills heal for 20% less',
-          tier: 10,
+          tier: 1,
           classId: 'high_cleric',
           effects: [
             { type: 'singleTargetHealingBonus', value: 30, description: 'Single-target healing skills heal for 30% more' },
@@ -2743,7 +2743,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiSparkles',
           shortDesc: '40% of excess Healing is redistributed to nearby allies',
           fullDesc: '40% of Excess Healing is redistributed evenly to nearby allies',
-          tier: 10,
+          tier: 1,
           classId: 'high_cleric',
           effects: [
             { type: 'excessHealingRedistribution', value: 40, description: '40% of excess Healing is redistributed to allies' }
@@ -2755,7 +2755,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiFocusedLightning',
           shortDesc: 'Area heals hit 25% fewer targets for 35% more Healing each',
           fullDesc: 'Area healing skills affect 25% fewer targets\nAffected targets receive 35% more Healing',
-          tier: 10,
+          tier: 1,
           classId: 'high_cleric',
           effects: [
             { type: 'areaTargetReduction', value: 25, description: 'Area heals affect 25% fewer targets' },
@@ -2766,7 +2766,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
     },
     // ROW 2 — Mana Efficiency Model
     {
-      level: 25,
+      level: 15,
       rowName: 'Mana Efficiency',
       rowTheme: 'How you manage your healing resources',
       rowIcon: 'GiWaterDrop',
@@ -2777,7 +2777,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiMoneyStack',
           shortDesc: 'Healing costs 20% less Mana, heals for 15% less',
           fullDesc: 'Your healing skills cost 20% less Mana\nYour healing skills heal for 15% less',
-          tier: 25,
+          tier: 15,
           classId: 'high_cleric',
           effects: [
             { type: 'manaReduction', value: 20, description: 'Healing skills cost 20% less Mana' },
@@ -2790,7 +2790,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiWaterfall',
           shortDesc: 'Excess Healing is stored and released when ally drops below 50%',
           fullDesc: 'Excess Healing is stored (up to 10% of your maximum Mana)\nStored healing is released automatically when an ally drops below 50% Life',
-          tier: 25,
+          tier: 15,
           classId: 'high_cleric',
           effects: [
             { type: 'excessHealingStorage', value: 10, description: 'Store excess healing, release when ally < 50% Life' }
@@ -2802,7 +2802,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiPrayerBeads',
           shortDesc: 'Repeatedly healing same target grants +8% Healing (stacks 5x)',
           fullDesc: 'Repeatedly healing the same target grants 8% increased Healing, stacking up to 5 times\nStacks reset if you heal a different target',
-          tier: 25,
+          tier: 15,
           classId: 'high_cleric',
           effects: [
             { type: 'faithfulChannelEffect', value: 8, description: 'Repeated healing same target +8% per stack (max 5)' }
@@ -2812,7 +2812,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
     },
     // ROW 3 — Low-Life Response
     {
-      level: 40,
+      level: 30,
       rowName: 'Low-Life Response',
       rowTheme: 'How you respond to critically injured allies',
       rowIcon: 'GiHeartBeats',
@@ -2823,7 +2823,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiAngelWings',
           shortDesc: '+40% Healing on targets below 35% Life',
           fullDesc: 'Your healing skills heal for 40% more on targets below 35% Life',
-          tier: 40,
+          tier: 30,
           classId: 'high_cleric',
           effects: [
             { type: 'lowLifeHealingBonus', value: 40, description: 'Healing is 40% more effective on targets below 35% Life' }
@@ -2835,7 +2835,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiMeditation',
           shortDesc: '+20% Healing, but healing cannot Crit',
           fullDesc: 'Your healing skills heal for 20% more\nYour healing skills cannot Critically Strike',
-          tier: 40,
+          tier: 30,
           classId: 'high_cleric',
           effects: [
             { type: 'healingIncrease', value: 20, description: 'Healing skills heal for 20% more' },
@@ -2848,7 +2848,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiEmergencyElevator',
           shortDesc: 'After ally takes 20%+ Life hit, next heal on them is +50%',
           fullDesc: 'After an ally takes a hit dealing 20% or more of their maximum Life:\nYour next heal on them has 50% increased Healing',
-          tier: 40,
+          tier: 30,
           classId: 'high_cleric',
           effects: [
             { type: 'crisisFocusEffect', value: 50, description: 'After ally takes big hit, next heal +50%' }
@@ -2858,7 +2858,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
     },
     // ROW 4 — Party Stabilization
     {
-      level: 55,
+      level: 45,
       rowName: 'Party Stabilization',
       rowTheme: 'How you keep the whole party stable',
       rowIcon: 'GiTwoShadows',
@@ -2869,7 +2869,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiLighthouse',
           shortDesc: '30% of lowest-Life ally healing is duplicated to another injured ally',
           fullDesc: '30% of Healing you deal to the lowest-Life party member is duplicated to another injured ally',
-          tier: 55,
+          tier: 45,
           classId: 'high_cleric',
           effects: [
             { type: 'beaconOfMercyEffect', value: 30, description: '30% of lowest-Life healing is duplicated' }
@@ -2881,7 +2881,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiHeartPlus',
           shortDesc: 'Healing ally above 90% redirects 20% to most injured',
           fullDesc: 'When you heal an ally above 90% Life:\n20% of that healing is redirected to the most injured party member',
-          tier: 55,
+          tier: 45,
           classId: 'high_cleric',
           effects: [
             { type: 'sharedSalvationEffect', value: 20, description: 'Overhealing above 90% redirects 20% to most injured' }
@@ -2893,7 +2893,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiShieldEchoes',
           shortDesc: 'Allies above 70% Life take 10% reduced Damage',
           fullDesc: 'Party members within your healing range take 10% reduced Damage while above 70% Life',
-          tier: 55,
+          tier: 45,
           classId: 'high_cleric',
           effects: [
             { type: 'allyDRWhileHighLife', value: 10, description: 'Allies above 70% Life take 10% reduced Damage' }
@@ -2903,7 +2903,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
     },
     // ROW 5 — Recovery vs Throughput
     {
-      level: 70,
+      level: 60,
       rowName: 'Recovery vs Throughput',
       rowTheme: 'Sustained healing over time vs burst healing',
       rowIcon: 'GiHealing',
@@ -2914,7 +2914,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiSunbeams',
           shortDesc: 'Healing skills also apply 25% of healing as HoT over 4s',
           fullDesc: 'Healing skills apply a heal-over-time effect equal to 25% of the healing dealt over 4 seconds',
-          tier: 70,
+          tier: 60,
           classId: 'high_cleric',
           effects: [
             { type: 'healingToHoT', value: 25, description: 'Healing skills also apply 25% as HoT over 4s' }
@@ -2926,7 +2926,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiHealthNormal',
           shortDesc: '+25% Healing, but HoTs are 50% less effective',
           fullDesc: 'Your healing skills heal for 25% more\nHealing-over-time effects from your skills heal for 50% less',
-          tier: 70,
+          tier: 60,
           classId: 'high_cleric',
           effects: [
             { type: 'healingIncrease', value: 25, description: 'Healing skills heal for 25% more' },
@@ -2939,7 +2939,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiHeartBottle',
           shortDesc: 'Healing removes 10% of current DoT effects from target',
           fullDesc: 'Healing removes 10% of current damage-over-time effects from the target',
-          tier: 70,
+          tier: 60,
           classId: 'high_cleric',
           effects: [
             { type: 'healingRemovesDoT', value: 10, description: 'Healing removes 10% of DoT effects from target' }
@@ -2949,7 +2949,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
     },
     // ROW 6 — Capstone Philosophy
     {
-      level: 85,
+      level: 75,
       rowName: 'Capstone Philosophy',
       rowTheme: 'Your defining healing identity',
       rowIcon: 'GiCrown',
@@ -2960,7 +2960,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiAura',
           shortDesc: 'No overheal for 4s = +30% Healing (lost on overheal)',
           fullDesc: 'If no healing is wasted (no excess healing) for 4 seconds:\nYou gain 30% increased Healing\nBuff is lost immediately upon overhealing',
-          tier: 85,
+          tier: 75,
           classId: 'high_cleric',
           effects: [
             { type: 'perfectDisciplineEffect', value: 30, description: 'No overheal for 4s = +30% Healing' }
@@ -2972,7 +2972,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiShield',
           shortDesc: 'Healing cannot be interrupted, costs 15% more Mana',
           fullDesc: 'Your healing skills cannot be interrupted\nYour healing skills cost 15% more Mana',
-          tier: 85,
+          tier: 75,
           classId: 'high_cleric',
           effects: [
             { type: 'healingCannotBeInterrupted', value: 1, description: 'Healing skills cannot be interrupted' },
@@ -2985,7 +2985,7 @@ const HIGH_CLERIC_TALENTS: ClassTalentTree = {
           icon: 'GiHolySymbol',
           shortDesc: 'Your healing auto-distributes to 2 lowest-Life allies at 60% each',
           fullDesc: 'At the end of each second:\nYour healing is automatically distributed to the 2 lowest-Life allies\nEach receives 60% of normal Healing',
-          tier: 85,
+          tier: 75,
           classId: 'high_cleric',
           effects: [
             { type: 'divineAllocationEffect', value: 60, description: 'Healing auto-distributes to 2 lowest-Life at 60% each' }
@@ -3004,7 +3004,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
   tiers: [
     // ROW 1 — Cost of Healing
     {
-      level: 10,
+      level: 1,
       rowName: 'Cost of Healing',
       rowTheme: 'How painful healing is to YOU',
       rowIcon: 'GiDrop',
@@ -3015,7 +3015,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiDrop',
           shortDesc: 'Life costs of healing skills are 20% reduced',
           fullDesc: 'Life costs of healing skills are 20% reduced\nSpend less of your own life to heal others',
-          tier: 10,
+          tier: 1,
           classId: 'blood_confessor',
           effects: [
             { type: 'lifeCostReduction', value: 20, description: 'Life costs of healing skills are 20% reduced' }
@@ -3027,7 +3027,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiHealthPotion',
           shortDesc: '30% of life spent on healing is returned over 3 seconds',
           fullDesc: '30% of life spent on healing is returned over 3 seconds\nYour sacrifice is partially restored through blood magic',
-          tier: 10,
+          tier: 1,
           classId: 'blood_confessor',
           effects: [
             { type: 'lifeSpentReturn', value: 30, description: '30% of life spent on healing is returned over 3 seconds' }
@@ -3039,7 +3039,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiFire',
           shortDesc: 'Healing costs 20% more life, +20% healing output',
           fullDesc: 'Healing skills cost 20% more life\nYou gain 20% increased healing output\nPain fuels your power',
-          tier: 10,
+          tier: 1,
           classId: 'blood_confessor',
           effects: [
             { type: 'lifeCostIncrease', value: 20, description: 'Healing skills cost 20% more life' },
@@ -3050,7 +3050,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
     },
     // ROW 2 — Self-Sustain Model
     {
-      level: 25,
+      level: 15,
       rowName: 'Self-Sustain Model',
       rowTheme: 'How you stay alive while bleeding',
       rowIcon: 'GiHeartPlus',
@@ -3061,7 +3061,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiHeartPlus',
           shortDesc: '25% of healing you deal also heals you',
           fullDesc: '25% of healing you deal also heals you\nYour blood magic flows both ways',
-          tier: 25,
+          tier: 15,
           classId: 'blood_confessor',
           effects: [
             { type: 'selfHealFromHealing', value: 25, description: '25% of healing you deal also heals you' }
@@ -3073,7 +3073,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiShield',
           shortDesc: '10% reduced damage taken while below 70% life',
           fullDesc: '10% reduced damage taken while below 70% life\nYour wounds have made you resilient',
-          tier: 25,
+          tier: 15,
           classId: 'blood_confessor',
           effects: [
             { type: 'lowLifeDamageReduction', value: 10, description: '10% reduced damage taken while below 70% life', condition: 'below70' }
@@ -3085,7 +3085,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiVortex',
           shortDesc: 'Spending life to heal grants 2% life regen/s for 3s',
           fullDesc: 'When you spend life to heal, regenerate 2% of life per second for 3 seconds\nYour sacrifice triggers a restorative flow',
-          tier: 25,
+          tier: 15,
           classId: 'blood_confessor',
           effects: [
             { type: 'lifeRegenOnLifeSpend', value: 2, description: 'Regenerate 2% life/s for 3s when spending life to heal' }
@@ -3095,7 +3095,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
     },
     // ROW 3 — Party Conversion
     {
-      level: 40,
+      level: 30,
       rowName: 'Party Conversion',
       rowTheme: 'How your pain helps the group',
       rowIcon: 'GiSparkles',
@@ -3106,7 +3106,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiWaterDrop',
           shortDesc: '15% of life you spend is recovered by lowest-life ally',
           fullDesc: '15% of life you spend on healing is recovered by the lowest-life ally\nYour sacrifice becomes their salvation',
-          tier: 40,
+          tier: 30,
           classId: 'blood_confessor',
           effects: [
             { type: 'allyLifeRecoveryFromLifeSpent', value: 15, description: '15% of life spent is recovered by lowest-life ally' }
@@ -3118,7 +3118,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiMagicShield',
           shortDesc: 'Allies healed by you gain 5% reduced damage for 3s',
           fullDesc: 'Allies healed by you gain 5% reduced damage taken for 3 seconds\nYour blood forms a protective bond',
-          tier: 40,
+          tier: 30,
           classId: 'blood_confessor',
           effects: [
             { type: 'allyDRFromHealing', value: 5, description: 'Allies healed gain 5% reduced damage taken for 3s' }
@@ -3130,7 +3130,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiLotusFlower',
           shortDesc: 'Allies healed gain 10% life regen for 4s',
           fullDesc: 'Allies healed by you gain 10% increased life regeneration for 4 seconds\nYour blood magic lingers in their veins',
-          tier: 40,
+          tier: 30,
           classId: 'blood_confessor',
           effects: [
             { type: 'allyLifeRegenFromHealing', value: 10, description: 'Allies healed gain 10% increased life regen for 4s' }
@@ -3140,7 +3140,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
     },
     // ROW 4 — Damage Smoothing
     {
-      level: 55,
+      level: 45,
       rowName: 'Damage Smoothing',
       rowTheme: 'Handling burst and spike damage',
       rowIcon: 'GiShieldReflect',
@@ -3151,7 +3151,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiHealthNormal',
           shortDesc: 'Your healing applies 40% as HoT over 4 seconds',
           fullDesc: 'Your healing applies a life recovery over time equal to 40% of the heal over 4 seconds\nYour blood magic continues to heal after the initial burst',
-          tier: 55,
+          tier: 45,
           classId: 'blood_confessor',
           effects: [
             { type: 'healingOverTimeFromHeal', value: 40, description: 'Healing applies 40% as HoT over 4 seconds' }
@@ -3163,7 +3163,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiBoltShield',
           shortDesc: 'Losing 15%+ life in 1s grants 15% DR for 3s',
           fullDesc: 'When you lose more than 15% of your life in 1 second, gain 15% reduced damage taken for 3 seconds\nMassive pain triggers a protective response',
-          tier: 55,
+          tier: 45,
           classId: 'blood_confessor',
           effects: [
             { type: 'bigLifeLossDR', value: 15, description: 'Losing 15%+ life in 1s grants 15% DR for 3s' }
@@ -3175,7 +3175,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiVibratingShield',
           shortDesc: 'Allies healed take 10% less hit damage for 2s',
           fullDesc: 'Allies healed by you take 10% less damage from hits for 2 seconds\nYour blood forms a brief barrier',
-          tier: 55,
+          tier: 45,
           classId: 'blood_confessor',
           effects: [
             { type: 'allyHitDRFromHealing', value: 10, description: 'Allies healed take 10% less hit damage for 2s' }
@@ -3185,7 +3185,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
     },
     // ROW 5 — Risk vs Reward
     {
-      level: 70,
+      level: 60,
       rowName: 'Risk vs Reward',
       rowTheme: 'How close to death you\'re willing to play',
       rowIcon: 'GiDeathSkull',
@@ -3196,7 +3196,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiHeartPlus',
           shortDesc: 'Below 50% life: +25% increased healing',
           fullDesc: 'While below 50% life, you gain 25% increased healing\nDesperation fuels your power',
-          tier: 70,
+          tier: 60,
           classId: 'blood_confessor',
           effects: [
             { type: 'lowLifeHealingIncrease', value: 25, description: 'Below 50% life: 25% increased healing' }
@@ -3208,7 +3208,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiShield',
           shortDesc: 'Life costs cannot reduce you below 10% life',
           fullDesc: 'Life costs cannot reduce you below 10% life\nYou maintain control even at the edge of death',
-          tier: 70,
+          tier: 60,
           classId: 'blood_confessor',
           effects: [
             { type: 'lifeCostFloor', value: 10, description: 'Life costs cannot reduce you below 10% life' }
@@ -3220,7 +3220,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiSkullCrossedBones',
           shortDesc: 'Healing deals 10% of life spent as chaos damage',
           fullDesc: 'Healing skills deal 10% of life spent as chaos damage to nearby enemies\nYour spilled blood becomes a weapon',
-          tier: 70,
+          tier: 60,
           classId: 'blood_confessor',
           effects: [
             { type: 'lifeCostChaosDamage', value: 10, description: 'Healing deals 10% of life spent as chaos damage to enemies' }
@@ -3230,7 +3230,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
     },
     // ROW 6 — Capstone Identity
     {
-      level: 85,
+      level: 75,
       rowName: 'Capstone Identity',
       rowTheme: 'What kind of Blood Confessor you are',
       rowIcon: 'GiCrown',
@@ -3241,7 +3241,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiAngelWings',
           shortDesc: 'Life spent on healing is never lethal',
           fullDesc: 'Life spent on healing is never lethal\nYou cannot die from your own healing costs\nYour sacrifice knows no bounds',
-          tier: 85,
+          tier: 75,
           classId: 'blood_confessor',
           effects: [
             { type: 'endlessMartyrdomEffect', value: 1, description: 'Life spent on healing cannot kill you' }
@@ -3253,7 +3253,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiFlameSpin',
           shortDesc: 'Per 10% life spent recently: +5% healing (max 25%)',
           fullDesc: 'For every 10% of life spent in the last 5 seconds, gain 5% increased healing\nMaximum 25% increased healing\nYour blood fuels an engine of restoration',
-          tier: 85,
+          tier: 75,
           classId: 'blood_confessor',
           effects: [
             { type: 'lifeCostStackingHealing', value: 5, description: 'Per 10% life spent in 5s: +5% healing (max 25%)' }
@@ -3265,7 +3265,7 @@ const BLOOD_CONFESSOR_TALENTS: ClassTalentTree = {
           icon: 'GiCrown',
           shortDesc: 'Allies healed gain 10% max life for 6s',
           fullDesc: 'Allies healed by you gain 10% increased maximum life for 6 seconds\nDoes not stack with itself\nYour blood empowers their very essence',
-          tier: 85,
+          tier: 75,
           classId: 'blood_confessor',
           effects: [
             { type: 'allyMaxLifeFromHealing', value: 10, description: 'Allies healed gain 10% max life for 6s (non-stacking)' }
@@ -3284,7 +3284,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
   tiers: [
     // ROW 1 — How you smooth incoming damage
     {
-      level: 10,
+      level: 1,
       rowName: 'Damage Smoothing',
       rowTheme: 'Baseline defensive philosophy',
       rowIcon: 'GiShield',
@@ -3295,7 +3295,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiShield',
           shortDesc: 'Allies take 10% reduced damage (always active)',
           fullDesc: 'Allies take 10% reduced damage\nAlways active',
-          tier: 10,
+          tier: 1,
           classId: 'tactician',
           effects: [
             { type: 'allyDamageReduction', value: 10, description: 'Allies take 10% reduced damage' }
@@ -3307,7 +3307,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiShieldReflect',
           shortDesc: 'Ally below 50% life: 15% DR for 4s (12s ICD)',
           fullDesc: 'When an ally drops below 50% Life, they take 15% reduced damage for 4s\nInternal cooldown: 12s per ally',
-          tier: 10,
+          tier: 1,
           classId: 'tactician',
           effects: [
             { type: 'lowLifeAllyDR', value: 15, description: 'Ally below 50% life: 15% DR for 4s (12s ICD per ally)' }
@@ -3319,7 +3319,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiVibratingShield',
           shortDesc: 'DoT effects deal 20% reduced damage to allies',
           fullDesc: 'Damage over time effects deal 20% reduced damage to allies',
-          tier: 10,
+          tier: 1,
           classId: 'tactician',
           effects: [
             { type: 'dotDamageReduction', value: 20, description: 'DoT effects deal 20% reduced damage to allies' }
@@ -3329,7 +3329,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
     },
     // ROW 2 — How your cooldowns function
     {
-      level: 25,
+      level: 15,
       rowName: 'Cooldown Philosophy',
       rowTheme: 'Frequency vs power',
       rowIcon: 'GiCog',
@@ -3340,7 +3340,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiVortex',
           shortDesc: '−20% defensive CD cooldowns, −10% effect',
           fullDesc: 'Your defensive cooldowns have 20% reduced cooldown\nCooldowns grant 10% less damage reduction',
-          tier: 25,
+          tier: 15,
           classId: 'tactician',
           effects: [
             { type: 'defensiveCooldownReduction', value: 20, description: 'Defensive cooldowns have 20% reduced cooldown' },
@@ -3353,7 +3353,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiChessRook',
           shortDesc: '+25% defensive CD effect, +20% longer CDs',
           fullDesc: 'Your defensive cooldowns have 25% increased effect\nCooldowns have 20% increased cooldown',
-          tier: 25,
+          tier: 15,
           classId: 'tactician',
           effects: [
             { type: 'defensiveCooldownEffect', value: 25, description: 'Defensive cooldowns have 25% increased effect' },
@@ -3366,7 +3366,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiBrain',
           shortDesc: 'Using a defensive CD reduces other CDs by 10%',
           fullDesc: 'Using a defensive cooldown reduces the cooldown of your other defensive cooldowns by 10%',
-          tier: 25,
+          tier: 15,
           classId: 'tactician',
           effects: [
             { type: 'defensiveCooldownCDR', value: 10, description: 'Using a defensive CD reduces other CDs by 10%' }
@@ -3376,7 +3376,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
     },
     // ROW 3 — Emergency response model
     {
-      level: 40,
+      level: 30,
       rowName: 'Emergency Response',
       rowTheme: 'What happens when things go wrong',
       rowIcon: 'GiHealthPotion',
@@ -3387,7 +3387,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiBoltShield',
           shortDesc: 'Ally hit for 30%+ max life: 20% DR for 3s (10s ICD)',
           fullDesc: 'When an ally takes a hit dealing 30% or more of their maximum Life, they gain:\n20% reduced damage taken for 3s\nInternal cooldown: 10s per ally',
-          tier: 40,
+          tier: 30,
           classId: 'tactician',
           effects: [
             { type: 'crisisProtocolDR', value: 20, description: 'Ally hit for 30%+ max life: 20% DR for 3s (10s ICD)' }
@@ -3399,7 +3399,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiMagicSwirl',
           shortDesc: '10% of ally damage redistributed across party',
           fullDesc: '10% of damage taken by allies is redirected evenly across the party (cannot affect you)',
-          tier: 40,
+          tier: 30,
           classId: 'tactician',
           effects: [
             { type: 'damageRedistribution', value: 10, description: '10% of ally damage redistributed across party' }
@@ -3411,7 +3411,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiMagicShield',
           shortDesc: '2+ allies below 40% life: party 12% DR for 5s (20s CD)',
           fullDesc: 'If two or more allies drop below 40% Life, the party takes 12% reduced damage for 5s\nCooldown: 20s',
-          tier: 40,
+          tier: 30,
           classId: 'tactician',
           effects: [
             { type: 'failSafeFormationDR', value: 12, description: '2+ allies below 40%: party 12% DR for 5s (20s CD)' }
@@ -3421,7 +3421,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
     },
     // ROW 4 — How you contribute healing
     {
-      level: 55,
+      level: 45,
       rowName: 'Healing Contribution',
       rowTheme: 'Limited, deliberate healing',
       rowIcon: 'GiHeartPlus',
@@ -3432,7 +3432,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiHealthPotion',
           shortDesc: '+30% direct heal strength, +20% heal CDs',
           fullDesc: 'Your direct heals are 30% stronger\nHealing cooldowns increased by 20%',
-          tier: 55,
+          tier: 45,
           classId: 'tactician',
           effects: [
             { type: 'directHealBonus', value: 30, description: 'Direct heals are 30% stronger' },
@@ -3445,7 +3445,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiHealthIncrease',
           shortDesc: 'Healing grants 5% life regen/s for 4s',
           fullDesc: 'Healing an ally grants 5% Life regeneration per second for 4s',
-          tier: 55,
+          tier: 45,
           classId: 'tactician',
           effects: [
             { type: 'healingLifeRegen', value: 5, description: 'Healing grants 5% life regen/s for 4s' }
@@ -3457,7 +3457,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiWaterDrop',
           shortDesc: '20% of overhealing becomes life regen over 4s',
           fullDesc: '20% of overhealing is converted into Life regeneration over 4s',
-          tier: 55,
+          tier: 45,
           classId: 'tactician',
           effects: [
             { type: 'overhealingToRegen', value: 20, description: '20% of overhealing becomes life regen over 4s' }
@@ -3467,7 +3467,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
     },
     // ROW 5 — Party-wide tactical buffs
     {
-      level: 70,
+      level: 60,
       rowName: 'Tactical Buffs',
       rowTheme: 'Unique team identity',
       rowIcon: 'GiStarFormation',
@@ -3478,7 +3478,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiMuscleUp',
           shortDesc: 'Allies gain 5% increased maximum life',
           fullDesc: 'Allies gain 5% increased maximum Life',
-          tier: 70,
+          tier: 60,
           classId: 'tactician',
           effects: [
             { type: 'allyMaxLifeBonus', value: 5, description: 'Allies gain 5% increased maximum life' }
@@ -3490,7 +3490,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiBrain',
           shortDesc: 'Allies take 10% reduced critical strike damage',
           fullDesc: 'Allies take 10% reduced critical strike damage',
-          tier: 70,
+          tier: 60,
           classId: 'tactician',
           effects: [
             { type: 'allyCritDamageReduction', value: 10, description: 'Allies take 10% reduced critical strike damage' }
@@ -3502,7 +3502,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiCog',
           shortDesc: 'Allies deal 5% less, take 10% less damage',
           fullDesc: 'Allies deal 5% reduced damage\nAllies take 10% reduced damage',
-          tier: 70,
+          tier: 60,
           classId: 'tactician',
           effects: [
             { type: 'allyDealLessDamage', value: 5, description: 'Allies deal 5% reduced damage' },
@@ -3513,7 +3513,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
     },
     // ROW 6 — Capstone Strategy
     {
-      level: 85,
+      level: 75,
       rowName: 'Capstone Strategy',
       rowTheme: 'Defines endgame playstyle',
       rowIcon: 'GiCrown',
@@ -3524,7 +3524,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiScrollUnfurled',
           shortDesc: 'Every 20s: party gains 15% DR for 4s',
           fullDesc: 'Every 20s, the party gains 15% reduced damage taken for 4s',
-          tier: 85,
+          tier: 75,
           classId: 'tactician',
           effects: [
             { type: 'battlePlanAlphaDR', value: 15, description: 'Every 20s: party gains 15% DR for 4s' }
@@ -3536,7 +3536,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiStarFormation',
           shortDesc: 'Using defensive CD: +20% DR from all sources for 3s',
           fullDesc: 'Using a defensive cooldown grants 20% increased damage reduction from all sources for 3s',
-          tier: 85,
+          tier: 75,
           classId: 'tactician',
           effects: [
             { type: 'perfectExecutionDR', value: 20, description: 'Using defensive CD: +20% DR from all sources for 3s' }
@@ -3548,7 +3548,7 @@ const TACTICIAN_TALENTS: ClassTalentTree = {
           icon: 'GiCrown',
           shortDesc: 'Defensive CD effects stack additively',
           fullDesc: 'Defensive cooldown effects stack additively instead of overwriting\n(e.g. multiple sources of reduced damage apply fully)',
-          tier: 85,
+          tier: 75,
           classId: 'tactician',
           effects: [
             { type: 'strategicMasteryEffect', value: 1, description: 'Defensive CD effects stack additively' }
@@ -3567,7 +3567,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
   tiers: [
     // ROW 1 — Baseline Regeneration Style
     {
-      level: 10,
+      level: 1,
       rowName: 'Regeneration Style',
       rowTheme: 'How your healing is delivered',
       rowIcon: 'GiOakLeaf',
@@ -3578,7 +3578,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiOakLeaf',
           shortDesc: 'You and allies regenerate Life 20% faster',
           fullDesc: 'You and allies have 20% increased Life Regeneration Rate\nNature flows through the party, accelerating recovery',
-          tier: 10,
+          tier: 1,
           classId: 'grove_healer',
           effects: [
             { type: 'lifeRegenRate', value: 20, description: 'You and allies regenerate Life 20% faster' }
@@ -3590,7 +3590,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiLotusFlower',
           shortDesc: 'Your Regeneration effects on allies last 30% longer',
           fullDesc: 'Your Regeneration effects on allies have 30% increased duration\nNature lingers longer, sustaining allies through extended fights',
-          tier: 10,
+          tier: 1,
           classId: 'grove_healer',
           effects: [
             { type: 'regenDuration', value: 30, description: 'Your Regen effects on allies last 30% longer' }
@@ -3602,7 +3602,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiHealthIncrease',
           shortDesc: 'Allies passively regenerate +1% of their maximum Life per second',
           fullDesc: 'Allies gain +1% Life Regeneration per second\nDeep roots of nature continuously restore ally vitality',
-          tier: 10,
+          tier: 1,
           classId: 'grove_healer',
           effects: [
             { type: 'flatLifeRegenPerSecond', value: 1, description: 'Allies passively regenerate +1% max Life per second' }
@@ -3612,7 +3612,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
     },
     // ROW 2 — Regeneration Scaling
     {
-      level: 25,
+      level: 15,
       rowName: 'Regeneration Scaling',
       rowTheme: 'How regen scales under pressure',
       rowIcon: 'GiSparkles',
@@ -3623,7 +3623,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiHeartPlus',
           shortDesc: 'Allies regenerate Life 25% faster while below 50% Life',
           fullDesc: 'Allies have 25% increased Life Regeneration Rate while below 50% Life\nNature responds urgently to wounded allies',
-          tier: 25,
+          tier: 15,
           classId: 'grove_healer',
           effects: [
             { type: 'lowLifeRegenRate', value: 25, description: 'Allies regenerate 25% faster while below 50% Life' }
@@ -3635,7 +3635,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiVortex',
           shortDesc: 'Allies regenerate Life 15% faster for each active Regen effect on them',
           fullDesc: 'Allies gain 15% increased Life Regeneration Rate per active regeneration effect on them\nStacking regeneration becomes increasingly powerful',
-          tier: 25,
+          tier: 15,
           classId: 'grove_healer',
           effects: [
             { type: 'regenRatePerEffect', value: 15, description: 'Allies regen 15% faster per active Regen effect' }
@@ -3647,7 +3647,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiHealthNormal',
           shortDesc: 'Allies regenerate 40% more Life total, but healing applies 10% slower',
           fullDesc: 'Allies have 40% increased Life Regeneration Rate, but regeneration heals 10% slower\nMore total healing, delivered gradually over extended time',
-          tier: 25,
+          tier: 15,
           classId: 'grove_healer',
           effects: [
             { type: 'lifeRegenRate', value: 40, description: 'Allies regenerate 40% more Life total' },
@@ -3658,7 +3658,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
     },
     // ROW 3 — Party Utility
     {
-      level: 40,
+      level: 30,
       rowName: 'Party Utility',
       rowTheme: 'How your regen helps the group beyond raw healing',
       rowIcon: 'GiShield',
@@ -3669,7 +3669,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiShield',
           shortDesc: 'Allies take 10% reduced Physical Damage from enemies while regenerating Life',
           fullDesc: 'Allies take 10% reduced Physical Damage from enemies while regenerating Life\nNature hardens their skin against physical blows',
-          tier: 40,
+          tier: 30,
           classId: 'grove_healer',
           effects: [
             { type: 'physicalDRWhileRegen', value: 10, description: 'Allies take 10% reduced Physical Damage from enemies while regenerating' }
@@ -3681,7 +3681,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiMagicShield',
           shortDesc: 'Allies take 8% reduced Elemental Damage from enemies while regenerating Life',
           fullDesc: 'Allies take 8% reduced Elemental Damage from enemies while regenerating Life\nThe grove shields them from fire, cold, and lightning',
-          tier: 40,
+          tier: 30,
           classId: 'grove_healer',
           effects: [
             { type: 'elementalDRWhileRegen', value: 8, description: 'Allies take 8% reduced Elemental Damage from enemies while regenerating' }
@@ -3693,7 +3693,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiVibratingShield',
           shortDesc: 'Allies gain +5% to all maximum Resistances while regenerating Life',
           fullDesc: 'Allies gain +5% to all maximum Resistances while regenerating Life\nNature fortifies their resistance to all damage types',
-          tier: 40,
+          tier: 30,
           classId: 'grove_healer',
           effects: [
             { type: 'maxResWhileRegen', value: 5, description: 'Allies gain +5% to all maximum Resistances while regenerating' }
@@ -3703,7 +3703,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
     },
     // ROW 4 — Smoothing Damage Intake
     {
-      level: 55,
+      level: 45,
       rowName: 'Damage Smoothing',
       rowTheme: 'How regen interacts with incoming damage',
       rowIcon: 'GiHealthPotion',
@@ -3714,7 +3714,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiBoltShield',
           shortDesc: 'Allies gain 20% increased Life Regen Rate after being hit by an enemy',
           fullDesc: 'Allies gain 20% increased Life Regeneration Rate for 4 seconds after being hit by an enemy\nDamage triggers accelerated recovery',
-          tier: 55,
+          tier: 45,
           classId: 'grove_healer',
           effects: [
             { type: 'regenRateAfterHit', value: 20, description: 'Allies gain 20% increased Life Regen Rate after being hit' }
@@ -3726,7 +3726,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiShieldReflect',
           shortDesc: 'Allies take 10% reduced Damage over Time from enemies while regenerating Life',
           fullDesc: 'Allies take 10% reduced Damage over Time from enemies while regenerating Life\nRegeneration counters enemy poison, bleeds, and burns',
-          tier: 55,
+          tier: 45,
           classId: 'grove_healer',
           effects: [
             { type: 'dotDRWhileRegen', value: 10, description: 'Allies take 10% reduced DoT from enemies while regenerating' }
@@ -3738,7 +3738,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiHealthIncrease',
           shortDesc: '30% of your Life Regeneration healing applies instantly to allies',
           fullDesc: '30% of Life Regeneration applies instantly instead of over time\nFrontloads healing for faster response to damage',
-          tier: 55,
+          tier: 45,
           classId: 'grove_healer',
           effects: [
             { type: 'instantRegenPercent', value: 30, description: '30% of Life Regen applies instantly to allies' }
@@ -3748,7 +3748,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
     },
     // ROW 5 — High-Impact Scaling
     {
-      level: 70,
+      level: 60,
       rowName: 'High-Impact Scaling',
       rowTheme: 'Build-defining regen modifiers',
       rowIcon: 'GiStarFormation',
@@ -3759,7 +3759,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiMuscleUp',
           shortDesc: 'Your Life Regeneration effects on allies have 25% more Effect',
           fullDesc: 'Your Life Regeneration effects on allies have 25% more Effect\nAncient nature magic amplifies all regeneration you provide',
-          tier: 70,
+          tier: 60,
           classId: 'grove_healer',
           effects: [
             { type: 'regenEffectMore', value: 25, description: 'Your Life Regen effects on allies have 25% more Effect' }
@@ -3771,7 +3771,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiVortex',
           shortDesc: 'Your Life Regeneration heals allies 20% faster (same total healing)',
           fullDesc: "Your Life Regeneration heals allies 20% faster, but total healing remains the same\nFrontloads regeneration without increasing total healing output",
-          tier: 70,
+          tier: 60,
           classId: 'grove_healer',
           effects: [
             { type: 'regenSpeedFaster', value: 20, description: 'Your Life Regen heals allies 20% faster (same total)' }
@@ -3783,7 +3783,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiSparkles',
           shortDesc: 'Excess Life Regeneration on allies grants them Energy Shield instead',
           fullDesc: 'When allies are at full Life, excess Life Regeneration grants Energy Shield instead\nUp to 10% of their maximum Life per second',
-          tier: 70,
+          tier: 60,
           classId: 'grove_healer',
           effects: [
             { type: 'excessRegenToES', value: 10, description: 'Excess Life Regen grants allies ES (up to 10% max Life/s)' }
@@ -3793,7 +3793,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
     },
     // ROW 6 — Capstones
     {
-      level: 85,
+      level: 75,
       rowName: 'Capstone Identity',
       rowTheme: 'Identity lock-in',
       rowIcon: 'GiCrown',
@@ -3804,7 +3804,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiOakLeaf',
           shortDesc: 'Allies gain +1% Life Regen/s. Your Regen effects have 20% more Effect',
           fullDesc: 'Allies gain 1% additional Life Regeneration per second\nYour Life Regeneration effects on allies have 20% more Effect\nYou become the heart of nature itself',
-          tier: 85,
+          tier: 75,
           classId: 'grove_healer',
           effects: [
             { type: 'additionalLifeRegenPerSecond', value: 1, description: 'Allies gain +1% Life Regen per second' },
@@ -3817,7 +3817,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiAngelWings',
           shortDesc: 'Ally Life Regen cannot be reduced. Allies take 15% less damage from enemies while regenerating',
           fullDesc: "Allies' Life Regeneration cannot be reduced by enemy effects\nAllies take 15% reduced Damage from enemies while regenerating Life\nNature shields those it heals",
-          tier: 85,
+          tier: 75,
           classId: 'grove_healer',
           effects: [
             { type: 'regenCannotBeReduced', value: 1, description: 'Ally Life Regen cannot be reduced by enemies' },
@@ -3830,7 +3830,7 @@ const GROVE_HEALER_TALENTS: ClassTalentTree = {
           icon: 'GiCrown',
           shortDesc: '50% of any ally Life Regen spreads to nearby allies. Regen duration −30%',
           fullDesc: '50% of Life Regeneration on any ally also applies to nearby allies\nRegeneration effects have 30% reduced duration\nThe grove shares its healing with all',
-          tier: 85,
+          tier: 75,
           classId: 'grove_healer',
           effects: [
             { type: 'regenShareToAllies', value: 50, description: '50% of ally Life Regen spreads to nearby allies' },
@@ -4194,19 +4194,56 @@ export function calculateTalentBonuses(classId: CharacterClassId, selectedTalent
     switch (effect.type) {
       case 'damageIncrease': bonuses.damageMultiplier += effect.value; break;
       case 'healingIncrease': bonuses.healingMultiplier += effect.value; break;
-      case 'damageReduction': bonuses.damageReduction += effect.value; break;
-      case 'armorBonus': bonuses.armorMultiplier += effect.value; break;
+      case 'damageReduction': 
+        // Check if this has a condition - if so, store in specialEffects
+        if (effect.condition && effect.condition !== '') {
+          bonuses.specialEffects.push(effect);
+        } else {
+          // No condition = applies to all damage
+          bonuses.damageReduction += effect.value;
+        }
+        break;
+      case 'armorBonus': 
+        // Check if this has a condition - if so, store in specialEffects
+        if (effect.condition && effect.condition !== '') {
+          bonuses.specialEffects.push(effect);
+        } else {
+          // No condition = applies to all damage types normally
+          bonuses.armorMultiplier += effect.value;
+        }
+        break;
       case 'evasionBonus': bonuses.evasionMultiplier += effect.value; break;
       case 'resistanceBonus': bonuses.resistanceBonus += effect.value; break;
       case 'manaRegen': bonuses.manaRegenMultiplier += effect.value; break;
       case 'manaReduction': bonuses.manaCostReduction += effect.value; break;
       case 'cooldownReduction': bonuses.cooldownReduction += effect.value; break;
-      case 'blockBonus': bonuses.blockBonus += effect.value; break;
+      case 'blockBonus': 
+        // Check if this is for spell block or attack block
+        if (effect.stat === 'spellBlockChance') {
+          bonuses.spellBlockBonus += effect.value;
+        } else {
+          bonuses.blockBonus += effect.value;
+        }
+        break;
       case 'blockEffectiveness': bonuses.blockEffectiveness += effect.value; break;
       case 'critBonus': bonuses.critBonus += effect.value; break;
       case 'castSpeed': bonuses.castSpeedBonus += effect.value; break;
       case 'lifesteal': bonuses.lifesteal += effect.value; break;
       case 'thorns': bonuses.thorns += effect.value; break;
+      case 'statBonus':
+        // Handle statBonus for various stats
+        if (effect.stat === 'spellSuppression') {
+          bonuses.spellSuppressionChance += effect.value;
+        } else if (effect.stat === 'maxSpellSuppression') {
+          // This increases the cap, stored separately - would need to track in TeamMemberState
+          // For now, add to spellSuppressionChance as a workaround
+          bonuses.spellSuppressionChance += effect.value;
+        } else if (effect.stat === 'maxSpellBlockChance') {
+          // This increases the cap, stored separately - would need to track in TeamMemberState
+          // For now, add to spellBlockBonus as a workaround
+          bonuses.spellBlockBonus += effect.value;
+        }
+        break;
       // Iron Skirmisher specific effect types
       case 'enemyAttackSpeed': bonuses.enemyAttackSpeedReduction += effect.value; break;
       case 'enemyAccuracy': bonuses.enemyAccuracyReduction += effect.value; break;

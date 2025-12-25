@@ -178,11 +178,11 @@ function runFormulaTests(): { results: FormulaTestResult[]; allPassed: boolean }
   
   // Test 7: Block damage reduction
   results.push({
-    name: 'Block: 30% Damage Reduction',
-    passed: Math.abs(BLOCK_DAMAGE_REDUCTION - 0.30) < 0.001,
-    expected: '30% damage reduction',
+    name: 'Block: 80% Damage Reduction',
+    passed: Math.abs(BLOCK_DAMAGE_REDUCTION - 0.80) < 0.001,
+    expected: '80% damage reduction',
     actual: `${(BLOCK_DAMAGE_REDUCTION * 100)}% damage reduction`,
-    details: `Blocked hits deal 30% less damage`
+    details: `Blocked hits deal 80% less damage (20% damage is taken)`
   });
   
   // ==================== SPELL SUPPRESSION TESTS ====================
@@ -823,6 +823,11 @@ function calculateEnemySpellDamage(enemy: SimEnemy, target: SimTeamMember, spell
   const isPhysical = damageType === 'physical';
   
   if (isPhysical) {
+    // Physical tankbuster - apply tankbuster multiplier (tuned so tank survives but just barely)
+    // Match the combat system: ability damage * 0.45 multiplier
+    if (ability?.damage) {
+      baseDamage = baseDamage * 0.45;
+    }
     // Physical tankbuster - use armor and block
     stats.armorHits++;
     stats.armorTotalRaw += baseDamage;

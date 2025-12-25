@@ -87,20 +87,24 @@ export function processBuffsAndRegen(
     const maxES = m.maxEnergyShield || 0;
     if (maxES > 0 && newEnergyShield < maxES) {
       // Check if ES recharge delay has expired
-      const lastDamageTick = m.lastDamageTakenTick || 0;
-      const baseRechargeDelay = 2.0; // 2 seconds base delay
-      const talentDelayReduction = m.talentBonuses?.esRechargeDelay || 0;
-      const effectiveDelay = baseRechargeDelay * (1 - talentDelayReduction / 100);
-      const delayTicks = Math.floor(effectiveDelay / TICK_DURATION);
-      
-      if (currentTick >= lastDamageTick + delayTicks) {
-        // ES is recharging
-        const baseRechargeRate = 0.33; // 33% of max ES per second (PoE default)
-        const talentRechargeRate = m.talentBonuses?.esRechargeRate || 0;
-        const effectiveRechargeRate = baseRechargeRate * (1 + talentRechargeRate / 100);
-        const esRegenPerSecond = maxES * effectiveRechargeRate;
-        const esRegenAmount = esRegenPerSecond * TICK_DURATION;
-        newEnergyShield = Math.min(maxES, newEnergyShield + esRegenAmount);
+      // Only allow recharge if lastDamageTakenTick is defined (character has taken damage at least once)
+      // If undefined, ES should be at full, so no recharge needed
+      if (m.lastDamageTakenTick !== undefined) {
+        const lastDamageTick = m.lastDamageTakenTick;
+        const baseRechargeDelay = 2.0; // 2 seconds base delay
+        const talentDelayReduction = m.talentBonuses?.esRechargeDelay || 0;
+        const effectiveDelay = baseRechargeDelay * (1 - talentDelayReduction / 100);
+        const delayTicks = Math.floor(effectiveDelay / TICK_DURATION);
+        
+        if (currentTick >= lastDamageTick + delayTicks) {
+          // ES is recharging
+          const baseRechargeRate = 0.33; // 33% of max ES per second (PoE default)
+          const talentRechargeRate = m.talentBonuses?.esRechargeRate || 0;
+          const effectiveRechargeRate = baseRechargeRate * (1 + talentRechargeRate / 100);
+          const esRegenPerSecond = maxES * effectiveRechargeRate;
+          const esRegenAmount = esRegenPerSecond * TICK_DURATION;
+          newEnergyShield = Math.min(maxES, newEnergyShield + esRegenAmount);
+        }
       }
     }
     

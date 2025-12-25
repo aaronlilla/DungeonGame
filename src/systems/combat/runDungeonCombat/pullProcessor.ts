@@ -126,6 +126,12 @@ export async function processPull(
   // Ensure context.teamStates is updated before combat starts
   context.teamStates = teamStatesLocal;
   
+  // Log pull start with verbose logger
+  if (context.verboseLogger) {
+    context.verboseLogger.setCurrentTick(currentTickLocal);
+    context.verboseLogger.logPullStart(totalTime, pullIdx, pullEnemies, teamStatesLocal);
+  }
+
   // Initially queue all enemies - they'll trickle in over 6 seconds
   updateCombatState(prev => ({
     ...prev,

@@ -9,8 +9,8 @@ import {
 import type { OrbType } from '../store/gameStore';
 
 // Import the new PoE crafting system
-import { generatePoeItem, generatePoeDungeonLoot, calculateItemLevel, type PoeItemRarity } from './poeCrafting';
-import { poeItemToLegacyItem } from './poeItemAdapter';
+import { generatePoeItem, generatePoeDungeonLoot, calculateItemLevel, type PoeItemRarity, applyCraftingOrb, type CraftingOrbType, type PoeItem } from './poeCrafting';
+import { poeItemToLegacyItem, legacyItemToPoeItem } from './poeItemAdapter';
 import { generateMap, generateFragment, type MapItem, type Fragment } from '../types/maps';
 
 // Feature flag - set to true to use the new PoE item system
@@ -194,6 +194,30 @@ export function applyOrbToItem(
   item: Item, 
   orbType: OrbType
 ): { success: boolean; item?: Item; message: string } {
+  // Check if this is a PoE item
+  const poeItem = legacyItemToPoeItem(item as Item & { _poeItem?: PoeItem });
+  
+  if (poeItem) {
+    // Use PoE crafting system
+    // Handle divine orb separately (not in PoE crafting system)
+    if (orbType === 'divine') {
+      return { success: false, message: 'Divine orb not yet supported for this item type' };
+    }
+    
+    // Convert orb type to PoE crafting orb type
+    const poeOrbType = orbType as CraftingOrbType;
+    const result = applyCraftingOrb(poeItem, poeOrbType);
+    
+    if (!result.success || !result.item) {
+      return { success: false, message: result.message };
+    }
+    
+    // Convert back to legacy format
+    const legacyItem = poeItemToLegacyItem(result.item);
+    return { success: true, item: legacyItem, message: result.message };
+  }
+  
+  // Legacy item system
   const base = getItemBaseById(item.baseId);
   if (!base) return { success: false, message: 'Invalid item base' };
   
@@ -468,7 +492,7 @@ export function generateOrbDrops(keyLevel: number, success: boolean, progressPer
   if (keyLevel >= 10 && Math.random() < 0.05 + keyLevel * 0.005) {
     drops.exalted = 1;
   }
-  if (Math.random() < 0.15) {
+  if (keyLevel >= 10 && Math.random() < 0.05 + keyLevel * 0.005) {
     drops.annulment = 1;
   }
   
@@ -504,9 +528,10 @@ export function generateMapDrops(
   
   // Failed runs have much lower drop chance
   if (!success) {
-    // 10% chance to drop a single map of same tier
+    // 10% chance to drop a single map of same tier (minimum tier 2)
     if (Math.random() < 0.1) {
-      maps.push(generateMap(currentTier, 'normal'));
+      const dropTier = Math.max(2, currentTier);
+      maps.push(generateMap(dropTier, 'normal'));
     }
     return maps;
   }
@@ -531,7 +556,7 @@ export function generateMapDrops(
       
       for (let i = 0; i < numMaps; i++) {
         // Determine tier: mostly same tier, sometimes +1
-        let dropTier = currentTier;
+        let dropTier = Math.max(2, currentTier); // Minimum tier 2
         const maxDropTier = highestCompleted + 1;
         
         // 30% chance to drop +1 tier (if not already at max)
@@ -539,10 +564,13 @@ export function generateMapDrops(
           dropTier = Math.min(dropTier + 1, maxDropTier);
         }
         
-        // Sometimes drop lower tier maps too
-        if (Math.random() < 0.2 && dropTier > 1) {
-          dropTier = Math.max(1, dropTier - randomInt(1, 2));
+        // Sometimes drop lower tier maps too (but never below tier 2)
+        if (Math.random() < 0.2 && dropTier > 2) {
+          dropTier = Math.max(2, dropTier - randomInt(1, 2));
         }
+        
+        // Ensure minimum tier 2
+        dropTier = Math.max(2, dropTier);
         
         // Always generate normal/white maps
         maps.push(generateMap(dropTier));
@@ -555,11 +583,14 @@ export function generateMapDrops(
     const dropChance = 0.05 + (quantityBonus * 0.1);
     
     if (Math.random() < dropChance) {
-      // Usually drops current tier or lower
-      let dropTier = currentTier;
-      if (Math.random() < 0.3 && dropTier > 1) {
-        dropTier = Math.max(1, dropTier - 1);
+      // Usually drops current tier or lower (but never below tier 2)
+      let dropTier = Math.max(2, currentTier);
+      if (Math.random() < 0.3 && dropTier > 2) {
+        dropTier = Math.max(2, dropTier - 1);
       }
+      
+      // Ensure minimum tier 2
+      dropTier = Math.max(2, dropTier);
       
       // Always generate normal/white maps
       maps.push(generateMap(dropTier));
@@ -653,7 +684,17 @@ export function generateEnemyLootDrops(
                      enemyType === 'miniboss' ? randomInt(1, 3) :
                      enemyType === 'elite' ? randomInt(1, 2) : 1;
     
-    const itemLevel = calculateItemLevel(currentTier);
+    // Calculate item level based on enemy type
+    // Normal monsters: area level (map tier)
+    // Magic monsters (elite): area level + 1
+    // Rare/uniques (miniboss/boss): area level + 2
+    let ilvlBonus = 0;
+    if (enemyType === 'elite') {
+      ilvlBonus = 1;
+    } else if (enemyType === 'miniboss' || enemyType === 'boss') {
+      ilvlBonus = 2;
+    }
+    const itemLevel = Math.max(1, Math.min(86, currentTier + ilvlBonus));
     
     for (let i = 0; i < numItems; i++) {
       // Rarity distribution affected by rarityBonus
@@ -689,7 +730,7 @@ export function generateEnemyLootDrops(
   
   // ===== ORB DROPS =====
   const orbChance = {
-    normal: 0.08,
+    normal: 0.04,  // 4% chance for normal monsters
     elite: 0.20,
     miniboss: 0.40,
     boss: 0.70
@@ -702,22 +743,24 @@ export function generateEnemyLootDrops(
     // Orb of Transmutation: 0.20831 (20.831%)
     // Orb of Augmentation: 0.10328 (10.328%)
     // Orb of Alteration: 0.05508 (5.508%)
-    // Orb of Alchemy: 0.02754 (2.754%)
-    // Chaos Orb: 0.01652 (1.652%)
-    // Orb of Scouring: 0.01377 (1.377%)
-    // Regal Orb: 0.00207 (0.207%)
-    // Exalted Orb: 0.00055 (0.055%)
-    // Divine Orb: 0.00034 (0.055%)
+    // Orb of Alchemy: 0.2754 (27.54%) - 10x increase
+    // Chaos Orb: 0.1652 (16.52%) - 10x increase
+    // Orb of Scouring: 0.1377 (13.77%) - 10x increase
+    // Regal Orb: 0.0207 (2.07%) - 10x increase
+    // Exalted Orb: 0.0055 (0.55%) - 10x increase
+    // Orb of Annulment: 0.0055 (0.55%) - same as exalted
+    // Divine Orb: 0.0034 (0.34%) - 10x increase
     const currencyRates: Array<{ type: string; rate: number }> = [
       { type: 'transmutation', rate: 0.20831 },
       { type: 'augmentation', rate: 0.10328 },
       { type: 'alteration', rate: 0.05508 },
-      { type: 'alchemy', rate: 0.02754 },
-      { type: 'chaos', rate: 0.01652 },
-      { type: 'scouring', rate: 0.01377 },
-      { type: 'regal', rate: 0.00207 },
-      { type: 'exalted', rate: 0.00055 },
-      { type: 'divine', rate: 0.00034 }
+      { type: 'alchemy', rate: 0.2754 },      // 10x: 0.02754 -> 0.2754
+      { type: 'chaos', rate: 0.1652 },        // 10x: 0.01652 -> 0.1652
+      { type: 'scouring', rate: 0.1377 },     // 10x: 0.01377 -> 0.1377
+      { type: 'regal', rate: 0.0207 },         // 10x: 0.00207 -> 0.0207
+      { type: 'exalted', rate: 0.0055 },      // 10x: 0.00055 -> 0.0055
+      { type: 'annulment', rate: 0.0055 },    // Same rate as exalted
+      { type: 'divine', rate: 0.0034 }        // 10x: 0.00034 -> 0.0034
     ];
     
     // Normalize rates to probabilities
@@ -749,7 +792,7 @@ export function generateEnemyLootDrops(
       orbRarity = 'uncommon';
     } else if (orbType === 'alchemy' || orbType === 'chaos' || orbType === 'regal') {
       orbRarity = 'rare';
-    } else if (orbType === 'exalted' || orbType === 'divine') {
+    } else if (orbType === 'exalted' || orbType === 'annulment' || orbType === 'divine') {
       orbRarity = 'epic';
     }
     
@@ -784,18 +827,39 @@ export function generateEnemyLootDrops(
     const modifiedChance = Math.min(1.0, baseChance * (1 + quantityBonus));
     
     if (Math.random() < modifiedChance) {
-      // Start with current tier (baseline level of map you're currently in)
-      let dropTier = currentTier;
-      const maxDropTier = Math.min(currentTier + 1, highestCompleted + 1);
+      // Start with current tier (baseline level of map you're currently in), minimum tier 2
+      let dropTier = Math.max(2, currentTier);
       
-      // When a map drops, 50% chance to upgrade by 1 tier
-      const upgradeChance = 0.50;
-      if (dropTier < maxDropTier && Math.random() < upgradeChance) {
-        dropTier = dropTier + 1;
+      // Final boss has a 20% chance to drop a map that's 2 tiers higher
+      if (enemyType === 'boss') {
+        const twoTierUpgradeChance = 0.20; // 20% chance for +2 tiers
+        const maxDropTierForTwo = Math.min(currentTier + 2, highestCompleted + 1);
+        
+        if (Math.random() < twoTierUpgradeChance && currentTier + 2 <= maxDropTierForTwo) {
+          dropTier = currentTier + 2;
+        } else {
+          // Normal upgrade logic: 50% chance to upgrade by 1 tier
+          const maxDropTier = Math.min(currentTier + 1, highestCompleted + 1);
+          const upgradeChance = 0.50;
+          if (dropTier < maxDropTier && Math.random() < upgradeChance) {
+            dropTier = dropTier + 1;
+          }
+          // Ensure we don't drop below current tier, but never below tier 2
+          dropTier = Math.max(2, Math.max(currentTier, Math.min(dropTier, maxDropTier)));
+        }
+      } else {
+        // Non-boss enemies: normal upgrade logic (50% chance to upgrade by 1 tier)
+        const maxDropTier = Math.min(currentTier + 1, highestCompleted + 1);
+        const upgradeChance = 0.50;
+        if (dropTier < maxDropTier && Math.random() < upgradeChance) {
+          dropTier = dropTier + 1;
+        }
+        // Ensure we don't drop below current tier, but never below tier 2
+        dropTier = Math.max(2, Math.max(currentTier, Math.min(dropTier, maxDropTier)));
       }
       
-      // Ensure we don't drop below current tier
-      dropTier = Math.max(currentTier, Math.min(dropTier, maxDropTier));
+      // Ensure minimum tier 2
+      dropTier = Math.max(2, dropTier);
       
       // Always generate normal/white maps
       const map = generateMap(dropTier);

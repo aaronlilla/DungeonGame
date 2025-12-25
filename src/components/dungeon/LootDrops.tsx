@@ -333,7 +333,7 @@ export const LootDrops = memo(function LootDrops({
               left: `${pos.x}px`,
               top: `${pos.y}px`,
               transform: 'translate(-50%, -50%)',
-              zIndex: 50 + index,
+              zIndex: 10000 + index,
             }}
           >
             {renderLootLabel(drop, index, false)}
@@ -348,7 +348,7 @@ export const LootDrops = memo(function LootDrops({
             position: 'absolute',
             left: `${visibleArea.left + 10}px`,
             top: `${visibleArea.top + 100}px`,
-            zIndex: 100,
+            zIndex: 10000,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-start',
@@ -383,7 +383,7 @@ export const LootDrops = memo(function LootDrops({
             left: `${visibleArea.right - 10}px`,
             top: `${visibleArea.top + 100}px`,
             transform: 'translateX(-100%)',
-            zIndex: 100,
+            zIndex: 10000,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-end',

@@ -17,7 +17,8 @@ import { getItemArtUrl, getFallbackArtUrl } from '../../utils/itemArt';
 import { getMonsterStatsForLevel } from '../../utils/monsterStats';
 import type { ExtendedItem } from '../../systems/poeItemAdapter';
 import { ALL_POE_BASE_ITEMS } from '../../data/poeBaseItems';
-import { validateEquipment } from '../../utils/equipmentValidation';
+import { validateEquipment, isOffHandWeapon, isShield, isTwoHandedWeapon } from '../../utils/equipmentValidation';
+import { calculateTalentBonuses } from '../../types/talents';
 
 // Stat source types for breakdown
 interface StatSource {
@@ -79,7 +80,82 @@ function getStatBreakdown(
     }
   }
   
-  // 3. Verify total matches calculateTotalCharacterStats (for debugging)
+  // 3. Talent bonuses
+  const classId = character.classId;
+  if (classId && character.selectedTalents) {
+    const talentBonuses = calculateTalentBonuses(classId, character.selectedTalents);
+    
+    // Add talent bonuses based on stat type
+    if (statKey === 'blockChance' && talentBonuses.blockBonus !== 0) {
+      sources.push({ 
+        source: 'Talents', 
+        value: talentBonuses.blockBonus, 
+        color: 'rgba(139, 107, 246, 0.9)' 
+      });
+      total += talentBonuses.blockBonus;
+    } else if (statKey === 'spellBlockChance') {
+      let talentValue = talentBonuses.spellBlockBonus;
+      // Include blockToSpellBlock conversion if applicable
+      // Need to calculate total block chance (base + equipment + talent bonuses) for conversion
+      if (talentBonuses.blockToSpellBlockPercent > 0) {
+        let totalBlockChance = (character.baseStats.blockChance || 0);
+        // Add equipment block chance
+        for (const { item } of equippedItems) {
+          const itemStats = calculateEquipmentStats([item]);
+          totalBlockChance += (itemStats.blockChance || 0);
+        }
+        // Add talent block bonus
+        totalBlockChance += talentBonuses.blockBonus;
+        if (totalBlockChance > 0) {
+          const convertedSpellBlock = Math.floor(totalBlockChance * (talentBonuses.blockToSpellBlockPercent / 100));
+          talentValue += convertedSpellBlock;
+        }
+      }
+      if (talentValue !== 0) {
+        sources.push({ 
+          source: 'Talents', 
+          value: talentValue, 
+          color: 'rgba(139, 107, 246, 0.9)' 
+        });
+        total += talentValue;
+      }
+    } else if (statKey === 'spellSuppressionChance' && talentBonuses.spellSuppressionChance !== 0) {
+      sources.push({ 
+        source: 'Talents', 
+        value: talentBonuses.spellSuppressionChance, 
+        color: 'rgba(139, 107, 246, 0.9)' 
+      });
+      total += talentBonuses.spellSuppressionChance;
+    } else if (statKey === 'criticalStrikeChance' && talentBonuses.critBonus !== 0) {
+      sources.push({ 
+        source: 'Talents', 
+        value: talentBonuses.critBonus, 
+        color: 'rgba(139, 107, 246, 0.9)' 
+      });
+      total += talentBonuses.critBonus;
+    } else if (statKey === 'fireResistance' || statKey === 'coldResistance' || statKey === 'lightningResistance') {
+      const resistanceBonus = talentBonuses.resistanceBonus + talentBonuses.elementalResistanceBonus;
+      if (resistanceBonus !== 0) {
+        sources.push({ 
+          source: 'Talents', 
+          value: resistanceBonus, 
+          color: 'rgba(139, 107, 246, 0.9)' 
+        });
+        total += resistanceBonus;
+      }
+    } else if (statKey === 'chaosResistance' && talentBonuses.chaosResistance !== 0) {
+      sources.push({ 
+        source: 'Talents', 
+        value: talentBonuses.chaosResistance, 
+        color: 'rgba(139, 107, 246, 0.9)' 
+      });
+      total += talentBonuses.chaosResistance;
+    }
+    // Note: Percentage multipliers (healthMultiplier, armorMultiplier, etc.) are applied multiplicatively
+    // so they don't show as separate line items in the breakdown
+  }
+  
+  // 4. Verify total matches calculateTotalCharacterStats (for debugging)
   // This ensures the breakdown is accurate
   const expectedTotal = calculateTotalCharacterStats(character, inventory)[statKey] as number;
   if (Math.abs(total - expectedTotal) > 0.01) {
@@ -92,7 +168,7 @@ function getStatBreakdown(
 }
 
 // Get formula description for a stat
-function getStatFormula(statKey: keyof BaseStats, character: Character, enemyDamageForLevel?: number, totalValue?: number): string {
+function getStatFormula(statKey: keyof BaseStats, character: Character, enemyDamageForLevel?: number, totalValue?: number, enemyAccuracyForLevel?: number): string {
   switch (statKey) {
     case 'armor':
       if (enemyDamageForLevel && totalValue !== undefined) {
@@ -101,6 +177,10 @@ function getStatFormula(statKey: keyof BaseStats, character: Character, enemyDam
       }
       return 'Phys DR = Armor / (Armor + 25 × Damage)\nMore effective against smaller hits';
     case 'evasion':
+      if (enemyAccuracyForLevel && totalValue !== undefined) {
+        const evadeChance = Math.round(calculateEvasionChance(totalValue, enemyAccuracyForLevel) * 100);
+        return `Evade Chance = 1 - (Accuracy / (Accuracy + (Evasion/4)^0.8))\nAt level ${character.level} (vs ${enemyAccuracyForLevel} accuracy): ${evadeChance}% evade chance\nCapped at 95%`;
+      }
       return 'Evade Chance = 1 - (Accuracy / (Accuracy + (Evasion/4)^0.8))\nCapped at 95%';
     case 'life':
       return 'Life = Base (38) + Level Bonus (12/level) + Strength/2 + Class + Equipment';
@@ -111,9 +191,9 @@ function getStatFormula(statKey: keyof BaseStats, character: Character, enemyDam
     case 'energyShield':
       return 'Energy Shield = Base × (1 + Intelligence × 0.002) + Equipment\nES protects against all damage types';
     case 'blockChance':
-      return 'Block Chance = Sum of all sources\nCapped at 75%\nBlock reduces damage by 30%';
+      return 'Block Chance = Sum of all sources\nCapped at 75%\nBlock reduces damage by 80% (20% damage is taken)';
     case 'spellBlockChance':
-      return 'Spell Block Chance = Sum of all sources\nCapped at 75%\nSpell Block reduces spell damage by 30%';
+      return 'Spell Block Chance = Sum of all sources\nCapped at 75%\nSpell Block reduces spell damage by 80% (20% damage is taken)';
     case 'spellSuppressionChance':
       return 'Spell Suppression Chance = Sum of all sources\nCapped at 100%\nSuppressed spells deal 50% less damage';
     case 'fireResistance':
@@ -149,9 +229,10 @@ function generateStatCopyText(
   label: string,
   breakdown: StatBreakdown,
   character: Character,
-  enemyDamageForLevel?: number
+  enemyDamageForLevel?: number,
+  enemyAccuracyForLevel?: number
 ): string {
-  const formula = getStatFormula(statKey, character, enemyDamageForLevel, breakdown.total);
+  const formula = getStatFormula(statKey, character, enemyDamageForLevel, breakdown.total, enemyAccuracyForLevel);
   const lines: string[] = [];
   
   lines.push(`=== ${label} ===`);
@@ -175,9 +256,9 @@ function generateStatCopyText(
   if (statKey === 'armor' && enemyDamageForLevel) {
     const dr = Math.round((1 - calculateArmorReduction(breakdown.total, enemyDamageForLevel)) * 100);
     lines.push(`PHYSICAL DAMAGE REDUCTION: ${dr}% (vs ${enemyDamageForLevel.toFixed(1)} damage at level ${character.level})`);
-  } else if (statKey === 'evasion') {
-    const evadeChance = Math.round(calculateEvasionChance(breakdown.total, 500) * 100);
-    lines.push(`EVADE CHANCE: ${evadeChance}% (vs 500 accuracy)`);
+  } else if (statKey === 'evasion' && enemyAccuracyForLevel) {
+    const evadeChance = Math.round(calculateEvasionChance(breakdown.total, enemyAccuracyForLevel) * 100);
+    lines.push(`EVADE CHANCE: ${evadeChance}% (vs ${enemyAccuracyForLevel} accuracy at level ${character.level})`);
   }
   
   lines.push('');
@@ -195,7 +276,8 @@ function StatBreakdownTooltip({
   valueFormatter,
   statKey,
   character,
-  enemyDamageForLevel
+  enemyDamageForLevel,
+  enemyAccuracyForLevel
 }: { 
   breakdown: StatBreakdown; 
   label: string;
@@ -204,6 +286,7 @@ function StatBreakdownTooltip({
   statKey?: keyof BaseStats;
   character?: Character;
   enemyDamageForLevel?: number;
+  enemyAccuracyForLevel?: number;
 }) {
   const formatValue = valueFormatter || ((v: number) => v >= 0 ? `+${v}` : `${v}`);
   
@@ -278,7 +361,7 @@ function StatBreakdownTooltip({
           whiteSpace: 'pre-line',
           border: '1px solid rgba(120, 100, 70, 0.2)',
         }}>
-          {getStatFormula(statKey, character, enemyDamageForLevel, breakdown.total)}
+          {getStatFormula(statKey, character, enemyDamageForLevel, breakdown.total, enemyAccuracyForLevel)}
         </div>
       )}
       
@@ -475,7 +558,24 @@ function EquipmentSlot({
     // Handle rings - they can go in either ring slot
     const isRingSlot = slot === 'ring1' || slot === 'ring2';
     const isRingItem = itemSlot === 'ring1' || itemSlot === 'ring2';
-    return itemSlot === slot || (isRingSlot && isRingItem);
+    if (isRingSlot && isRingItem) return true;
+    
+    // Handle one-handed weapons and shields - they can go in either mainHand or offHand
+    const isWeaponSlot = slot === 'mainHand' || slot === 'offHand';
+    const isWeaponItem = itemSlot === 'mainHand' || itemSlot === 'offHand';
+    if (isWeaponSlot && isWeaponItem) {
+      // One-handed weapons and shields can go in either slot
+      if (isOffHandWeapon(heldItemData) || isShield(heldItemData)) {
+        return true;
+      }
+      // Two-handers can only go in mainHand
+      if (slot === 'mainHand' && isTwoHandedWeapon(heldItemData)) {
+        return true;
+      }
+      return false;
+    }
+    
+    return itemSlot === slot;
   })();
   
   // Check equipment validation (2H/bow/quiver/shield rules)
@@ -1502,6 +1602,7 @@ function StatRow({
   statKey,
   character,
   enemyDamageForLevel,
+  enemyAccuracyForLevel,
 }: { 
   label: string; 
   value: string | number; 
@@ -1511,6 +1612,7 @@ function StatRow({
   statKey?: keyof BaseStats;
   character?: Character;
   enemyDamageForLevel?: number;
+  enemyAccuracyForLevel?: number;
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -1522,7 +1624,7 @@ function StatRow({
   
   const handleClick = useCallback(() => {
     if (breakdown && statKey && character) {
-      const copyText = generateStatCopyText(statKey, label, breakdown, character, enemyDamageForLevel);
+      const copyText = generateStatCopyText(statKey, label, breakdown, character, enemyDamageForLevel, enemyAccuracyForLevel);
       navigator.clipboard.writeText(copyText).then(() => {
         setCopyFeedback(true);
         setTimeout(() => setCopyFeedback(false), 2000);
@@ -1530,7 +1632,7 @@ function StatRow({
         console.error('Failed to copy:', err);
       });
     }
-  }, [breakdown, statKey, character, label, enemyDamageForLevel]);
+  }, [breakdown, statKey, character, label, enemyDamageForLevel, enemyAccuracyForLevel]);
   
   return (
     <>
@@ -1597,6 +1699,7 @@ function StatRow({
             statKey={statKey}
             character={character}
             enemyDamageForLevel={enemyDamageForLevel}
+            enemyAccuracyForLevel={enemyAccuracyForLevel}
           />
         )}
       </AnimatePresence>
@@ -1659,11 +1762,12 @@ export function GearSlots({ character, inventory, heldItemId, onEquipHeldItem, o
     [character, inventory]
   );
   
-  // Get enemy damage for this character's level (for Phys DR display)
-  const enemyDamageForLevel = useMemo(() => {
-    const monsterStats = getMonsterStatsForLevel(character.level);
-    return monsterStats.physical_damage;
+  // Get enemy stats for this character's level (for Phys DR and Evasion display)
+  const enemyStatsForLevel = useMemo(() => {
+    return getMonsterStatsForLevel(character.level);
   }, [character.level]);
+  const enemyDamageForLevel = enemyStatsForLevel.physical_damage;
+  const enemyAccuracyForLevel = enemyStatsForLevel.accuracy;
   
   const equipItem = useGameStore(state => state.equipItem);
   const unequipItem = useGameStore(state => state.unequipItem);
@@ -2082,12 +2186,13 @@ export function GearSlots({ character, inventory, heldItemId, onEquipHeldItem, o
             />
             <StatRow 
               label="Evade" 
-              value={`${Math.round(calculateEvasionChance(calculatedTotalStats.evasion, 500) * 100)}%`} 
+              value={`${Math.round(calculateEvasionChance(calculatedTotalStats.evasion, enemyAccuracyForLevel) * 100)}%`} 
               color="#4ade80" 
               breakdown={breakdowns.evasion}
               valueFormatter={(v) => `+${v} evasion`}
               statKey="evasion"
               character={character}
+              enemyAccuracyForLevel={enemyAccuracyForLevel}
             />
             <StatRow label="Block" value={`${breakdowns.blockChance.total}%`} color="#a8a29e" breakdown={breakdowns.blockChance} valueFormatter={(v) => `+${v}%`} statKey="blockChance" character={character} />
             <StatRow label="Spell Block" value={`${breakdowns.spellBlockChance.total}%`} color="#60a5fa" breakdown={breakdowns.spellBlockChance} valueFormatter={(v) => `+${v}%`} statKey="spellBlockChance" character={character} />

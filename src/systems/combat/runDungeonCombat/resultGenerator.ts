@@ -59,6 +59,12 @@ export function generateSuccessResult(
   const orbDrops = generateOrbDrops(effectiveTier, true);
   const xp = Math.floor(1000 * scaling.rewardMultiplier * (1 + upgradeLevel * 0.25));
 
+  // Merge verbose logger logs with regular combat log
+  const verboseLogs = context.verboseLogger?.getLogs() || [];
+  const allLogs = [...currentCombatState.combatLog, ...verboseLogs];
+  // Sort by timestamp to ensure chronological order
+  allLogs.sort((a, b) => a.timestamp - b.timestamp);
+
   const result: DungeonRunResult = {
     success: true,
     keyLevel: selectedKeyLevel,
@@ -71,7 +77,7 @@ export function generateSuccessResult(
     deaths: teamStates.filter(m => m.isDead).length,
     forcesCleared: totalForcesCleared,
     forcesRequired: dungeon.requiredForces,
-    combatLog: currentCombatState.combatLog,
+    combatLog: allLogs,
     // Enhanced stats
     playerStats: generatePlayerStats(teamStates, totalTime),
     dungeonName: dungeon.name,
@@ -118,6 +124,12 @@ export function generateTimeoutResult(
   const orbDrops = generateOrbDrops(effectiveTier, true);
   const xp = Math.floor(500 * scaling.rewardMultiplier);
   
+  // Merge verbose logger logs with regular combat log
+  const verboseLogs = context.verboseLogger?.getLogs() || [];
+  const allLogs = [...currentCombatState.combatLog, ...verboseLogs];
+  // Sort by timestamp to ensure chronological order
+  allLogs.sort((a, b) => a.timestamp - b.timestamp);
+
   const result: DungeonRunResult = {
     success: false,
     keyLevel: selectedKeyLevel,
@@ -130,7 +142,7 @@ export function generateTimeoutResult(
     deaths: teamStates.filter(m => m.isDead).length,
     forcesCleared: totalForcesCleared,
     forcesRequired: dungeon.requiredForces,
-    combatLog: currentCombatState.combatLog,
+    combatLog: allLogs,
     failReason: 'timeout',
     failedPullIndex: currentCombatState.currentPullIndex,
     // Enhanced stats

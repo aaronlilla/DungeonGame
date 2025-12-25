@@ -14,6 +14,143 @@ import { createFloatingNumber } from '../../utils/combat';
 import { secondsToTicks, ticksToSeconds } from './types';
 import type { CombatContext } from './types';
 import { processOnBlockEffects, processOnEvadeEffects, processOnLowHealthEffects } from './talentEvents';
+
+/**
+ * Calculate effective armor for a specific damage type, considering conditional armor bonuses
+ */
+function calculateEffectiveArmorForDamageType(
+  baseArmor: number,
+  talentBonuses: TeamMemberState['talentBonuses'],
+  damageType: 'physical' | 'chaos' | 'fire' | 'cold' | 'lightning' | 'shadow' | 'holy' | 'magic',
+  isSpellHit: boolean = false
+): number {
+  let effectiveArmor = baseArmor;
+  
+  if (!talentBonuses?.specialEffects) return effectiveArmor;
+  
+  // Check for conditional armor bonuses
+  for (const effect of talentBonuses.specialEffects) {
+    if (effect.type !== 'armorBonus') continue;
+    
+    const condition = effect.condition || '';
+    
+    // Armor applies to chaos damage at X% effectiveness
+    if (condition === 'chaos' && damageType === 'chaos') {
+      effectiveArmor = Math.floor(effectiveArmor * (effect.value / 100));
+    }
+    // Armor applies to spell hits at X% effectiveness
+    else if (condition === 'spellHits' && isSpellHit) {
+      effectiveArmor = Math.floor(effectiveArmor * (effect.value / 100));
+    }
+  }
+  
+  // Apply armorEffectivenessVsAttacks (Iron Skirmisher talent)
+  if (damageType === 'physical' && !isSpellHit && talentBonuses.armorEffectivenessVsAttacks !== undefined) {
+    const effectiveness = talentBonuses.armorEffectivenessVsAttacks;
+    if (effectiveness !== 100) {
+      effectiveArmor = Math.floor(effectiveArmor * (effectiveness / 100));
+    }
+  }
+  
+  return effectiveArmor;
+}
+
+/**
+ * Calculate evasion-based mitigation (Iron Skirmisher talent)
+ * Converts evasion rating to physical damage reduction
+ */
+function calculateEvasionMitigation(
+  evasion: number,
+  evasionToMitigationPercent: number,
+  incomingDamage: number
+): number {
+  if (evasionToMitigationPercent <= 0 || evasion <= 0) return 0;
+  
+  // Convert evasion to a mitigation value
+  // Use a similar formula to armor but scaled by the conversion percent
+  const effectiveMitigation = Math.floor(evasion * (evasionToMitigationPercent / 100));
+  const mitigationReduction = effectiveMitigation / (effectiveMitigation + (25 * incomingDamage));
+  
+  // Cap at reasonable level
+  return Math.min(mitigationReduction, 0.50); // Max 50% from evasion mitigation
+}
+
+/**
+ * Calculate conditional damage reduction from talent special effects
+ * Checks conditions like 'physical', 'elemental', 'chaos', 'hits', etc.
+ */
+function calculateConditionalDamageReduction(
+  talentBonuses: TeamMemberState['talentBonuses'],
+  damageType: 'physical' | 'chaos' | 'fire' | 'cold' | 'lightning' | 'shadow' | 'holy' | 'magic',
+  isHit: boolean = true,
+  isDoT: boolean = false,
+  target: TeamMemberState
+): number {
+  if (!talentBonuses?.specialEffects) return 0;
+  
+  let totalReduction = 0;
+  
+  for (const effect of talentBonuses.specialEffects) {
+    if (effect.type !== 'damageReduction') continue;
+    
+    const condition = effect.condition || '';
+    
+    // Physical damage only
+    if (condition === 'physical' && damageType === 'physical') {
+      totalReduction += effect.value;
+    }
+    // Elemental damage (fire, cold, lightning)
+    else if (condition === 'elemental' && (damageType === 'fire' || damageType === 'cold' || damageType === 'lightning')) {
+      totalReduction += effect.value;
+    }
+    // Chaos damage only
+    else if (condition === 'chaos' && damageType === 'chaos') {
+      totalReduction += effect.value;
+    }
+    // Hits only (not DoTs)
+    else if (condition === 'hits' && isHit && !isDoT) {
+      totalReduction += effect.value;
+    }
+    // Physical attacks only (hits that are physical)
+    else if (condition === 'physicalAttacks' && isHit && damageType === 'physical') {
+      totalReduction += effect.value;
+    }
+    // DoT damage only
+    else if (condition === 'dot' && isDoT) {
+      totalReduction += effect.value;
+    }
+    // Attack damage reduction (all attacks, not spells)
+    else if (condition === 'attacks' && isHit && damageType === 'physical') {
+      totalReduction += effect.value;
+    }
+    // Has Energy Shield
+    else if (condition === 'hasES' && (target.energyShield || 0) > 0) {
+      totalReduction += effect.value;
+    }
+    // Has Block Chance
+    else if (condition === 'hasBlock' && (target.blockChance || 0) > 0) {
+      totalReduction += effect.value;
+    }
+    // Elemental to Physical conversion (special case - handled separately)
+    else if (condition === 'elementalToPhysical') {
+      // This is handled as a conversion, not reduction
+      // Would need special handling
+    }
+  }
+  
+  // Also check for non-conditional reductions from TalentBonuses
+  // Elemental damage reduction (applies to all elemental)
+  if ((damageType === 'fire' || damageType === 'cold' || damageType === 'lightning') && talentBonuses?.elementalDamageReduction) {
+    totalReduction += talentBonuses.elementalDamageReduction;
+  }
+  
+  // Attack damage reduction (applies to all physical attacks)
+  if (isHit && damageType === 'physical' && talentBonuses?.attackDamageReduction) {
+    totalReduction += talentBonuses.attackDamageReduction;
+  }
+  
+  return totalReduction;
+}
 import {
   getBossAbilities,
   selectBossAbility,
@@ -36,6 +173,20 @@ function applyEnemySpeedToCooldown(baseCooldownSeconds: number, enemySpeed: numb
 }
 
 /**
+ * Apply talent-based enemy attack speed reduction to cooldown
+ * This makes enemies attack slower when targeting a player with the talent
+ */
+function applyTalentAttackSpeedReduction(
+  baseCooldownSeconds: number,
+  target: TeamMemberState
+): number {
+  const attackSpeedReduction = target.talentBonuses?.enemyAttackSpeedReduction || 0;
+  if (attackSpeedReduction <= 0) return baseCooldownSeconds;
+  // 10% slower = cooldown is 11.1% longer (1 / 0.90)
+  return baseCooldownSeconds / (1 - attackSpeedReduction / 100);
+}
+
+/**
  * Track damage taken by a team member for statistics
  */
 function trackDamageTaken(
@@ -43,7 +194,8 @@ function trackDamageTaken(
   damage: number,
   sourceName: string,
   abilityName: string,
-  currentTick?: number
+  currentTick?: number,
+  resetESRecharge: boolean = true
 ): void {
   // Initialize tracking fields if needed
   if (!target.damageTaken) target.damageTaken = 0;
@@ -62,8 +214,9 @@ function trackDamageTaken(
   // Also update recent damage for UI
   target.recentDamageTaken = (target.recentDamageTaken || 0) + damage;
   
-  // Update ES recharge delay timer
-  if (currentTick !== undefined && damage > 0) {
+  // Update ES recharge delay timer (only if not blocked/evaded)
+  // Evading or blocking doesn't count as getting hit for ES recharge purposes
+  if (currentTick !== undefined && damage > 0 && resetESRecharge) {
     target.lastDamageTakenTick = currentTick;
   }
 }
@@ -220,10 +373,9 @@ function processEnemyCastComplete(
   const healthBefore = target.health;
   const esBefore = target.energyShield || 0;
   
-  const effectiveArmor = target.armor * (1 + (target.armorBuff || 0) / 100);
-  // Apply talent damage reduction
-  const talentDR = target.talentBonuses?.damageReduction || 0;
-  const painSuppMult = talentDR > 0 ? (1 - talentDR / 100) : 1;
+  const baseArmor = target.armor * (1 + (target.armorBuff || 0) / 100);
+  // Apply general talent damage reduction (no conditions)
+  const generalTalentDR = target.talentBonuses?.damageReduction || 0;
   const isAuto = enemy.castAbility === 'Auto Attack';
   
   const enemyDef = getEnemyById(enemy.enemyId);
@@ -237,13 +389,33 @@ function processEnemyCastComplete(
   
     if (isTankbuster && tankbusterAbility) {
     const baseAbilityDamage = tankbusterAbility.damage || 300;
-    const scaledAbilityDamage = baseAbilityDamage * scaling.damageMultiplier * 1.25; // Tankbuster - reduced from 2.5x, still dangerous
+    const scaledAbilityDamage = baseAbilityDamage * scaling.damageMultiplier * 0.45; // Tankbuster - tuned so tank survives but just barely
     const rawDamage = scaledAbilityDamage * (shieldActive ? 0.5 : 1);
     damageType = (tankbusterAbility.damageType || 'physical') as 'physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'shadow' | 'holy' | 'magic';
     
     if (damageType === 'physical') {
-      const armorMult = calculateArmorReduction(effectiveArmor, rawDamage);
-      let damageAfterArmor = Math.floor(rawDamage * armorMult * painSuppMult);
+      // Calculate conditional damage reduction for physical damage
+      const conditionalDR = calculateConditionalDamageReduction(target.talentBonuses, 'physical', true, false, target);
+      const totalDR = generalTalentDR + conditionalDR;
+      const painSuppMult = totalDR > 0 ? (1 - totalDR / 100) : 1;
+      
+      // Calculate effective armor considering conditional bonuses and effectiveness
+      const effectiveArmorForDamage = calculateEffectiveArmorForDamageType(
+        baseArmor,
+        target.talentBonuses,
+        'physical',
+        false
+      );
+      
+      // Apply evasion-to-mitigation if applicable
+      const evasionMitigation = target.evasion && target.talentBonuses?.evasionToMitigationPercent
+        ? calculateEvasionMitigation(target.evasion, target.talentBonuses.evasionToMitigationPercent, rawDamage)
+        : 0;
+      
+      const armorMult = calculateArmorReduction(effectiveArmorForDamage, rawDamage);
+      // Apply evasion mitigation as additional reduction
+      const totalMitigation = armorMult * (1 - evasionMitigation);
+      let damageAfterArmor = Math.floor(rawDamage * totalMitigation * painSuppMult);
       const blockChance = (target.blockChance || 0) + (target.blockBuff || 0);
       blocked = rollBlock(blockChance);
       if (blocked) {
@@ -257,6 +429,12 @@ function processEnemyCastComplete(
         
         // Process onBlock effects
         processOnBlockEffects(target, damageBlocked, _currentTick, teamStates);
+      } else {
+        // Apply nonBlockedDamageReduction (Duel Warden talent)
+        const nonBlockedDR = target.talentBonuses?.nonBlockedDamageReduction || 0;
+        if (nonBlockedDR > 0) {
+          damageAfterArmor = Math.floor(damageAfterArmor * (1 - nonBlockedDR / 100));
+        }
       }
       const damageResult = calculateDamageWithResistances(
         damageAfterArmor, 'physical',
@@ -269,7 +447,41 @@ function processEnemyCastComplete(
       target.health = safeLifeRemaining;
       dmg = isNaN(damageResult.totalDamage) || !isFinite(damageResult.totalDamage) ? 0 : damageResult.totalDamage;
     } else {
-      let spellDamage = Math.floor(rawDamage * painSuppMult);
+      // Calculate conditional damage reduction for spell damage
+      const conditionalDR = calculateConditionalDamageReduction(target.talentBonuses, damageType, true, false, target);
+      const totalDR = generalTalentDR + conditionalDR;
+      const painSuppMult = totalDR > 0 ? (1 - totalDR / 100) : 1;
+      
+      // For chaos damage, check if armor applies
+      let spellDamage = rawDamage;
+      if (damageType === 'chaos') {
+        const effectiveArmorForChaos = calculateEffectiveArmorForDamageType(
+          baseArmor,
+          target.talentBonuses,
+          'chaos',
+          true
+        );
+        if (effectiveArmorForChaos > 0) {
+          const armorMult = calculateArmorReduction(effectiveArmorForChaos, rawDamage);
+          spellDamage = Math.floor(rawDamage * armorMult);
+        }
+      }
+      
+      // For spell hits, check if armor applies
+      if (damageType !== 'chaos') {
+        const effectiveArmorForSpells = calculateEffectiveArmorForDamageType(
+          baseArmor,
+          target.talentBonuses,
+          damageType,
+          true
+        );
+        if (effectiveArmorForSpells > 0) {
+          const armorMult = calculateArmorReduction(effectiveArmorForSpells, rawDamage);
+          spellDamage = Math.floor(rawDamage * armorMult);
+        }
+      }
+      
+      spellDamage = Math.floor(spellDamage * painSuppMult);
       const spellBlockChance = (target.spellBlockChance || 0) + (target.blockBuff || 0);
       const spellBlocked = rollSpellBlock(spellBlockChance);
       // Apply talent spell suppression chance
@@ -286,7 +498,11 @@ function processEnemyCastComplete(
         target.lastBlockTime = Date.now();
         blocked = true;
       } else if (spellSuppressed) {
-        spellDamage = Math.floor(spellDamage * (1 - SPELL_SUPPRESSION_DAMAGE_REDUCTION));
+        // Apply base suppression reduction + talent suppression effectiveness
+        const baseSuppressionReduction = SPELL_SUPPRESSION_DAMAGE_REDUCTION;
+        const suppressionEffect = target.talentBonuses?.spellSuppressionEffect || 0;
+        const totalSuppressionReduction = Math.min(0.9, baseSuppressionReduction + (suppressionEffect / 100));
+        spellDamage = Math.floor(spellDamage * (1 - totalSuppressionReduction));
       }
       const damageResult = calculateDamageWithResistances(
         spellDamage, damageType,
@@ -301,7 +517,14 @@ function processEnemyCastComplete(
     }
     } else if (isAuto) {
     const rawDamage = enemy.damage * (shieldActive ? 0.5 : 1);
-    let evasionChance = target.evasion ? calculateEvasionChance(target.evasion, enemy.damage * 100) : 0;
+    // Calculate enemy accuracy with talent reductions
+    let enemyAccuracy = enemy.damage * 100; // Base accuracy estimate from damage
+    const enemyAccuracyReduction = target.talentBonuses?.enemyAccuracyReduction || 0;
+    if (enemyAccuracyReduction > 0) {
+      enemyAccuracy = Math.floor(enemyAccuracy * (1 - enemyAccuracyReduction / 100));
+    }
+    
+    let evasionChance = target.evasion ? calculateEvasionChance(target.evasion, enemyAccuracy) : 0;
     // Apply flat evade chance from talents (direct % bonus)
     const flatEvadeChance = target.talentBonuses?.evadeChance || 0;
     evasionChance = Math.min(0.95, evasionChance + (flatEvadeChance / 100));
@@ -316,8 +539,28 @@ function processEnemyCastComplete(
       // Process onEvade effects
       processOnEvadeEffects(target, enemy.name, _currentTick, teamStates);
     } else {
-      const armorMult = calculateArmorReduction(effectiveArmor, rawDamage);
-      let damageAfterArmor = Math.floor(rawDamage * armorMult * painSuppMult);
+      // Calculate conditional damage reduction for physical auto attacks
+      const conditionalDR = calculateConditionalDamageReduction(target.talentBonuses, 'physical', true, false, target);
+      const totalDR = generalTalentDR + conditionalDR;
+      const painSuppMult = totalDR > 0 ? (1 - totalDR / 100) : 1;
+      
+      // Calculate effective armor considering conditional bonuses and effectiveness
+      const effectiveArmorForDamage = calculateEffectiveArmorForDamageType(
+        baseArmor,
+        target.talentBonuses,
+        'physical',
+        false
+      );
+      
+      // Apply evasion-to-mitigation if applicable
+      const evasionMitigation = target.evasion && target.talentBonuses?.evasionToMitigationPercent
+        ? calculateEvasionMitigation(target.evasion, target.talentBonuses.evasionToMitigationPercent, rawDamage)
+        : 0;
+      
+      const armorMult = calculateArmorReduction(effectiveArmorForDamage, rawDamage);
+      // Apply evasion mitigation as additional reduction
+      const totalMitigation = armorMult * (1 - evasionMitigation);
+      let damageAfterArmor = Math.floor(rawDamage * totalMitigation * painSuppMult);
       const blockChance = (target.blockChance || 0) + (target.blockBuff || 0);
       blocked = rollBlock(blockChance);
       if (blocked) {
@@ -331,6 +574,12 @@ function processEnemyCastComplete(
         
         // Process onBlock effects
         processOnBlockEffects(target, blockedDamage, _currentTick, teamStates);
+      } else {
+        // Apply nonBlockedDamageReduction (Duel Warden talent)
+        const nonBlockedDR = target.talentBonuses?.nonBlockedDamageReduction || 0;
+        if (nonBlockedDR > 0) {
+          damageAfterArmor = Math.floor(damageAfterArmor * (1 - nonBlockedDR / 100));
+        }
       }
       const damageResult = calculateDamageWithResistances(
         damageAfterArmor, 'physical',
@@ -353,6 +602,70 @@ function processEnemyCastComplete(
       ? abilityDamage * scaling.damageMultiplier * 0.3 
       : enemy.damage * 0.12;
     rawSpellDamage *= (shieldActive ? 0.5 : 1);
+    
+    // Check for elemental to physical conversion (Wardbreaker talent)
+    let convertedToPhysical = 0;
+    if ((damageType === 'fire' || damageType === 'cold' || damageType === 'lightning') && target.talentBonuses?.specialEffects) {
+      for (const effect of target.talentBonuses.specialEffects) {
+        if (effect.type === 'damageReduction' && effect.condition === 'elementalToPhysical') {
+          convertedToPhysical = Math.floor(rawSpellDamage * (effect.value / 100));
+          rawSpellDamage = rawSpellDamage - convertedToPhysical;
+          break;
+        }
+      }
+    }
+    
+    // Calculate conditional damage reduction for spell damage
+    const conditionalDR = calculateConditionalDamageReduction(target.talentBonuses, damageType, true, false, target);
+    const totalDR = generalTalentDR + conditionalDR;
+    const painSuppMult = totalDR > 0 ? (1 - totalDR / 100) : 1;
+    
+    // For chaos damage, check if armor applies
+    if (damageType === 'chaos') {
+      const effectiveArmorForChaos = calculateEffectiveArmorForDamageType(
+        baseArmor,
+        target.talentBonuses,
+        'chaos',
+        true
+      );
+      if (effectiveArmorForChaos > 0) {
+        const armorMult = calculateArmorReduction(effectiveArmorForChaos, rawSpellDamage);
+        rawSpellDamage = Math.floor(rawSpellDamage * armorMult);
+      }
+    }
+    
+    // For spell hits, check if armor applies
+    if (damageType !== 'chaos' && (damageType === 'fire' || damageType === 'cold' || damageType === 'lightning')) {
+      const effectiveArmorForSpells = calculateEffectiveArmorForDamageType(
+        baseArmor,
+        target.talentBonuses,
+        damageType,
+        true
+      );
+      if (effectiveArmorForSpells > 0) {
+        const armorMult = calculateArmorReduction(effectiveArmorForSpells, rawSpellDamage);
+        rawSpellDamage = Math.floor(rawSpellDamage * armorMult);
+      }
+    }
+    
+    // Apply damage reduction
+    rawSpellDamage = Math.floor(rawSpellDamage * painSuppMult);
+    
+    // Handle converted physical damage
+    if (convertedToPhysical > 0) {
+      const effectiveArmorForPhysical = calculateEffectiveArmorForDamageType(
+        baseArmor,
+        target.talentBonuses,
+        'physical',
+        false
+      );
+      const armorMult = calculateArmorReduction(effectiveArmorForPhysical, convertedToPhysical);
+      const conditionalDRPhysical = calculateConditionalDamageReduction(target.talentBonuses, 'physical', true, false, target);
+      const totalDRPhysical = generalTalentDR + conditionalDRPhysical;
+      const painSuppMultPhysical = totalDRPhysical > 0 ? (1 - totalDRPhysical / 100) : 1;
+      convertedToPhysical = Math.floor(convertedToPhysical * armorMult * painSuppMultPhysical);
+    }
+    
     const spellBlockChance = (target.spellBlockChance || 0) + (target.blockBuff || 0);
     const spellBlocked = rollSpellBlock(spellBlockChance);
     const spellSuppressed = target.spellSuppressionChance ? rollSpellSuppression(target.spellSuppressionChance) : false;
@@ -366,14 +679,37 @@ function processEnemyCastComplete(
       target.lastBlockTime = Date.now();
       blocked = true;
     } else if (spellSuppressed) {
-      rawSpellDamage = Math.floor(rawSpellDamage * (1 - SPELL_SUPPRESSION_DAMAGE_REDUCTION));
+      // Apply base suppression reduction + talent suppression effectiveness
+      const baseSuppressionReduction = SPELL_SUPPRESSION_DAMAGE_REDUCTION;
+      const suppressionEffect = target.talentBonuses?.spellSuppressionEffect || 0;
+      const totalSuppressionReduction = Math.min(0.9, baseSuppressionReduction + (suppressionEffect / 100));
+      rawSpellDamage = Math.floor(rawSpellDamage * (1 - totalSuppressionReduction));
     }
-    const damageResult = calculateDamageWithResistances(
-      rawSpellDamage, damageType,
-      { health: target.health, maxHealth: target.maxHealth, energyShield: target.energyShield || 0, maxEnergyShield: target.maxEnergyShield || 0, fireResistance: target.fireResistance || 0, coldResistance: target.coldResistance || 0, lightningResistance: target.lightningResistance || 0, chaosResistance: target.chaosResistance || 0 }
-    );
-    const finalDamageToES = Math.floor(damageResult.damageToES * painSuppMult);
-    const finalDamageToLife = Math.floor(damageResult.damageToLife * painSuppMult);
+    
+    // Calculate damage - if there's converted physical, handle both types
+    let finalDamageToES = 0;
+    let finalDamageToLife = 0;
+    if (convertedToPhysical > 0) {
+      // Apply physical damage separately
+      const physicalDamageResult = calculateDamageWithResistances(
+        convertedToPhysical, 'physical',
+        { health: target.health, maxHealth: target.maxHealth, energyShield: target.energyShield || 0, maxEnergyShield: target.maxEnergyShield || 0, fireResistance: target.fireResistance || 0, coldResistance: target.coldResistance || 0, lightningResistance: target.lightningResistance || 0, chaosResistance: target.chaosResistance || 0 }
+      );
+      const spellDamageResult = calculateDamageWithResistances(
+        rawSpellDamage, damageType,
+        { health: target.health, maxHealth: target.maxHealth, energyShield: target.energyShield || 0, maxEnergyShield: target.maxEnergyShield || 0, fireResistance: target.fireResistance || 0, coldResistance: target.coldResistance || 0, lightningResistance: target.lightningResistance || 0, chaosResistance: target.chaosResistance || 0 }
+      );
+      // Combine both damage types
+      finalDamageToES = Math.floor(physicalDamageResult.damageToES + spellDamageResult.damageToES);
+      finalDamageToLife = Math.floor(physicalDamageResult.damageToLife + spellDamageResult.damageToLife);
+    } else {
+      const damageResult = calculateDamageWithResistances(
+        rawSpellDamage, damageType,
+        { health: target.health, maxHealth: target.maxHealth, energyShield: target.energyShield || 0, maxEnergyShield: target.maxEnergyShield || 0, fireResistance: target.fireResistance || 0, coldResistance: target.coldResistance || 0, lightningResistance: target.lightningResistance || 0, chaosResistance: target.chaosResistance || 0 }
+      );
+      finalDamageToES = damageResult.damageToES;
+      finalDamageToLife = damageResult.damageToLife;
+    }
     // Safety checks to prevent NaN
     const safeFinalDamageToES = isNaN(finalDamageToES) || !isFinite(finalDamageToES) ? 0 : Math.max(0, finalDamageToES);
     const safeFinalDamageToLife = isNaN(finalDamageToLife) || !isFinite(finalDamageToLife) ? 0 : Math.max(0, finalDamageToLife);
@@ -431,7 +767,7 @@ function processEnemyCastComplete(
   const healthAfter = target.health;
   const esAfter = target.energyShield || 0;
   
-  trackDamageTaken(target, dmg, enemy.name, enemy.castAbility || 'Auto Attack');
+  trackDamageTaken(target, dmg, enemy.name, enemy.castAbility || 'Auto Attack', _currentTick, !blocked);
   setTeamFightAnim(prev => prev + 1);
   setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 }));
   const jitterX = (Math.random() * 80) - 40;
@@ -494,9 +830,26 @@ function performMeleeAttackOnTarget(
 ): boolean {
   const { shieldActive, currentCombatState, batchedFloatingNumbers, batchedLogEntries, totalTime, updateCombatState, setTeamFightAnim, setEnemyFightAnims } = context;
   
-  const effectiveArmor = target.armor * (1 + (target.armorBuff || 0) / 100);
-  const painSuppMult = target.damageReduction ? (1 - target.damageReduction / 100) : 1;
+  const baseArmor = target.armor * (1 + (target.armorBuff || 0) / 100);
+  // Calculate conditional damage reduction for physical melee attacks
+  const generalTalentDR = target.talentBonuses?.damageReduction || 0;
+  const conditionalDR = calculateConditionalDamageReduction(target.talentBonuses, 'physical', true, false, target);
+  const totalDR = generalTalentDR + conditionalDR;
+  const painSuppMult = totalDR > 0 ? (1 - totalDR / 100) : 1;
   const rawDamage = enemy.damage * (shieldActive ? 0.5 : 1) * damageMultiplier;
+  
+  // Calculate effective armor considering conditional bonuses and effectiveness
+  const effectiveArmor = calculateEffectiveArmorForDamageType(
+    baseArmor,
+    target.talentBonuses,
+    'physical',
+    false
+  );
+  
+  // Apply evasion-to-mitigation if applicable
+  const evasionMitigation = target.evasion && target.talentBonuses?.evasionToMitigationPercent
+    ? calculateEvasionMitigation(target.evasion, target.talentBonuses.evasionToMitigationPercent, rawDamage)
+    : 0;
   let evasionChance = target.evasion ? calculateEvasionChance(target.evasion, enemy.damage * 100) : 0;
   // Apply flat evade chance from talents (direct % bonus)
   const flatEvadeChance = target.talentBonuses?.evadeChance || 0;
@@ -512,13 +865,21 @@ function performMeleeAttackOnTarget(
     }
   } else {
     const armorMult = calculateArmorReduction(effectiveArmor, rawDamage);
-    let damageAfterArmor = Math.floor(rawDamage * armorMult * painSuppMult);
+    // Apply evasion mitigation as additional reduction
+    const totalMitigation = armorMult * (1 - evasionMitigation);
+    let damageAfterArmor = Math.floor(rawDamage * totalMitigation * painSuppMult);
     const blockChance = (target.blockChance || 0) + (target.blockBuff || 0);
-    blocked = rollBlock(blockChance);
-    if (blocked) {
-      damageAfterArmor = Math.floor(damageAfterArmor * (1 - BLOCK_DAMAGE_REDUCTION));
-      target.lastBlockTime = Date.now();
-    }
+      blocked = rollBlock(blockChance);
+      if (blocked) {
+        damageAfterArmor = Math.floor(damageAfterArmor * (1 - BLOCK_DAMAGE_REDUCTION));
+        target.lastBlockTime = Date.now();
+      } else {
+        // Apply nonBlockedDamageReduction (Duel Warden talent)
+        const nonBlockedDR = target.talentBonuses?.nonBlockedDamageReduction || 0;
+        if (nonBlockedDR > 0) {
+          damageAfterArmor = Math.floor(damageAfterArmor * (1 - nonBlockedDR / 100));
+        }
+      }
       const damageResult = calculateDamageWithResistances(
         damageAfterArmor, 'physical',
         { health: target.health, maxHealth: target.maxHealth, energyShield: target.energyShield || 0, maxEnergyShield: target.maxEnergyShield || 0, fireResistance: target.fireResistance || 0, coldResistance: target.coldResistance || 0, lightningResistance: target.lightningResistance || 0, chaosResistance: target.chaosResistance || 0 }
@@ -529,7 +890,7 @@ function performMeleeAttackOnTarget(
       target.energyShield = safeESRemaining;
       target.health = safeLifeRemaining;
       dmg = isNaN(damageResult.totalDamage) || !isFinite(damageResult.totalDamage) ? 0 : damageResult.totalDamage;
-    trackDamageTaken(target, dmg, enemy.name, 'Melee Attack');
+    trackDamageTaken(target, dmg, enemy.name, 'Melee Attack', _currentTick, !blocked);
     if (dmg > 0) {
       setTeamFightAnim(prev => prev + 1);
       setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 }));
@@ -601,7 +962,7 @@ function processMeleeAttack(
         member.energyShield = Math.max(0, damageResult.esRemaining);
         member.health = Math.max(0, damageResult.lifeRemaining);
         const cleave = damageResult.totalDamage;
-        trackDamageTaken(member, cleave, enemy.name, 'Cleave');
+        trackDamageTaken(member, cleave, enemy.name, 'Cleave', currentTick, !blocked);
         const jitterX = (Math.random() * 80) - 40;
         const jitterY = (Math.random() * 60) - 30;
         const floatNum = createFloatingNumber(cleave, blocked ? 'blocked' : 'enemy', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 40 + jitterY);
@@ -729,12 +1090,34 @@ function processArcherAttack(
   if (targetPool.length > 0) {
     const target = targetPool[Math.floor(Math.random() * targetPool.length)];
     enemy.lastShotTarget = target.id;
-    const effectiveArmor = target.armor * (1 + (target.armorBuff || 0) / 100);
-    // Apply talent damage reduction
-  const talentDR = target.talentBonuses?.damageReduction || 0;
-  const painSuppMult = talentDR > 0 ? (1 - talentDR / 100) : 1;
+    const baseArmor = target.armor * (1 + (target.armorBuff || 0) / 100);
+    const generalTalentDR = target.talentBonuses?.damageReduction || 0;
+    const conditionalDR = calculateConditionalDamageReduction(target.talentBonuses, 'physical', true, false, target);
+    const totalDR = generalTalentDR + conditionalDR;
+    const painSuppMult = totalDR > 0 ? (1 - totalDR / 100) : 1;
     const rawDamage = enemy.damage * 0.85 * (shieldActive ? 0.5 : 1);
-    let evasionChance = target.evasion ? calculateEvasionChance(target.evasion, enemy.damage * 100) : 0;
+    
+    // Calculate effective armor considering conditional bonuses and effectiveness
+    const effectiveArmor = calculateEffectiveArmorForDamageType(
+      baseArmor,
+      target.talentBonuses,
+      'physical',
+      false
+    );
+    
+    // Apply evasion-to-mitigation if applicable
+    // const evasionMitigation = target.evasion && target.talentBonuses?.evasionToMitigationPercent
+    //   ? calculateEvasionMitigation(target.evasion, target.talentBonuses.evasionToMitigationPercent, rawDamage)
+    //   : 0;
+    
+    // Calculate enemy accuracy with talent reductions
+    let enemyAccuracy = enemy.damage * 100; // Base accuracy estimate from damage
+    const enemyAccuracyReduction = target.talentBonuses?.enemyAccuracyReduction || 0;
+    if (enemyAccuracyReduction > 0) {
+      enemyAccuracy = Math.floor(enemyAccuracy * (1 - enemyAccuracyReduction / 100));
+    }
+    
+    let evasionChance = target.evasion ? calculateEvasionChance(target.evasion, enemyAccuracy) : 0;
     // Apply flat evade chance from talents (direct % bonus)
     const flatEvadeChance = target.talentBonuses?.evadeChance || 0;
     evasionChance = Math.min(0.95, evasionChance + (flatEvadeChance / 100));
@@ -769,7 +1152,7 @@ function processArcherAttack(
       target.energyShield = safeESRemaining;
       target.health = safeLifeRemaining;
       dmg = isNaN(damageResult.totalDamage) || !isFinite(damageResult.totalDamage) ? 0 : damageResult.totalDamage;
-      trackDamageTaken(target, dmg, enemy.name, 'Ranged Attack');
+      trackDamageTaken(target, dmg, enemy.name, 'Ranged Attack', currentTick, !blocked);
       if (dmg > 0) {
         setTeamFightAnim(prev => prev + 1);
         setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 }));
@@ -819,15 +1202,24 @@ function processAoeAttack(
         const painSuppMult = talentDR > 0 ? (1 - talentDR / 100) : 1;
         const rawAoeDamage = enemy.damage * (shieldActive ? 0.5 : 1) * aoeDmgMultiplier;
         const armorMult = calculateArmorReduction(effectiveArmor, rawAoeDamage);
-        let dmg = Math.floor(rawAoeDamage * armorMult * painSuppMult);
+        let damageAfterArmor = Math.floor(rawAoeDamage * armorMult * painSuppMult);
         const blockChance = (member.blockChance || 0) + (member.blockBuff || 0);
         const blocked = rollBlock(blockChance);
         if (blocked) {
-          dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+          damageAfterArmor = Math.floor(damageAfterArmor * (1 - BLOCK_DAMAGE_REDUCTION));
           member.lastBlockTime = Date.now();
         }
-        member.health = Math.max(0, member.health - dmg);
-        trackDamageTaken(member, dmg, enemy.name, abilityName);
+        const damageResult = calculateDamageWithResistances(
+          damageAfterArmor, 'physical',
+          { health: member.health, maxHealth: member.maxHealth, energyShield: member.energyShield || 0, maxEnergyShield: member.maxEnergyShield || 0, fireResistance: member.fireResistance || 0, coldResistance: member.coldResistance || 0, lightningResistance: member.lightningResistance || 0, chaosResistance: member.chaosResistance || 0 }
+        );
+        // Safety checks to prevent NaN
+        const safeESRemaining = isNaN(damageResult.esRemaining) || !isFinite(damageResult.esRemaining) ? (member.energyShield || 0) : Math.max(0, damageResult.esRemaining);
+        const safeLifeRemaining = isNaN(damageResult.lifeRemaining) || !isFinite(damageResult.lifeRemaining) ? (member.maxHealth || 0) : Math.max(0, damageResult.lifeRemaining);
+        member.energyShield = safeESRemaining;
+        member.health = safeLifeRemaining;
+        const dmg = isNaN(damageResult.totalDamage) || !isFinite(damageResult.totalDamage) ? 0 : damageResult.totalDamage;
+        trackDamageTaken(member, dmg, enemy.name, abilityName, currentTick, !blocked);
         setTeamFightAnim(prev => prev + 1);
         totalAoeDamage += dmg;
         const jitterX = (Math.random() * 80) - 40;
@@ -1176,11 +1568,33 @@ function processBossAttack(
         if (meleeTarget && !meleeTarget.isDead) {
           // Boss melee attacks are instant, no cast time
           const baseDamage = enemy.damage || 30; // Use enemy damage or default
-          const effectiveArmor = meleeTarget.armor * (1 + (meleeTarget.armorBuff || 0) / 100);
-          const painSuppMult = meleeTarget.damageReduction ? (1 - meleeTarget.damageReduction / 100) : 1;
+          const baseArmor = meleeTarget.armor * (1 + (meleeTarget.armorBuff || 0) / 100);
+          const generalTalentDR = meleeTarget.talentBonuses?.damageReduction || 0;
+          const conditionalDR = calculateConditionalDamageReduction(meleeTarget.talentBonuses, 'physical', true, false, meleeTarget);
+          const totalDR = generalTalentDR + conditionalDR;
+          const painSuppMult = totalDR > 0 ? (1 - totalDR / 100) : 1;
           const rawDamage = baseDamage * (shieldActive ? 0.5 : 1) * scaling.damageMultiplier;
           
-          let evasionChance = meleeTarget.evasion ? calculateEvasionChance(meleeTarget.evasion, baseDamage * 100) : 0;
+          const effectiveArmor = calculateEffectiveArmorForDamageType(
+            baseArmor,
+            meleeTarget.talentBonuses,
+            'physical',
+            false
+          );
+          
+          // Apply evasion-to-mitigation if applicable
+          const evasionMitigation = meleeTarget.evasion && meleeTarget.talentBonuses?.evasionToMitigationPercent
+            ? calculateEvasionMitigation(meleeTarget.evasion, meleeTarget.talentBonuses.evasionToMitigationPercent, rawDamage)
+            : 0;
+          
+          // Calculate enemy accuracy with talent reductions
+          let enemyAccuracy = baseDamage * 100; // Base accuracy estimate from damage
+          const enemyAccuracyReduction = meleeTarget.talentBonuses?.enemyAccuracyReduction || 0;
+          if (enemyAccuracyReduction > 0) {
+            enemyAccuracy = Math.floor(enemyAccuracy * (1 - enemyAccuracyReduction / 100));
+          }
+          
+          let evasionChance = meleeTarget.evasion ? calculateEvasionChance(meleeTarget.evasion, enemyAccuracy) : 0;
           const flatEvadeChance = meleeTarget.talentBonuses?.evadeChance || 0;
           evasionChance = Math.min(0.95, evasionChance + (flatEvadeChance / 100));
           let dmg = 0;
@@ -1195,13 +1609,25 @@ function processBossAttack(
             }
           } else {
             const armorMult = calculateArmorReduction(effectiveArmor, rawDamage);
-            dmg = Math.floor(rawDamage * armorMult * painSuppMult);
+            // Apply evasion mitigation as additional reduction
+            const totalMitigation = armorMult * (1 - evasionMitigation);
+            let damageAfterArmor = Math.floor(rawDamage * totalMitigation * painSuppMult);
             blocked = rollBlock(meleeTarget.blockChance || 0);
             if (blocked) {
-              dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+              damageAfterArmor = Math.floor(damageAfterArmor * (1 - BLOCK_DAMAGE_REDUCTION));
             }
             
-            meleeTarget.health = Math.max(0, meleeTarget.health - dmg);
+            const damageResult = calculateDamageWithResistances(
+              damageAfterArmor, 'physical',
+              { health: meleeTarget.health, maxHealth: meleeTarget.maxHealth, energyShield: meleeTarget.energyShield || 0, maxEnergyShield: meleeTarget.maxEnergyShield || 0, fireResistance: meleeTarget.fireResistance || 0, coldResistance: meleeTarget.coldResistance || 0, lightningResistance: meleeTarget.lightningResistance || 0, chaosResistance: meleeTarget.chaosResistance || 0 }
+            );
+            // Safety checks to prevent NaN
+            const safeESRemaining = isNaN(damageResult.esRemaining) || !isFinite(damageResult.esRemaining) ? (meleeTarget.energyShield || 0) : Math.max(0, damageResult.esRemaining);
+            const safeLifeRemaining = isNaN(damageResult.lifeRemaining) || !isFinite(damageResult.lifeRemaining) ? (meleeTarget.maxHealth || 0) : Math.max(0, damageResult.lifeRemaining);
+            meleeTarget.energyShield = safeESRemaining;
+            meleeTarget.health = safeLifeRemaining;
+            dmg = isNaN(damageResult.totalDamage) || !isFinite(damageResult.totalDamage) ? 0 : damageResult.totalDamage;
+            
             if (batchedFloatingNumbers) {
               batchedFloatingNumbers.push(createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', 0, 0));
             }
@@ -1227,7 +1653,8 @@ function processBossAttack(
           // Set cooldown for next melee attack (1.5 seconds)
           const enemySpeed = context.mapAffixEffects?.enemySpeed || 0;
           const meleeCooldownSeconds = 1.5;
-          const adjustedCooldown = applyEnemySpeedToCooldown(meleeCooldownSeconds, enemySpeed);
+          let adjustedCooldown = applyEnemySpeedToCooldown(meleeCooldownSeconds, enemySpeed);
+          adjustedCooldown = applyTalentAttackSpeedReduction(adjustedCooldown, meleeTarget);
           enemy.autoAttackEndTick = currentTick + secondsToTicks(adjustedCooldown);
         }
       }
@@ -1301,7 +1728,11 @@ function processBossAttack(
           dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
           member.lastBlockTime = Date.now();
         } else if (spellSuppressed) {
-          dmg = Math.floor(dmg * (1 - SPELL_SUPPRESSION_DAMAGE_REDUCTION));
+          // Apply base suppression reduction + talent suppression effectiveness
+          const baseSuppressionReduction = SPELL_SUPPRESSION_DAMAGE_REDUCTION;
+          const suppressionEffect = member.talentBonuses?.spellSuppressionEffect || 0;
+          const totalSuppressionReduction = Math.min(0.9, baseSuppressionReduction + (suppressionEffect / 100));
+          dmg = Math.floor(dmg * (1 - totalSuppressionReduction));
         }
         
         // Apply to ES first, then life
@@ -1322,7 +1753,7 @@ function processBossAttack(
         member.health = Math.max(0, damageResult.lifeRemaining);
         dmg = damageResult.totalDamage;
         
-        trackDamageTaken(member, dmg, enemy.name, abilityName);
+        trackDamageTaken(member, dmg, enemy.name, abilityName, currentTick, !spellBlocked);
         totalAoeDamage += dmg;
         
         const jitterX = (Math.random() * 80) - 40;
@@ -1428,7 +1859,7 @@ function processBossAttack(
       meleeTarget.health = Math.max(0, damageResult.lifeRemaining);
       dmg = damageResult.totalDamage;
       
-      trackDamageTaken(meleeTarget, dmg, enemy.name, 'Melee Attack');
+      trackDamageTaken(meleeTarget, dmg, enemy.name, 'Melee Attack', currentTick, !blocked);
       
       if (dmg > 0) {
         setTeamFightAnim(prev => prev + 1);

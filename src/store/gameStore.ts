@@ -13,10 +13,10 @@ import type {
   LeagueEncounter
 } from '../types';
 import { generateMap } from '../types/maps';
-import { createCharacter, type Character } from '../types/character';
+import { createCharacter, type Character, calculateBaseLifeFromLevel, calculateBaseManaFromLevel, calculateLifeFromStrength, calculateManaFromIntelligence, calculateAccuracyFromDexterity, calculateEvasionBonus } from '../types/character';
 import { SAMPLE_DUNGEON } from '../types/dungeon';
 import { generateRandomItem } from '../systems/crafting';
-import { SKILL_GEMS, SUPPORT_GEMS, getSkillGemById, getSupportGemById, canSupportApplyToSkill } from '../types/skills';
+import { SKILL_GEMS, SUPPORT_GEMS, getSkillGemById, getSupportGemById, canSupportApplyToSkill, getDefaultSupportGemForSkill } from '../types/skills';
 import { addExperienceToCharacter as addExpToChar } from '../utils/leveling';
 import { createSmartSkillConfig, type SkillUsageConfig } from '../types/skillUsage';
 import type { TalentTierLevel } from '../types/talents';
@@ -91,6 +91,7 @@ export const CRAFTING_ORBS: CraftingOrb[] = [
 export interface GameState {
   // Team
   team: Character[];
+  teamSlotAssignments: Record<number, string>; // slotIndex -> characterId
   selectedCharacterId: string | null;
   
   // Inventory & Stash
@@ -123,10 +124,10 @@ export interface GameState {
   activeLeagueEncounters: LeagueEncounter[];  // League mechanics in current map
   
   // UI State
-  activeTab: 'team' | 'skills' | 'gear' | 'talents' | 'dungeon' | 'stash' | 'maps';
+  activeTab: 'team' | 'skills' | 'gear' | 'crafting' | 'talents' | 'dungeon' | 'stash' | 'maps';
   
   // Actions
-  addCharacter: (name: string, role: CharacterRole, classId?: import('../types/classes').CharacterClassId) => void;
+  addCharacter: (name: string, role: CharacterRole, classId?: import('../types/classes').CharacterClassId, slotIndex?: number) => void;
   removeCharacter: (id: string) => void;
   selectCharacter: (id: string | null) => void;
   updateCharacter: (id: string, updates: Partial<Character>) => void;
@@ -164,6 +165,7 @@ export interface GameState {
   
   addOrbs: (orbs: Partial<Record<OrbType, number>>) => void;
   useOrb: (orbType: OrbType, itemId: string) => void;
+  applyOrbToItemAction: (itemId: string, orbType: OrbType) => { success: boolean; message: string };
   
   setActiveTab: (tab: GameState['activeTab']) => void;
   
@@ -201,21 +203,98 @@ export interface GameState {
 }
 
 /**
- * Generate starter white items for a character using real PoE base items
+ * Generate starter items for a character using real PoE base items
  * Returns a map of slot -> item for all gear slots
+ * All items are normal (white) rarity except one randomly selected magic item
  */
 function generateStarterItems(character: Character): Map<GearSlot, Item> {
   const items = new Map<GearSlot, Item>();
   const classData = character.classId ? getClassById(character.classId) : null;
-  const level = character.level || 1;
+  const level = character.level || 2;
   
-  // Determine defense type preference from class
-  const defensePool = classData?.defensePool || 'armor';
-  const isIntBased = classData && (classData.statModifiers.intelligence || 0) > 30;
+  // For DPS characters without a class, infer build type from stats
+  // (Stats are already adjusted in addCharacter, so we can infer from them)
+  let dpsBuildType: 'caster' | 'attack_melee' | 'attack_ranged' | null = null;
+  let dpsDefenseType: 'armor' | 'evasion' | 'energyShield' | 'hybrid' | null = null;
+  let dpsMeleeStyle: 'one_handed' | 'two_handed' | 'dual_wield' | null = null;
+  
+  if (character.role === 'dps' && !classData) {
+    // Infer build type from stats (which were set in addCharacter)
+    const str = character.baseStats.strength;
+    const dex = character.baseStats.dexterity;
+    const int = character.baseStats.intelligence;
+    
+    // Determine build type based on highest stat
+    if (int > str && int > dex && int > 30) {
+      // Caster (high intelligence)
+      dpsBuildType = 'caster';
+      // Casters prefer energy shield, but can also use hybrid
+      const defenseRoll = Math.random();
+      if (defenseRoll < 0.6) {
+        dpsDefenseType = 'energyShield';
+      } else if (defenseRoll < 0.85) {
+        dpsDefenseType = 'hybrid'; // ES + armor or ES + evasion
+      } else {
+        dpsDefenseType = Math.random() < 0.5 ? 'armor' : 'evasion';
+      }
+    } else if (dex > str && dex > 30) {
+      // Ranged attack (high dexterity)
+      dpsBuildType = 'attack_ranged';
+      // Ranged characters prefer evasion
+      const defenseRoll = Math.random();
+      if (defenseRoll < 0.5) {
+        dpsDefenseType = 'evasion';
+      } else if (defenseRoll < 0.8) {
+        dpsDefenseType = 'hybrid'; // Evasion + armor
+      } else {
+        dpsDefenseType = 'armor';
+      }
+    } else {
+      // Melee attack (high strength)
+      dpsBuildType = 'attack_melee';
+      // Melee characters prefer armor, but can use others
+      const defenseRoll = Math.random();
+      if (defenseRoll < 0.5) {
+        dpsDefenseType = 'armor';
+      } else if (defenseRoll < 0.75) {
+        dpsDefenseType = 'hybrid'; // Armor + evasion
+      } else {
+        dpsDefenseType = Math.random() < 0.5 ? 'evasion' : 'energyShield';
+      }
+      
+      // For melee, choose one-handed, two-handed, or dual wield
+      const meleeRoll = Math.random();
+      if (meleeRoll < 0.4) {
+        dpsMeleeStyle = 'two_handed';
+      } else if (meleeRoll < 0.7) {
+        dpsMeleeStyle = 'dual_wield';
+      } else {
+        dpsMeleeStyle = 'one_handed';
+      }
+    }
+  }
+  
+  // Determine defense type preference from class or DPS build
+  let defensePool: 'armor' | 'evasion' | 'energyShield' = classData?.defensePool || 'armor';
+  if (dpsDefenseType && dpsDefenseType !== 'hybrid') {
+    defensePool = dpsDefenseType;
+  } else if (dpsDefenseType === 'hybrid') {
+    // For hybrid, randomly pick a primary defense type (items will still be filtered appropriately)
+    const hybridRoll = Math.random();
+    if (hybridRoll < 0.33) {
+      defensePool = 'armor';
+    } else if (hybridRoll < 0.66) {
+      defensePool = 'evasion';
+    } else {
+      defensePool = 'energyShield';
+    }
+  }
+  
+  const isIntBased = classData ? (classData.statModifiers.intelligence || 0) > 30 : (dpsBuildType === 'caster');
   const hasBlock = classData?.mitigationTypes?.includes('block') || false;
   
   // Helper to filter PoE base items by defense type
-  const filterByDefenseType = (bases: typeof ALL_POE_BASE_ITEMS, defenseType: 'armor' | 'evasion' | 'energyShield'): typeof ALL_POE_BASE_ITEMS => {
+  const filterByDefenseType = (bases: typeof ALL_POE_BASE_ITEMS, defenseType: 'armor' | 'evasion' | 'energyShield' | 'hybrid'): typeof ALL_POE_BASE_ITEMS => {
     return bases.filter(base => {
       const defenseTypes = getDefenceTypeFromTags(base.tags);
       if (defenseType === 'armor') {
@@ -224,6 +303,13 @@ function generateStarterItems(character: Character): Map<GearSlot, Item> {
         return defenseTypes.includes('evasion');
       } else if (defenseType === 'energyShield') {
         return defenseTypes.includes('energy_shield');
+      } else if (defenseType === 'hybrid') {
+        // For hybrid, accept items with any defense type (armor, evasion, or energy shield)
+        return defenseTypes.length > 0 && (
+          defenseTypes.includes('armour') || 
+          defenseTypes.includes('evasion') || 
+          defenseTypes.includes('energy_shield')
+        );
       }
       return true;
     });
@@ -242,8 +328,11 @@ function generateStarterItems(character: Character): Map<GearSlot, Item> {
   // Helper to get appropriate PoE base item for a slot
   const getPoeBaseForSlot = (_slot: GearSlot, itemClass: PoeItemClass): typeof ALL_POE_BASE_ITEMS[0] | null => {
     // Get all bases for this item class at appropriate level, excluding talismans
+    // For low levels, allow items slightly above character level to provide variety
+    // This prevents level 2 characters from only getting Iron Rings
+    const maxDropLevel = level <= 5 ? level + 3 : level;
     let candidates = ALL_POE_BASE_ITEMS.filter(b => 
-      b.itemClass === itemClass && b.dropLevel <= level
+      b.itemClass === itemClass && b.dropLevel <= maxDropLevel
     );
     
     // Filter out talismans
@@ -253,11 +342,13 @@ function generateStarterItems(character: Character): Map<GearSlot, Item> {
     
     // Filter by defense type for armor pieces
     if (['Helmet', 'Body Armour', 'Gloves', 'Boots', 'Shield'].includes(itemClass)) {
-      candidates = filterByDefenseType(candidates, defensePool);
+      // Use DPS defense type if available, otherwise use defensePool
+      const filterType = dpsDefenseType === 'hybrid' ? 'hybrid' : (dpsDefenseType || defensePool);
+      candidates = filterByDefenseType(candidates, filterType);
       // If no matches, fall back to any defense type (but still exclude talismans)
       if (candidates.length === 0) {
         candidates = ALL_POE_BASE_ITEMS.filter(b => 
-          b.itemClass === itemClass && b.dropLevel <= level
+          b.itemClass === itemClass && b.dropLevel <= maxDropLevel
         );
         candidates = filterTalismans(candidates);
       }
@@ -297,25 +388,62 @@ function generateStarterItems(character: Character): Map<GearSlot, Item> {
       case 'feet': return 'Boots';
       case 'waist': return 'Belt';
       case 'mainHand': 
-        // Intelligence-based classes get Staff if available at this level, otherwise Wand
-        // Others get One Hand Sword
-        if (isIntBased) {
-          // Check if Staff items are available at this level
+        // Handle DPS build types
+        if (dpsBuildType === 'caster') {
+          // Casters get Staff if available, otherwise Wand
           const staffCandidates = ALL_POE_BASE_ITEMS.filter(b => 
             b.itemClass === 'Staff' && b.dropLevel <= level
           );
           if (staffCandidates.length > 0) {
             return 'Staff';
           }
-          // Fall back to Wand if no Staff available (e.g., level 1)
+          return 'Wand';
+        } else if (dpsBuildType === 'attack_ranged') {
+          // Ranged attack DPS gets Bow
+          return 'Bow';
+        } else if (dpsBuildType === 'attack_melee') {
+          // Melee attack DPS
+          if (dpsMeleeStyle === 'two_handed') {
+            // Randomly choose between two-handed weapons
+            const twoHandWeapons: PoeItemClass[] = ['Two Hand Sword', 'Two Hand Axe', 'Two Hand Mace'];
+            return twoHandWeapons[Math.floor(Math.random() * twoHandWeapons.length)];
+          } else {
+            // One-handed melee weapon
+            const oneHandWeapons: PoeItemClass[] = ['One Hand Sword', 'One Hand Axe', 'One Hand Mace', 'Dagger'];
+            return oneHandWeapons[Math.floor(Math.random() * oneHandWeapons.length)];
+          }
+        } else if (isIntBased) {
+          // Intelligence-based classes get Staff if available at this level, otherwise Wand
+          const staffCandidates = ALL_POE_BASE_ITEMS.filter(b => 
+            b.itemClass === 'Staff' && b.dropLevel <= level
+          );
+          if (staffCandidates.length > 0) {
+            return 'Staff';
+          }
           return 'Wand';
         }
+        // Default: One Hand Sword
         return 'One Hand Sword';
       case 'offHand': 
-        // Only generate offhand if it makes sense:
-        // - Tanks with block get Shield
-        // - Casters/healers get Wand
-        // - Others don't get offhand (return null to skip)
+        // Handle DPS build types
+        if (dpsBuildType === 'caster') {
+          // Casters can get a second Wand
+          return 'Wand';
+        } else if (dpsBuildType === 'attack_melee' && dpsMeleeStyle === 'dual_wield') {
+          // Dual wield melee gets a second one-handed weapon
+          const oneHandWeapons: PoeItemClass[] = ['One Hand Sword', 'One Hand Axe', 'One Hand Mace', 'Dagger'];
+          return oneHandWeapons[Math.floor(Math.random() * oneHandWeapons.length)];
+        } else if (dpsBuildType === 'attack_ranged') {
+          // Ranged characters can get a Quiver (if available)
+          const quiverCandidates = ALL_POE_BASE_ITEMS.filter(b => 
+            b.itemClass === 'Quiver' && b.dropLevel <= level
+          );
+          if (quiverCandidates.length > 0) {
+            return 'Quiver';
+          }
+          return null;
+        }
+        // Standard logic for non-DPS or class-based characters
         if (character.role === 'tank' && hasBlock) return 'Shield';
         if (isIntBased || character.role === 'healer') return 'Wand';
         // Don't generate offhand for others
@@ -336,7 +464,7 @@ function generateStarterItems(character: Character): Map<GearSlot, Item> {
   // Track mainHand item class to check if it's two-handed
   let mainHandItemClass: PoeItemClass | null = null;
   
-  // Generate required slots - all must be filled
+  // First pass: generate all required slots and determine mainHand item class
   for (const slot of requiredSlots) {
     const itemClass = getItemClassForSlot(slot);
     if (!itemClass) {
@@ -356,7 +484,7 @@ function generateStarterItems(character: Character): Map<GearSlot, Item> {
       continue;
     }
     
-    // Generate a white PoE item with this base
+    // Generate as normal for now (we'll upgrade one to magic later)
     const poeItem = generatePoeItem(level, 'normal', baseItem);
     if (poeItem) {
       // Convert to legacy format for compatibility
@@ -380,12 +508,36 @@ function generateStarterItems(character: Character): Map<GearSlot, Item> {
     const baseItem = getPoeBaseForSlot(slot, itemClass);
     
     if (baseItem) {
-      // Generate a white PoE item with this base
+      // Generate as normal for now (we'll upgrade one to magic later)
       const poeItem = generatePoeItem(level, 'normal', baseItem);
       if (poeItem) {
         // Convert to legacy format for compatibility
         const legacyItem = poeItemToLegacyItem(poeItem);
         items.set(slot, legacyItem);
+      }
+    }
+  }
+  
+  // Now that we know which slots actually have items, randomly select one to be magic
+  const generatedSlots = Array.from(items.keys());
+  if (generatedSlots.length > 0) {
+    const magicSlot = generatedSlots[Math.floor(Math.random() * generatedSlots.length)];
+    
+    // Regenerate the selected slot as magic
+    const existingItem = items.get(magicSlot);
+    if (existingItem) {
+      const itemClass = getItemClassForSlot(magicSlot);
+      if (itemClass) {
+        // Find the base item that was used (we need to reverse-engineer or regenerate)
+        // Since we can't easily reverse-engineer, we'll regenerate with the same logic
+        const baseItem = getPoeBaseForSlot(magicSlot, itemClass);
+        if (baseItem) {
+          const magicPoeItem = generatePoeItem(level, 'magic', baseItem);
+          if (magicPoeItem) {
+            const magicLegacyItem = poeItemToLegacyItem(magicPoeItem);
+            items.set(magicSlot, magicLegacyItem);
+          }
+        }
       }
     }
   }
@@ -399,6 +551,7 @@ export const useGameStore = create<GameState>()(
     immer((set, get) => ({
       // Initial state
       team: [],
+      teamSlotAssignments: {},
       selectedCharacterId: null,
       inventory: [],
       stashTabs: Array.from({ length: DEFAULT_STASH_TAB_COUNT }, (_, i) => ({
@@ -442,30 +595,193 @@ export const useGameStore = create<GameState>()(
       activeTab: 'team',
 
       // Actions
-      addCharacter: (name, role, classId) => set(state => {
-        if (state.team.length >= 5) return;
-        const char = createCharacter(name, role, 1, classId);
+      addCharacter: (name, role, classId, slotIndex) => set(state => {
+        console.log('addCharacter called in store', { name, role, classId, slotIndex, currentTeamLength: state.team.length, slotAssignments: state.teamSlotAssignments });
         
-        // Auto-equip default skills based on role
+        // If a specific slot is provided, check if it's occupied
+        if (slotIndex !== undefined) {
+          const existingCharId = state.teamSlotAssignments[slotIndex];
+          if (existingCharId) {
+            const existingChar = state.team.find(c => c.id === existingCharId);
+            if (existingChar) {
+              console.warn('Cannot add character: slot', slotIndex, 'is already occupied by', existingChar.name);
+              return;
+            } else {
+              // Slot assignment exists but character doesn't - clean up orphaned assignment
+              delete state.teamSlotAssignments[slotIndex];
+            }
+          }
+          // If slot is empty, allow adding even if team has 5 (might be replacing or filling a gap)
+        } else {
+          // No slot specified - check if team is at capacity
+          if (state.team.length >= 5) {
+            console.warn('Cannot add character: team is already full (5/5) and no slot specified');
+            return;
+          }
+        }
+        const char = createCharacter(name, role, 2, classId);
+        console.log('Character created:', char.id, char.name);
+        
+        // For DPS characters without a class, determine build type and adjust stats
+        let dpsBuildType: 'caster' | 'attack_melee' | 'attack_ranged' | null = null;
+        if (role === 'dps' && !classId) {
+          // Randomly choose caster or attack DPS
+          const isCaster = Math.random() < 0.5;
+          
+          if (isCaster) {
+            dpsBuildType = 'caster';
+            // Caster DPS: High intelligence, moderate dexterity, low strength
+            // Energy shield focus
+            char.baseStats.intelligence += 15; // Level 2 appropriate bonus
+            char.baseStats.dexterity += 5;
+            char.baseStats.strength += 2;
+            // Recalculate mana from intelligence
+            const manaFromInt = calculateManaFromIntelligence(char.baseStats.intelligence);
+            char.baseStats.mana = 40 + manaFromInt; // Base level 2 mana + int bonus
+            char.baseStats.maxMana = char.baseStats.mana;
+            // Energy shield from intelligence
+            const baseES = 20; // Small base ES for casters
+            const esMultiplier = 1 + (char.baseStats.intelligence * 0.002);
+            char.baseStats.energyShield = Math.floor(baseES * esMultiplier);
+          } else {
+            // Attack DPS: Choose melee or ranged
+            const isRanged = Math.random() < 0.4;
+            
+            if (isRanged) {
+              dpsBuildType = 'attack_ranged';
+              // Ranged attack DPS: High dexterity, moderate intelligence, low strength
+              // Evasion focus
+              char.baseStats.dexterity += 18;
+              char.baseStats.intelligence += 8;
+              char.baseStats.strength += 2;
+              // Recalculate accuracy from dexterity
+              const accuracyFromDex = calculateAccuracyFromDexterity(char.baseStats.dexterity);
+              char.baseStats.accuracy = 102 + accuracyFromDex; // Base level 2 accuracy + dex bonus
+              // Evasion bonus from dexterity
+              char.baseStats.evasion = calculateEvasionBonus(char.baseStats.dexterity, 56); // Base level 2 evasion
+            } else {
+              dpsBuildType = 'attack_melee';
+              // Melee attack DPS: High strength, moderate dexterity, low intelligence
+              // Armor focus
+              char.baseStats.strength += 18;
+              char.baseStats.dexterity += 8;
+              char.baseStats.intelligence += 2;
+              // Recalculate life from strength
+              const lifeFromStr = calculateLifeFromStrength(char.baseStats.strength);
+              char.baseStats.life = 50 + lifeFromStr; // Base level 2 life + str bonus
+              char.baseStats.maxLife = char.baseStats.life;
+              // Recalculate accuracy from dexterity
+              const accuracyFromDex = calculateAccuracyFromDexterity(char.baseStats.dexterity);
+              char.baseStats.accuracy = 102 + accuracyFromDex;
+            }
+          }
+        }
+        
+        // Auto-equip default skills based on role and build type (only 2 core abilities)
+        // const enabledSupportSlots = getEnabledSupportSlots(char.level);
         if (role === 'tank') {
+          const skill1 = getSkillGemById('shield_slam');
+          const skill2 = getSkillGemById('shield_block');
+          const support1 = skill1 ? getDefaultSupportGemForSkill(skill1) : null;
+          const support2 = skill2 ? getDefaultSupportGemForSkill(skill2) : null;
+          
           char.skillGems = [
-            { slotIndex: 0, skillGemId: 'shield_slam', supportGemIds: [], usageConfig: createSmartSkillConfig('shield_slam') },
-            { slotIndex: 1, skillGemId: 'shield_block', supportGemIds: [], usageConfig: createSmartSkillConfig('shield_block') },
-            { slotIndex: 2, skillGemId: 'defensive_stance', supportGemIds: [], usageConfig: createSmartSkillConfig('defensive_stance') },
-            { slotIndex: 3, skillGemId: 'thunder_clap', supportGemIds: [], usageConfig: createSmartSkillConfig('thunder_clap') }
+            { 
+              slotIndex: 0, 
+              skillGemId: 'shield_slam', 
+              supportGemIds: support1 ? [support1] : [], 
+              usageConfig: createSmartSkillConfig('shield_slam') 
+            },
+            { 
+              slotIndex: 1, 
+              skillGemId: 'shield_block', 
+              supportGemIds: support2 ? [support2] : [], 
+              usageConfig: createSmartSkillConfig('shield_block') 
+            }
           ];
         } else if (role === 'healer') {
+          const skill1 = getSkillGemById('healing_wave');
+          const skill2 = getSkillGemById('massive_heal');
+          const support1 = skill1 ? getDefaultSupportGemForSkill(skill1) : null;
+          const support2 = skill2 ? getDefaultSupportGemForSkill(skill2) : null;
+          
           char.skillGems = [
-            { slotIndex: 0, skillGemId: 'healing_wave', supportGemIds: [], usageConfig: createSmartSkillConfig('healing_wave') },
-            { slotIndex: 1, skillGemId: 'massive_heal', supportGemIds: [], usageConfig: createSmartSkillConfig('massive_heal') },
-            { slotIndex: 2, skillGemId: 'rejuvenation', supportGemIds: [], usageConfig: createSmartSkillConfig('rejuvenation') },
-            { slotIndex: 3, skillGemId: 'pain_suppression', supportGemIds: [], usageConfig: createSmartSkillConfig('pain_suppression') }
+            { 
+              slotIndex: 0, 
+              skillGemId: 'healing_wave', 
+              supportGemIds: support1 ? [support1] : [], 
+              usageConfig: createSmartSkillConfig('healing_wave') 
+            },
+            { 
+              slotIndex: 1, 
+              skillGemId: 'massive_heal', 
+              supportGemIds: support2 ? [support2] : [], 
+              usageConfig: createSmartSkillConfig('massive_heal') 
+            }
           ];
         } else if (role === 'dps') {
+          // Assign skills based on build type
+          let skill1Id: string;
+          let skill2Id: string;
+          
+          if (dpsBuildType === 'caster') {
+            // Caster: Use spell skills (fireball, shadow_bolt, ice_lance, lightning_bolt)
+            const casterSkills = ['fireball', 'shadow_bolt', 'ice_lance', 'lightning_bolt'];
+            const selected = casterSkills.sort(() => Math.random() - 0.5).slice(0, 2);
+            skill1Id = selected[0];
+            skill2Id = selected[1];
+          } else if (dpsBuildType === 'attack_ranged') {
+            // Ranged attack (bow): Use bow attack skills
+            const rangedSkills = ['split_arrow', 'rain_of_arrows', 'barrage', 'tornado_shot', 'ice_shot', 'lightning_arrow'];
+            const selected = rangedSkills.sort(() => Math.random() - 0.5).slice(0, 2);
+            skill1Id = selected[0];
+            skill2Id = selected[1];
+          } else if (dpsBuildType === 'attack_melee') {
+            // Melee attack: Use melee attack skills
+            const meleeSkills = ['cleave', 'heavy_strike', 'double_strike', 'cyclone', 'reave', 'lacerate'];
+            const selected = meleeSkills.sort(() => Math.random() - 0.5).slice(0, 2);
+            skill1Id = selected[0];
+            skill2Id = selected[1];
+          } else {
+            // Fallback for class-based DPS or unknown build type
+            // Infer from stats if class-based
+            const int = char.baseStats.intelligence;
+            const dex = char.baseStats.dexterity;
+            const str = char.baseStats.strength;
+            
+            if (int > dex && int > str && int > 30) {
+              // Caster build
+              skill1Id = 'fireball';
+              skill2Id = 'shadow_bolt';
+            } else if (dex > str && dex > 30) {
+              // Ranged build
+              skill1Id = 'split_arrow';
+              skill2Id = 'barrage';
+            } else {
+              // Melee build
+              skill1Id = 'cleave';
+              skill2Id = 'heavy_strike';
+            }
+          }
+          
+          const skill1 = getSkillGemById(skill1Id);
+          const skill2 = getSkillGemById(skill2Id);
+          const support1 = skill1 ? getDefaultSupportGemForSkill(skill1) : null;
+          const support2 = skill2 ? getDefaultSupportGemForSkill(skill2) : null;
+          
           char.skillGems = [
-            { slotIndex: 0, skillGemId: 'fireball', supportGemIds: [], usageConfig: createSmartSkillConfig('fireball') },
-            { slotIndex: 1, skillGemId: 'shadow_bolt', supportGemIds: [], usageConfig: createSmartSkillConfig('shadow_bolt') },
-            { slotIndex: 2, skillGemId: 'blow_up', supportGemIds: [], usageConfig: createSmartSkillConfig('blow_up') }
+            { 
+              slotIndex: 0, 
+              skillGemId: skill1Id, 
+              supportGemIds: support1 ? [support1] : [], 
+              usageConfig: createSmartSkillConfig(skill1Id) 
+            },
+            { 
+              slotIndex: 1, 
+              skillGemId: skill2Id, 
+              supportGemIds: support2 ? [support2] : [], 
+              usageConfig: createSmartSkillConfig(skill2Id) 
+            }
           ];
         }
         
@@ -479,13 +795,26 @@ export const useGameStore = create<GameState>()(
         }
         
         state.team.push(char);
+        console.log('Character added to team. New team length:', state.team.length);
+        if (slotIndex !== undefined) {
+          state.teamSlotAssignments[slotIndex] = char.id;
+          console.log('Character assigned to slot', slotIndex, '->', char.id);
+        }
         if (!state.selectedCharacterId) {
           state.selectedCharacterId = char.id;
         }
+        console.log('addCharacter complete. Team:', state.team.map(c => ({ id: c.id, name: c.name, role: c.role })));
       }),
 
       removeCharacter: (id) => set(state => {
         state.team = state.team.filter(c => c.id !== id);
+        // Remove from slot assignments
+        for (const [slotIndex, charId] of Object.entries(state.teamSlotAssignments)) {
+          if (charId === id) {
+            delete state.teamSlotAssignments[parseInt(slotIndex)];
+            break;
+          }
+        }
         if (state.selectedCharacterId === id) {
           state.selectedCharacterId = state.team[0]?.id ?? null;
         }
@@ -941,13 +1270,13 @@ export const useGameStore = create<GameState>()(
 
       useOrb: (orbType, itemId) => set(state => {
         if (state.orbs[orbType] <= 0) return;
-        
+
         const item = state.inventory.find(i => i.id === itemId);
         if (!item) return;
-        
+
         // Apply orb effect
         const result = applyOrbToItem(item, orbType);
-        
+
         if (result.success) {
           state.orbs[orbType]--;
           // Update item in inventory
@@ -957,6 +1286,53 @@ export const useGameStore = create<GameState>()(
           }
         }
       }),
+
+      applyOrbToItemAction: (itemId, orbType) => {
+        const state = get();
+
+        // Check if player has the orb
+        if (state.orbs[orbType] <= 0) {
+          return {
+            success: false,
+            message: `Not enough ${CRAFTING_ORBS.find(o => o.type === orbType)?.name || orbType} orbs`
+          };
+        }
+
+        // Find the item in inventory
+        const itemIndex = state.inventory.findIndex(i => i.id === itemId);
+        if (itemIndex < 0) {
+          return {
+            success: false,
+            message: 'Item not found'
+          };
+        }
+
+        const item = state.inventory[itemIndex];
+
+        // Apply the orb
+        const result = applyOrbToItem(item, orbType);
+
+        if (!result.success || !result.item) {
+          // Don't consume orb if crafting failed
+          return {
+            success: false,
+            message: result.message
+          };
+        }
+
+        // Update the item in state
+        set(state => {
+          // Consume the orb only if crafting succeeded
+          state.orbs[orbType] = Math.max(0, state.orbs[orbType] - 1);
+          // Update the item
+          state.inventory[itemIndex] = result.item!;
+        });
+
+        return {
+          success: true,
+          message: result.message
+        };
+      },
 
       setActiveTab: (tab) => {
         const state = get();
@@ -1381,18 +1757,17 @@ export const useGameStore = create<GameState>()(
               }
               
               // Recalculate derived stats from attributes (PoE style)
-              // Life from Strength: +1 Life per 2 Strength + flat bonus per level
-              const lifeFromStrength = Math.floor(char.baseStats.strength / 2);
-              const baseLife = char.role === 'tank' ? 500 : char.role === 'healer' ? 200 : 300;
-              const levelLifeBonus = (char.level - 1) * (char.role === 'tank' ? 15 : 10); // +15 HP per level for tank, +10 for others
-              char.baseStats.maxLife = baseLife + lifeFromStrength + levelLifeBonus;
+              // Use the same PoE formula as character creation for consistency
+              // PoE base life: 38 at level 1, +12 per level (much more gradual scaling)
+              const poeBaseLife = calculateBaseLifeFromLevel(char.level);
+              const lifeFromStrength = calculateLifeFromStrength(char.baseStats.strength);
+              char.baseStats.maxLife = poeBaseLife + lifeFromStrength;
               char.baseStats.life = char.baseStats.maxLife; // Full heal on level up
               
-              // Mana from Intelligence: +1 Mana per 2 Intelligence + flat bonus per level
-              const manaFromIntelligence = Math.floor(char.baseStats.intelligence / 2);
-              const baseMana = char.role === 'healer' ? 200 : 0;
-              const levelManaBonus = (char.level - 1) * (char.role === 'healer' ? 10 : 5); // +10 mana per level for healer, +5 for others
-              char.baseStats.maxMana = baseMana + manaFromIntelligence + levelManaBonus;
+              // PoE base mana: 34 at level 1, +6 per level (much more gradual scaling)
+              const poeBaseMana = calculateBaseManaFromLevel(char.level);
+              const manaFromIntelligence = calculateManaFromIntelligence(char.baseStats.intelligence);
+              char.baseStats.maxMana = poeBaseMana + manaFromIntelligence;
               char.baseStats.mana = char.baseStats.maxMana; // Full mana on level up
               
               // Energy Shield from Intelligence: +0.2% per Intelligence (PoE formula)
@@ -1406,6 +1781,15 @@ export const useGameStore = create<GameState>()(
               const baseEvasion = char.role === 'dps' ? 600 : char.role === 'healer' ? 400 : 200;
               const evasionMultiplier = 1 + (char.baseStats.dexterity * 0.002);
               char.baseStats.evasion = Math.floor(baseEvasion * evasionMultiplier);
+              
+              // Apply permanent -30% resistance penalty when reaching level 40
+              // This penalty is applied once when crossing level 40 threshold
+              if (char.level >= 40 && oldLevel < 40) {
+                char.baseStats.fireResistance = (char.baseStats.fireResistance || 0) - 30;
+                char.baseStats.coldResistance = (char.baseStats.coldResistance || 0) - 30;
+                char.baseStats.lightningResistance = (char.baseStats.lightningResistance || 0) - 30;
+                char.baseStats.chaosResistance = (char.baseStats.chaosResistance || 0) - 30;
+              }
             }
             
             result = {

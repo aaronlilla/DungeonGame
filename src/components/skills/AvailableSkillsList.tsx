@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import type { SkillGem } from '../../types/skills';
 import type { Character } from '../../types/character';
-import { GiShieldBash, GiHealthPotion, GiBroadsword } from 'react-icons/gi';
+import { GiShieldBash, GiHealthPotion, GiBroadsword, GiPadlock } from 'react-icons/gi';
 import { getTagColor } from '../../utils/tagColors';
 import { SkillGemTooltip } from './SkillGemTooltip';
 
@@ -23,12 +23,15 @@ interface AvailableSkillsListProps {
 function SkillItem({
   skill,
   isEquipped,
+  characterLevel,
   onClick,
 }: {
   skill: SkillGem;
   isEquipped: boolean;
+  characterLevel: number;
   onClick: () => void;
 }) {
+  const isLocked = skill.levelRequirement > characterLevel;
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
@@ -53,11 +56,11 @@ function SkillItem({
 
   // Use onMouseDown for immediate response - doesn't wait for re-renders
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button === 0 && !isEquipped) { // Left click only
+    if (e.button === 0 && !isEquipped && !isLocked) { // Left click only, not equipped, and not locked
       e.preventDefault();
       onClick();
     }
-  }, [onClick, isEquipped]);
+  }, [onClick, isEquipped, isLocked]);
   
   return (
     <div 
@@ -65,6 +68,11 @@ function SkillItem({
       onMouseDown={handleMouseDown}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      style={{
+        opacity: isLocked ? 0.6 : 1,
+        filter: isLocked ? 'grayscale(0.4)' : 'none',
+        cursor: isLocked ? 'not-allowed' : 'pointer',
+      }}
     >
       {isEquipped && (
         <div style={{
@@ -113,6 +121,26 @@ function SkillItem({
           onMouseLeave={handleMouseLeave}
         >
           {skill.icon}
+          {/* Lock icon overlay */}
+          {isLocked && (
+            <div style={{
+              position: 'absolute',
+              top: '2px',
+              right: '2px',
+              background: 'rgba(100, 80, 60, 0.9)',
+              borderRadius: '4px',
+              padding: '2px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+              zIndex: 10,
+            }}
+            title={`Locked: Requires Level ${skill.levelRequirement}`}
+            >
+              <GiPadlock style={{ fontSize: '0.6rem', color: '#d4c4a8' }} />
+            </div>
+          )}
           {/* Gloss */}
           <div style={{
             position: 'absolute',
@@ -138,15 +166,27 @@ function SkillItem({
         <div style={{ flex: 1, minWidth: 0 }}>
           {/* Skill Name */}
           <div style={{ 
-            color: isEquipped ? 'rgba(46, 204, 113, 0.9)' : isHovered ? '#e2d0ff' : '#d4c4a8', 
+            color: isLocked ? 'rgba(160, 150, 130, 0.6)' : (isEquipped ? 'rgba(46, 204, 113, 0.9)' : isHovered ? '#e2d0ff' : '#d4c4a8'), 
             fontFamily: "'Cinzel', Georgia, serif",
             fontWeight: 600,
             fontSize: '0.9rem',
             marginBottom: '0.35rem',
             transition: 'color 0.2s ease',
-            textShadow: isHovered ? '0 0 8px rgba(180, 150, 220, 0.3)' : 'none',
+            textShadow: isHovered && !isLocked ? '0 0 8px rgba(180, 150, 220, 0.3)' : 'none',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.4rem',
           }}>
             {skill.name}
+            {isLocked && (
+              <span style={{
+                fontSize: '0.65rem',
+                color: 'rgba(180, 140, 100, 0.8)',
+                fontWeight: 500,
+              }}>
+                (Level {skill.levelRequirement})
+              </span>
+            )}
           </div>
           
           {/* Tags */}
@@ -223,8 +263,7 @@ function SkillItem({
 export function AvailableSkillsList({ 
   character, 
   availableSkills, 
-  onEquipSkill,
-  getEquippedSkill 
+  onEquipSkill
 }: AvailableSkillsListProps) {
   // Corner ornament style helper
   const cornerStyle = (position: 'tl' | 'tr' | 'bl' | 'br'): React.CSSProperties => ({
@@ -361,12 +400,10 @@ export function AvailableSkillsList({
                 key={skill.id}
                 skill={skill}
                 isEquipped={isEquipped}
+                characterLevel={character.level}
                 onClick={() => {
-                  if (!isEquipped) {
-                    const emptySlot = [0, 1, 2, 3, 4].find(i => !getEquippedSkill(i));
-                    if (emptySlot !== undefined) {
-                      onEquipSkill(skill.id);
-                    }
+                  if (!isEquipped && skill.levelRequirement <= character.level) {
+                    onEquipSkill(skill.id);
                   }
                 }}
               />

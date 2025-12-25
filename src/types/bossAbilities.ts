@@ -410,7 +410,7 @@ export const BOSS_ABILITIES: Record<string, BossAbility[]> = {
       castTime: 0,
       cooldown: 4,
       isSignature: false,
-      damage: 50, // Scaled up for balanced DPS (~12.5 DPS)
+      damage: 20, // Reduced from 50 - hits all party members, balanced for tier 1 boss
       damageType: 'chaos',
       targetType: 'all',
       effects: [{ type: 'silence', name: 'Mute Reality', duration: 1 }]
@@ -422,7 +422,7 @@ export const BOSS_ABILITIES: Record<string, BossAbility[]> = {
       castTime: 0,
       cooldown: 3,
       isSignature: false,
-      damage: 50, // Scaled up for balanced DPS (~16.67 DPS)
+      damage: 20, // Reduced from 50 - hits all party members, balanced for tier 1 boss
       damageType: 'chaos',
       targetType: 'all'
     },
@@ -433,7 +433,7 @@ export const BOSS_ABILITIES: Record<string, BossAbility[]> = {
       castTime: 0,
       cooldown: 6,
       isSignature: false,
-      damage: 40, // Scaled up for balanced DPS (~6.67 DPS)
+      damage: 15, // Reduced from 40 - hits all party members, scales with missing mana
       damageType: 'chaos',
       targetType: 'all'
     },
@@ -445,7 +445,7 @@ export const BOSS_ABILITIES: Record<string, BossAbility[]> = {
       cooldown: 999, // Once per fight
       isSignature: true,
       isOncePerFight: true,
-      damage: 40,
+      damage: 20, // Reduced from 40 - hits all party members, once per fight
       damageType: 'chaos',
       targetType: 'all',
       effects: [{ type: 'silence', name: 'Absolute Silence', duration: 1 }]

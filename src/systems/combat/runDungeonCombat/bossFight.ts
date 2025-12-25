@@ -4,7 +4,8 @@ import { sleep, TICK_MS, TICK_DURATION, secondsToTicks, ticksToSeconds, GCD_TICK
 import { 
   calculateArmorReduction, 
   rollBlock, 
-  BLOCK_DAMAGE_REDUCTION 
+  BLOCK_DAMAGE_REDUCTION,
+  calculateDamageWithResistances
 } from '../../../types/character';
 import { createFloatingNumber } from '../../../utils/combat';
 import { assignEnemyDefensiveStats } from '../../../utils/enemyStats';
@@ -31,7 +32,9 @@ function trackDamageTaken(
   target: TeamMemberState,
   damage: number,
   sourceName: string,
-  abilityName: string
+  abilityName: string,
+  currentTick?: number,
+  resetESRecharge: boolean = true
 ): void {
   if (!target.damageTaken) target.damageTaken = 0;
   if (!target.damageTakenBySource) target.damageTakenBySource = {};
@@ -41,6 +44,12 @@ function trackDamageTaken(
   target.damageTakenBySource[sourceName] = (target.damageTakenBySource[sourceName] || 0) + damage;
   target.damageTakenByAbility[abilityName] = (target.damageTakenByAbility[abilityName] || 0) + damage;
   target.recentDamageTaken = (target.recentDamageTaken || 0) + damage;
+  
+  // Update ES recharge delay timer (only if not blocked/evaded)
+  // Evading or blocking doesn't count as getting hit for ES recharge purposes
+  if (currentTick !== undefined && damage > 0 && resetESRecharge) {
+    target.lastDamageTakenTick = currentTick;
+  }
 }
 
 export interface BossFightResult {
@@ -575,15 +584,24 @@ export async function runBossFight(
           const effectiveArmor = member.armor * (1 + (member.armorBuff || 0) / 100);
           const painSuppMult = member.damageReduction ? (1 - member.damageReduction / 100) : 1;
           const armorMult = calculateArmorReduction(effectiveArmor, pulseDamage);
-          let dmg = Math.floor(pulseDamage * armorMult * painSuppMult);
+          let damageAfterArmor = Math.floor(pulseDamage * armorMult * painSuppMult);
           const blockChance = (member.blockChance || 0) + (member.blockBuff || 0);
           const blocked = rollBlock(blockChance);
           if (blocked) {
-            dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+            damageAfterArmor = Math.floor(damageAfterArmor * (1 - BLOCK_DAMAGE_REDUCTION));
             member.lastBlockTime = Date.now();
           }
-          member.health = Math.max(0, member.health - dmg);
-          trackDamageTaken(member, dmg, bossDisplayName, 'Pulse');
+          const damageResult = calculateDamageWithResistances(
+            damageAfterArmor, 'physical',
+            { health: member.health, maxHealth: member.maxHealth, energyShield: member.energyShield || 0, maxEnergyShield: member.maxEnergyShield || 0, fireResistance: member.fireResistance || 0, coldResistance: member.coldResistance || 0, lightningResistance: member.lightningResistance || 0, chaosResistance: member.chaosResistance || 0 }
+          );
+          // Safety checks to prevent NaN
+          const safeESRemaining = isNaN(damageResult.esRemaining) || !isFinite(damageResult.esRemaining) ? (member.energyShield || 0) : Math.max(0, damageResult.esRemaining);
+          const safeLifeRemaining = isNaN(damageResult.lifeRemaining) || !isFinite(damageResult.lifeRemaining) ? (member.maxHealth || 0) : Math.max(0, damageResult.lifeRemaining);
+          member.energyShield = safeESRemaining;
+          member.health = safeLifeRemaining;
+          const dmg = isNaN(damageResult.totalDamage) || !isFinite(damageResult.totalDamage) ? 0 : damageResult.totalDamage;
+          trackDamageTaken(member, dmg, bossDisplayName, 'Pulse', currentTick, !blocked);
           const jitterX = (Math.random() * 80) - 40;
           const jitterY = (Math.random() * 60) - 30;
           const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 40 + jitterY);
@@ -614,15 +632,24 @@ export async function runBossFight(
           const effectiveArmor = member.armor * (1 + (member.armorBuff || 0) / 100);
           const painSuppMult = member.damageReduction ? (1 - member.damageReduction / 100) : 1;
           const armorMult = calculateArmorReduction(effectiveArmor, volleyDamage);
-          let dmg = Math.floor(volleyDamage * armorMult * painSuppMult);
+          let damageAfterArmor = Math.floor(volleyDamage * armorMult * painSuppMult);
           const blockChance = (member.blockChance || 0) + (member.blockBuff || 0);
           const blocked = rollBlock(blockChance);
           if (blocked) {
-            dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+            damageAfterArmor = Math.floor(damageAfterArmor * (1 - BLOCK_DAMAGE_REDUCTION));
             member.lastBlockTime = Date.now();
           }
-          member.health = Math.max(0, member.health - dmg);
-          trackDamageTaken(member, dmg, bossDisplayName, 'Volley');
+          const damageResult = calculateDamageWithResistances(
+            damageAfterArmor, 'physical',
+            { health: member.health, maxHealth: member.maxHealth, energyShield: member.energyShield || 0, maxEnergyShield: member.maxEnergyShield || 0, fireResistance: member.fireResistance || 0, coldResistance: member.coldResistance || 0, lightningResistance: member.lightningResistance || 0, chaosResistance: member.chaosResistance || 0 }
+          );
+          // Safety checks to prevent NaN
+          const safeESRemaining = isNaN(damageResult.esRemaining) || !isFinite(damageResult.esRemaining) ? (member.energyShield || 0) : Math.max(0, damageResult.esRemaining);
+          const safeLifeRemaining = isNaN(damageResult.lifeRemaining) || !isFinite(damageResult.lifeRemaining) ? (member.maxHealth || 0) : Math.max(0, damageResult.lifeRemaining);
+          member.energyShield = safeESRemaining;
+          member.health = safeLifeRemaining;
+          const dmg = isNaN(damageResult.totalDamage) || !isFinite(damageResult.totalDamage) ? 0 : damageResult.totalDamage;
+          trackDamageTaken(member, dmg, bossDisplayName, 'Volley', currentTick, !blocked);
           const jitterX = (Math.random() * 80) - 40;
           const jitterY = (Math.random() * 60) - 30;
           const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 40 + jitterY);
@@ -657,15 +684,24 @@ export async function runBossFight(
         const painSuppMult = tank.damageReduction ? (1 - tank.damageReduction / 100) : 1;
         const rawTankBusterDamage = bossEnemy.damage * 3.0;
         const armorMult = calculateArmorReduction(effectiveArmor, rawTankBusterDamage);
-        let dmg = Math.floor(rawTankBusterDamage * armorMult * painSuppMult);
+        let damageAfterArmor = Math.floor(rawTankBusterDamage * armorMult * painSuppMult);
         const blockChance = (tank.blockChance || 0) + (tank.blockBuff || 0);
         const blocked = rollBlock(blockChance);
         if (blocked) {
-          dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+          damageAfterArmor = Math.floor(damageAfterArmor * (1 - BLOCK_DAMAGE_REDUCTION));
           tank.lastBlockTime = Date.now();
         }
-        tank.health = Math.max(0, tank.health - dmg);
-        trackDamageTaken(tank, dmg, bossDisplayName, 'Tank Buster');
+        const damageResult = calculateDamageWithResistances(
+          damageAfterArmor, 'physical',
+          { health: tank.health, maxHealth: tank.maxHealth, energyShield: tank.energyShield || 0, maxEnergyShield: tank.maxEnergyShield || 0, fireResistance: tank.fireResistance || 0, coldResistance: tank.coldResistance || 0, lightningResistance: tank.lightningResistance || 0, chaosResistance: tank.chaosResistance || 0 }
+        );
+        // Safety checks to prevent NaN
+        const safeESRemaining = isNaN(damageResult.esRemaining) || !isFinite(damageResult.esRemaining) ? (tank.energyShield || 0) : Math.max(0, damageResult.esRemaining);
+        const safeLifeRemaining = isNaN(damageResult.lifeRemaining) || !isFinite(damageResult.lifeRemaining) ? (tank.maxHealth || 0) : Math.max(0, damageResult.lifeRemaining);
+        tank.energyShield = safeESRemaining;
+        tank.health = safeLifeRemaining;
+        const dmg = isNaN(damageResult.totalDamage) || !isFinite(damageResult.totalDamage) ? 0 : damageResult.totalDamage;
+        trackDamageTaken(tank, dmg, bossDisplayName, 'Tank Buster', currentTick, !blocked);
         bossEnemy.gcdEndTick = currentTick + GCD_TICKS;
         const jitterX = (Math.random() * 80) - 40;
         const jitterY = (Math.random() * 60) - 30;
@@ -711,15 +747,24 @@ export async function runBossFight(
         const painSuppMult = tank.damageReduction ? (1 - tank.damageReduction / 100) : 1;
         const rawSlamDamage = bossEnemy.damage * 1.2;
         const armorMult = calculateArmorReduction(effectiveArmor, rawSlamDamage);
-        let dmg = Math.floor(rawSlamDamage * armorMult * painSuppMult);
+        let damageAfterArmor = Math.floor(rawSlamDamage * armorMult * painSuppMult);
         const blockChance = (tank.blockChance || 0) + (tank.blockBuff || 0);
         const blocked = rollBlock(blockChance);
         if (blocked) {
-          dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
+          damageAfterArmor = Math.floor(damageAfterArmor * (1 - BLOCK_DAMAGE_REDUCTION));
           tank.lastBlockTime = Date.now();
         }
-        tank.health = Math.max(0, tank.health - dmg);
-        trackDamageTaken(tank, dmg, bossDisplayName, 'Slam');
+        const damageResult = calculateDamageWithResistances(
+          damageAfterArmor, 'physical',
+          { health: tank.health, maxHealth: tank.maxHealth, energyShield: tank.energyShield || 0, maxEnergyShield: tank.maxEnergyShield || 0, fireResistance: tank.fireResistance || 0, coldResistance: tank.coldResistance || 0, lightningResistance: tank.lightningResistance || 0, chaosResistance: tank.chaosResistance || 0 }
+        );
+        // Safety checks to prevent NaN
+        const safeESRemaining = isNaN(damageResult.esRemaining) || !isFinite(damageResult.esRemaining) ? (tank.energyShield || 0) : Math.max(0, damageResult.esRemaining);
+        const safeLifeRemaining = isNaN(damageResult.lifeRemaining) || !isFinite(damageResult.lifeRemaining) ? (tank.maxHealth || 0) : Math.max(0, damageResult.lifeRemaining);
+        tank.energyShield = safeESRemaining;
+        tank.health = safeLifeRemaining;
+        const dmg = isNaN(damageResult.totalDamage) || !isFinite(damageResult.totalDamage) ? 0 : damageResult.totalDamage;
+        trackDamageTaken(tank, dmg, bossDisplayName, 'Slam', currentTick, !blocked);
         bossEnemy.gcdEndTick = currentTick + GCD_TICKS;
         const jitterX = (Math.random() * 80) - 40;
         const jitterY = (Math.random() * 60) - 30;

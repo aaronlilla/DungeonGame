@@ -9,6 +9,7 @@ import { getEnemyById } from '../../../types/dungeon';
 import { calculateExperienceFromEnemy } from '../../../utils/leveling';
 import { generateEnemyLootDrops } from '../../crafting';
 import { createVerboseTickSummary } from '../verboseLogging';
+import { updateTeamMemberStats } from '../../../utils/combat';
 
 export interface CombatLoopResult {
   teamStates: TeamMemberState[];
@@ -173,6 +174,11 @@ export async function runCombatLoop(
     currentTick++;
     totalTime = ticksToSeconds(currentTick);
     tickCount++;
+    
+    // Update verbose logger current tick
+    if (context.verboseLogger) {
+      context.verboseLogger.setCurrentTick(currentTick);
+    }
     
     // ===== TRICKLE-IN LOGIC =====
     // Gradually add enemies from queue over 6 seconds, with pack-based distribution
@@ -395,6 +401,11 @@ export async function runCombatLoop(
     // Process buffs, HoTs, regen using module
     teamStates = processBuffsAndRegen(context, teamStates, currentTick);
     
+    // Log tick summary every 10 ticks (1 second) for verbose logging
+    if (context.verboseLogger && tickCount % 10 === 0) {
+      context.verboseLogger.logTickSummary(totalTime, currentTick, teamStates, currentEnemies, currentCombatState.phase, _pullIdx);
+    }
+    
     // Sync back from context
     currentCombatState = context.currentCombatState;
     totalTime = context.totalTime;
@@ -489,14 +500,14 @@ export async function runCombatLoop(
       }
     }
     
-    // Check for newly dead enemies and mark them (experience awarded at end of pull)
+    // Check for newly dead enemies and award experience immediately
     currentEnemies.forEach(enemy => {
       if (enemy.health <= 0 && !enemy.isDead) {
         enemy.isDead = true;
         enemy.deathTick = currentTick;
         enemy.deathTime = Date.now();
         
-        // Track enemy for end-of-pull experience (don't award yet)
+        // Award experience immediately when enemy dies (mid-combat level-ups)
         if (!experienceAwarded.has(enemy.id)) {
           experienceAwarded.add(enemy.id);
           
@@ -513,6 +524,64 @@ export async function runCombatLoop(
             context.quantityBonus,
             context.rarityBonus
           );
+          
+          // Award experience to all alive team members immediately
+          const aliveTeamMembers = teamStates.filter(m => !m.isDead);
+          const enemyDef = getEnemyById(enemy.enemyId);
+          
+          if (enemyDef) {
+            aliveTeamMembers.forEach(member => {
+              const character = team.find(c => c.id === member.id);
+              if (!character) return;
+              
+              // Calculate XP based on this character's level
+              const expFromEnemy = calculateExperienceFromEnemy(
+                enemyDef,
+                selectedKeyLevel,
+                scaling.healthMultiplier,
+                character.level
+              );
+              
+              // Award experience immediately
+              if (expFromEnemy > 0) {
+                const levelUpResult = awardExperience(character.id, expFromEnemy);
+                if (levelUpResult && levelUpResult.leveledUp) {
+                  // Update team member stats immediately (full heal, full mana, new stats)
+                  const updatedCharacter = context.team.find(c => c.id === character.id);
+                  if (updatedCharacter) {
+                    const memberIndex = teamStates.findIndex(m => m.id === character.id);
+                    if (memberIndex >= 0) {
+                      teamStates[memberIndex] = updateTeamMemberStats(
+                        teamStates[memberIndex],
+                        updatedCharacter,
+                        context.inventory,
+                        context.team
+                      );
+                      // Update context teamStates reference
+                      context.teamStates = teamStates;
+                    }
+                  }
+                  
+                  // Add level up animation and log
+                  updateCombatState(prev => ({ 
+                    ...prev, 
+                    levelUpAnimations: [...prev.levelUpAnimations, {
+                      characterId: character.id,
+                      newLevel: levelUpResult.newLevel,
+                      timestamp: Date.now()
+                    }],
+                    combatLog: [...prev.combatLog, { 
+                      timestamp: totalTime, 
+                      type: 'level', 
+                      source: character.name, 
+                      target: '', 
+                      message: `🎉 ${character.name} reached level ${levelUpResult.newLevel}! (Full Heal!)` 
+                    }] 
+                  }));
+                }
+              }
+            });
+          }
           
           // Update combat state with new loot drops and death message
           updateCombatState(prev => ({ 
@@ -586,61 +655,8 @@ export async function runCombatLoop(
     };
   }
 
-  // === AWARD EXPERIENCE AT END OF PULL ===
-  // Only award if pull was successful (enemies dead, team alive)
-  if (experienceAwarded.size > 0 && teamStates.some(m => !m.isDead)) {
-    const aliveTeamMembers = teamStates.filter(m => !m.isDead);
-    
-    // Award experience per-character (each character gets XP based on their own level)
-    // This ensures proper experience penalties are applied per character
-    aliveTeamMembers.forEach(member => {
-      const character = team.find(c => c.id === member.id);
-      if (!character) return;
-      
-      let characterExpGained = 0;
-      
-      // Calculate exp from all killed enemies for this specific character
-      experienceAwarded.forEach(enemyId => {
-        // Find the enemy that was killed (by their ID prefix)
-        const killedEnemy = pullEnemies.find(e => e.id === enemyId);
-        if (killedEnemy) {
-          const enemyDef = getEnemyById(killedEnemy.enemyId);
-          if (enemyDef) {
-            // Calculate XP based on this character's level (not average)
-            const expFromEnemy = calculateExperienceFromEnemy(
-              enemyDef, 
-              selectedKeyLevel, 
-              scaling.healthMultiplier, 
-              character.level  // Use character's own level for penalty calculation
-            );
-            characterExpGained += expFromEnemy;
-          }
-        }
-      });
-      
-      // Award calculated exp to this character
-      if (characterExpGained > 0) {
-        const levelUpResult = awardExperience(character.id, characterExpGained);
-        if (levelUpResult && levelUpResult.leveledUp) {
-          updateCombatState(prev => ({ 
-            ...prev, 
-            levelUpAnimations: [...prev.levelUpAnimations, {
-              characterId: character.id,
-              newLevel: levelUpResult.newLevel,
-              timestamp: Date.now()
-            }],
-            combatLog: [...prev.combatLog, { 
-              timestamp: totalTime, 
-              type: 'level', 
-              source: character.name, 
-              target: '', 
-              message: `🎉 ${character.name} reached level ${levelUpResult.newLevel}!` 
-            }] 
-          }));
-        }
-      }
-    });
-  }
+  // Experience is now awarded immediately when enemies die (mid-combat level-ups)
+  // No need to award at end of pull since it's already been awarded
 
   return {
     teamStates,

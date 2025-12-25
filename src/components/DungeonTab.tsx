@@ -19,6 +19,7 @@ import { runDungeonCombat } from '../systems/dungeonCombat';
 import { runCombatSimulationTest } from '../systems/combatSimulationTest';
 import { CombatTestModal } from './dungeon/CombatTestModal';
 import { generateLeagueEncounters } from '../types/maps';
+import { generateAutoRoute } from '../systems/combatSimulation/routeGenerator';
 import type { MapAffixEffectType } from '../types/maps';
 import { generateEnemyLootDrops } from '../systems/crafting';
 import { getItemGridSize } from '../types/items';
@@ -47,7 +48,8 @@ export function DungeonTab() {
     stashTabs,
     activeStashTabId,
     addItemToStash,
-    clearActivatedMap
+    clearActivatedMap,
+    activeTab
   } = useGameStore();
 
   const [routePulls, setRoutePulls] = useState<RoutePull[]>([]);
@@ -142,6 +144,7 @@ export function DungeonTab() {
   const combatRef = useRef<CombatRef>({ stop: false, paused: false, resurrectRequest: null, bloodlustRequest: false, abilityCooldowns: {} });
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapScrollRef = useRef<HTMLDivElement>(null);
+  const hasStoppedCombatRef = useRef(false);
 
   // Initialize boss names when dungeon is created
   const initializeBossNames = useCallback((dungeon: typeof SAMPLE_DUNGEON) => {
@@ -532,6 +535,43 @@ export function DungeonTab() {
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [isRunning]);
+
+  // Stop combat when navigating away from dungeon tab
+  useEffect(() => {
+    if (activeTab !== 'dungeon' && isRunning && !hasStoppedCombatRef.current) {
+      // Mark that we've stopped combat to prevent multiple stops
+      hasStoppedCombatRef.current = true;
+      
+      // Stop all combat immediately
+      combatRef.current.stop = true;
+      setIsRunning(false);
+      
+      // Create a failure result for the stopped run
+      const failureResult: DungeonRunResult = {
+        success: false,
+        keyLevel: selectedKeyLevel,
+        timeElapsed: elapsedTime,
+        timeLimit: dungeon.timeLimitSeconds,
+        upgradeLevel: 0,
+        loot: [],
+        orbDrops: {},
+        fragmentDrops: [],
+        experienceGained: 0,
+        deaths: combatState.teamStates.filter(t => t.isDead).length,
+        forcesCleared: combatState.forcesCleared,
+        forcesRequired: dungeon.requiredForces,
+        combatLog: combatState.combatLog,
+        failReason: undefined,
+        mapTier: activatedMap?.tier
+      };
+      setRunResult(failureResult);
+    }
+    
+    // Reset the flag when we're back on the dungeon tab and not running
+    if (activeTab === 'dungeon' && !isRunning) {
+      hasStoppedCombatRef.current = false;
+    }
+  }, [activeTab, isRunning, selectedKeyLevel, elapsedTime, dungeon.timeLimitSeconds, dungeon.requiredForces, combatState.teamStates, combatState.forcesCleared, combatState.combatLog, activatedMap?.tier]);
   
   // Filter out collected loot for display
   const visibleLootDrops = combatState.lootDrops.filter(
@@ -642,6 +682,7 @@ export function DungeonTab() {
     // Only reset the stop flag when explicitly requested (e.g., when clearing route, not when stopping)
     if (resetStopFlag) {
       combatRef.current.stop = false;
+      hasStoppedCombatRef.current = false;
     }
     combatRef.current.paused = false;
   };
@@ -667,81 +708,9 @@ export function DungeonTab() {
   
   const handleAutoRoute = () => {
     if (isRunning) return;
-    const newPulls: RoutePull[] = [];
-    const usedPacks = new Set<string>();
     
-    // Process each gate
-    [1, 2, 3].forEach(gateNum => {
-      const gate = dungeon.gates[gateNum - 1];
-      const requiredForces = gate.requiredForces;
-      let currentGateForces = 0;
-      let bossPulled = false;
-      
-      // Get packs for this gate, sorted by x position (left to right)
-      const gatePacks = dungeon.enemyPacks
-        .filter(p => p.gate === gateNum)
-        .sort((a, b) => a.position.x - b.position.x);
-      
-      // Check if this gate has a boss
-      const bossPack = gatePacks.find(p => p.isGateBoss);
-      const needsBoss = bossPack !== undefined;
-      
-      // Create pulls until we meet requirements
-      while (true) {
-        // Check if we're done with this gate
-        const forcesMet = currentGateForces >= requiredForces;
-        const bossHandled = !needsBoss || bossPulled;
-        if (forcesMet && bossHandled) break;
-        
-        // Find available packs
-        const availablePacks = gatePacks.filter(p => !usedPacks.has(p.id));
-        if (availablePacks.length === 0) break;
-        
-        // Pick which pack to start with
-        let startPack: EnemyPack;
-        if (needsBoss && !bossPulled && forcesMet) {
-          // Forces met but need boss - go get the boss
-          startPack = bossPack!;
-        } else if (needsBoss && !bossPulled && currentGateForces >= requiredForces * 0.5) {
-          // Halfway there and haven't pulled boss - consider getting it
-          startPack = bossPack!;
-        } else {
-          // Normal progression - pick leftmost available
-          startPack = availablePacks[0];
-        }
-        
-        // Start the pull
-        const pullPacks: string[] = [startPack.id];
-        usedPacks.add(startPack.id);
-        let pullForces = startPack.totalForces;
-        if (startPack.isGateBoss) bossPulled = true;
-        
-        // Try to combine with ONE nearby pack
-        const remainingPacks = availablePacks.filter(p => p.id !== startPack.id);
-        const nearbyPack = remainingPacks.find(p => {
-          const dist = Math.sqrt(Math.pow(p.position.x - startPack.position.x, 2) + Math.pow(p.position.y - startPack.position.y, 2));
-          return dist <= startPack.pullRadius;
-        });
-        
-        if (nearbyPack) {
-          // Only add if we still need forces or it's the boss
-          const wouldOvershoot = currentGateForces + pullForces + nearbyPack.totalForces > requiredForces + 10;
-          if (!wouldOvershoot || nearbyPack.isGateBoss) {
-            pullPacks.push(nearbyPack.id);
-            usedPacks.add(nearbyPack.id);
-            pullForces += nearbyPack.totalForces;
-            if (nearbyPack.isGateBoss) bossPulled = true;
-          }
-        }
-        
-        currentGateForces += pullForces;
-        newPulls.push({ 
-          pullNumber: newPulls.length + 1, 
-          packIds: pullPacks, 
-          gate: gateNum as 1 | 2 | 3 
-        });
-      }
-    });
+    // Use the improved route generator
+    const newPulls = generateAutoRoute(dungeon);
     
     setRoutePulls(newPulls); 
     setCurrentPullPacks([]); 
@@ -772,8 +741,12 @@ export function DungeonTab() {
         case 'battlerez':
           const deadMembers = newTeamStates.filter(m => m.isDead);
           if (deadMembers.length > 0) {
-            // Pick a random dead member and request resurrection via ref (combat loop will apply it)
-            const deadMember = deadMembers[Math.floor(Math.random() * deadMembers.length)];
+            // Priority: Tank first, then Healer, then DPS
+            const deadTank = deadMembers.find(m => m.role === 'tank');
+            const deadHealer = deadMembers.find(m => m.role === 'healer');
+            const deadDps = deadMembers.find(m => m.role === 'dps');
+            
+            const deadMember = deadTank || deadHealer || deadDps || deadMembers[0];
             combatRef.current.resurrectRequest = deadMember.id;
             combatRef.current.abilityCooldowns['battlerez'] = 240;
             // Find healer to show them casting
@@ -795,6 +768,9 @@ export function DungeonTab() {
       console.error('Cannot start dungeon: No route created. Please create a route first.');
       return;
     }
+    
+    // Reset the stop combat flag for new run
+    hasStoppedCombatRef.current = false;
     
     // Capture map context
     const currentMapContext = activatedMap ? {
@@ -1063,6 +1039,7 @@ export function DungeonTab() {
             onPauseToggle={() => { combatRef.current.paused = !isPaused; setIsPaused(!isPaused); }}
             onStop={() => { 
               combatRef.current.stop = true; 
+              hasStoppedCombatRef.current = true;
               // Create a failure result
               const failureResult: DungeonRunResult = {
                 success: false,

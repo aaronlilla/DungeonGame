@@ -166,6 +166,9 @@ export interface TeamMemberState {
     attackSpeed: number;
     criticalStrikeChance: number;
   };
+  // Dual wielding tracking
+  lastWeaponUsed?: 'mainHand' | 'offHand' | null; // Track which weapon was used last for alternation
+  isDualWielding?: boolean; // Whether character is currently dual wielding
   // Debuff effects from bosses
   healAbsorb?: number; // Amount of healing absorbed before actual healing applies
   canCastSpells?: boolean; // Whether the player can cast spells (false when silenced)

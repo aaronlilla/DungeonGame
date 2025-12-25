@@ -6,12 +6,16 @@ import { describeSkillConfig, describeSkillConfigDetailed, createSmartSkillConfi
 import { SkillUsageConfigModal } from './SkillUsageConfigModal';
 import { getTagColor } from '../../utils/tagColors';
 import { SkillGemTooltip } from './SkillGemTooltip';
+import { GiPadlock } from 'react-icons/gi';
 
 interface SkillSlotProps {
   slotIndex: number;
   skill: SkillGem | undefined;
   supports: (SupportGem | undefined)[];
   usageConfig?: SkillUsageConfig;
+  isEnabled: boolean;
+  requiredLevel?: number;
+  enabledSupportSlots: number;
   onSelectSlot: () => void;
   onUnequipSkill: () => void;
   onSelectSupportSlot: (supportIndex: number) => void;
@@ -24,6 +28,9 @@ export function SkillSlot({
   skill,
   supports,
   usageConfig,
+  isEnabled,
+  requiredLevel,
+  enabledSupportSlots,
   onSelectSlot,
   onUnequipSkill,
   onSelectSupportSlot,
@@ -54,8 +61,17 @@ export function SkillSlot({
     setIsTooltipVisible(false);
   }, []);
   
+  const maxSupportSlots = skill?.maxSupportSlots ?? 5;
+  
   return (
-    <div className={`skill-slot ${skill ? 'filled' : ''}`}>
+    <div 
+      className={`skill-slot ${skill ? 'filled' : ''} ${!isEnabled ? 'disabled' : ''}`}
+      style={{
+        opacity: isEnabled ? 1 : 0.5,
+        filter: isEnabled ? 'none' : 'grayscale(0.6)',
+        position: 'relative',
+      }}
+    >
       {skill ? (
         <>
           <div className="skill-gem">
@@ -233,25 +249,32 @@ export function SkillSlot({
           {/* Support gem slots */}
           <div className="support-slots">
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.35rem', flex: '0 0 auto' }}>
-              {Array(skill.maxSupportSlots).fill(null).map((_, supportIndex) => {
+              {Array(maxSupportSlots).fill(null).map((_, supportIndex) => {
                 const support = supports[supportIndex];
+                const isSupportEnabled = supportIndex < enabledSupportSlots;
                 return (
                   <div
                     key={supportIndex}
                     className={`support-slot ${support ? 'filled' : ''}`}
                     onClick={() => {
-                      if (support) {
-                        onUnequipSupport(supportIndex);
-                      } else {
-                        onSelectSupportSlot(supportIndex);
+                      if (isSupportEnabled) {
+                        if (support) {
+                          onUnequipSupport(supportIndex);
+                        } else {
+                          onSelectSupportSlot(supportIndex);
+                        }
                       }
                     }}
-                    style={{ cursor: 'pointer' }}
+                    style={{ 
+                      cursor: isSupportEnabled ? 'pointer' : 'default',
+                      opacity: isSupportEnabled ? 1 : 0.4,
+                      filter: isSupportEnabled ? 'none' : 'grayscale(0.8)',
+                    }}
                   >
                     {support ? (
                       <span style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>{support.icon}</span>
                     ) : (
-                      <span style={{ fontSize: '1rem', color: 'var(--text-dim)', opacity: 0.4 }}>+</span>
+                      <span style={{ fontSize: '1rem', color: 'var(--text-dim)', opacity: isSupportEnabled ? 0.4 : 0.2 }}>+</span>
                     )}
                   </div>
                 );
@@ -276,10 +299,14 @@ export function SkillSlot({
         <div 
           className="skill-slot-empty"
           onMouseDown={(e) => {
-            if (e.button === 0) {
+            if (e.button === 0 && isEnabled) {
               e.preventDefault();
               onSelectSlot();
             }
+          }}
+          style={{
+            cursor: isEnabled ? 'pointer' : 'default',
+            position: 'relative',
           }}
         >
           {/* Gem socket placeholder */}
@@ -288,10 +315,42 @@ export function SkillSlot({
               <span className="socket-plus">+</span>
             </div>
             <div className="socket-glow" />
+            {/* Lock icon overlay for locked slots */}
+            {!isEnabled && requiredLevel && (
+              <div style={{
+                position: 'absolute',
+                top: '4px',
+                right: '4px',
+                background: 'rgba(100, 80, 60, 0.95)',
+                borderRadius: '4px',
+                padding: '3px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+                zIndex: 10,
+              }}
+              title={`Locked: Requires Level ${requiredLevel}`}
+              >
+                <GiPadlock style={{ fontSize: '0.7rem', color: '#d4c4a8' }} />
+              </div>
+            )}
           </div>
           <div className="empty-slot-label">
             <span className="slot-number">{slotIndex + 1}</span>
-            <span className="slot-text">Add Skill Gem</span>
+            {!isEnabled && requiredLevel ? (
+              <span className="slot-text" style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.3rem',
+                color: 'rgba(180, 150, 120, 0.9)',
+              }}>
+                <GiPadlock style={{ fontSize: '0.75rem' }} />
+                Level {requiredLevel}
+              </span>
+            ) : (
+              <span className="slot-text">Add Skill Gem</span>
+            )}
           </div>
         </div>
       )}

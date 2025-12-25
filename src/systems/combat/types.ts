@@ -62,6 +62,7 @@ export interface MapAffixEffects {
 
 export interface CombatContext {
   team: Character[];
+  inventory: import('../../types/items').Item[]; // For equipment stats recalculation
   dungeon: Dungeon;
   selectedKeyLevel: number;
   scaling: ReturnType<typeof import('../../types/dungeon').calculateKeyScaling>;
@@ -82,7 +83,7 @@ export interface CombatContext {
   currentCombatState: CombatState;
   // Tick-based cooldowns for healer and tank abilities
   healerCooldowns: { painSuppressionEndTick: number };
-  tankCooldowns: { shieldSlamEndTick: number; defensiveStanceEndTick: number; shieldBlockEndTick: number };
+  tankCooldowns: { shieldSlamEndTick: number; defensiveStanceEndTick: number; shieldBlockEndTick: number; thunderClapEndTick: number };
   // Map-specific bonuses for loot generation
   mapTier: number;
   quantityBonus: number;
@@ -103,6 +104,8 @@ export interface CombatContext {
   batchedLogEntries?: CombatLogEntry[];
   // Track used boss names to avoid duplicates
   usedBossNames?: Set<string>;
+  // Verbose combat logger
+  verboseLogger?: import('./verboseCombatLogger').VerboseCombatLogger;
 }
 
 // ===== COMBAT TIMING CONSTANTS =====

@@ -257,6 +257,15 @@ export function createSmartSkillConfig(skillId: string): SkillUsageConfig {
         }
       };
       
+    case 'circle_of_healing':
+      return {
+        ...createDefaultSkillConfig('heal'),
+        priority: 6, // Higher priority than single-target heals when party is hurt
+        partyHurt: { enabled: true, minCount: 2, healthThreshold: 85 }, // Cast when 2+ allies below 85% HP
+        allyHealth: { enabled: false, target: 'lowest_ally', operator: 'less_than', threshold: 50 }, // Disable single-target check since this is AoE
+        cooldown: { enabled: true, mode: 'normal' }
+      };
+      
     case 'corruption':
       return {
         ...createDefaultSkillConfig('dot'),
@@ -326,7 +335,124 @@ export function createSmartSkillConfig(skillId: string): SkillUsageConfig {
         targetType: 'elite_plus', // Use against dangerous enemies
         cooldown: { enabled: true, mode: 'normal' }
       };
-      
+    
+    // === RANGED ATTACK SKILLS ===
+    case 'split_arrow':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 5,
+        targetCount: 'two_plus', // AoE skill - better with multiple targets
+        targetType: 'any',
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+    
+    case 'rain_of_arrows':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 6,
+        targetCount: 'three_plus', // AoE skill - best with many targets
+        targetType: 'any',
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+    
+    case 'barrage':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 5,
+        targetCount: 'single', // Single-target focused skill
+        targetType: 'lowest_health', // Focus fire on weak enemies
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+    
+    case 'tornado_shot':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 6,
+        targetCount: 'two_plus', // Chaining skill - better with multiple targets
+        targetType: 'any',
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+    
+    case 'ice_shot':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 5,
+        targetCount: 'any', // Can be used on any target count
+        targetType: 'elite_plus', // Slow is more valuable on dangerous enemies
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+    
+    case 'lightning_arrow':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 6,
+        targetCount: 'two_plus', // Chaining skill - better with multiple targets
+        targetType: 'any',
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+    
+    // === MELEE ATTACK SKILLS ===
+    case 'cleave':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 5,
+        targetCount: 'two_plus', // AoE skill - better with multiple targets
+        targetType: 'any',
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+    
+    case 'heavy_strike':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 6,
+        targetCount: 'single', // Single-target high damage skill
+        targetType: 'elite_plus', // High damage is best on dangerous enemies
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+    
+    case 'double_strike':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 5,
+        targetCount: 'any', // Flexible single-target skill
+        targetType: 'lowest_health', // Fast attacks good for finishing off enemies
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+    
+    case 'cyclone':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 7,
+        targetCount: 'three_plus', // Channeled AoE - best with many targets
+        targetType: 'any',
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+    
+    case 'reave':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 6,
+        targetCount: 'two_plus', // AoE skill - better with multiple targets
+        targetType: 'any',
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+    
+    case 'lacerate':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 6,
+        targetCount: 'any', // Can apply DoT to any target
+        targetType: 'elite_plus', // DoT is more valuable on tanky enemies
+        effectApplication: { 
+          enabled: true, 
+          targetGroup: 'enemies', 
+          operator: 'less_than', 
+          count: 99, // Apply DoT to all enemies
+          prioritizeWithout: true 
+        },
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+    
     default:
       return createDefaultSkillConfig('damage');
   }
@@ -417,7 +543,7 @@ export function checkSkillConditions(
 
 function checkTargetCount(condition: TargetCountCondition, count: number): boolean {
   switch (condition) {
-    case 'any': return count > 0;
+    case 'any': return count >= 0; // 'any' means any number including 0 (for healing skills)
     case 'single': return count === 1;
     case 'two_plus': return count >= 2;
     case 'three_plus': return count >= 3;

@@ -214,6 +214,134 @@ export interface CombatLogEntry {
   value?: number;
   ability?: string;
   message: string;
+  // Detailed metadata for verbose logging (optional, added silently)
+  metadata?: CombatLogMetadata;
+}
+
+export interface CombatLogMetadata {
+  // Tick information
+  tick?: number;
+  // Entity state snapshots
+  sourceState?: EntitySnapshot;
+  targetState?: EntitySnapshot;
+  allEntities?: EntitySnapshot[];
+  // Combat context
+  combatPhase?: 'traveling' | 'combat' | 'recovery' | 'boss' | 'victory' | 'defeat';
+  pullIndex?: number;
+  // Damage/heal details
+  damageDetails?: {
+    baseDamage?: number;
+    crit?: boolean;
+    critMultiplier?: number;
+    damageType?: 'physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'shadow' | 'holy' | 'magic' | 'mixed';
+    blocked?: boolean;
+    blockAmount?: number;
+    evaded?: boolean;
+    mitigated?: boolean;
+    mitigationAmount?: number;
+    resistanceReduction?: number;
+    armorReduction?: number;
+    beforeHealth?: number;
+    afterHealth?: number;
+    beforeES?: number;
+    afterES?: number;
+    beforeMana?: number;
+    afterMana?: number;
+  };
+  // Ability/Skill details
+  abilityDetails?: {
+    skillId?: string;
+    skillName?: string;
+    skillIcon?: string;
+    castTime?: number;
+    cooldown?: number;
+    manaCost?: number;
+    supportGems?: string[];
+    damageMultiplier?: number;
+    bloodlustActive?: boolean;
+  };
+  // Talent/Effect details
+  talentDetails?: {
+    selectedTalents?: Record<string, any>;
+    talentBonuses?: Record<string, number>;
+    passiveEffects?: Array<{ name: string; effect: any }>;
+  };
+  // Map/Dungeon details
+  dungeonDetails?: {
+    dungeonName?: string;
+    keyLevel?: number;
+    mapTier?: number;
+    mapAffixes?: string[];
+    mapAffixEffects?: {
+      enemyDamageIncrease?: number;
+      enemyHealthIncrease?: number;
+      playerDamageReduction?: number;
+      enemySpeed?: number;
+      twinBoss?: boolean;
+    };
+    scaling?: {
+      healthMultiplier?: number;
+      damageMultiplier?: number;
+      rewardMultiplier?: number;
+    };
+  };
+  // Equipment details
+  equipmentDetails?: {
+    weapon?: any;
+    armor?: any[];
+    accessories?: any[];
+    totalStats?: Record<string, number>;
+  };
+}
+
+export interface EntitySnapshot {
+  id: string;
+  name: string;
+  type: 'team' | 'enemy';
+  role?: 'tank' | 'healer' | 'dps';
+  // Health/Resources
+  health: number;
+  maxHealth: number;
+  healthPercent: number;
+  mana?: number;
+  maxMana?: number;
+  manaPercent?: number;
+  energyShield?: number;
+  maxEnergyShield?: number;
+  esPercent?: number;
+  // Stats
+  stats?: {
+    armor?: number;
+    evasion?: number;
+    accuracy?: number;
+    blockChance?: number;
+    spellBlockChance?: number;
+    spellSuppressionChance?: number;
+    criticalStrikeChance?: number;
+    criticalStrikeMultiplier?: number;
+    fireResistance?: number;
+    coldResistance?: number;
+    lightningResistance?: number;
+    chaosResistance?: number;
+    lifeRegeneration?: number;
+    manaRegeneration?: number;
+    damage?: number;
+  };
+  // Status
+  isDead: boolean;
+  isCasting?: boolean;
+  castAbility?: string;
+  gcdRemaining?: number;
+  // Effects
+  buffs?: Array<{ name: string; duration?: number; stacks?: number; value?: any }>;
+  debuffs?: Array<{ name: string; duration?: number; stacks?: number; value?: any }>;
+  hotEffects?: Array<{ name: string; healPerTick: number; expiresAtTick: number }>;
+  // Talent bonuses
+  talentBonuses?: Record<string, number>;
+  // Combat tracking
+  totalDamage?: number;
+  totalHealing?: number;
+  damageTaken?: number;
 }
 
 // ===== ENEMY DEFINITIONS =====

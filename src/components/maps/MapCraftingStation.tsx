@@ -41,7 +41,7 @@ import augmentationOrbImg from '../../assets/orbs/augmentation_original.png';
 import alchemyOrbImg from '../../assets/orbs/alchemy_original.webp';
 import chaosOrbImg from '../../assets/orbs/chaos_original.webp';
 import exaltedOrbImg from '../../assets/orbs/exalt_original.webp';
-import annulmentOrbImg from '../../assets/orbs/orbofannulment.png';
+import annulmentOrbImg from '../../assets/orbs/annul_original.png';
 import scouringOrbImg from '../../assets/orbs/scouring_original.webp';
 import regalOrbImg from '../../assets/orbs/regal_original.webp';
 import divineOrbImg from '../../assets/orbs/divine_original.webp';
@@ -80,7 +80,10 @@ function MapTooltipContent({ map }: { map: MapItem }) {
   return (
     <div style={{
       width: '100%',
+      height: '100%',
       fontFamily: "'Cormorant', 'Crimson Text', Georgia, serif",
+      display: 'flex',
+      flexDirection: 'column',
     }}>
       {/* Header with rarity background */}
       <div style={{
@@ -239,6 +242,38 @@ const MAP_CRAFTABLE_ORBS: OrbType[] = [
   'alchemy',
   'divine',
 ];
+
+// Helper function to check if an orb can be used on a map
+function canUseOrbOnMap(map: MapItem | null, orbType: OrbType): boolean {
+  if (!map) return false;
+  
+  // Corrupted maps can only use scouring
+  if (map.corrupted && orbType !== 'scouring') {
+    return false;
+  }
+  
+  switch (orbType) {
+    case 'transmutation':
+      return map.rarity === 'normal';
+    case 'alteration':
+      return map.rarity === 'magic';
+    case 'augmentation':
+      return map.rarity === 'magic' && map.affixes.length < 2;
+    case 'regal':
+      return map.rarity === 'magic';
+    case 'scouring':
+      return map.rarity !== 'normal' || map.affixes.length > 0;
+    case 'chaos':
+      return map.rarity === 'rare';
+    case 'alchemy':
+      return map.rarity === 'normal';
+    case 'divine':
+      // Divine orbs are not applicable to maps
+      return false;
+    default:
+      return false;
+  }
+}
 
 interface MapCraftingStationProps {
   isDragging?: boolean;
@@ -476,8 +511,8 @@ export function MapCraftingStation({ isDragging = false, heldMapId: externalHeld
           border: `2px ${craftingStationMap ? 'solid' : 'dashed'} ${isDragging && heldMapId ? 'rgba(201, 162, 39, 0.6)' : craftingStationMap ? 'rgba(201, 162, 39, 0.5)' : 'rgba(201, 162, 39, 0.3)'}`,
           borderRadius: '8px',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          alignItems: craftingStationMap ? 'stretch' : 'center',
+          justifyContent: craftingStationMap ? 'stretch' : 'center',
           cursor: craftingStationMap ? 'pointer' : 'default',
           transition: 'all 0.2s ease',
           overflow: 'auto',
@@ -497,6 +532,7 @@ export function MapCraftingStation({ isDragging = false, heldMapId: externalHeld
             <div style={{
               position: 'relative',
               width: '100%',
+              height: '100%',
               padding: '1rem',
               display: 'flex',
               flexDirection: 'column',
@@ -589,24 +625,26 @@ export function MapCraftingStation({ isDragging = false, heldMapId: externalHeld
               const orb = CRAFTING_ORBS.find(o => o.type === orbType);
               const count = orbs[orbType] || 0;
               const hasOrb = count > 0;
+              const canUse = canUseOrbOnMap(craftingStationMap, orbType);
+              const isUsable = hasOrb && canUse;
               
               return (
                 <motion.div
                   key={orbType}
-                  whileHover={{ scale: hasOrb ? 1.1 : 1 }}
-                  whileTap={{ scale: hasOrb ? 0.95 : 1 }}
+                  whileHover={{ scale: isUsable ? 1.1 : 1 }}
+                  whileTap={{ scale: isUsable ? 0.95 : 1 }}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    cursor: hasOrb ? 'pointer' : 'not-allowed',
-                    opacity: hasOrb ? 1 : 0.4,
+                    cursor: isUsable ? 'pointer' : 'not-allowed',
+                    opacity: isUsable ? 1 : 0.3,
                     gap: '0.25rem',
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (hasOrb && craftingStationMap) {
+                    if (isUsable) {
                       handleDropOrbOnMap(orbType);
                     }
                   }}
@@ -629,15 +667,15 @@ export function MapCraftingStation({ isDragging = false, heldMapId: externalHeld
                       width: '40px',
                       height: '40px',
                       objectFit: 'contain',
-                      filter: hasOrb ? 'none' : 'grayscale(100%)',
+                      filter: isUsable ? 'none' : 'grayscale(100%)',
                       imageRendering: 'auto',
                     }}
                   />
                   <div style={{
                     fontSize: '0.7rem',
-                    color: hasOrb ? '#c9a227' : '#666',
+                    color: isUsable ? '#c9a227' : '#666',
                     fontWeight: 600,
-                    textShadow: hasOrb ? '0 0 4px rgba(201, 162, 39, 0.5)' : 'none',
+                    textShadow: isUsable ? '0 0 4px rgba(201, 162, 39, 0.5)' : 'none',
                   }}>
                     {count}
                   </div>

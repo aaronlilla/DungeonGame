@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { GiHealthPotion, GiShieldBash, GiSkullCrossedBones, GiBroadsword } from 'react-icons/gi';
 import type { CombatState } from '../../types/combat';
@@ -40,6 +40,20 @@ export function TeamStatusPanel({
   onStatsLeave,
   onLevelUpComplete
 }: TeamStatusPanelProps) {
+  // Local state to force re-renders for real-time cast bar updates
+  const [currentTime, setCurrentTime] = useState(Date.now());
+  
+  useEffect(() => {
+    if (!isRunning) return;
+    
+    // Update current time every 50ms for smooth cast bar animation
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 50);
+    
+    return () => clearInterval(interval);
+  }, [isRunning]);
+  
   if (!isRunning) return null;
 
   // Sort team states by role: tank, healer, then dps
@@ -83,7 +97,6 @@ export function TeamStatusPanel({
           const portrait = classId ? getClassPortrait(classId) : null;
           const background = classId ? getClassBackground(classId) : null;
           
-          const castDuration = member.castTotalTime || 2;
           const recentlyBlocked = member.lastBlockTime && (Date.now() - member.lastBlockTime) < 600;
           const hasBloodlust = combatState.bloodlustActive && !member.isDead;
           const isResurrecting = member.lastResurrectTime && (Date.now() - member.lastResurrectTime) < 1500;
@@ -135,6 +148,13 @@ export function TeamStatusPanel({
           const isChanneling = member.isChanneling;
           const isCasting = member.isCasting && !isChanneling;
           const castAbility = member.castAbility || '';
+          
+          // Calculate cast progress based on elapsed time (using currentTime for real-time updates)
+          let castProgress = 0;
+          if (isCasting && member.castStartTime && member.castTotalTime) {
+            const elapsed = (currentTime - member.castStartTime) / 1000; // elapsed in seconds
+            castProgress = Math.min(1, Math.max(0, elapsed / member.castTotalTime));
+          }
           
           return (
             <motion.div 
@@ -565,13 +585,16 @@ export function TeamStatusPanel({
                       animation: 'channelBarFlow 1.2s linear infinite'
                     }} />
                   ) : isCasting ? (
-                    <div 
+                    <motion.div 
                       key={`cast-${member.castStartTime}`}
-                      className="cast-bar-filling"
+                      animate={{ width: `${castProgress * 100}%` }}
+                      transition={{ 
+                        duration: 0.05,
+                        ease: 'linear'
+                      }}
                       style={{ 
                         height: '100%',
                         background: `linear-gradient(180deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
-                        animationDuration: `${castDuration}s`,
                       }} 
                     />
                   ) : null}

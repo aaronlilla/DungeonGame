@@ -207,7 +207,7 @@ export function CombatPanel({ isRunning, combatState, enemyFightAnims }: CombatP
                         marginBottom: isBoss ? '1rem' : '0.5rem',
                         position: isDying ? 'absolute' : 'relative',
                         width: isDying ? '100%' : 'auto',
-                        zIndex: isBoss ? 100 : (isDying ? 100 : 'auto'),
+                        zIndex: isBoss ? 9999 : (isDying ? 100 : 'auto'),
                         padding: isBoss ? '1.2rem 1.4rem' : '0.5rem 0.6rem',
                         // Grand, official look for bosses
                         background: isBoss 

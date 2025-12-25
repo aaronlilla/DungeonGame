@@ -57,10 +57,10 @@ export function MapGridItem({
 
   const getMapRarityBorder = (rarity: string): string => {
     switch (rarity) {
-      case 'magic': return 'rgba(59, 130, 246, 0.7)'; // More prominent blue
-      case 'rare': return 'rgba(255, 215, 0, 0.7)'; // More prominent yellow
-      case 'normal': return 'rgba(255, 255, 255, 0.5)'; // White border
-      case 'corrupted': return 'rgba(220, 38, 38, 0.3)'; // Faint red
+      case 'magic': return 'rgba(59, 130, 246, 0.8)'; // 80% opacity blue
+      case 'rare': return 'rgba(255, 215, 0, 0.8)'; // 80% opacity yellow
+      case 'normal': return 'rgba(255, 255, 255, 0.8)'; // 80% opacity white border
+      case 'corrupted': return 'rgba(220, 38, 38, 0.8)'; // 80% opacity red
       default: return 'transparent';
     }
   };
@@ -120,7 +120,7 @@ export function MapGridItem({
           border: selected 
             ? `2px solid ${rarityColor}`
             : isHovered 
-              ? `1px solid ${rarityColor}80`
+              ? `1px solid ${rarityColor}`
               : `1px solid ${rarityBorder}`,
           borderRadius: '4px',
           background: isHovered 

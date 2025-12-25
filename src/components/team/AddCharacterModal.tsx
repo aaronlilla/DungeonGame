@@ -4,6 +4,7 @@ import type { CharacterRole } from '../../types/character';
 import type { CharacterClassId, CharacterClass } from '../../types/classes';
 import { getClassesForRole, getClassById, getClassPortrait } from '../../types/classes';
 import { useGameStore } from '../../store/gameStore';
+import { generateRandomCharacterName } from '../../utils/characterNames';
 import { 
   GiShieldBash, GiBroadsword, GiScrollUnfurled,
   // Tank class icons
@@ -482,7 +483,13 @@ export function AddCharacterModal({
   };
 
   const handleNext = () => {
-    if (step === 'class' && classId) onConfirm();
+    console.log('handleNext called', { step, classId, canCreate });
+    if (step === 'class' && classId) {
+      console.log('Calling onConfirm');
+      onConfirm();
+    } else {
+      console.warn('handleNext condition not met', { step, classId });
+    }
   };
 
   return (
@@ -850,9 +857,8 @@ export function AddCharacterModal({
                   animate={{ opacity: 0.6 }}
                   transition={{ delay: 0.4 }}
                   onClick={() => {
-                    // Add placeholder DPS character
-                    const timestamp = Date.now().toString().slice(-4); // Last 4 digits of timestamp for uniqueness
-                    const placeholderName = `DPS Fighter ${timestamp}`;
+                    // Add placeholder DPS character with random unique name
+                    const placeholderName = generateRandomCharacterName();
                     addCharacter(placeholderName, 'dps');
                     onCancel(); // Close the modal
                   }}
@@ -1499,7 +1505,12 @@ export function AddCharacterModal({
               
               {step === 'class' && (
                 <button 
-                  onClick={handleNext}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Create Hero button clicked', { canCreate, classId, step });
+                    handleNext();
+                  }}
                   disabled={!canCreate}
                   style={{
                     padding: '0.75rem 2rem',

@@ -859,7 +859,10 @@ export function generatePoeItem(
     baseItem = baseItemOrClass;
   } else {
     // Filter base items by class if specified, and by drop level
-    let candidates = ALL_POE_BASE_ITEMS.filter(b => b.dropLevel <= itemLevel);
+    // For low levels, allow items slightly above item level to provide variety
+    // This prevents level 2 characters from only getting Iron Rings
+    const maxDropLevel = itemLevel <= 5 ? itemLevel + 3 : itemLevel;
+    let candidates = ALL_POE_BASE_ITEMS.filter(b => b.dropLevel <= maxDropLevel);
     
     // Exclude talismans from random generation (they're special drops)
     // Check both tags array and itemClass/name for talisman references
@@ -1073,15 +1076,10 @@ export function rollItemRarity(magicChance = 0.25, rareChance = 0.05): PoeItemRa
  * @returns The item level for drops
  */
 export function calculateItemLevel(keyLevel: number): number {
-  // Key level IS the zone level (key +2 = zone 2, key +50 = zone 50)
-  const zoneLevel = keyLevel;
-  
-  // Small variance: items can be 0-2 levels below zone level
-  const variance = Math.floor(Math.random() * 3);
-  const ilvl = Math.max(1, zoneLevel - variance);
-  
-  // Cap at 86 (PoE's practical max for most content)
-  return Math.min(86, ilvl);
+  // Map tier directly corresponds to item level
+  // Tier 1 = ilvl 1, Tier 2 = ilvl 2, Tier 3 = ilvl 3, etc.
+  // No variance - each tier drops items at exactly that level
+  return Math.max(1, Math.min(86, keyLevel));
 }
 
 /**
@@ -1150,6 +1148,9 @@ export interface CraftingResult {
  * Apply a crafting orb to an item
  */
 export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): CraftingResult {
+  // Ensure affix data is initialized
+  initializeAffixData();
+  
   if (item.corrupted) {
     return { success: false, message: 'Cannot modify corrupted items' };
   }
@@ -1183,30 +1184,53 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
       newItem.suffixes = [];
       usedGroups.clear();
       
-      // Add 1-2 mods
-      const numMods = Math.random() < 0.5 ? 1 : 2;
-      const rollPrefix = Math.random() < 0.5;
+      // Add 1-2 mods (matching generation logic)
+      const targetAffixes = Math.random() < 0.5 ? 1 : 2;
       
       if (affixData) {
-        if (numMods >= 1) {
-          const type = rollPrefix ? 'prefix' : 'suffix';
-          const groups = type === 'prefix' ? affixData.prefixes : affixData.suffixes;
-          const affix = rollSingleAffix(groups, type, item.itemLevel, usedGroups);
-          if (affix) {
-            if (type === 'prefix') newItem.prefixes.push(affix);
-            else newItem.suffixes.push(affix);
-            usedGroups.add(affix.group);
+        // Try to roll at least 1 affix - try prefix first, then suffix
+        let gotFirstAffix = false;
+        
+        // Try prefix
+        const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups);
+        if (prefixAffix) {
+          newItem.prefixes.push(prefixAffix);
+          usedGroups.add(prefixAffix.group);
+          gotFirstAffix = true;
+        }
+        
+        // If we didn't get a prefix, try suffix for first affix
+        if (!gotFirstAffix) {
+          const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups);
+          if (suffixAffix) {
+            newItem.suffixes.push(suffixAffix);
+            usedGroups.add(suffixAffix.group);
+            gotFirstAffix = true;
           }
         }
         
-        if (numMods >= 2) {
-          const type = rollPrefix ? 'suffix' : 'prefix';
-          const groups = type === 'prefix' ? affixData.prefixes : affixData.suffixes;
-          const affix = rollSingleAffix(groups, type, item.itemLevel, usedGroups);
-          if (affix) {
-            if (type === 'prefix') newItem.prefixes.push(affix);
-            else newItem.suffixes.push(affix);
+        // If we want 2 affixes and got a prefix, try to add a suffix
+        if (targetAffixes === 2 && newItem.prefixes.length === 1) {
+          const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups);
+          if (suffixAffix) {
+            newItem.suffixes.push(suffixAffix);
+            usedGroups.add(suffixAffix.group);
           }
+        }
+        // If we want 2 affixes and got a suffix, try to add a prefix
+        else if (targetAffixes === 2 && newItem.suffixes.length === 1) {
+          const prefixAffix2 = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups);
+          if (prefixAffix2) {
+            newItem.prefixes.push(prefixAffix2);
+            usedGroups.add(prefixAffix2.group);
+          }
+        }
+        
+        // If we still have no mods, downgrade to normal
+        if (newItem.prefixes.length === 0 && newItem.suffixes.length === 0) {
+          newItem.rarity = 'normal';
+          newItem.name = newItem.baseItem.name;
+          return { success: true, item: newItem, message: 'No valid mods available, item remains normal' };
         }
       }
       
@@ -1223,27 +1247,45 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
       newItem.suffixes = [];
       usedGroups.clear();
       
-      // Add 1-2 mods
-      const numMods = Math.random() < 0.5 ? 1 : 2;
+      // Add 1-2 mods (matching generation logic)
+      const targetAffixes = Math.random() < 0.5 ? 1 : 2;
       
       if (affixData) {
-        for (let i = 0; i < numMods; i++) {
-          const canPrefix = newItem.prefixes.length < 1;
-          const canSuffix = newItem.suffixes.length < 1;
-          
-          if (!canPrefix && !canSuffix) break;
-          
-          let type: 'prefix' | 'suffix';
-          if (!canPrefix) type = 'suffix';
-          else if (!canSuffix) type = 'prefix';
-          else type = Math.random() < 0.5 ? 'prefix' : 'suffix';
-          
-          const groups = type === 'prefix' ? affixData.prefixes : affixData.suffixes;
-          const affix = rollSingleAffix(groups, type, item.itemLevel, usedGroups);
-          if (affix) {
-            if (type === 'prefix') newItem.prefixes.push(affix);
-            else newItem.suffixes.push(affix);
-            usedGroups.add(affix.group);
+        // Try to roll at least 1 affix - try prefix first, then suffix
+        let gotFirstAffix = false;
+        
+        // Try prefix
+        const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups);
+        if (prefixAffix) {
+          newItem.prefixes.push(prefixAffix);
+          usedGroups.add(prefixAffix.group);
+          gotFirstAffix = true;
+        }
+        
+        // If we didn't get a prefix, try suffix for first affix
+        if (!gotFirstAffix) {
+          const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups);
+          if (suffixAffix) {
+            newItem.suffixes.push(suffixAffix);
+            usedGroups.add(suffixAffix.group);
+            gotFirstAffix = true;
+          }
+        }
+        
+        // If we want 2 affixes and got a prefix, try to add a suffix
+        if (targetAffixes === 2 && newItem.prefixes.length === 1) {
+          const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups);
+          if (suffixAffix) {
+            newItem.suffixes.push(suffixAffix);
+            usedGroups.add(suffixAffix.group);
+          }
+        }
+        // If we want 2 affixes and got a suffix, try to add a prefix
+        else if (targetAffixes === 2 && newItem.suffixes.length === 1) {
+          const prefixAffix2 = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups);
+          if (prefixAffix2) {
+            newItem.prefixes.push(prefixAffix2);
+            usedGroups.add(prefixAffix2.group);
           }
         }
       }
@@ -1275,7 +1317,12 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
         if (affix) {
           if (type === 'prefix') newItem.prefixes.push(affix);
           else newItem.suffixes.push(affix);
+          usedGroups.add(affix.group);
+        } else {
+          return { success: false, message: 'No valid affixes available' };
         }
+      } else {
+        return { success: false, message: 'No affix data available' };
       }
       
       newItem.name = generateMagicName(newItem.baseItem, newItem.prefixes, newItem.suffixes);
@@ -1292,25 +1339,30 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
       newItem.suffixes = [];
       usedGroups.clear();
       
-      const totalMods = 4 + Math.floor(Math.random() * 3);
+      // Rare items: MUST have 3-6 affixes, max 3 prefixes and 3 suffixes (matching generation)
+      const totalAffixes = 3 + Math.floor(Math.random() * 4); // 3, 4, 5, or 6
       
       if (affixData) {
-        // Guarantee 1 prefix and 1 suffix
+        // Guarantee at least 1 prefix
         const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups);
         if (prefixAffix) {
           newItem.prefixes.push(prefixAffix);
           usedGroups.add(prefixAffix.group);
         }
         
+        // Guarantee at least 1 suffix
         const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups);
         if (suffixAffix) {
           newItem.suffixes.push(suffixAffix);
           usedGroups.add(suffixAffix.group);
         }
         
-        // Fill remaining
-        const remaining = totalMods - newItem.prefixes.length - newItem.suffixes.length;
-        for (let i = 0; i < remaining; i++) {
+        // Fill remaining slots to reach target
+        let attempts = 0;
+        while (newItem.prefixes.length + newItem.suffixes.length < totalAffixes && attempts < 20) {
+          attempts++;
+          
+          // Decide which type to roll
           const canPrefix = newItem.prefixes.length < 3;
           const canSuffix = newItem.suffixes.length < 3;
           
@@ -1328,6 +1380,18 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
             else newItem.suffixes.push(affix);
             usedGroups.add(affix.group);
           }
+        }
+        
+        // If we have fewer than 3 mods, downgrade to magic or normal
+        const totalMods = newItem.prefixes.length + newItem.suffixes.length;
+        if (totalMods === 0) {
+          newItem.rarity = 'normal';
+          newItem.name = newItem.baseItem.name;
+          return { success: true, item: newItem, message: 'No valid mods available, item remains normal' };
+        } else if (totalMods < 3) {
+          newItem.rarity = 'magic';
+          newItem.name = generateMagicName(newItem.baseItem, newItem.prefixes, newItem.suffixes);
+          return { success: true, item: newItem, message: 'Item upgraded to magic (insufficient mods for rare)' };
         }
       }
       
@@ -1344,24 +1408,30 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
       newItem.suffixes = [];
       usedGroups.clear();
       
-      const totalMods = 4 + Math.floor(Math.random() * 3);
+      // Rare items: MUST have 3-6 affixes, max 3 prefixes and 3 suffixes (matching generation)
+      const totalAffixes = 3 + Math.floor(Math.random() * 4); // 3, 4, 5, or 6
       
       if (affixData) {
-        // Guarantee 1 prefix and 1 suffix
+        // Guarantee at least 1 prefix
         const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups);
         if (prefixAffix) {
           newItem.prefixes.push(prefixAffix);
           usedGroups.add(prefixAffix.group);
         }
         
+        // Guarantee at least 1 suffix
         const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups);
         if (suffixAffix) {
           newItem.suffixes.push(suffixAffix);
           usedGroups.add(suffixAffix.group);
         }
         
-        const remaining = totalMods - newItem.prefixes.length - newItem.suffixes.length;
-        for (let i = 0; i < remaining; i++) {
+        // Fill remaining slots to reach target
+        let attempts = 0;
+        while (newItem.prefixes.length + newItem.suffixes.length < totalAffixes && attempts < 20) {
+          attempts++;
+          
+          // Decide which type to roll
           const canPrefix = newItem.prefixes.length < 3;
           const canSuffix = newItem.suffixes.length < 3;
           
@@ -1379,6 +1449,18 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
             else newItem.suffixes.push(affix);
             usedGroups.add(affix.group);
           }
+        }
+        
+        // If we have fewer than 3 mods, downgrade to magic or normal
+        const totalMods = newItem.prefixes.length + newItem.suffixes.length;
+        if (totalMods === 0) {
+          newItem.rarity = 'normal';
+          newItem.name = newItem.baseItem.name;
+          return { success: true, item: newItem, message: 'No valid mods available, item downgraded to normal' };
+        } else if (totalMods < 3) {
+          newItem.rarity = 'magic';
+          newItem.name = generateMagicName(newItem.baseItem, newItem.prefixes, newItem.suffixes);
+          return { success: true, item: newItem, message: 'Item downgraded to magic (insufficient mods for rare)' };
         }
       }
       
@@ -1409,7 +1491,12 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
         if (affix) {
           if (type === 'prefix') newItem.prefixes.push(affix);
           else newItem.suffixes.push(affix);
+          usedGroups.add(affix.group);
+        } else {
+          return { success: false, message: 'No valid affixes available' };
         }
+      } else {
+        return { success: false, message: 'No affix data available' };
       }
       
       return { success: true, item: newItem, message: 'Added powerful mod' };
@@ -1450,6 +1537,12 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
         const canPrefix = newItem.prefixes.length < 3;
         const canSuffix = newItem.suffixes.length < 3;
         
+        if (!canPrefix && !canSuffix) {
+          // Item already has 3 prefixes and 3 suffixes somehow? Just upgrade rarity
+          newItem.name = generateRareName();
+          return { success: true, item: newItem, message: 'Item upgraded to rare' };
+        }
+        
         let type: 'prefix' | 'suffix';
         if (!canPrefix) type = 'suffix';
         else if (!canSuffix) type = 'prefix';
@@ -1460,6 +1553,7 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
         if (affix) {
           if (type === 'prefix') newItem.prefixes.push(affix);
           else newItem.suffixes.push(affix);
+          usedGroups.add(affix.group);
         }
       }
       

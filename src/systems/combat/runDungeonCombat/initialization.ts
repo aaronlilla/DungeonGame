@@ -5,13 +5,14 @@ import type { Item } from '../../../types/items';
 import type { Dungeon } from '../../../types/dungeon';
 import type { CombatContext, DungeonCombatCallbacks, MapAffixEffects } from '../types';
 import { initTeamStates, initAbilities } from '../../../utils/combat';
+import { resetVerboseLogger } from '../verboseCombatLogger';
 
 export interface CombatInitialization {
   initialTeamStates: ReturnType<typeof initTeamStates>;
   initialAbilities: ReturnType<typeof initAbilities>;
   experienceAwarded: Set<string>;
   healerCooldowns: { painSuppressionEndTick: number };
-  tankCooldowns: { shieldSlamEndTick: number; defensiveStanceEndTick: number; shieldBlockEndTick: number };
+  tankCooldowns: { shieldSlamEndTick: number; defensiveStanceEndTick: number; shieldBlockEndTick: number; thunderClapEndTick: number };
   combatState: CombatState;
   context: CombatContext;
 }
@@ -53,6 +54,10 @@ export function initializeCombat(
   const initialTeamStates = initTeamStates(team, inventory);
   const initialAbilities = initAbilities();
   
+  // Initialize verbose combat logger
+  const verboseLogger = resetVerboseLogger();
+  verboseLogger.initialize(team, initialTeamStates, dungeon, selectedKeyLevel, mapContext);
+  
   const combatState: CombatState = {
     phase: 'traveling',
     currentPullIndex: 0,
@@ -79,7 +84,7 @@ export function initializeCombat(
   const healerCooldowns = { painSuppressionEndTick: 0 };
   
   // Track tank ability cooldowns (tick-based)
-  const tankCooldowns = { shieldSlamEndTick: 0, defensiveStanceEndTick: 0, shieldBlockEndTick: 0 };
+  const tankCooldowns = { shieldSlamEndTick: 0, defensiveStanceEndTick: 0, shieldBlockEndTick: 0, thunderClapEndTick: 0 };
 
   let totalForcesCleared = 0;
   let totalTime = 0;
@@ -105,6 +110,7 @@ export function initializeCombat(
   // Note: updateCombatState is defined as a placeholder and set properly below
   const context: CombatContext = {
     team,
+    inventory,
     dungeon,
     selectedKeyLevel,
     scaling,
@@ -147,7 +153,9 @@ export function initializeCombat(
     applyDeathPenalty: callbacks.applyDeathPenalty,
     setIsRunning: callbacks.setIsRunning,
     // Initialize used boss names tracker
-    usedBossNames: new Set<string>()
+    usedBossNames: new Set<string>(),
+    // Verbose combat logger
+    verboseLogger
   };
   
   // Helper to update combat state (syncs local state AND context.currentCombatState)

@@ -1,22 +1,58 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import type { SkillGem } from '../../types/skills';
+import type { SkillGem, SkillCategory } from '../../types/skills';
 import { getTagColor } from '../../utils/tagColors';
 import { SkillGemTooltip } from './SkillGemTooltip';
+import { GiPadlock, GiSwordWound, GiMagicSwirl, GiHealthPotion, GiShield, GiCog } from 'react-icons/gi';
 
 interface SkillPickerModalProps {
   characterName: string;
+  characterLevel: number;
   availableSkills: SkillGem[];
   onSelect: (skillId: string) => void;
   onClose: () => void;
 }
 
-function SkillPickerItem({ skill, onSelect }: { skill: SkillGem; onSelect: () => void }) {
+type TabType = 'all' | SkillCategory;
+
+// Category configuration
+const CATEGORY_CONFIG: Record<SkillCategory | 'all', { label: string; icon: React.ReactNode; color: string }> = {
+  all: { label: 'All Skills', icon: <GiCog />, color: '#c9a227' },
+  attack: { label: 'Attacks', icon: <GiSwordWound />, color: '#ef4444' },
+  spell: { label: 'Spells', icon: <GiMagicSwirl />, color: '#8b5cf6' },
+  heal: { label: 'Healing', icon: <GiHealthPotion />, color: '#10b981' },
+  defensive: { label: 'Defensive', icon: <GiShield />, color: '#3b82f6' },
+  buff: { label: 'Buffs', icon: <GiMagicSwirl />, color: '#f59e0b' },
+  debuff: { label: 'Debuffs', icon: <GiSwordWound />, color: '#ec4899' },
+  utility: { label: 'Utility', icon: <GiCog />, color: '#6b7280' },
+};
+
+// Damage type colors
+const DAMAGE_TYPE_COLORS: Record<string, string> = {
+  physical: '#a8a29e',
+  fire: '#f97316',
+  cold: '#38bdf8',
+  lightning: '#facc15',
+  chaos: '#a855f7',
+  nature: '#22c55e',
+  arcane: '#8b5cf6',
+  holy: '#fbbf24',
+};
+
+function SkillPickerItem({ 
+  skill, 
+  characterLevel, 
+  onSelect 
+}: { 
+  skill: SkillGem; 
+  characterLevel: number; 
+  onSelect: () => void;
+}) {
+  const isLocked = skill.levelRequirement > characterLevel;
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   
-  // Use ref to track position without causing re-renders
   const positionRef = React.useRef({ x: 0, y: 0 });
   
   const handleIconMouseEnter = useCallback((e: React.MouseEvent) => {
@@ -25,8 +61,6 @@ function SkillPickerItem({ skill, onSelect }: { skill: SkillGem; onSelect: () =>
     setIsTooltipVisible(true);
   }, []);
   
-  // Don't update state on every mouse move - just update the ref
-  // The tooltip already has pointerEvents: none so position doesn't need to be perfect
   const handleIconMouseMove = useCallback((e: React.MouseEvent) => {
     positionRef.current = { x: e.clientX, y: e.clientY };
   }, []);
@@ -35,33 +69,66 @@ function SkillPickerItem({ skill, onSelect }: { skill: SkillGem; onSelect: () =>
     setIsTooltipVisible(false);
   }, []);
 
-  // Use onMouseDown for immediate response - doesn't wait for re-renders
+  // Fixed: Use onMouseDown with immediate execution and proper event handling
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button === 0) { // Left click only
+    if (e.button === 0 && !isLocked) {
       e.preventDefault();
-      e.stopPropagation(); // Prevent modal from closing
+      e.stopPropagation();
+      // Call onSelect immediately before any state updates
       onSelect();
     }
-  }, [onSelect]);
+  }, [onSelect, isLocked]);
   
-  // Also handle onClick as backup
+  // Backup onClick handler
   const handleClick = useCallback((e: React.MouseEvent) => {
+    if (isLocked) return;
     e.preventDefault();
-    e.stopPropagation(); // Prevent modal from closing
+    e.stopPropagation();
     onSelect();
-  }, [onSelect]);
+  }, [onSelect, isLocked]);
+
+  const damageTypeColor = skill.damageType ? DAMAGE_TYPE_COLORS[skill.damageType] : '#c9a227';
+  
+  // Convert hex to rgba for use in gradients
+  const hexToRgba = (hex: string, alpha: number) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
+  const hoverColor = damageTypeColor;
+  // Hovered state colors
+  const hoverColorRgba = hexToRgba(hoverColor, 0.12);
+  const hoverColorRgbaDark = hexToRgba(hoverColor, 0.05);
+  const borderColorRgba = hexToRgba(hoverColor, 0.5);
+  const glowColorRgba = hexToRgba(hoverColor, 0.2);
+  const iconBgRgba = hexToRgba(hoverColor, 0.28);
+  const iconBgRgbaDark = hexToRgba(hoverColor, 0.15);
+  const iconBorderRgba = hexToRgba(hoverColor, 0.6);
+  // Non-hovered state colors (subtle tint)
+  const borderColorRgbaLight = hexToRgba(hoverColor, 0.2);
+  const iconBorderRgbaLight = hexToRgba(hoverColor, 0.25);
+  const iconBgRgbaLight = hexToRgba(hoverColor, 0.08);
 
   return (
     <div
-      className={`skill-picker-item ${isHovered ? 'hovered' : ''}`}
       style={{
+        position: 'relative',
+        padding: '0.875rem 1rem',
         background: isHovered 
-          ? 'linear-gradient(180deg, rgba(201, 162, 39, 0.12) 0%, rgba(25, 22, 18, 0.95) 100%)'
-          : undefined,
-        borderColor: isHovered ? 'rgba(201, 162, 39, 0.5)' : undefined,
+          ? `linear-gradient(180deg, ${hoverColorRgba} 0%, ${hoverColorRgbaDark} 100%)`
+          : `linear-gradient(180deg, ${hexToRgba(hoverColor, 0.03)} 0%, transparent 100%)`,
+        border: `1px solid ${isHovered ? borderColorRgba : borderColorRgbaLight}`,
+        borderRadius: '6px',
         boxShadow: isHovered 
-          ? '0 4px 15px rgba(201, 162, 39, 0.12), inset 0 1px 0 rgba(255,255,255,0.03)'
+          ? `0 4px 15px ${glowColorRgba}, inset 0 1px 0 rgba(255,255,255,0.03)`
           : 'inset 0 1px 0 rgba(255,255,255,0.02)',
+        opacity: isLocked ? 0.6 : 1,
+        filter: isLocked ? 'grayscale(0.4)' : 'none',
+        cursor: isLocked ? 'not-allowed' : 'pointer',
+        transition: 'all 0.2s ease',
+        marginBottom: '0.5rem',
       }}
       onMouseDown={handleMouseDown}
       onClick={handleClick}
@@ -76,7 +143,7 @@ function SkillPickerItem({ skill, onSelect }: { skill: SkillGem; onSelect: () =>
         right: 0,
         height: '1px',
         background: isHovered 
-          ? 'linear-gradient(90deg, transparent, rgba(201, 162, 39, 0.5), transparent)'
+          ? `linear-gradient(90deg, transparent, ${borderColorRgba}, transparent)`
           : 'transparent',
         transition: 'background 0.2s ease',
         zIndex: 2,
@@ -94,13 +161,13 @@ function SkillPickerItem({ skill, onSelect }: { skill: SkillGem; onSelect: () =>
             alignItems: 'center',
             justifyContent: 'center',
             background: isHovered
-              ? 'linear-gradient(145deg, rgba(201, 162, 39, 0.28) 0%, rgba(140, 110, 30, 0.15) 100%)'
-              : 'linear-gradient(145deg, rgba(201, 162, 39, 0.15) 0%, rgba(140, 110, 30, 0.08) 100%)',
-            border: `2px solid ${isHovered ? 'rgba(201, 162, 39, 0.6)' : 'rgba(201, 162, 39, 0.35)'}`,
+              ? `linear-gradient(145deg, ${iconBgRgba} 0%, ${iconBgRgbaDark} 100%)`
+              : `linear-gradient(145deg, ${iconBgRgbaLight} 0%, ${hexToRgba(hoverColor, 0.04)} 100%)`,
+            border: `2px solid ${isHovered ? iconBorderRgba : iconBorderRgbaLight}`,
             borderRadius: '8px',
             boxShadow: isHovered 
-              ? '0 0 20px rgba(201, 162, 39, 0.2)'
-              : '0 2px 8px rgba(201, 162, 39, 0.08)',
+              ? `0 0 20px ${glowColorRgba}`
+              : `0 2px 8px ${hexToRgba(hoverColor, 0.1)}`,
             transition: 'all 0.2s ease',
             position: 'relative',
           }}
@@ -109,7 +176,25 @@ function SkillPickerItem({ skill, onSelect }: { skill: SkillGem; onSelect: () =>
           onMouseLeave={handleIconMouseLeave}
         >
           {skill.icon}
-          {/* Gloss effect */}
+          {isLocked && (
+            <div style={{
+              position: 'absolute',
+              top: '2px',
+              right: '2px',
+              background: 'rgba(100, 80, 60, 0.9)',
+              borderRadius: '4px',
+              padding: '2px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+              zIndex: 10,
+            }}
+            title={`Locked: Requires Level ${skill.levelRequirement}`}
+            >
+              <GiPadlock style={{ fontSize: '0.7rem', color: '#d4c4a8' }} />
+            </div>
+          )}
           <div style={{
             position: 'absolute',
             top: 0,
@@ -122,7 +207,7 @@ function SkillPickerItem({ skill, onSelect }: { skill: SkillGem; onSelect: () =>
           }} />
         </div>
         
-        {/* Tooltip - rendered in portal */}
+        {/* Tooltip */}
         {isTooltipVisible && createPortal(
           <SkillGemTooltip 
             skill={skill} 
@@ -132,17 +217,41 @@ function SkillPickerItem({ skill, onSelect }: { skill: SkillGem; onSelect: () =>
         )}
         
         <div style={{ flex: 1, minWidth: 0 }}>
-          {/* Skill Name */}
+          {/* Skill Name and Category */}
           <div style={{ 
-            color: isHovered ? '#f0e6d8' : '#e0d4c0', 
-            fontFamily: "'Cinzel', Georgia, serif",
-            fontWeight: 600, 
-            fontSize: '1.05rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
             marginBottom: '0.4rem',
-            transition: 'color 0.2s ease',
-            textShadow: isHovered ? '0 0 10px rgba(200, 175, 140, 0.3)' : '0 1px 2px rgba(0,0,0,0.3)',
           }}>
-            {skill.name}
+            <div style={{ 
+              color: isLocked ? 'rgba(160, 150, 130, 0.6)' : (isHovered ? '#f0e6d8' : '#e0d4c0'), 
+              fontFamily: "'Cinzel', Georgia, serif",
+              fontWeight: 600, 
+              fontSize: '1.05rem',
+              transition: 'color 0.2s ease',
+              textShadow: isHovered && !isLocked ? '0 0 10px rgba(200, 175, 140, 0.3)' : '0 1px 2px rgba(0,0,0,0.3)',
+            }}>
+              {skill.name}
+            </div>
+            {isLocked && (
+              <span style={{
+                fontSize: '0.7rem',
+                color: 'rgba(180, 140, 100, 0.8)',
+                fontWeight: 500,
+              }}>
+                (Level {skill.levelRequirement})
+              </span>
+            )}
+            {damageTypeColor && (
+              <div style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: damageTypeColor,
+                boxShadow: `0 0 6px ${damageTypeColor}80`,
+              }} />
+            )}
           </div>
           
           {/* Tags */}
@@ -153,7 +262,7 @@ function SkillPickerItem({ skill, onSelect }: { skill: SkillGem; onSelect: () =>
               gap: '0.3rem',
               marginBottom: '0.5rem'
             }}>
-              {skill.tags.slice(0, 5).map((tag, idx) => (
+              {skill.tags.slice(0, 6).map((tag, idx) => (
                 <span
                   key={idx}
                   className="skill-tag"
@@ -162,8 +271,8 @@ function SkillPickerItem({ skill, onSelect }: { skill: SkillGem; onSelect: () =>
                   {tag}
                 </span>
               ))}
-              {skill.tags.length > 5 && (
-                <span style={{ fontSize: '0.55rem', color: 'rgba(160,150,130,0.6)', fontWeight: 500 }}>+{skill.tags.length - 5}</span>
+              {skill.tags.length > 6 && (
+                <span style={{ fontSize: '0.55rem', color: 'rgba(160,150,130,0.6)', fontWeight: 500 }}>+{skill.tags.length - 6}</span>
               )}
             </div>
           )}
@@ -230,15 +339,15 @@ function SkillPickerItem({ skill, onSelect }: { skill: SkillGem; onSelect: () =>
           width: '28px',
           height: '28px',
           background: isHovered 
-            ? 'linear-gradient(135deg, rgba(201, 162, 39, 0.35) 0%, rgba(201, 162, 39, 0.15) 100%)'
+            ? `linear-gradient(135deg, ${hexToRgba(hoverColor, 0.35)} 0%, ${hexToRgba(hoverColor, 0.15)} 100%)`
             : 'rgba(60, 55, 45, 0.3)',
-          border: `1px solid ${isHovered ? 'rgba(201, 162, 39, 0.5)' : 'rgba(80, 70, 55, 0.3)'}`,
+          border: `1px solid ${isHovered ? borderColorRgba : 'rgba(80, 70, 55, 0.3)'}`,
           borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: '0.9rem',
-          color: isHovered ? 'rgba(230, 200, 130, 0.9)' : 'rgba(120, 110, 95, 0.5)',
+          color: isHovered ? hoverColor : 'rgba(120, 110, 95, 0.5)',
           transition: 'all 0.2s ease',
         }}>
           +
@@ -248,7 +357,59 @@ function SkillPickerItem({ skill, onSelect }: { skill: SkillGem; onSelect: () =>
   );
 }
 
-export function SkillPickerModal({ characterName, availableSkills, onSelect, onClose }: SkillPickerModalProps) {
+export function SkillPickerModal({ characterName, characterLevel, availableSkills, onSelect, onClose }: SkillPickerModalProps) {
+  const [activeTab, setActiveTab] = useState<TabType>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Group skills by category and filter
+  const { groupedSkills } = useMemo(() => {
+    // Filter by search query
+    let filtered = availableSkills;
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = availableSkills.filter(skill => 
+        skill.name.toLowerCase().includes(query) ||
+        skill.description.toLowerCase().includes(query) ||
+        skill.tags?.some(tag => tag.toLowerCase().includes(query))
+      );
+    }
+
+    // Filter by active tab
+    if (activeTab !== 'all') {
+      filtered = filtered.filter(skill => skill.category === activeTab);
+    }
+
+    // Group by damage type within category
+    const grouped: Record<string, SkillGem[]> = {};
+    filtered.forEach(skill => {
+      const groupKey = skill.damageType || 'other';
+      if (!grouped[groupKey]) {
+        grouped[groupKey] = [];
+      }
+      grouped[groupKey].push(skill);
+    });
+
+    return { filteredSkills: filtered, groupedSkills: grouped };
+  }, [availableSkills, activeTab, searchQuery]);
+
+  // Get available tabs (only show tabs that have skills)
+  const availableTabs = useMemo(() => {
+    const tabs: TabType[] = ['all'];
+    const categories = new Set(availableSkills.map(s => s.category));
+    categories.forEach(cat => tabs.push(cat));
+    return tabs;
+  }, [availableSkills]);
+
+  // Fixed: Ensure onSelect is called synchronously before modal closes
+  const handleSelectSkill = useCallback((skillId: string) => {
+    // Call onSelect immediately
+    onSelect(skillId);
+    // Close modal after a tiny delay to ensure state updates
+    setTimeout(() => {
+      onClose();
+    }, 0);
+  }, [onSelect, onClose]);
+
   return createPortal(
     <div 
       style={{
@@ -261,12 +422,30 @@ export function SkillPickerModal({ characterName, availableSkills, onSelect, onC
         justifyContent: 'center',
         zIndex: 10000,
       }}
-      onClick={onClose}
+      onMouseDown={(e) => {
+        // Only close if clicking directly on backdrop (not on modal content)
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
     >
       <div 
         className="skill-picker-modal"
-        onMouseDown={e => e.stopPropagation()}
-        onClick={e => e.stopPropagation()}
+        style={{
+          width: '90vw',
+          maxWidth: '1000px',
+          maxHeight: '85vh',
+          background: 'linear-gradient(180deg, rgba(18, 15, 12, 0.99) 0%, rgba(12, 10, 8, 0.99) 100%)',
+          border: '2px solid rgba(201, 162, 39, 0.4)',
+          borderRadius: '12px',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255,255,255,0.05)',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          position: 'relative',
+        }}
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Corner ornaments */}
         <div style={{ position: 'absolute', top: 8, left: 8, width: 24, height: 24, borderTop: '2px solid var(--accent-gold)', borderLeft: '2px solid var(--accent-gold)', borderRadius: '4px 0 0 0', pointerEvents: 'none', zIndex: 10 }} />
@@ -280,6 +459,7 @@ export function SkillPickerModal({ characterName, availableSkills, onSelect, onC
           padding: '1.25rem 1.5rem',
           background: 'linear-gradient(180deg, rgba(201, 162, 39, 0.15) 0%, rgba(201, 162, 39, 0.03) 100%)',
           borderBottom: '1px solid rgba(201, 162, 39, 0.3)',
+          flexShrink: 0,
         }}>
           {/* Top gold line */}
           <div style={{
@@ -304,7 +484,7 @@ export function SkillPickerModal({ characterName, availableSkills, onSelect, onC
             borderRadius: '2px',
           }} />
           
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
             <div>
               <h3 style={{
                 margin: 0,
@@ -352,22 +532,150 @@ export function SkillPickerModal({ characterName, availableSkills, onSelect, onC
               ×
             </button>
           </div>
+
+          {/* Search bar */}
+          <input
+            type="text"
+            placeholder="Search skills..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '0.5rem 0.75rem',
+              background: 'rgba(0, 0, 0, 0.4)',
+              border: '1px solid rgba(201, 162, 39, 0.3)',
+              borderRadius: '6px',
+              color: '#e0d4c0',
+              fontSize: '0.85rem',
+              fontFamily: 'inherit',
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+
+        {/* Tabs */}
+        <div style={{
+          display: 'flex',
+          gap: '0.5rem',
+          padding: '0.75rem 1.5rem',
+          background: 'rgba(0, 0, 0, 0.2)',
+          borderBottom: '1px solid rgba(201, 162, 39, 0.2)',
+          flexShrink: 0,
+          overflowX: 'auto',
+        }}>
+          {availableTabs.map(tab => {
+            const config = CATEGORY_CONFIG[tab];
+            const isActive = activeTab === tab;
+            return (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: isActive 
+                    ? `linear-gradient(180deg, ${config.color}40 0%, ${config.color}20 100%)`
+                    : 'rgba(0, 0, 0, 0.3)',
+                  border: `1px solid ${isActive ? config.color + '80' : 'rgba(201, 162, 39, 0.3)'}`,
+                  borderRadius: '6px',
+                  color: isActive ? config.color : 'rgba(200, 190, 170, 0.7)',
+                  fontSize: '0.8rem',
+                  fontWeight: isActive ? 600 : 500,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  transition: 'all 0.2s ease',
+                  whiteSpace: 'nowrap',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = 'rgba(201, 162, 39, 0.15)';
+                    e.currentTarget.style.borderColor = 'rgba(201, 162, 39, 0.5)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
+                    e.currentTarget.style.borderColor = 'rgba(201, 162, 39, 0.3)';
+                  }
+                }}
+              >
+                <span style={{ fontSize: '0.9rem' }}>{config.icon}</span>
+                {config.label}
+              </button>
+            );
+          })}
         </div>
         
-        {/* Skills list */}
+        {/* Skills list - grouped by damage type */}
         <div style={{
-          padding: '1rem 1.25rem',
-          maxHeight: 'calc(80vh - 120px)',
+          flex: 1,
           overflowY: 'auto',
+          padding: '1rem 1.5rem',
           background: 'radial-gradient(ellipse at 50% 0%, rgba(201, 162, 39, 0.04) 0%, transparent 50%)',
         }}>
-          {availableSkills.map(skill => (
-            <SkillPickerItem 
-              key={skill.id}
-              skill={skill}
-              onSelect={() => onSelect(skill.id)}
-            />
-          ))}
+          {Object.keys(groupedSkills).length === 0 ? (
+            <div style={{
+              textAlign: 'center',
+              padding: '3rem',
+              color: 'rgba(160, 150, 130, 0.6)',
+              fontSize: '0.9rem',
+            }}>
+              {searchQuery ? 'No skills found matching your search.' : 'No skills available in this category.'}
+            </div>
+          ) : (
+            Object.entries(groupedSkills).map(([damageType, skills]) => (
+              <div key={damageType} style={{ marginBottom: '1.5rem' }}>
+                {/* Group header */}
+                {damageType !== 'other' && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    marginBottom: '0.75rem',
+                    paddingBottom: '0.5rem',
+                    borderBottom: `1px solid ${DAMAGE_TYPE_COLORS[damageType] || '#c9a227'}40`,
+                  }}>
+                    <div style={{
+                      width: '12px',
+                      height: '12px',
+                      borderRadius: '50%',
+                      background: DAMAGE_TYPE_COLORS[damageType] || '#c9a227',
+                      boxShadow: `0 0 8px ${DAMAGE_TYPE_COLORS[damageType] || '#c9a227'}80`,
+                    }} />
+                    <span style={{
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      color: DAMAGE_TYPE_COLORS[damageType] || '#c9a227',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.1em',
+                      fontFamily: "'Cinzel', Georgia, serif",
+                    }}>
+                      {damageType.charAt(0).toUpperCase() + damageType.slice(1)} Skills
+                    </span>
+                    <span style={{
+                      fontSize: '0.65rem',
+                      color: 'rgba(160, 150, 130, 0.6)',
+                      marginLeft: 'auto',
+                    }}>
+                      {skills.length} {skills.length === 1 ? 'skill' : 'skills'}
+                    </span>
+                  </div>
+                )}
+                
+                {/* Skills in this group */}
+                {skills.map(skill => (
+                  <SkillPickerItem 
+                    key={skill.id}
+                    skill={skill}
+                    characterLevel={characterLevel}
+                    onSelect={() => handleSelectSkill(skill.id)}
+                  />
+                ))}
+              </div>
+            ))
+          )}
           
           {/* Bottom decorative element */}
           <div style={{
@@ -394,4 +702,3 @@ export function SkillPickerModal({ characterName, availableSkills, onSelect, onC
     document.body
   );
 }
-

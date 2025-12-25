@@ -14,6 +14,8 @@ import type { WeaponProperties, ArmourProperties } from '../types/poeItems';
 import type { PoeItem } from './poeCrafting';
 import type { RolledAffix, RolledStat } from '../types/poeAffixes';
 import { parseStatRange } from '../types/poeAffixes';
+import { isOffHandWeapon } from '../utils/equipmentValidation';
+import { calculateTalentBonuses } from '../types/talents';
 
 // Stat text pattern matching
 // Each entry maps a regex pattern to a stat key and optionally handles special cases
@@ -358,13 +360,9 @@ export interface WeaponDamage {
   criticalStrikeChance: number;
 }
 
-// Get weapon damage from equipped main hand weapon
-export function getEquippedWeaponDamage(items: Item[]): WeaponDamage | null {
-  // Find the main hand weapon
-  const mainHand = items.find(item => item.slot === 'mainHand');
-  if (!mainHand) return null;
-  
-  const poeItem = mainHand._poeItem as PoeItem | undefined;
+// Get weapon damage from a specific weapon item
+function getWeaponDamageFromItem(item: Item): WeaponDamage | null {
+  const poeItem = item._poeItem as PoeItem | undefined;
   if (!poeItem || !poeItem.baseItem) return null;
   
   const props = poeItem.baseItem.properties;
@@ -440,6 +438,54 @@ export function getEquippedWeaponDamage(items: Item[]): WeaponDamage | null {
   return damage;
 }
 
+// Check if character is dual wielding
+export function isDualWielding(items: Item[]): boolean {
+  const mainHand = items.find(item => item.slot === 'mainHand');
+  const offHand = items.find(item => item.slot === 'offHand');
+  
+  if (!mainHand || !offHand) return false;
+  
+  // Check if both are weapons (not shields or quivers)
+  return isOffHandWeapon(mainHand) && isOffHandWeapon(offHand);
+}
+
+// Get weapon damage from equipped weapons, supporting dual wielding with alternation
+// lastWeaponUsed: 'mainHand' | 'offHand' | null - tracks which weapon was used last
+export function getEquippedWeaponDamage(
+  items: Item[],
+  lastWeaponUsed: 'mainHand' | 'offHand' | null = null
+): WeaponDamage | null {
+  const mainHand = items.find(item => item.slot === 'mainHand');
+  const offHand = items.find(item => item.slot === 'offHand');
+  
+  // Check if dual wielding
+  const dualWielding = mainHand && offHand && isOffHandWeapon(mainHand) && isOffHandWeapon(offHand);
+  
+  if (dualWielding) {
+    // Dual wielding: alternate between weapons
+    // If lastWeaponUsed is null or 'offHand', use mainHand next
+    // If lastWeaponUsed is 'mainHand', use offHand next
+    const useMainHand = lastWeaponUsed !== 'mainHand';
+    const weaponToUse = useMainHand ? mainHand : offHand;
+    
+    if (weaponToUse) {
+      const damage = getWeaponDamageFromItem(weaponToUse);
+      if (damage) {
+        // Apply dual wielding attack speed bonus: 10% more attack speed
+        damage.attackSpeed = damage.attackSpeed * 1.1;
+        return damage;
+      }
+    }
+  }
+  
+  // Single weapon or no dual wielding: use main hand
+  if (mainHand) {
+    return getWeaponDamageFromItem(mainHand);
+  }
+  
+  return null;
+}
+
 /**
  * Calculate final character stats (base + equipment)
  */
@@ -489,12 +535,69 @@ export function calculateTotalCharacterStats(
   // +2 Accuracy per Dexterity from equipment
   totalStats.accuracy += equipDex * 2;
   
+  // Apply talent bonuses
+  const classId = character.classId;
+  if (classId && character.selectedTalents) {
+    const talentBonuses = calculateTalentBonuses(classId, character.selectedTalents);
+    
+    // Apply flat talent bonuses to block chance and spell block chance
+    totalStats.blockChance += talentBonuses.blockBonus;
+    totalStats.spellBlockChance += talentBonuses.spellBlockBonus;
+    
+    // Apply blockToSpellBlock conversion (Duel Warden talent)
+    if (talentBonuses.blockToSpellBlockPercent > 0 && totalStats.blockChance > 0) {
+      const convertedSpellBlock = Math.floor(totalStats.blockChance * (talentBonuses.blockToSpellBlockPercent / 100));
+      totalStats.spellBlockChance += convertedSpellBlock;
+    }
+    
+    // Apply spell suppression chance
+    totalStats.spellSuppressionChance += talentBonuses.spellSuppressionChance;
+    
+    // Apply crit chance bonus
+    totalStats.criticalStrikeChance += talentBonuses.critBonus;
+    
+    // Apply percentage-based multipliers
+    if (talentBonuses.healthMultiplier > 0) {
+      totalStats.life = Math.floor(totalStats.life * (1 + talentBonuses.healthMultiplier / 100));
+      totalStats.maxLife = totalStats.life;
+    }
+    if (talentBonuses.armorMultiplier > 0) {
+      totalStats.armor = Math.floor(totalStats.armor * (1 + talentBonuses.armorMultiplier / 100));
+    }
+    if (talentBonuses.evasionMultiplier > 0) {
+      totalStats.evasion = Math.floor(totalStats.evasion * (1 + talentBonuses.evasionMultiplier / 100));
+    }
+    
+    // Apply resistance bonus
+    if (talentBonuses.resistanceBonus > 0) {
+      totalStats.fireResistance += talentBonuses.resistanceBonus;
+      totalStats.coldResistance += talentBonuses.resistanceBonus;
+      totalStats.lightningResistance += talentBonuses.resistanceBonus;
+    }
+    
+    // Apply chaos resistance
+    if (talentBonuses.chaosResistance > 0) {
+      totalStats.chaosResistance += talentBonuses.chaosResistance;
+    }
+    
+    // Apply elemental resistance bonus
+    if (talentBonuses.elementalResistanceBonus > 0) {
+      totalStats.fireResistance += talentBonuses.elementalResistanceBonus;
+      totalStats.coldResistance += talentBonuses.elementalResistanceBonus;
+      totalStats.lightningResistance += talentBonuses.elementalResistanceBonus;
+    }
+  }
+  
   // Cap resistances at 75% (default cap)
   totalStats.fireResistance = Math.min(75, totalStats.fireResistance);
   totalStats.coldResistance = Math.min(75, totalStats.coldResistance);
   totalStats.lightningResistance = Math.min(75, totalStats.lightningResistance);
   // Chaos resistance cap is also 75%
   totalStats.chaosResistance = Math.min(75, totalStats.chaosResistance);
+  
+  // Cap block chances at 75%
+  totalStats.blockChance = Math.min(75, totalStats.blockChance);
+  totalStats.spellBlockChance = Math.min(75, totalStats.spellBlockChance);
   
   return totalStats;
 }

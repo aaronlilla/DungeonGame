@@ -95,6 +95,17 @@ function getAbilityTarget(
 ): TeamMemberState[] {
   const aliveMembers = teamStates.filter(m => !m.isDead);
   
+  // Check if ability has silence effect - if so, only target 1 non-healer
+  const hasSilenceEffect = ability.effects?.some(e => e.type === 'silence');
+  
+  if (hasSilenceEffect) {
+    // Filter out healers and select only 1 random target
+    const nonHealers = aliveMembers.filter(m => m.role !== 'healer');
+    if (nonHealers.length === 0) return [];
+    // Randomly select 1 target from non-healers
+    return [nonHealers[Math.floor(Math.random() * nonHealers.length)]];
+  }
+  
   switch (ability.targetType) {
     case 'all':
       return aliveMembers;
@@ -208,13 +219,13 @@ function calculateAbilityDamage(
     case 'devour_sound':
       // Damage if party skipped actions (simplified: use random chance)
       // In real implementation, track skipped actions
-      baseDamage += Math.random() * 20;
+      baseDamage += Math.random() * 10; // Reduced from 20 to prevent excessive damage
       break;
       
     case 'quiet_collapse':
       // Damage per missing mana
       const totalMissingMana = teamStates.reduce((sum, m) => sum + (m.maxMana - m.mana), 0);
-      baseDamage += totalMissingMana / 10;
+      baseDamage += totalMissingMana / 20; // Reduced from /10 to /20 to prevent excessive scaling
       break;
       
     case 'royal_immolation':

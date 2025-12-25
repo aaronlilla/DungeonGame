@@ -55,7 +55,7 @@ export function LootNotifications() {
       left: '50%',
       transform: 'translate(-50%, -50%)',
       pointerEvents: 'none',
-      zIndex: 9999,
+      zIndex: 10000,
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',

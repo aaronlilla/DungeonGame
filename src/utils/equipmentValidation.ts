@@ -6,6 +6,11 @@
  * - Bows allow quivers in offHand
  * - Quivers can only be equipped with bows
  * - Shields can't be equipped with two-handers
+ * - All one-handers can be equipped with a shield
+ * - Weapon dual-wielding compatibility:
+ *   - Wands can only be equipped together (wand + wand)
+ *   - Claws and daggers can be equipped in any combination together
+ *   - Axes, swords, and maces can be equipped in any combination together
  * - Item stat requirements (str/dex/int/level)
  */
 
@@ -44,6 +49,39 @@ export function isQuiver(item: Item): boolean {
 // Check if an item is a shield
 export function isShield(item: Item): boolean {
   return getItemClass(item) === 'Shield';
+}
+
+// Check if an item is a wand
+export function isWand(item: Item): boolean {
+  return getItemClass(item) === 'Wand';
+}
+
+// Check if an item is a claw
+export function isClaw(item: Item): boolean {
+  return getItemClass(item) === 'Claw';
+}
+
+// Check if an item is a dagger
+export function isDagger(item: Item): boolean {
+  const itemClass = getItemClass(item);
+  return itemClass === 'Dagger' || itemClass === 'Rune Dagger';
+}
+
+// Check if an item is an axe (one-handed)
+export function isAxe(item: Item): boolean {
+  return getItemClass(item) === 'One Hand Axe';
+}
+
+// Check if an item is a sword (one-handed)
+export function isSword(item: Item): boolean {
+  const itemClass = getItemClass(item);
+  return itemClass === 'One Hand Sword' || itemClass === 'Thrusting One Hand Sword';
+}
+
+// Check if an item is a mace (one-handed, including sceptre)
+export function isMace(item: Item): boolean {
+  const itemClass = getItemClass(item);
+  return itemClass === 'One Hand Mace' || itemClass === 'Sceptre';
 }
 
 // Check if an item is an off-hand weapon (for dual-wielding)
@@ -86,6 +124,64 @@ export function validateEquipment(
         };
       }
     }
+    
+    // Dual wielding validation: weapon type compatibility rules
+    if (isOffHandWeapon(item) && currentOffHand && isOffHandWeapon(currentOffHand)) {
+      // Wands can only be equipped together (wand + wand only)
+      const itemIsWand = isWand(item);
+      const offHandIsWand = isWand(currentOffHand);
+      
+      if (itemIsWand || offHandIsWand) {
+        // If either is a wand, both must be wands
+        if (itemIsWand !== offHandIsWand) {
+          return {
+            canEquip: false,
+            reason: 'Wands can only be equipped together',
+          };
+        }
+        // Both are wands - allowed
+      } else {
+        // Neither is a wand - check other compatibility rules
+        const itemIsClaw = isClaw(item);
+        const itemIsDagger = isDagger(item);
+        const itemIsAxe = isAxe(item);
+        const itemIsSword = isSword(item);
+        const itemIsMace = isMace(item);
+        
+        const offHandIsClaw = isClaw(currentOffHand);
+        const offHandIsDagger = isDagger(currentOffHand);
+        const offHandIsAxe = isAxe(currentOffHand);
+        const offHandIsSword = isSword(currentOffHand);
+        const offHandIsMace = isMace(currentOffHand);
+        
+        // Claws and daggers can be equipped in any combination together
+        const itemIsClawOrDagger = itemIsClaw || itemIsDagger;
+        const offHandIsClawOrDagger = offHandIsClaw || offHandIsDagger;
+        
+        // Axes, swords, and maces can be equipped in any combination together
+        const itemIsAxeSwordMace = itemIsAxe || itemIsSword || itemIsMace;
+        const offHandIsAxeSwordMace = offHandIsAxe || offHandIsSword || offHandIsMace;
+        
+        // If one is claw/dagger, the other must also be claw/dagger
+        if (itemIsClawOrDagger && !offHandIsClawOrDagger) {
+          return {
+            canEquip: false,
+            reason: 'Claws and daggers can only be equipped with claws or daggers',
+          };
+        }
+        
+        // If one is axe/sword/mace, the other must also be axe/sword/mace
+        if (itemIsAxeSwordMace && !offHandIsAxeSwordMace) {
+          return {
+            canEquip: false,
+            reason: 'Axes, swords, and maces can only be equipped together',
+          };
+        }
+        
+        // All other combinations are allowed (e.g., claw+dagger, axe+sword, etc.)
+      }
+    }
+    
     return { canEquip: true };
   }
   
@@ -122,6 +218,66 @@ export function validateEquipment(
       }
       return { canEquip: true };
     }
+    
+    // Dual wielding validation: weapon type compatibility rules
+    if (isOffHandWeapon(item) && currentMainHand && isOffHandWeapon(currentMainHand)) {
+      // Wands can only be equipped together (wand + wand only)
+      const itemIsWand = isWand(item);
+      const mainHandIsWand = isWand(currentMainHand);
+      
+      if (itemIsWand || mainHandIsWand) {
+        // If either is a wand, both must be wands
+        if (itemIsWand !== mainHandIsWand) {
+          return {
+            canEquip: false,
+            reason: 'Wands can only be equipped together',
+          };
+        }
+        // Both are wands - allowed
+      } else {
+        // Neither is a wand - check other compatibility rules
+        const itemIsClaw = isClaw(item);
+        const itemIsDagger = isDagger(item);
+        const itemIsAxe = isAxe(item);
+        const itemIsSword = isSword(item);
+        const itemIsMace = isMace(item);
+        
+        const mainHandIsClaw = isClaw(currentMainHand);
+        const mainHandIsDagger = isDagger(currentMainHand);
+        const mainHandIsAxe = isAxe(currentMainHand);
+        const mainHandIsSword = isSword(currentMainHand);
+        const mainHandIsMace = isMace(currentMainHand);
+        
+        // Claws and daggers can be equipped in any combination together
+        const itemIsClawOrDagger = itemIsClaw || itemIsDagger;
+        const mainHandIsClawOrDagger = mainHandIsClaw || mainHandIsDagger;
+        
+        // Axes, swords, and maces can be equipped in any combination together
+        const itemIsAxeSwordMace = itemIsAxe || itemIsSword || itemIsMace;
+        const mainHandIsAxeSwordMace = mainHandIsAxe || mainHandIsSword || mainHandIsMace;
+        
+        // If one is claw/dagger, the other must also be claw/dagger
+        if (itemIsClawOrDagger && !mainHandIsClawOrDagger) {
+          return {
+            canEquip: false,
+            reason: 'Claws and daggers can only be equipped with claws or daggers',
+          };
+        }
+        
+        // If one is axe/sword/mace, the other must also be axe/sword/mace
+        if (itemIsAxeSwordMace && !mainHandIsAxeSwordMace) {
+          return {
+            canEquip: false,
+            reason: 'Axes, swords, and maces can only be equipped together',
+          };
+        }
+        
+        // All other combinations are allowed (e.g., claw+dagger, axe+sword, etc.)
+      }
+    }
+    
+    // Also check when equipping to mainHand if offHand is a weapon
+    // This is handled in the mainHand section, but we need to check here too for consistency
     
     // Shield or off-hand weapon is fine with one-hander or empty main hand
     return { canEquip: true };

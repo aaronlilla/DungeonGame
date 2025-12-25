@@ -41,6 +41,12 @@ export function handleWipe(
   const orbDrops = generateOrbDrops(selectedKeyLevel, false, progressPercent);
   const xp = Math.floor(200 * scaling.rewardMultiplier * progressPercent);
   
+  // Merge verbose logger logs with regular combat log
+  const verboseLogs = context.verboseLogger?.getLogs() || [];
+  const allLogs = [...currentCombatState.combatLog, ...verboseLogs];
+  // Sort by timestamp to ensure chronological order
+  allLogs.sort((a, b) => a.timestamp - b.timestamp);
+
   const result: DungeonRunResult = {
     success: false,
     keyLevel: selectedKeyLevel,
@@ -53,7 +59,7 @@ export function handleWipe(
     deaths: teamStates.filter(m => m.isDead).length,
     forcesCleared: totalForcesCleared,
     forcesRequired: dungeon.requiredForces,
-    combatLog: currentCombatState.combatLog,
+    combatLog: allLogs,
     failReason: 'wipe',
     failedPullIndex: currentCombatState.currentPullIndex,
     deathCauses,

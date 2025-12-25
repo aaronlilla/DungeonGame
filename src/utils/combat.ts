@@ -6,7 +6,7 @@ import type { EnemyBehavior, TeamMemberState, PlayerAbility, FloatingNumber } fr
 import { calculatePassiveBonuses, getDefaultClassForRole } from '../types/passives';
 import type { PassiveEffect } from '../types/passives';
 import { calculateTalentBonuses, type TalentBonuses } from '../types/talents';
-import { calculateEquipmentStats, getEquippedWeaponDamage } from '../systems/equipmentStats';
+import { calculateEquipmentStats, getEquippedWeaponDamage, isDualWielding } from '../systems/equipmentStats';
 
 // Determine enemy behavior based on their icon/type
 export function getEnemyBehavior(enemyId: string): EnemyBehavior {
@@ -280,7 +280,24 @@ export function initTeamStates(team: Character[], inventory: Item[] = []): TeamM
     // Apply talent flat bonuses
     blockChance += talentBonuses.blockBonus;
     spellBlockChance += talentBonuses.spellBlockBonus;
+    
+    // Apply blockToSpellBlock conversion (Duel Warden talent)
+    if (talentBonuses.blockToSpellBlockPercent > 0 && blockChance > 0) {
+      const convertedSpellBlock = Math.floor(blockChance * (talentBonuses.blockToSpellBlockPercent / 100));
+      spellBlockChance += convertedSpellBlock;
+    }
+    
     spellSuppressionChance += talentBonuses.spellSuppressionChance;
+    
+    // Apply evadeChanceToSuppression conversion (Shadow Warden talent)
+    if (talentBonuses.evadeChanceToSuppressionPercent > 0 && talentBonuses.evadeChance > 0) {
+      // Convert a percentage of evade chance to spell suppression
+      const evadeChancePercent = talentBonuses.evadeChance;
+      const conversionPercent = talentBonuses.evadeChanceToSuppressionPercent;
+      const convertedSuppression = Math.floor(evadeChancePercent * (conversionPercent / 100));
+      spellSuppressionChance += convertedSuppression;
+    }
+    
     critChance += talentBonuses.critBonus;
     
     // Apply evasion bonus (evadeChance is a flat % chance, not a rating)
@@ -334,8 +351,16 @@ export function initTeamStates(team: Character[], inventory: Item[] = []): TeamM
       }
     });
     
-    // Get weapon damage from equipped main hand weapon
-    const weaponDamage = getEquippedWeaponDamage(equippedItems);
+    // Check if dual wielding
+    const dualWielding = isDualWielding(equippedItems);
+    
+    // Apply dual wielding block bonus: +20% block chance
+    if (dualWielding) {
+      blockChance += 20;
+    }
+    
+    // Get weapon damage from equipped weapons (start with mainHand for dual wielding)
+    const weaponDamage = getEquippedWeaponDamage(equippedItems, null);
     
     return {
       id: char.id,
@@ -367,7 +392,10 @@ export function initTeamStates(team: Character[], inventory: Item[] = []): TeamM
       // Store talent bonuses for combat system
       talentBonuses,
       // Store weapon damage for attack skills
-      weaponDamage: weaponDamage || undefined
+      weaponDamage: weaponDamage || undefined,
+      // Dual wielding tracking
+      lastWeaponUsed: null, // Start with null (will use mainHand first)
+      isDualWielding: dualWielding
     };
   });
   
@@ -384,6 +412,240 @@ export function initTeamStates(team: Character[], inventory: Item[] = []): TeamM
     };
     return result;
   });
+}
+
+/**
+ * Update a single team member's stats from their character data
+ * Used when a character levels up mid-combat
+ */
+export function updateTeamMemberStats(
+  member: TeamMemberState,
+  character: Character,
+  inventory: Item[],
+  allTeamMembers: Character[]
+): TeamMemberState {
+  // Get passive bonuses from allocated nodes (legacy system)
+  const classId = character.classId || getDefaultClassForRole(character.role);
+  const passiveBonuses = classId 
+    ? calculatePassiveBonuses(classId, character.allocatedPassives || [])
+    : { stats: {} as Partial<BaseStats>, effects: [] as PassiveEffect[] };
+  
+  // Get talent bonuses from MoP-style talents
+  const talentBonuses: TalentBonuses = classId && character.selectedTalents
+    ? calculateTalentBonuses(classId, character.selectedTalents)
+    : {
+        damageMultiplier: 0, healingMultiplier: 0, damageReduction: 0,
+        armorMultiplier: 0, evasionMultiplier: 0, healthMultiplier: 0, manaRegenMultiplier: 0,
+        manaCostReduction: 0, cooldownReduction: 0, blockBonus: 0,
+        blockEffectiveness: 0, critBonus: 0, castSpeedBonus: 0,
+        lifesteal: 0, thorns: 0, resistanceBonus: 0,
+        enemyAttackSpeedReduction: 0, enemyAccuracyReduction: 0,
+        attackDamageReduction: 0, physicalDamageReductionFromArmor: 0,
+        armorEffectivenessVsAttacks: 100, evasionToMitigationPercent: 0, selfDamageReduction: 0,
+        spellBlockBonus: 0, nonBlockedDamageReduction: 0, blockToSpellBlockPercent: 0,
+        spellSuppressionChance: 0, spellSuppressionEffect: 0,
+        evadeChanceToSuppressionPercent: 0, evadeChance: 0,
+        enemyCritChanceReduction: 0, enemyCritMultiplierReduction: 0,
+        elementalDamageReduction: 0, hitDamageReduction: 0,
+        enemyCritDamageReduction: 0, suppressedNoCrit: false,
+        armorReduction: 0, allyEvadeChance: 0,
+        esRechargeRate: 0, esRechargeDelay: 0, esRecoveryBonus: 0,
+        esRegeneration: 0, spellDamageReduction: 0, maxESBonus: 0,
+        maxLifeReduction: 0, elementalResistanceBonus: 0, esLeech: 0,
+        allySpellDamageReduction: 0,
+        chaosResistance: 0, maxChaosResistance: 0, chaosDamageReduction: 0,
+        allyChaosResistance: 0, allyElementalDamageReduction: 0,
+        dodgeChance: 0, allyEvasionRating: 0, maxESReduction: 0,
+        singleTargetHealingBonus: 0, areaHealingReduction: 0,
+        areaTargetReduction: 0, areaHealingPerTargetBonus: 0,
+        healingReduction: 0, lowLifeHealingBonus: 0, healingCannotCrit: false,
+        hotEffectivenessReduction: 0, manaCostIncrease: 0,
+        lifeCostReduction: 0, lifeSpentReturn: 0, lifeCostIncrease: 0,
+        healingOutputBonus: 0, selfHealFromHealing: 0, lowLifeDamageReduction: 0,
+        lifeRegenOnLifeSpend: 0, allyLifeRecoveryFromLifeSpent: 0, allyDRFromHealing: 0,
+        allyLifeRegenFromHealing: 0, healingOverTimeFromHeal: 0, bigLifeLossDR: 0,
+        allyHitDRFromHealing: 0, lowLifeHealingIncrease: 0, lifeCostFloor: 0,
+        lifeCostChaosDamage: 0, endlessMartyrdom: false, lifeCostStackingHealing: 0,
+        allyMaxLifeFromHealing: 0,
+        allyDamageReduction: 0, lowLifeAllyDR: 0, dotDamageReduction: 0,
+        defensiveCooldownReduction: 0, defensiveCooldownEffect: 0, defensiveCooldownCDR: 0,
+        crisisProtocolDR: 0, damageRedistribution: 0, failSafeFormationDR: 0,
+        directHealBonus: 0, healCooldownIncrease: 0, healingLifeRegen: 0,
+        overhealingToRegen: 0, allyMaxLifeBonus: 0, allyCritDamageReduction: 0,
+        allyDealLessDamage: 0, allyTakeLessDamage: 0, battlePlanAlphaDR: 0,
+        perfectExecutionDR: 0, strategicMastery: false,
+        lifeRegenRate: 0, regenDuration: 0, flatLifeRegenPerSecond: 0,
+        lowLifeRegenRate: 0, regenRatePerEffect: 0, regenRateSlower: 0,
+        physicalDRWhileRegen: 0, elementalDRWhileRegen: 0, maxResWhileRegen: 0,
+        regenRateAfterHit: 0, dotDRWhileRegen: 0, instantRegenPercent: 0,
+        regenEffectMore: 0, regenSpeedFaster: 0, excessRegenToES: 0,
+        additionalLifeRegenPerSecond: 0, regenEffectMoreBonus: 0, regenCannotBeReduced: false,
+        drWhileRegen: 0, regenShareToAllies: 0, regenDurationReduction: 0,
+        specialEffects: []
+      };
+  
+  // Get equipment bonuses from equipped items
+  const equippedItems: Item[] = [];
+  for (const itemId of Object.values(character.equippedGear)) {
+    if (itemId) {
+      const item = inventory.find(i => i.id === itemId);
+      if (item) equippedItems.push(item);
+    }
+  }
+  const equipmentBonuses = calculateEquipmentStats(equippedItems);
+  
+  // Helper to get stat with passive + equipment bonus
+  const getStat = (baseStat: number, key: keyof BaseStats): number => {
+    const passiveBonus = ((passiveBonuses.stats[key] as number) || 0);
+    const equipBonus = ((equipmentBonuses[key] as number) || 0);
+    return baseStat + passiveBonus + equipBonus;
+  };
+  
+  // Calculate final stats with passive and equipment bonuses
+  let maxLife = getStat(character.baseStats.maxLife, 'maxLife');
+  let maxMana = getStat(character.baseStats.maxMana, 'maxMana');
+  let armor = getStat(character.baseStats.armor, 'armor');
+  let evasion = getStat(character.baseStats.evasion ?? 0, 'evasion');
+  let energyShield = getStat(character.baseStats.energyShield ?? 0, 'energyShield');
+  
+  // Apply talent percentage bonuses
+  if (talentBonuses.healthMultiplier > 0) {
+    maxLife = Math.floor(maxLife * (1 + talentBonuses.healthMultiplier / 100));
+  }
+  if (talentBonuses.armorMultiplier > 0) {
+    armor = Math.floor(armor * (1 + talentBonuses.armorMultiplier / 100));
+  }
+  if (talentBonuses.evasionMultiplier > 0) {
+    const baseEvasion = evasion;
+    evasion = Math.floor(baseEvasion * (1 + talentBonuses.evasionMultiplier / 100));
+  }
+  if (talentBonuses.maxESBonus > 0) {
+    const baseES = energyShield;
+    energyShield = Math.floor(baseES * (1 + talentBonuses.maxESBonus / 100));
+  }
+  if (talentBonuses.maxLifeReduction > 0) {
+    maxLife = Math.floor(maxLife * (1 - talentBonuses.maxLifeReduction / 100));
+  }
+  
+  // Get base resistances
+  let fireResistance = getStat(character.baseStats.fireResistance, 'fireResistance');
+  let coldResistance = getStat(character.baseStats.coldResistance, 'coldResistance');
+  let lightningResistance = getStat(character.baseStats.lightningResistance, 'lightningResistance');
+  let chaosResistance = getStat(character.baseStats.chaosResistance, 'chaosResistance');
+  
+  // Apply special effects from passives
+  let blockChance = getStat(character.baseStats.blockChance, 'blockChance');
+  let spellBlockChance = getStat(character.baseStats.spellBlockChance, 'spellBlockChance');
+  let spellSuppressionChance = getStat(character.baseStats.spellSuppressionChance, 'spellSuppressionChance');
+  let critChance = getStat(character.baseStats.criticalStrikeChance, 'criticalStrikeChance');
+  let critMultiplier = getStat(character.baseStats.criticalStrikeMultiplier, 'criticalStrikeMultiplier');
+  
+  // Apply talent flat bonuses
+  blockChance += talentBonuses.blockBonus;
+  spellBlockChance += talentBonuses.spellBlockBonus;
+  
+  // Apply blockToSpellBlock conversion (Duel Warden talent)
+  if (talentBonuses.blockToSpellBlockPercent > 0 && blockChance > 0) {
+    const convertedSpellBlock = Math.floor(blockChance * (talentBonuses.blockToSpellBlockPercent / 100));
+    spellBlockChance += convertedSpellBlock;
+  }
+  
+  spellSuppressionChance += talentBonuses.spellSuppressionChance;
+  
+  // Apply evadeChanceToSuppression conversion (Shadow Warden talent)
+  if (talentBonuses.evadeChanceToSuppressionPercent > 0 && talentBonuses.evadeChance > 0) {
+    // Convert a percentage of evade chance to spell suppression
+    const evadeChancePercent = talentBonuses.evadeChance;
+    const conversionPercent = talentBonuses.evadeChanceToSuppressionPercent;
+    const convertedSuppression = Math.floor(evadeChancePercent * (conversionPercent / 100));
+    spellSuppressionChance += convertedSuppression;
+  }
+  
+  critChance += talentBonuses.critBonus;
+  
+  // Apply evasion bonus
+  if (talentBonuses.evadeChance > 0) {
+    evasion += Math.floor(evasion * (talentBonuses.evadeChance / 100));
+  }
+  
+  // Apply resistance bonus
+  const resistanceBonus = talentBonuses.resistanceBonus || 0;
+  if (resistanceBonus > 0) {
+    fireResistance = Math.min(75, fireResistance + resistanceBonus);
+    coldResistance = Math.min(75, coldResistance + resistanceBonus);
+    lightningResistance = Math.min(75, lightningResistance + resistanceBonus);
+  }
+  
+  // Apply talent chaos resistance
+  if (talentBonuses.chaosResistance > 0) {
+    chaosResistance = Math.min(75, chaosResistance + talentBonuses.chaosResistance);
+  }
+  
+  // Apply elemental resistance bonus
+  if (talentBonuses.elementalResistanceBonus > 0) {
+    fireResistance = Math.min(75, fireResistance + talentBonuses.elementalResistanceBonus);
+    coldResistance = Math.min(75, coldResistance + talentBonuses.elementalResistanceBonus);
+    lightningResistance = Math.min(75, lightningResistance + talentBonuses.elementalResistanceBonus);
+  }
+  
+  // Apply percentage-based effects from passives
+  passiveBonuses.effects.forEach(effect => {
+    switch (effect.type) {
+      case 'blockChance':
+        blockChance += effect.value;
+        break;
+      case 'spellBlockChance':
+        spellBlockChance += effect.value;
+        break;
+      case 'spellSuppression':
+        spellSuppressionChance += effect.value;
+        break;
+      case 'critChance':
+        critChance += effect.value;
+        break;
+      case 'critMultiplier':
+        critMultiplier += effect.value;
+        break;
+    }
+  });
+  
+  // Get weapon damage from equipped main hand weapon
+  const weaponDamage = getEquippedWeaponDamage(equippedItems);
+  
+  // Full heal and full mana on level up (mid-combat)
+  const newHealth = maxLife;
+  const newMana = maxMana;
+  
+  // Create updated member with new stats
+  const updatedMember: TeamMemberState = {
+    ...member,
+    maxHealth: maxLife,
+    health: newHealth,
+    maxMana: maxMana,
+    mana: newMana,
+    armor: Math.max(0, armor),
+    evasion: Math.max(0, evasion) as number,
+    energyShield: Math.max(0, energyShield) as number,
+    maxEnergyShield: Math.max(0, energyShield) as number,
+    blockChance: Math.min(75, Math.max(0, blockChance)),
+    spellBlockChance: Math.min(75, Math.max(0, spellBlockChance)),
+    spellSuppressionChance: Math.min(100, Math.max(0, spellSuppressionChance)),
+    fireResistance: fireResistance,
+    coldResistance: coldResistance,
+    lightningResistance: lightningResistance,
+    chaosResistance: chaosResistance,
+    criticalStrikeChance: Math.max(0, critChance),
+    criticalStrikeMultiplier: Math.max(100, critMultiplier),
+    passiveEffects: passiveBonuses.effects,
+    talentBonuses,
+    weaponDamage: weaponDamage || undefined
+  };
+  
+  // Apply team-affecting talents from all team members
+  const teamStatesWithThisMember = [updatedMember];
+  const withTeamTalents = applyTeamAffectingTalents(teamStatesWithThisMember, allTeamMembers);
+  
+  return withTeamTalents[0];
 }
 
 // Initialize player abilities

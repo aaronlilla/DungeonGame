@@ -132,7 +132,8 @@ export async function performPostCombatRecovery(
     injured.lastHealAmount = actualHeal;
     injured.lastHealCrit = isCritHeal;
     if (isCritHeal) setScreenShake(prev => prev + 1);
-    healer.mana = Math.max(0, healer.mana - 16);
+    // During recovery, healer has infinite mana - restore to full after each heal
+    healer.mana = healer.maxMana;
     healer.totalHealing = (healer.totalHealing || 0) + actualHeal;
     healer.healingBySpell = healer.healingBySpell || {};
     healer.healingBySpell['Healing Wave'] = (healer.healingBySpell['Healing Wave'] || 0) + actualHeal;
@@ -146,7 +147,7 @@ export async function performPostCombatRecovery(
       m.id === injured.id 
         ? { ...m, lastHealTime: healTimestamp, lastHealAmount: actualHeal, lastHealCrit: isCritHeal, health: injured.health }
         : m.id === healer.id
-        ? { ...m, mana: healer.mana, totalHealing: healer.totalHealing, healingBySpell: healer.healingBySpell, isCasting: false }
+        ? { ...m, mana: healer.maxMana, totalHealing: healer.totalHealing, healingBySpell: healer.healingBySpell, isCasting: false }
         : m
     );
     
@@ -168,156 +169,104 @@ export async function performPostCombatRecovery(
     const updatedAliveMembers = teamStates.filter(m => !m.isDead);
     membersNeedingHealing = updatedAliveMembers.filter(m => m.health < m.maxHealth);
     
-    if (healer.mana < 16) {
-      break;
-    }
+    // No need to check mana - healer has infinite mana during recovery
   }
   
-  if (healer.mana < healer.maxMana * 0.8 && !combatRef.current.stop && !timedOut) {
-    const drinkTime = Math.ceil((1 - healer.mana / healer.maxMana) * 4);
+  // During recovery, healer has infinite mana - no need to drink
+  // Continue healing any remaining injured members
+  const updatedAliveMembers = teamStates.filter(m => !m.isDead);
+  let stillNeedingHealing = updatedAliveMembers.filter(m => m.health < m.maxHealth);
+  
+  while (stillNeedingHealing.length > 0 && !combatRef.current.stop && !timedOut) {
+    const injured = stillNeedingHealing.reduce((mostInjured, m) => {
+      const injuredPercent = (mostInjured.maxHealth - mostInjured.health) / mostInjured.maxHealth;
+      const mPercent = (m.maxHealth - m.health) / m.maxHealth;
+      return mPercent > injuredPercent ? m : mostInjured;
+    });
     
-    updateCombatState(prev => ({ 
-      ...prev, 
-      combatLog: [...prev.combatLog, { 
-        timestamp: context.totalTime, 
-        type: 'ability', 
-        source: healer.name, 
-        target: '', 
-        message: `🥤 ${healer.name} is drinking...` 
-      }] 
-    }));
+    if (combatRef.current.stop) break;
+    if (checkTimeout()) { timedOut = true; break; }
     
-    const drinkTicks = secondsToTicks(drinkTime);
-    const manaPerTickActual = Math.ceil((healer.maxMana - healer.mana) / drinkTicks);
-    for (let t = 1; t <= drinkTicks; t++) {
+    const healNeeded = injured.maxHealth - injured.health;
+    const healAmount = Math.min(healNeeded, Math.floor(injured.maxHealth * 0.4));
+    const castTime = 1.2;
+    
+    healer.isCasting = true;
+    healer.castAbility = 'Healing Wave';
+    healer.castStartTime = Date.now();
+    healer.castTotalTime = castTime;
+    healer.castTargetId = injured.id;
+    
+    teamStates = teamStates.map(m => 
+      m.id === healer.id 
+        ? { ...m, isCasting: true, castAbility: 'Healing Wave', castStartTime: healer.castStartTime, castTotalTime: castTime, castTargetId: injured.id }
+        : m
+    );
+    updateCombatState(prev => ({ ...prev, teamStates: [...teamStates] }));
+    
+    const castTicks = secondsToTicks(castTime);
+    for (let t = 0; t < castTicks; t++) {
       if (combatRef.current.stop) break;
-      if (checkTimeout()) { timedOut = true; break; }
       const isSimulation = combatRef.current.simulationContextRef !== undefined;
       if (!isSimulation) {
         await sleep(TICK_MS, combatRef);
       }
       context.currentTick++;
       context.totalTime = ticksToSeconds(context.currentTick);
-      healer.mana = Math.min(healer.maxMana, healer.mana + manaPerTickActual);
-      teamStates = teamStates.map(m => {
-        if (m.isDead || m.role === 'healer') return m;
-        return { ...m, mana: Math.min(m.maxMana, m.mana + Math.floor(m.maxMana * 0.02)) };
-      });
       if (t % 5 === 0) { // Update UI every 500ms
-        updateCombatState(prev => ({ 
-          ...prev, 
-          teamStates: [...teamStates],
-          timeElapsed: context.totalTime
-        }));
+        updateCombatState(prev => ({ ...prev, teamStates: [...teamStates], timeElapsed: context.totalTime }));
       }
     }
+    
+    const healerChar = context.team.find(c => c.id === healer.id);
+    const critChance = healerChar?.baseStats?.criticalStrikeChance || 10;
+    const isCritHeal = Math.random() < (critChance / 100);
+    const finalHealAmount = isCritHeal ? Math.floor(healAmount * 1.5) : healAmount;
+    const actualHeal = Math.min(injured.maxHealth - injured.health, finalHealAmount);
+    injured.health = Math.min(injured.maxHealth, injured.health + finalHealAmount);
+    const healTimestamp = Date.now();
+    injured.lastHealTime = healTimestamp;
+    injured.lastHealAmount = actualHeal;
+    injured.lastHealCrit = isCritHeal;
+    if (isCritHeal) setScreenShake(prev => prev + 1);
+    // During recovery, healer has infinite mana - restore to full after each heal
+    healer.mana = healer.maxMana;
+    healer.totalHealing = (healer.totalHealing || 0) + actualHeal;
+    healer.healingBySpell = healer.healingBySpell || {};
+    healer.healingBySpell['Healing Wave'] = (healer.healingBySpell['Healing Wave'] || 0) + actualHeal;
+    healer.isCasting = false;
+    
+    const jitterX = (Math.random() * 80) - 40;
+    const jitterY = (Math.random() * 60) - 30;
+    const floatNum = createFloatingNumber(actualHeal, 'heal', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 50 + jitterY);
+    
+    teamStates = teamStates.map(m => 
+      m.id === injured.id 
+        ? { ...m, lastHealTime: healTimestamp, lastHealAmount: actualHeal, lastHealCrit: isCritHeal, health: injured.health }
+        : m.id === healer.id
+        ? { ...m, mana: healer.maxMana, totalHealing: healer.totalHealing, healingBySpell: healer.healingBySpell, isCasting: false }
+        : m
+    );
     
     updateCombatState(prev => ({ 
       ...prev, 
+      teamStates: [...teamStates],
+      timeElapsed: context.totalTime,
+      floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum],
       combatLog: [...prev.combatLog, { 
         timestamp: context.totalTime, 
-        type: 'buff', 
+        type: 'heal', 
         source: healer.name, 
-        target: '', 
-        message: `✨ ${healer.name} finished drinking. Ready!` 
-      }] 
+        target: injured.name, 
+        value: actualHeal, 
+        message: `💊 ${healer.name} casts Healing Wave on ${injured.name} for ${actualHeal}${isCritHeal ? ' CRIT!' : ''}!` 
+      }]
     }));
     
-    const updatedAliveMembers = teamStates.filter(m => !m.isDead);
-    let stillNeedingHealing = updatedAliveMembers.filter(m => m.health < m.maxHealth);
+    const refreshedAliveMembers = teamStates.filter(m => !m.isDead);
+    stillNeedingHealing = refreshedAliveMembers.filter(m => m.health < m.maxHealth);
     
-    while (stillNeedingHealing.length > 0 && !combatRef.current.stop && !timedOut) {
-      const injured = stillNeedingHealing.reduce((mostInjured, m) => {
-        const injuredPercent = (mostInjured.maxHealth - mostInjured.health) / mostInjured.maxHealth;
-        const mPercent = (m.maxHealth - m.health) / m.maxHealth;
-        return mPercent > injuredPercent ? m : mostInjured;
-      });
-      
-      if (combatRef.current.stop) break;
-      if (checkTimeout()) { timedOut = true; break; }
-      
-      const healNeeded = injured.maxHealth - injured.health;
-      const healAmount = Math.min(healNeeded, Math.floor(injured.maxHealth * 0.4));
-      const castTime = 1.2;
-      
-      healer.isCasting = true;
-      healer.castAbility = 'Healing Wave';
-      healer.castStartTime = Date.now();
-      healer.castTotalTime = castTime;
-      healer.castTargetId = injured.id;
-      
-      teamStates = teamStates.map(m => 
-        m.id === healer.id 
-          ? { ...m, isCasting: true, castAbility: 'Healing Wave', castStartTime: healer.castStartTime, castTotalTime: castTime, castTargetId: injured.id }
-          : m
-      );
-      updateCombatState(prev => ({ ...prev, teamStates: [...teamStates] }));
-      
-      const castTicks = secondsToTicks(castTime);
-      for (let t = 0; t < castTicks; t++) {
-        if (combatRef.current.stop) break;
-        const isSimulation = combatRef.current.simulationContextRef !== undefined;
-        if (!isSimulation) {
-          await sleep(TICK_MS, combatRef);
-        }
-        context.currentTick++;
-        context.totalTime = ticksToSeconds(context.currentTick);
-        if (t % 5 === 0) { // Update UI every 500ms
-          updateCombatState(prev => ({ ...prev, teamStates: [...teamStates], timeElapsed: context.totalTime }));
-        }
-      }
-      
-      const healerChar = context.team.find(c => c.id === healer.id);
-      const critChance = healerChar?.baseStats?.criticalStrikeChance || 10;
-      const isCritHeal = Math.random() < (critChance / 100);
-      const finalHealAmount = isCritHeal ? Math.floor(healAmount * 1.5) : healAmount;
-      const actualHeal = Math.min(injured.maxHealth - injured.health, finalHealAmount);
-      injured.health = Math.min(injured.maxHealth, injured.health + finalHealAmount);
-      const healTimestamp = Date.now();
-      injured.lastHealTime = healTimestamp;
-      injured.lastHealAmount = actualHeal;
-      injured.lastHealCrit = isCritHeal;
-      if (isCritHeal) setScreenShake(prev => prev + 1);
-      healer.mana = Math.max(0, healer.mana - 16);
-      healer.totalHealing = (healer.totalHealing || 0) + actualHeal;
-      healer.healingBySpell = healer.healingBySpell || {};
-      healer.healingBySpell['Healing Wave'] = (healer.healingBySpell['Healing Wave'] || 0) + actualHeal;
-      healer.isCasting = false;
-      
-      const jitterX = (Math.random() * 80) - 40;
-      const jitterY = (Math.random() * 60) - 30;
-      const floatNum = createFloatingNumber(actualHeal, 'heal', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 50 + jitterY);
-      
-      teamStates = teamStates.map(m => 
-        m.id === injured.id 
-          ? { ...m, lastHealTime: healTimestamp, lastHealAmount: actualHeal, lastHealCrit: isCritHeal, health: injured.health }
-          : m.id === healer.id
-          ? { ...m, mana: healer.mana, totalHealing: healer.totalHealing, healingBySpell: healer.healingBySpell, isCasting: false }
-          : m
-      );
-      
-      updateCombatState(prev => ({ 
-        ...prev, 
-        teamStates: [...teamStates],
-        timeElapsed: context.totalTime,
-        floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum],
-        combatLog: [...prev.combatLog, { 
-          timestamp: context.totalTime, 
-          type: 'heal', 
-          source: healer.name, 
-          target: injured.name, 
-          value: actualHeal, 
-          message: `💊 ${healer.name} casts Healing Wave on ${injured.name} for ${actualHeal}${isCritHeal ? ' CRIT!' : ''}!` 
-        }]
-      }));
-      
-      const refreshedAliveMembers = teamStates.filter(m => !m.isDead);
-      stillNeedingHealing = refreshedAliveMembers.filter(m => m.health < m.maxHealth);
-      
-      if (healer.mana < 16) {
-        break;
-      }
-    }
+    // No need to check mana - healer has infinite mana during recovery
   }
   
   if (timedOut) {
@@ -371,16 +320,37 @@ export async function performPostCombatRecovery(
     }
     
     const rezCastTime = 6;
+    const rezStartTime = Date.now();
+    
+    // Set healer's casting state so it's visible in the UI
+    healer.isCasting = true;
+    healer.castAbility = 'Mass Resurrection';
+    healer.castStartTime = rezStartTime;
+    healer.castTotalTime = rezCastTime;
+    healer.castTargetId = undefined; // Mass rez targets all dead members
+    
+    teamStates = teamStates.map(m => 
+      m.id === healer.id 
+        ? { ...m, isCasting: true, castAbility: 'Mass Resurrection', castStartTime: rezStartTime, castTotalTime: rezCastTime, castTargetId: undefined }
+        : m
+    );
+    
     updateCombatState(prev => ({ 
       ...prev, 
       phase: 'traveling',
+      teamStates: [...teamStates],
       combatLog: [...prev.combatLog, { 
         timestamp: context.totalTime, 
         type: 'ability', 
         source: healer.name, 
         target: '', 
         message: `🙏 ${healer.name} begins casting Mass Resurrection... (${rezCastTime}s)` 
-      }]
+      }],
+      healerCasting: { 
+        ability: 'Mass Resurrection', 
+        progress: 0, 
+        startTime: rezStartTime 
+      }
     }));
     
     const rezCastTicks = secondsToTicks(rezCastTime);
@@ -396,16 +366,30 @@ export async function performPostCombatRecovery(
       }
       context.currentTick++;
       context.totalTime = ticksToSeconds(context.currentTick);
+      const progress = (i / rezCastTicks) * 100;
       updateCombatState(prev => ({ 
         ...prev, 
         timeElapsed: context.totalTime,
+        teamStates: prev.teamStates.map(m => 
+          m.id === healer.id && m.isCasting
+            ? { ...m, castStartTime: rezStartTime, castTotalTime: rezCastTime }
+            : m
+        ),
         healerCasting: { 
           ability: 'Mass Resurrection', 
-          progress: (i / rezCastTicks) * 100, 
-          startTime: i === 1 ? Date.now() : prev.healerCasting?.startTime || Date.now() 
+          progress, 
+          startTime: rezStartTime 
         }
       }));
     }
+    
+    // Clear casting state after resurrection completes
+    healer.isCasting = false;
+    teamStates = teamStates.map(m => 
+      m.id === healer.id 
+        ? { ...m, isCasting: false, castAbility: undefined, castStartTime: undefined, castTotalTime: undefined, castTargetId: undefined }
+        : m
+    );
     
     if (combatRef.current.stop || timedOut) {
       setIsRunning(false);
@@ -437,7 +421,7 @@ export async function performPostCombatRecovery(
     const rezNames = deadMembers.map(m => m.name).join(', ');
     updateCombatState(prev => ({
       ...prev,
-      teamStates,
+      teamStates: [...teamStates],
       healerCasting: undefined,
       combatLog: [...prev.combatLog, {
         timestamp: context.totalTime,
@@ -525,7 +509,8 @@ export async function performPostCombatRecovery(
       injured.lastHealAmount = actualHeal;
       injured.lastHealCrit = isCritHeal;
       if (isCritHeal) setScreenShake(prev => prev + 1);
-      healer.mana = Math.max(0, healer.mana - 16);
+      // During recovery, healer has infinite mana - restore to full after each heal
+      healer.mana = healer.maxMana;
       healer.totalHealing = (healer.totalHealing || 0) + actualHeal;
       healer.healingBySpell = healer.healingBySpell || {};
       healer.healingBySpell['Healing Wave'] = (healer.healingBySpell['Healing Wave'] || 0) + actualHeal;
@@ -539,7 +524,7 @@ export async function performPostCombatRecovery(
         m.id === injured.id 
           ? { ...m, lastHealTime: healTimestamp, lastHealAmount: actualHeal, lastHealCrit: isCritHeal, health: safeNewHealth }
           : m.id === healer.id
-          ? { ...m, mana: healer.mana, totalHealing: healer.totalHealing, healingBySpell: healer.healingBySpell, isCasting: false }
+          ? { ...m, mana: healer.maxMana, totalHealing: healer.totalHealing, healingBySpell: healer.healingBySpell, isCasting: false }
           : m
       );
       
@@ -566,57 +551,7 @@ export async function performPostCombatRecovery(
         return health < maxHealth;
       });
       
-      if (healer.mana < 16) {
-        // Need to drink more mana
-        const drinkTime = Math.ceil((1 - healer.mana / healer.maxMana) * 4);
-        
-        updateCombatState(prev => ({
-          ...prev,
-          combatLog: [...prev.combatLog, {
-            timestamp: context.totalTime,
-            type: 'ability',
-            source: healer.name,
-            target: '',
-            message: `🥤 ${healer.name} is drinking...`
-          }]
-        }));
-        
-        const drinkTicks = secondsToTicks(drinkTime);
-        const manaPerTickActual = Math.ceil((healer.maxMana - healer.mana) / drinkTicks);
-        for (let t = 1; t <= drinkTicks; t++) {
-          if (combatRef.current.stop) break;
-          if (checkTimeout()) { timedOut = true; break; }
-          const isSimulation = combatRef.current.simulationContextRef !== undefined;
-          if (!isSimulation) {
-            await sleep(TICK_MS, combatRef);
-          }
-          context.currentTick++;
-          context.totalTime = ticksToSeconds(context.currentTick);
-          healer.mana = Math.min(healer.maxMana, healer.mana + manaPerTickActual);
-          teamStates = teamStates.map(m => {
-            if (m.isDead || m.role === 'healer') return m;
-            return { ...m, mana: Math.min(m.maxMana, m.mana + Math.floor(m.maxMana * 0.02)) };
-          });
-          if (t % 5 === 0) {
-            updateCombatState(prev => ({
-              ...prev,
-              teamStates: [...teamStates],
-              timeElapsed: context.totalTime
-            }));
-          }
-        }
-        
-        updateCombatState(prev => ({
-          ...prev,
-          combatLog: [...prev.combatLog, {
-            timestamp: context.totalTime,
-            type: 'buff',
-            source: healer.name,
-            target: '',
-            message: `✨ ${healer.name} finished drinking. Ready!`
-          }]
-        }));
-      }
+      // No need to check mana - healer has infinite mana during recovery
     }
   }
   

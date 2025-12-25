@@ -1,6 +1,6 @@
 import type { AnimatedEnemy, TeamMemberState, CombatState } from '../../../types/combat';
 import type { CombatContext } from '../types';
-import { sleep, TICK_MS, secondsToTicks, ticksToSeconds, GCD_TICKS } from '../types';
+import { sleep, TICK_MS, TICK_DURATION, secondsToTicks, ticksToSeconds, GCD_TICKS } from '../types';
 import { 
   calculateArmorReduction, 
   rollBlock, 
@@ -355,6 +355,9 @@ export async function runBossFight(
     if (context.bloodlustActive && currentTick >= context.bloodlustEndTick) {
       context.bloodlustActive = false;
     }
+    
+    // Decrement ability cooldowns (tick-based)
+    context.abilities = context.abilities.map(a => ({ ...a, currentCooldown: Math.max(0, a.currentCooldown - TICK_DURATION) }));
     
     // Sync ability cooldowns from ref
     Object.entries(combatRef.current.abilityCooldowns).forEach(([id, cd]) => {
@@ -842,6 +845,9 @@ export async function runBossFight(
       ...prev, 
       enemies: [bossEnemyState], 
       teamStates: [...teamStates], 
+      abilities: [...context.abilities],
+      bloodlustActive: context.bloodlustActive,
+      bloodlustTimer: context.bloodlustActive ? ticksToSeconds(context.bloodlustEndTick - currentTick) : 0,
       timeElapsed: totalTime 
     }));
   }

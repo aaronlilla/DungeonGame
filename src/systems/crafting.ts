@@ -769,15 +769,14 @@ export function generateEnemyLootDrops(
   }
   
   // ===== MAP DROPS =====
-  // Maps drop at original rates, with a chance to upgrade tier when they drop
-  // Upgrade chance: 25% from monsters, 50% from boss
+  // Maps drop at baseline level of current map tier, with 50% chance to upgrade by 1 tier
   if (currentTier > 0) {
-    // Original map drop rates (restored)
+    // Map drop rates: normal 2%, miniboss 25%, final boss 100%
     const mapChance = {
-      normal: 0.0,    // Normal monsters don't drop maps
-      elite: 0.03,    // 3% chance from elite monsters
-      miniboss: 0.15, // 15% chance from minibosses
-      boss: 0.50      // 50% chance from boss
+      normal: 0.02,    // 2% chance from normal monsters
+      elite: 0.02,     // 2% chance from elite monsters (same as normal)
+      miniboss: 0.25,  // 25% chance from minibosses
+      boss: 1.0        // 100% chance from final boss
     };
     
     // Apply quantity bonus (multiplies the chance, but caps at 100%)
@@ -785,13 +784,12 @@ export function generateEnemyLootDrops(
     const modifiedChance = Math.min(1.0, baseChance * (1 + quantityBonus));
     
     if (Math.random() < modifiedChance) {
-      // Start with current tier
+      // Start with current tier (baseline level of map you're currently in)
       let dropTier = currentTier;
       const maxDropTier = Math.min(currentTier + 1, highestCompleted + 1);
       
-      // When a map drops, chance to upgrade by 1 tier:
-      // 25% from monsters (normal/elite/miniboss), 50% from boss
-      const upgradeChance = enemyType === 'boss' ? 0.50 : 0.25;
+      // When a map drops, 50% chance to upgrade by 1 tier
+      const upgradeChance = 0.50;
       if (dropTier < maxDropTier && Math.random() < upgradeChance) {
         dropTier = dropTier + 1;
       }

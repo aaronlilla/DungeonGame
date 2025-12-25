@@ -752,7 +752,12 @@ export function DungeonTab() {
   const useAbility = useCallback((abilityId: string) => {
     setCombatState(prev => {
       const ability = prev.abilities.find(a => a.id === abilityId);
-      if (!ability || ability.currentCooldown > 0) return prev;
+      if (!ability) return prev;
+      
+      // Check cooldown in both state and ref to prevent spam
+      const stateCooldown = ability.currentCooldown || 0;
+      const refCooldown = combatRef.current.abilityCooldowns[abilityId] || 0;
+      if (stateCooldown > 0 || refCooldown > 0) return prev;
       
       const newAbilities = prev.abilities.map(a => a.id === abilityId ? { ...a, currentCooldown: a.cooldown } : a);
       let newLog = [...prev.combatLog];

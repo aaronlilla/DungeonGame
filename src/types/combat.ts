@@ -227,6 +227,7 @@ export interface CombatState {
   currentPullIndex: number;
   teamPosition: { x: number; y: number };
   enemies: AnimatedEnemy[];
+  queuedEnemies: AnimatedEnemy[]; // Enemies waiting to trickle into combat
   teamStates: TeamMemberState[];
   combatLog: import('./dungeon').CombatLogEntry[];
   forcesCleared: number;

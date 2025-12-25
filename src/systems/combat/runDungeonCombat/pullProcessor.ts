@@ -111,6 +111,7 @@ export async function processPull(
     context.usedBossNames = new Set<string>();
   }
   const pullEnemies = createPullEnemies(packs, pullIdx, scaling, shieldActive, context.mapAffixEffects, context.usedBossNames);
+  const enemiesByPack = (pullEnemies as any).__byPack as AnimatedEnemy[][];
 
   const hasGateBoss = packs.some(p => p.isGateBoss);
   // Find the gate boss name if this is a gate boss pull
@@ -125,16 +126,18 @@ export async function processPull(
   // Ensure context.teamStates is updated before combat starts
   context.teamStates = teamStatesLocal;
   
+  // Initially queue all enemies - they'll trickle in over 6 seconds
   updateCombatState(prev => ({
     ...prev,
     phase: 'combat',
-    enemies: pullEnemies,
+    enemies: [], // Start with no enemies in combat
+    queuedEnemies: pullEnemies, // All enemies start in queue
     teamStates: teamStatesLocal,
     combatLog: [...prev.combatLog, { timestamp: totalTime, type: hasGateBoss ? 'boss' : 'pull', source: '', target: '', message: gateBossMessage }]
   }));
 
-  // Run combat loop
-  const combatResult = await runCombatLoop(context, pullEnemies, pullIdx, totalForcesClearedLocal);
+  // Run combat loop - pass enemiesByPack for trickle-in logic
+  const combatResult = await runCombatLoop(context, pullEnemies, pullIdx, totalForcesClearedLocal, enemiesByPack);
   
   if (combatResult.wiped && combatResult.wipeResult) {
     return {
@@ -170,6 +173,7 @@ export async function processPull(
     ...prev,
     forcesCleared: totalForcesClearedLocal,
     enemies: [],
+    queuedEnemies: [],
     teamStates: teamStatesLocal,
     combatLog: [...prev.combatLog, { timestamp: totalTime, type: 'loot', source: '', target: '', message: `✅ Pull complete! +${pullForces} forces` }]
   }));

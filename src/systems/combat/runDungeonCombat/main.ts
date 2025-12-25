@@ -174,7 +174,7 @@ export async function runDungeonCombat(params: DungeonCombatParams): Promise<Dun
 
   const victoryLogEntry = { timestamp: totalTime, type: 'phase' as const, source: '', target: '', message: `🏆 DUNGEON COMPLETE in ${Math.floor(totalTime)}s!` };
   currentCombatState = { ...currentCombatState, combatLog: [...currentCombatState.combatLog, victoryLogEntry] };
-  updateCombatState(prev => ({ ...prev, phase: 'victory', enemies: [], combatLog: [...prev.combatLog, victoryLogEntry] }));
+  updateCombatState(prev => ({ ...prev, phase: 'victory', enemies: [], queuedEnemies: [], combatLog: [...prev.combatLog, victoryLogEntry] }));
 
   await sleep(500, combatRef);
 

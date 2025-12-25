@@ -32,7 +32,11 @@ export function processBuffsAndRegen(
     
     // HP and Mana regen (per tick) - use character stats if available
     const character = team.find(c => c.id === m.id);
-    const lifeRegenPercent = character?.baseStats?.lifeRegeneration ?? (m.role === 'tank' ? 1.5 : 0.5);
+    
+    // Baseline HP regeneration: 2% of max health per second
+    const lifeRegenPercent = 2.0;
+    
+    // Mana regen (still percentage-based)
     let manaRegenPercent = character?.baseStats?.manaRegeneration ?? (m.role === 'healer' ? 5.0 : 4.0);
     
     // Apply 1000% increase (11x multiplier) to mana regen for characters under level 10

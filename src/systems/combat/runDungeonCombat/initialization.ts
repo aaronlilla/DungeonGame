@@ -58,6 +58,7 @@ export function initializeCombat(
     currentPullIndex: 0,
     teamPosition: { x: 100, y: 400 },
     enemies: [],
+    queuedEnemies: [],
     teamStates: initialTeamStates,
     combatLog: [{ timestamp: 0, type: 'phase', source: '', target: '', message: `⚔️ ${dungeon.name} +${selectedKeyLevel} STARTED!` }],
     forcesCleared: 0,

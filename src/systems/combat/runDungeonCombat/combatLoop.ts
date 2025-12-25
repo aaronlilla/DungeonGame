@@ -38,7 +38,8 @@ export async function runCombatLoop(
   context: CombatContext,
   pullEnemies: AnimatedEnemy[],
   _pullIdx: number,
-  totalForcesCleared: number
+  totalForcesCleared: number,
+  enemiesByPack?: AnimatedEnemy[][]
 ): Promise<CombatLoopResult> {
   const { combatRef, team, stunActive, experienceAwarded, checkTimeout, awardExperience, updateCombatState, selectedKeyLevel, scaling } = context;
   
@@ -75,15 +76,39 @@ export async function runCombatLoop(
     };
   }
   
-  // Ensure enemies have valid health
-  let currentEnemies = pullEnemies.map(e => {
+  // Initialize enemies - start with empty (they're in queuedEnemies)
+  let currentEnemies: AnimatedEnemy[] = [];
+  
+  // Set up trickle-in system
+  const TRICKLE_DURATION_SECONDS = 6;
+  const TRICKLE_DURATION_TICKS = secondsToTicks(TRICKLE_DURATION_SECONDS);
+  let queuedEnemies = [...pullEnemies.map(e => {
     if (e.health <= 0 || e.maxHealth <= 0 || isNaN(e.health) || isNaN(e.maxHealth)) {
       console.warn(`runCombatLoop: Enemy ${e.name} (${e.id}) has invalid health: ${e.health}/${e.maxHealth}, fixing...`);
       const fixedHealth = e.maxHealth > 0 ? e.maxHealth : 1000;
       return { ...e, health: fixedHealth, maxHealth: fixedHealth };
     }
     return e;
-  });
+  })];
+  
+  // Organize queued enemies by pack for trickle-in
+  // Create a map of enemy ID to enemy object for quick lookup
+  const enemyMap = new Map(queuedEnemies.map(e => [e.id, e]));
+  let packQueues: AnimatedEnemy[][] = [];
+  if (enemiesByPack && enemiesByPack.length > 0) {
+    // Use provided pack organization - map each pack's enemies to queuedEnemies by ID
+    // We use the same object references from queuedEnemies so removals sync correctly
+    packQueues = enemiesByPack.map(pack => {
+      return pack.map(packEnemy => enemyMap.get(packEnemy.id)!).filter(e => e !== undefined);
+    }).filter(pack => pack.length > 0);
+  } else {
+    // Fallback: treat all enemies as one pack (create array with same object references)
+    packQueues = [[...queuedEnemies]];
+  }
+  
+  const combatStartTick = context.currentTick;
+  const numPacks = packQueues.length;
+  const totalEnemies = queuedEnemies.length;
   
   let teamStates = [...context.teamStates];
   let abilities = [...context.abilities];
@@ -96,7 +121,7 @@ export async function runCombatLoop(
   
   // Debug: Log combat start
   console.log(`[Combat] ===== COMBAT LOOP START =====`);
-  console.log(`[Combat] Enemies: ${currentEnemies.length}`, currentEnemies.map(e => `${e.name} (${e.health}/${e.maxHealth}hp, behavior: ${e.behavior})`));
+  console.log(`[Combat] Total enemies: ${totalEnemies} (${numPacks} packs), starting in queue`);
   console.log(`[Combat] Team: ${teamStates.length} members`, teamStates.map(m => `${m.name} (${m.health}/${m.maxHealth}hp, dead: ${m.isDead})`));
   console.log(`[Combat] Initial tick: ${currentTick}, totalTime: ${totalTime.toFixed(2)}s`);
   
@@ -118,7 +143,8 @@ export async function runCombatLoop(
   context.batchedLogEntries = batchedLogEntries;
   
   let tickCount = 0;
-  while (currentEnemies.some(e => e.health > 0) && teamStates.some(m => !m.isDead) && !timedOut) {
+  // Continue combat while there are alive enemies OR queued enemies still trickling in
+  while ((currentEnemies.some(e => e.health > 0) || queuedEnemies.length > 0) && teamStates.some(m => !m.isDead) && !timedOut) {
     if (combatRef.current.stop) {
       console.log(`[Combat] Loop stopped by combatRef.stop at tick ${currentTick}`);
       break;
@@ -148,8 +174,70 @@ export async function runCombatLoop(
     totalTime = ticksToSeconds(currentTick);
     tickCount++;
     
+    // ===== TRICKLE-IN LOGIC =====
+    // Gradually add enemies from queue over 6 seconds, with pack-based distribution
+    // When multiple packs are pulled, take one enemy from each pack at a time
+    const ticksElapsed = currentTick - combatStartTick;
+    if (ticksElapsed <= TRICKLE_DURATION_TICKS && queuedEnemies.length > 0 && packQueues.length > 0) {
+      // Calculate how many enemies should have entered by now (evenly distributed over 6 seconds)
+      const progress = Math.min(1, ticksElapsed / TRICKLE_DURATION_TICKS);
+      // Use Math.ceil on first few enemies to ensure at least some enter immediately
+      const targetEnemiesInCombat = ticksElapsed === 1 
+        ? Math.max(1, Math.floor(totalEnemies * progress)) // At least 1 enemy on first tick
+        : Math.floor(totalEnemies * progress);
+      const enemiesNeeded = targetEnemiesInCombat - currentEnemies.length;
+      
+      // Add enemies in pack-based groups (one from each pack at a time)
+      if (enemiesNeeded > 0) {
+        const enemiesToAdd: AnimatedEnemy[] = [];
+        
+        // Keep adding waves until we catch up, taking one from each pack per wave
+        while (enemiesToAdd.length < enemiesNeeded && queuedEnemies.length > 0) {
+          let addedThisWave = 0;
+          // One wave: take one enemy from each pack that still has enemies
+          for (let packIdx = 0; packIdx < packQueues.length; packIdx++) {
+            if (packQueues[packIdx].length > 0 && enemiesToAdd.length < enemiesNeeded) {
+              const enemy = packQueues[packIdx].shift()!;
+              enemiesToAdd.push(enemy);
+              addedThisWave++;
+              // Remove from queuedEnemies array
+              const queueIndex = queuedEnemies.findIndex(e => e.id === enemy.id);
+              if (queueIndex !== -1) {
+                queuedEnemies.splice(queueIndex, 1);
+              }
+            }
+          }
+          
+          if (addedThisWave === 0) {
+            break; // No more enemies available
+          }
+        }
+        
+        // Add all collected enemies to combat
+        if (enemiesToAdd.length > 0) {
+          currentEnemies.push(...enemiesToAdd);
+          updateCombatState(prev => ({
+            ...prev,
+            enemies: [...currentEnemies],
+            queuedEnemies: [...queuedEnemies]
+          }));
+        }
+      }
+    } else if (queuedEnemies.length > 0 && ticksElapsed > TRICKLE_DURATION_TICKS) {
+      // Time window expired, add all remaining enemies at once
+      currentEnemies.push(...queuedEnemies);
+      queuedEnemies = [];
+      packQueues = [];
+      
+      updateCombatState(prev => ({
+        ...prev,
+        enemies: [...currentEnemies],
+        queuedEnemies: []
+      }));
+    }
+    
     if (tickCount % 10 === 0) {
-      console.log(`[Combat] Tick ${currentTick} (${totalTime.toFixed(1)}s) - Enemies: ${currentEnemies.filter(e => e.health > 0).length}/${currentEnemies.length} alive, Team: ${teamStates.filter(m => !m.isDead).length}/${teamStates.length} alive`);
+      console.log(`[Combat] Tick ${currentTick} (${totalTime.toFixed(1)}s) - Enemies: ${currentEnemies.filter(e => e.health > 0).length}/${currentEnemies.length} alive (${queuedEnemies.length} queued), Team: ${teamStates.filter(m => !m.isDead).length}/${teamStates.length} alive`);
     }
     
     // Sleep for real-time display or yield for simulation
@@ -205,7 +293,8 @@ export async function runCombatLoop(
     // Recalculate alive enemies each tick (they can die during combat)
     const aliveEnemies = currentEnemies.filter(e => e.health > 0);
     
-    if (aliveEnemies.length === 0) break;
+    // Only break if no alive enemies AND no queued enemies (all have trickled in)
+    if (aliveEnemies.length === 0 && queuedEnemies.length === 0) break;
     
     // Check for resurrection requests from useAbility
     if (combatRef.current.resurrectRequest) {

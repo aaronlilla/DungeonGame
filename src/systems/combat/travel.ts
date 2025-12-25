@@ -108,6 +108,8 @@ export function createPullEnemies(
   usedBossNames?: Set<string>
 ): AnimatedEnemy[] {
   const pullEnemies: AnimatedEnemy[] = [];
+  // Also return enemies organized by pack for trickle-in logic
+  const enemiesByPack: AnimatedEnemy[][] = [];
   
   // Apply map affix modifiers
   const healthMod = 1 + (mapAffixEffects?.enemyHealthIncrease || 0);
@@ -124,6 +126,7 @@ export function createPullEnemies(
   }
   
   packs.forEach(pack => {
+    const packEnemies: AnimatedEnemy[] = [];
     pack.enemies.forEach(({ enemyId, count }) => {
       const enemyDef = getEnemyById(enemyId);
       if (!enemyDef) return;
@@ -160,7 +163,7 @@ export function createPullEnemies(
           ? 'boss' 
           : getEnemyBehavior(enemyId);
         
-        pullEnemies.push({
+        const enemy: AnimatedEnemy = {
           id: `${enemyId}_${pullIdx}_${i}_${Math.random()}`,
           enemyId,
           name: enemyName,
@@ -189,9 +192,16 @@ export function createPullEnemies(
           castEndTick: undefined,
           castTotalTicks: undefined,
           castTarget: undefined
-        });
+        };
+        pullEnemies.push(enemy);
+        packEnemies.push(enemy);
       }
     });
+    enemiesByPack.push(packEnemies);
   });
+  
+  // Store enemiesByPack on the return array for trickle-in logic
+  (pullEnemies as any).__byPack = enemiesByPack;
+  
   return pullEnemies;
 }

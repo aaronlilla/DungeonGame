@@ -28,6 +28,8 @@ const getEnemyTypeColor = (type: string): { primary: string; secondary: string; 
 export function CombatPanel({ isRunning, combatState, enemyFightAnims }: CombatPanelProps) {
   const hasDyingEnemy = combatState.enemies.some(e => e.isDead && e.deathTime && (Date.now() - e.deathTime) < 800);
   const aliveEnemies = combatState.enemies.filter(e => e.health > 0);
+  const queuedEnemies = combatState.queuedEnemies || [];
+  const queuedCount = queuedEnemies.length;
 
   return (
     <motion.div 
@@ -129,6 +131,13 @@ export function CombatPanel({ isRunning, combatState, enemyFightAnims }: CombatP
                 <span style={{ fontSize: '1.5rem', color: '#8b6914' }}>★</span>
                 <span style={{ color: '#8b6914', fontWeight: 600, fontSize: '0.9rem' }}>Victory</span>
               </>
+            ) : queuedCount > 0 ? (
+              <>
+                <span style={{ fontSize: '1.5rem', opacity: 0.6 }}>⚡</span>
+                <span style={{ fontStyle: 'italic', color: '#b8a88c' }}>
+                  {queuedCount} {queuedCount === 1 ? 'mob is' : 'mobs are'} traveling to you...
+                </span>
+              </>
             ) : (
               <>
                 <GiSkullCrossedBones style={{ fontSize: '1.5rem', opacity: 0.3 }} />
@@ -155,6 +164,23 @@ export function CombatPanel({ isRunning, combatState, enemyFightAnims }: CombatP
               <span>Hostiles ({aliveEnemies.length})</span>
               <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, rgba(90, 70, 50, 0.3), transparent)' }} />
             </div>
+
+            {/* Queued enemies message */}
+            {queuedCount > 0 && (
+              <div style={{
+                padding: '0.5rem 0.75rem',
+                marginBottom: '0.5rem',
+                background: 'rgba(201, 162, 39, 0.08)',
+                border: '1px solid rgba(201, 162, 39, 0.2)',
+                borderRadius: '4px',
+                fontSize: '0.75rem',
+                color: '#b8a88c',
+                textAlign: 'center',
+                fontStyle: 'italic'
+              }}>
+                {queuedCount} {queuedCount === 1 ? 'mob is' : 'mobs are'} traveling to you...
+              </div>
+            )}
 
             {/* Enemy list */}
             <AnimatePresence>

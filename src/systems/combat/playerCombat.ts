@@ -718,6 +718,12 @@ function processDpsActions(
       member.channelSkillId = undefined;
       member.channelStacks = undefined;
       member.castAbility = undefined;
+      // Clear cast-related fields when stopping channeling
+      member.castStartTick = undefined;
+      member.castEndTick = undefined;
+      member.castTotalTicks = undefined;
+      member.castStartTime = undefined;
+      member.castTotalTime = undefined;
       return null;
     }
     
@@ -739,6 +745,12 @@ function processDpsActions(
         member.channelStacks = undefined;
         member.castAbility = undefined;
         member.channelNextTickAt = undefined;
+        // Clear cast-related fields when stopping channeling
+        member.castStartTick = undefined;
+        member.castEndTick = undefined;
+        member.castTotalTicks = undefined;
+        member.castStartTime = undefined;
+        member.castTotalTime = undefined;
         return { floatNumbers, logEntries };
       }
       
@@ -748,6 +760,12 @@ function processDpsActions(
         member.channelStacks = undefined;
         member.castAbility = undefined;
         member.channelNextTickAt = undefined;
+        // Clear cast-related fields when stopping channeling
+        member.castStartTick = undefined;
+        member.castEndTick = undefined;
+        member.castTotalTicks = undefined;
+        member.castStartTime = undefined;
+        member.castTotalTime = undefined;
         return { floatNumbers, logEntries };
       }
       
@@ -932,6 +950,12 @@ function processDpsActions(
               member.channelStacks = undefined;
               member.castAbility = undefined;
               member.channelNextTickAt = undefined;
+              // Clear cast-related fields when stopping channeling
+              member.castStartTick = undefined;
+              member.castEndTick = undefined;
+              member.castTotalTicks = undefined;
+              member.castStartTime = undefined;
+              member.castTotalTime = undefined;
             }
           }
         }
@@ -976,6 +1000,14 @@ function processDpsActions(
       member.channelStacks = 0;
       member.maxChannelStacks = skill.maxChannelStacks;
       member.channelManaPerTick = skill.manaPerTick;
+      
+      // Clear cast-related fields when transitioning to channeling
+      member.castStartTick = undefined;
+      member.castEndTick = undefined;
+      member.castTotalTicks = undefined;
+      member.castStartTime = undefined;
+      member.castTotalTime = undefined;
+      // Keep castAbility set so UI knows what's being channeled
       
       // Set first tick time - apply talent cast speed bonus
       const baseCastSpeed = 100; // Base cast speed (not in BaseStats, using default)

@@ -26,7 +26,7 @@ const RARITY_STYLES: Record<string, { bg: string; text: string; border: string }
   // Rare items - yellow text on dark brown
   rare: { bg: '#2a2419', text: '#ffff77', border: '#5a4d3a' },
   // Epic/Unique - orange text on dark red-brown
-  epic: { bg: '#301810', text: '#af6025', border: '#6a3a2a' },
+  epic: { bg: '#301810', text: '#af6025', border: '#6a3a2a' }, 
   // Legendary - purple text on dark purple
   legendary: { bg: '#251030', text: '#b35dff', border: '#5a3a6a' },
   // Maps - special tan/gold

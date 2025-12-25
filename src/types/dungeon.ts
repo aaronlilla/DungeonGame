@@ -248,21 +248,21 @@ export const SAMPLE_ENEMIES: DungeonEnemy[] = [
   ]},
   
   // ========== ELITE CASTERS - DANGEROUS ==========
-  // Spell damage hurts but DPS can survive 5-6 hits
+  // Spell damage reduced by 40% from baseline
   { id: 'dark_sorcerer', name: 'Dark Sorcerer', icon: React.createElement(GiWizardStaff), type: 'elite', baseHealth: 0, baseDamage: 0, enemyForces: 4, dangerLevel: 3, abilities: [
-    { id: 'ice_bolt', name: 'Ice Bolt', description: 'Fires a shard of ice at a random party member', damageType: 'cold', tags: ['spell', 'ranged', 'projectile', 'cold'], damage: 50, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
+    { id: 'ice_bolt', name: 'Ice Bolt', description: 'Fires a shard of ice at a random party member', damageType: 'cold', tags: ['spell', 'ranged', 'projectile', 'cold'], damage: 30, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
   ]},
   { id: 'necromancer', name: 'Lesser Necromancer', icon: React.createElement(GiWizardStaff), type: 'elite', baseHealth: 0, baseDamage: 0, enemyForces: 5, dangerLevel: 4, abilities: [
-    { id: 'lightning_bolt', name: 'Lightning Bolt', description: 'Fires a bolt of lightning at a random party member', damageType: 'lightning', tags: ['spell', 'ranged', 'projectile', 'lightning'], damage: 60, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
+    { id: 'lightning_bolt', name: 'Lightning Bolt', description: 'Fires a bolt of lightning at a random party member', damageType: 'lightning', tags: ['spell', 'ranged', 'projectile', 'lightning'], damage: 36, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
   ]},
   
   // ========== NORMAL CASTERS - MODERATE ==========
-  // Manageable damage, good for learning
+  // Spell damage reduced by 40% from baseline
   { id: 'skeleton_mage', name: 'Skeleton Mage', icon: React.createElement(GiWizardStaff), type: 'normal', baseHealth: 0, baseDamage: 0, enemyForces: 2, dangerLevel: 2, abilities: [
-    { id: 'fire_bolt', name: 'Fire Bolt', description: 'Fires a bolt of fire at a random party member', damageType: 'fire', tags: ['spell', 'ranged', 'projectile', 'fire'], damage: 35, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
+    { id: 'fire_bolt', name: 'Fire Bolt', description: 'Fires a bolt of fire at a random party member', damageType: 'fire', tags: ['spell', 'ranged', 'projectile', 'fire'], damage: 21, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
   ]},
   { id: 'crypt_warlock', name: 'Crypt Warlock', icon: React.createElement(GiWizardStaff), type: 'normal', baseHealth: 0, baseDamage: 0, enemyForces: 2, dangerLevel: 2, abilities: [
-    { id: 'shadow_bolt', name: 'Shadow Bolt', description: 'Fires a bolt of shadow at a random party member', damageType: 'shadow', tags: ['spell', 'ranged', 'projectile', 'shadow'], damage: 40, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
+    { id: 'shadow_bolt', name: 'Shadow Bolt', description: 'Fires a bolt of shadow at a random party member', damageType: 'shadow', tags: ['spell', 'ranged', 'projectile', 'shadow'], damage: 24, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
   ]},
   
   // ========== HARD MELEE - ABOVE AVERAGE DAMAGE ==========

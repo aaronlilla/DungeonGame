@@ -1,5 +1,5 @@
 import type { EnemyPack, RoutePull } from '../../../types/dungeon';
-import type { TeamMemberState, CombatState, PlayerAbility } from '../../../types/combat';
+import type { TeamMemberState, CombatState, PlayerAbility, AnimatedEnemy } from '../../../types/combat';
 import type { CombatContext } from '../types';
 import { travelToPull, createPullEnemies } from '../travel';
 import { performPostCombatRecovery } from '../recovery';

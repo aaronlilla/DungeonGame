@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Character } from '../../types/character';
-import { getClassById, getClassColor, getClassPortrait } from '../../types/classes';
+import { getClassById, getClassColor, getClassPortrait, getDefaultDpsPortrait } from '../../types/classes';
 
 interface CharacterSelectorProps {
   team: Character[];
@@ -25,11 +25,8 @@ export function CharacterSelector({
   );
 
   return (
-    <motion.div 
+    <div 
       className="character-selector-panel"
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
       style={{ 
         display: 'flex', 
         flexDirection: 'column', 
@@ -165,7 +162,7 @@ export function CharacterSelector({
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -247,7 +244,10 @@ function CharacterCard({ character, isSelected, onSelect, info }: CharacterCardP
   const classColors = character.classId ? getClassColor(character.classId) : null;
   const primaryColor = classColors?.primary || '#c9a227';
   const secondaryColor = classColors?.secondary || '#8b7019';
-  const portraitPath = character.classId ? getClassPortrait(character.classId) : null;
+  // Use defaultdps.png for DPS characters without a class
+  const portraitPath = character.classId 
+    ? getClassPortrait(character.classId) 
+    : (character.role === 'dps' ? getDefaultDpsPortrait() : null);
   
   // Generate ember particles - more embers for better visibility
   const emberCount = 10;
@@ -268,6 +268,10 @@ function CharacterCard({ character, isSelected, onSelect, info }: CharacterCardP
       animate={{
         scale: isSelected ? 1.02 : isHovered ? 1.01 : 1,
         y: isHovered && !isSelected ? -2 : 0,
+      }}
+      whileTap={{
+        scale: [1, 0.98, 1],
+        transition: { duration: 0.15, ease: "easeInOut" }
       }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       style={{

@@ -6,7 +6,7 @@
 import type { TeamMemberState, AnimatedEnemy, CombatState } from '../../types/combat';
 import type { BossAbility, BossDebuff, BossBuff } from '../../types/bossAbilities';
 import { BOSS_ABILITIES } from '../../types/bossAbilities';
-import { calculateArmorReduction, rollBlock, BLOCK_DAMAGE_REDUCTION } from '../../types/character';
+import { calculateArmorReduction, rollBlock, BLOCK_DAMAGE_REDUCTION, calculateDamageWithResistances } from '../../types/character';
 import { createFloatingNumber } from '../../utils/combat';
 import { secondsToTicks } from './types';
 
@@ -93,7 +93,8 @@ function getAbilityTarget(
   teamStates: TeamMemberState[],
   _bossEnemy: AnimatedEnemy
 ): TeamMemberState[] {
-  const aliveMembers = teamStates.filter(m => !m.isDead);
+  // Filter out dead members AND members with resurrection immunity
+  const aliveMembers = teamStates.filter(m => !m.isDead && !m.resurrectionImmunity);
   
   // Check if ability has silence effect - if so, only target 1 non-healer
   const hasSilenceEffect = ability.effects?.some(e => e.type === 'silence');
@@ -526,13 +527,29 @@ export function executeBossAbility(
         if (blocked) {
           dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
         }
-        const safeCurrentHealth = isNaN(target.health) || !isFinite(target.health) ? target.maxHealth : target.health;
-        const safeDmg = isNaN(dmg) || !isFinite(dmg) ? 0 : dmg;
-        target.health = Math.max(0, safeCurrentHealth - safeDmg);
-        totalDamageDealt += dmg;
+        
+        // Apply damage through energy shield first (PoE mechanic)
+        const damageResult = calculateDamageWithResistances(
+          dmg,
+          ability.damageType || 'chaos',
+          {
+            health: target.health,
+            maxHealth: target.maxHealth,
+            energyShield: target.energyShield || 0,
+            maxEnergyShield: target.maxEnergyShield || 0,
+            fireResistance: target.fireResistance || 0,
+            coldResistance: target.coldResistance || 0,
+            lightningResistance: target.lightningResistance || 0,
+            chaosResistance: target.chaosResistance || 0
+          }
+        );
+        
+        target.energyShield = Math.max(0, damageResult.esRemaining);
+        target.health = Math.max(0, damageResult.lifeRemaining);
+        totalDamageDealt += damageResult.totalDamage;
         targetsHit++;
         
-        const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', 0, 0);
+        const floatNum = createFloatingNumber(damageResult.totalDamage, blocked ? 'blocked' : 'enemy', 0, 0);
         if (batchedFloatingNumbers) batchedFloatingNumbers.push(floatNum);
       }
     }
@@ -647,15 +664,32 @@ export function executeBossAbility(
         dmg = Math.floor(dmg * (1 - BLOCK_DAMAGE_REDUCTION));
       }
       
+      // Apply damage through energy shield first (PoE mechanic)
+      const damageResult = calculateDamageWithResistances(
+        dmg,
+        ability.damageType || 'physical',
+        {
+          health: target.health,
+          maxHealth: target.maxHealth,
+          energyShield: target.energyShield || 0,
+          maxEnergyShield: target.maxEnergyShield || 0,
+          fireResistance: target.fireResistance || 0,
+          coldResistance: target.coldResistance || 0,
+          lightningResistance: target.lightningResistance || 0,
+          chaosResistance: effectiveChaosRes
+        }
+      );
+      
       // Last Bastion protection
-      const safeCurrentHealth = isNaN(target.health) || !isFinite(target.health) ? target.maxHealth : target.health;
-      if (abilityState.lastBastionActive && safeCurrentHealth - dmg <= 0) {
-        dmg = safeCurrentHealth - 1; // Leave at 1 HP
+      let finalLifeRemaining = damageResult.lifeRemaining;
+      if (abilityState.lastBastionActive && finalLifeRemaining <= 0) {
+        finalLifeRemaining = 1; // Leave at 1 HP
       }
       
-      const safeDmg = isNaN(dmg) || !isFinite(dmg) ? 0 : dmg;
-      target.health = Math.max(abilityState.lastBastionActive ? 1 : 0, safeCurrentHealth - safeDmg);
-      totalDamageDealt += dmg;
+      // Update target health and ES
+      target.energyShield = Math.max(0, damageResult.esRemaining);
+      target.health = Math.max(abilityState.lastBastionActive ? 1 : 0, finalLifeRemaining);
+      totalDamageDealt += damageResult.totalDamage;
       targetsHit++;
       
       const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', 0, 0);

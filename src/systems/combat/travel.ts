@@ -136,19 +136,29 @@ export function createPullEnemies(
       for (let i = 0; i < count; i++) {
         // Bosses and minibosses deal significantly more damage than regular enemies
         const isBossType = enemyDef.type === 'boss' || enemyDef.type === 'miniboss';
-        // Bosses/minibosses deal 0.875x (reduced from 1.75x) - still dangerous but more manageable
-        const damageMultiplier = isBossType ? 0.875 : 0.16; // Regular enemies remain at 0.16x
+        // TUNED FOR TIER 1: Trash mobs should be survivable for undergeared characters
+        // Regular enemies: 0.35x base damage (2-3 damage per hit at tier 1)
+        // Bosses/minibosses: 1.5x base damage (dangerous but not instant death)
+        const damageMultiplier = isBossType ? 1.5 : 0.35;
         
-        // Apply type-based damage adjustments: +20% for bosses/minibosses, -20% for trash
-        const typeDamageModifier = isBossType ? 1.2 : 0.8; // Bosses/minibosses +20%, trash -20%
+        // Apply type-based damage adjustments: +30% for bosses/minibosses, no modifier for trash
+        const typeDamageModifier = isBossType ? 1.3 : 1.0;
         
         // Calculate health and damage with map modifiers
-        // Minibosses: target ~20k HP at +2 (doubled from 10k)
-        // Adjust multiplier for miniboss to get target HP
-        const healthMultiplier = (enemyDef.type === 'miniboss') ? 104.16 : 10; // DOUBLED: miniboss multiplier from 52.08
+        // BALANCED: Health multipliers for 5-person team combat
+        // Trash mobs: 15x base health (balanced for 5 DPS sources)
+        // Elite: 30x base health (mini-threats that require focus)
+        // Miniboss/Boss: No multiplier - they have their own explicit health values
+        let healthMultiplier = 15.0;  // Increased from 3.0 for 5-person team
+        if (enemyDef.type === 'boss') healthMultiplier = 1.0;  // Bosses use their explicit baseHealth
+        else if (enemyDef.type === 'miniboss') healthMultiplier = 1.0;  // Minibosses use their explicit baseHealth
+        else if (enemyDef.type === 'elite') healthMultiplier = 30.0;  // Increased from 6.0
+        
         const finalHealth = enemyDef.baseHealth * scaling.healthMultiplier * healthMod * healthMultiplier;
-        // Enemy base damage reduced by 20% (from 2 to 1.6), then apply type modifier
-        const finalDamage = enemyDef.baseDamage * scaling.damageMultiplier * damageMultiplier * damageMod * 1.6 * typeDamageModifier;
+        // Enemy base damage: baseDamage * scaling * damageMultiplier * damageMod * typeDamageModifier
+        // Regular enemies: baseDamage * 0.9 * 0.35 * damageMod * 1.0 = ~2-3 damage at +1
+        // Bosses: baseDamage * 0.9 * 1.5 * damageMod * 1.3 = ~10-15 damage at +1
+        const finalDamage = enemyDef.baseDamage * scaling.damageMultiplier * damageMultiplier * damageMod * typeDamageModifier;
         
         // Scale defensive stats with key level
         const finalArmor = (enemyDef.baseArmor || 0) * scaling.healthMultiplier;

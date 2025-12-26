@@ -149,9 +149,9 @@ export async function runBossFight(
     icon: boss.enemy.icon,
     type: boss.enemy.type,
     behavior: 'boss', // Boss behavior: tankbuster + AoE pulse + melee
-    // Final boss: target ~40k HP at +2 (doubled from 20k)
-    health: boss.enemy.baseHealth * scaling.healthMultiplier * 104.16 * healthMod, // DOUBLED: from 52.08
-    maxHealth: boss.enemy.baseHealth * scaling.healthMultiplier * 104.16 * healthMod, // DOUBLED: from 52.08
+    // Final boss: target ~16-20k HP at +2
+    health: boss.enemy.baseHealth * scaling.healthMultiplier * 20 * healthMod, // 20x multiplier for final boss
+    maxHealth: boss.enemy.baseHealth * scaling.healthMultiplier * 20 * healthMod, // 20x multiplier for final boss
     // Final boss damage multiplier (reduced from 2.0 to 1.0) - still dangerous but more manageable
     damage: boss.enemy.baseDamage * scaling.damageMultiplier * 1.0 * damageMod * 4, // Final bosses deal moderate damage
     // Defensive stats
@@ -183,8 +183,8 @@ export async function runBossFight(
       icon: boss.enemy.icon,
       type: boss.enemy.type,
       behavior: 'boss',
-      health: boss.enemy.baseHealth * scaling.healthMultiplier * 104.16 * healthMod,
-      maxHealth: boss.enemy.baseHealth * scaling.healthMultiplier * 104.16 * healthMod,
+      health: boss.enemy.baseHealth * scaling.healthMultiplier * 20 * healthMod,
+      maxHealth: boss.enemy.baseHealth * scaling.healthMultiplier * 20 * healthMod,
       damage: boss.enemy.baseDamage * scaling.damageMultiplier * 1.0 * damageMod * 4,
       armor: finalArmor,
       evasion: finalEvasion,
@@ -321,23 +321,35 @@ export async function runBossFight(
           
           // Check if cast complete
           if (combatRef.current.resurrectCastEndTick !== undefined && currentTick >= combatRef.current.resurrectCastEndTick) {
-            // Apply resurrection
+            // Apply resurrection - 100% HP/mana with 2 second immunity
+            const resurrectionImmunityDuration = 2; // seconds
+            const resurrectionImmunityEndTick = currentTick + secondsToTicks(resurrectionImmunityDuration);
+            
             teamStates = teamStates.map(m => 
               m.id === rezTargetId 
-                ? { ...m, isDead: false, health: Math.floor(m.maxHealth * 0.6), mana: Math.floor(m.maxMana * 0.3), lastResurrectTime: Date.now() } 
+                ? { 
+                    ...m, 
+                    isDead: false, 
+                    health: m.maxHealth, // 100% HP
+                    mana: m.maxMana, // 100% mana
+                    lastResurrectTime: Date.now(),
+                    resurrectionImmunity: true,
+                    resurrectionImmunityEndTick: resurrectionImmunityEndTick
+                  } 
                 : m
             );
             
-            // Clear casting state
+            // Clear casting state and update teamStates immediately so UI sees the resurrected member
             updateCombatState(prev => ({ 
               ...prev, 
+              teamStates: teamStates,
               healerCasting: undefined,
               combatLog: [...prev.combatLog, { 
                 timestamp: totalTime, 
                 type: 'heal', 
                 source: healer.name, 
                 target: rezTarget.name, 
-                message: `💫 ${rezTarget.name} has been resurrected!` 
+                message: `💫 ${rezTarget.name} has been resurrected! (Immune for ${resurrectionImmunityDuration}s)` 
               }]
             }));
             

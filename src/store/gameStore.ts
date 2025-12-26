@@ -12,6 +12,7 @@ import type {
   LootDrop,
   LeagueEncounter
 } from '../types';
+import type { LootFilterConfig } from '../types/lootFilter';
 import { generateMap } from '../types/maps';
 import { createCharacter, type Character, calculateBaseLifeFromLevel, calculateBaseManaFromLevel, calculateLifeFromStrength, calculateManaFromIntelligence, calculateAccuracyFromDexterity, calculateEvasionBonus } from '../types/character';
 import { SAMPLE_DUNGEON } from '../types/dungeon';
@@ -125,6 +126,11 @@ export interface GameState {
   
   // UI State
   activeTab: 'team' | 'skills' | 'gear' | 'crafting' | 'talents' | 'dungeon' | 'stash' | 'maps';
+  volume: number; // Audio volume (0-1)
+  
+  // Loot Filter
+  lootFilter: LootFilterConfig | null;
+  lootFilterEnabled: boolean;
   
   // Actions
   addCharacter: (name: string, role: CharacterRole, classId?: import('../types/classes').CharacterClassId, slotIndex?: number) => void;
@@ -168,6 +174,9 @@ export interface GameState {
   applyOrbToItemAction: (itemId: string, orbType: OrbType) => { success: boolean; message: string };
   
   setActiveTab: (tab: GameState['activeTab']) => void;
+  setVolume: (volume: number) => void;
+  setLootFilter: (filter: LootFilterConfig | null) => void;
+  setLootFilterEnabled: (enabled: boolean) => void;
   
   addKey: (key: DungeonKey) => void;
   saveRoute: (route: DungeonRoute) => void;
@@ -593,6 +602,11 @@ export const useGameStore = create<GameState>()(
       activeLeagueEncounters: [],
       
       activeTab: 'team',
+      volume: 0.5, // Default to 50% volume
+      
+      // Loot Filter
+      lootFilter: null,
+      lootFilterEnabled: false,
 
       // Actions
       addCharacter: (name, role, classId, slotIndex) => set(state => {
@@ -677,11 +691,12 @@ export const useGameStore = create<GameState>()(
           }
         }
         
-        // Auto-equip default skills based on role and build type (only 2 core abilities)
-        // const enabledSupportSlots = getEnabledSupportSlots(char.level);
+        // Auto-equip default skills based on role and build type
+        // RULE: Each character gets 1 single-target skill and 1 AOE skill with appropriate supports
         if (role === 'tank') {
+          // Tank: Shield Slam (single target) + Thunder Clap (AOE)
           const skill1 = getSkillGemById('shield_slam');
-          const skill2 = getSkillGemById('shield_block');
+          const skill2 = getSkillGemById('thunder_clap');
           const support1 = skill1 ? getDefaultSupportGemForSkill(skill1) : null;
           const support2 = skill2 ? getDefaultSupportGemForSkill(skill2) : null;
           
@@ -694,14 +709,15 @@ export const useGameStore = create<GameState>()(
             },
             { 
               slotIndex: 1, 
-              skillGemId: 'shield_block', 
+              skillGemId: 'thunder_clap', 
               supportGemIds: support2 ? [support2] : [], 
-              usageConfig: createSmartSkillConfig('shield_block') 
+              usageConfig: createSmartSkillConfig('thunder_clap') 
             }
           ];
         } else if (role === 'healer') {
+          // Healer: Healing Wave (single target) + Circle of Healing (AOE)
           const skill1 = getSkillGemById('healing_wave');
-          const skill2 = getSkillGemById('massive_heal');
+          const skill2 = getSkillGemById('circle_of_healing');
           const support1 = skill1 ? getDefaultSupportGemForSkill(skill1) : null;
           const support2 = skill2 ? getDefaultSupportGemForSkill(skill2) : null;
           
@@ -714,34 +730,41 @@ export const useGameStore = create<GameState>()(
             },
             { 
               slotIndex: 1, 
-              skillGemId: 'massive_heal', 
+              skillGemId: 'circle_of_healing', 
               supportGemIds: support2 ? [support2] : [], 
-              usageConfig: createSmartSkillConfig('massive_heal') 
+              usageConfig: createSmartSkillConfig('circle_of_healing') 
             }
           ];
         } else if (role === 'dps') {
           // Assign skills based on build type
-          let skill1Id: string;
-          let skill2Id: string;
+          // RULE: Always assign 1 single-target skill and 1 AOE skill
+          let skill1Id: string; // Single target
+          let skill2Id: string; // AOE
           
           if (dpsBuildType === 'caster') {
-            // Caster: Use spell skills (fireball, shadow_bolt, ice_lance, lightning_bolt)
-            const casterSkills = ['fireball', 'shadow_bolt', 'ice_lance', 'lightning_bolt'];
-            const selected = casterSkills.sort(() => Math.random() - 0.5).slice(0, 2);
-            skill1Id = selected[0];
-            skill2Id = selected[1];
+            // Caster spells
+            // Single target options: fireball, ice_lance, shadow_bolt (chains but good ST), disintegrate
+            // AOE options: blow_up, blizzard, meteor, storm_call
+            const singleTargetSkills = ['fireball', 'ice_lance', 'shadow_bolt'];
+            const aoeSkills = ['blow_up', 'blizzard'];
+            skill1Id = singleTargetSkills[Math.floor(Math.random() * singleTargetSkills.length)];
+            skill2Id = aoeSkills[Math.floor(Math.random() * aoeSkills.length)];
           } else if (dpsBuildType === 'attack_ranged') {
-            // Ranged attack (bow): Use bow attack skills
-            const rangedSkills = ['split_arrow', 'rain_of_arrows', 'barrage', 'tornado_shot', 'ice_shot', 'lightning_arrow'];
-            const selected = rangedSkills.sort(() => Math.random() - 0.5).slice(0, 2);
-            skill1Id = selected[0];
-            skill2Id = selected[1];
+            // Ranged attack (bow)
+            // Single target options: barrage, ice_shot, lightning_arrow
+            // AOE options: split_arrow, rain_of_arrows, tornado_shot
+            const singleTargetSkills = ['barrage', 'ice_shot', 'lightning_arrow'];
+            const aoeSkills = ['split_arrow', 'rain_of_arrows', 'tornado_shot'];
+            skill1Id = singleTargetSkills[Math.floor(Math.random() * singleTargetSkills.length)];
+            skill2Id = aoeSkills[Math.floor(Math.random() * aoeSkills.length)];
           } else if (dpsBuildType === 'attack_melee') {
-            // Melee attack: Use melee attack skills
-            const meleeSkills = ['cleave', 'heavy_strike', 'double_strike', 'cyclone', 'reave', 'lacerate'];
-            const selected = meleeSkills.sort(() => Math.random() - 0.5).slice(0, 2);
-            skill1Id = selected[0];
-            skill2Id = selected[1];
+            // Melee attack
+            // Single target options: heavy_strike, double_strike, lacerate
+            // AOE options: cleave, cyclone, reave
+            const singleTargetSkills = ['heavy_strike', 'double_strike', 'lacerate'];
+            const aoeSkills = ['cleave', 'cyclone', 'reave'];
+            skill1Id = singleTargetSkills[Math.floor(Math.random() * singleTargetSkills.length)];
+            skill2Id = aoeSkills[Math.floor(Math.random() * aoeSkills.length)];
           } else {
             // Fallback for class-based DPS or unknown build type
             // Infer from stats if class-based
@@ -751,16 +774,16 @@ export const useGameStore = create<GameState>()(
             
             if (int > dex && int > str && int > 30) {
               // Caster build
-              skill1Id = 'fireball';
-              skill2Id = 'shadow_bolt';
+              skill1Id = 'fireball'; // Single target
+              skill2Id = 'blow_up'; // AOE
             } else if (dex > str && dex > 30) {
               // Ranged build
-              skill1Id = 'split_arrow';
-              skill2Id = 'barrage';
+              skill1Id = 'barrage'; // Single target
+              skill2Id = 'split_arrow'; // AOE
             } else {
               // Melee build
-              skill1Id = 'cleave';
-              skill2Id = 'heavy_strike';
+              skill1Id = 'heavy_strike'; // Single target
+              skill2Id = 'cleave'; // AOE
             }
           }
           
@@ -1333,6 +1356,18 @@ export const useGameStore = create<GameState>()(
           message: result.message
         };
       },
+
+      setVolume: (volume) => set(state => {
+        state.volume = Math.max(0, Math.min(1, volume)); // Clamp between 0 and 1
+      }),
+      
+      setLootFilter: (filter) => set(state => {
+        state.lootFilter = filter;
+      }),
+      
+      setLootFilterEnabled: (enabled) => set(state => {
+        state.lootFilterEnabled = enabled;
+      }),
 
       setActiveTab: (tab) => {
         const state = get();

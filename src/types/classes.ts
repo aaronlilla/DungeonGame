@@ -910,6 +910,7 @@ import shadowwardenBg from '../assets/backgrounds/shadowwarden.png';
 import tacticianBg from '../assets/backgrounds/tactician.png';
 import vitalistBg from '../assets/backgrounds/vitalist.png';
 import wardbreakerBg from '../assets/backgrounds/wardbreaker.png';
+import defaultdpsBg from '../assets/backgrounds/defaultdps.png';
 
 // Map classIds to imported background images
 const CLASS_IMAGE_MAP: Record<string, string> = {
@@ -941,6 +942,11 @@ export function getClassPortrait(classId: CharacterClassId): string | null {
 // Get the class background image (same as portrait, different styling)
 export function getClassBackground(classId: CharacterClassId): string | null {
   return CLASS_IMAGE_MAP[classId] || null;
+}
+
+// Get the default DPS portrait for characters without a class
+export function getDefaultDpsPortrait(): string {
+  return defaultdpsBg;
 }
 
 // Role icons - consistent across the app

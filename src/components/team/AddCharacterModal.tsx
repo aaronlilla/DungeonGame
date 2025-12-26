@@ -943,7 +943,6 @@ export function AddCharacterModal({
                       paddingRight: '0.5rem',
                       minHeight: 0,
                       scrollSnapType: 'y mandatory',
-                      scrollBehavior: 'smooth',
                       position: 'relative',
                       // Hide scrollbar but allow scrolling
                       scrollbarWidth: 'none',

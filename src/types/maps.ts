@@ -389,47 +389,48 @@ export const FRAGMENT_BASES = [
 
 // ===== LEAGUE MECHANICS POOL =====
 
+// DISABLED: League mechanics are not yet implemented
 export const LEAGUE_MECHANICS: LeagueMechanic[] = [
-  {
-    id: 'breach',
-    name: 'Breach',
-    icon: '🌀',
-    description: 'A portal opens, spawning waves of monsters.',
-    bonusQuantity: 0.15,
-    bonusRarity: 0.10,
-    encounterType: 'breach',
-    timerPenalty: 15
-  },
-  {
-    id: 'essence',
-    name: 'Essence',
-    icon: '💠',
-    description: 'A frozen monster contains valuable essences.',
-    bonusQuantity: 0.08,
-    bonusRarity: 0.20,
-    encounterType: 'essence',
-    timerPenalty: 5
-  },
-  {
-    id: 'ritual',
-    name: 'Ritual',
-    icon: '🔺',
-    description: 'Sacrifice monsters for tribute rewards.',
-    bonusQuantity: 0.20,
-    bonusRarity: 0.15,
-    encounterType: 'ritual',
-    timerPenalty: 20
-  },
-  {
-    id: 'delirium',
-    name: 'Delirium Mirror',
-    icon: '🪞',
-    description: 'Touch the mirror to enter the mist. Rewards scale with progress.',
-    bonusQuantity: 0.30,
-    bonusRarity: 0.25,
-    encounterType: 'delirium',
-    timerPenalty: 30
-  }
+  // {
+  //   id: 'breach',
+  //   name: 'Breach',
+  //   icon: '🌀',
+  //   description: 'A portal opens, spawning waves of monsters.',
+  //   bonusQuantity: 0.15,
+  //   bonusRarity: 0.10,
+  //   encounterType: 'breach',
+  //   timerPenalty: 15
+  // },
+  // {
+  //   id: 'essence',
+  //   name: 'Essence',
+  //   icon: '💠',
+  //   description: 'A frozen monster contains valuable essences.',
+  //   bonusQuantity: 0.08,
+  //   bonusRarity: 0.20,
+  //   encounterType: 'essence',
+  //   timerPenalty: 5
+  // },
+  // {
+  //   id: 'ritual',
+  //   name: 'Ritual',
+  //   icon: '🔺',
+  //   description: 'Sacrifice monsters for tribute rewards.',
+  //   bonusQuantity: 0.20,
+  //   bonusRarity: 0.15,
+  //   encounterType: 'ritual',
+  //   timerPenalty: 20
+  // },
+  // {
+  //   id: 'delirium',
+  //   name: 'Delirium Mirror',
+  //   icon: '🪞',
+  //   description: 'Touch the mirror to enter the mist. Rewards scale with progress.',
+  //   bonusQuantity: 0.30,
+  //   bonusRarity: 0.25,
+  //   encounterType: 'delirium',
+  //   timerPenalty: 30
+  // }
 ];
 
 // ===== HELPER FUNCTIONS =====

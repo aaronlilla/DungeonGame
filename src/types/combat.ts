@@ -125,6 +125,9 @@ export interface TeamMemberState {
   lastBlockTime?: number;
   // Resurrection animation (real-time for UI)
   lastResurrectTime?: number;
+  // Resurrection immunity (tick-based)
+  resurrectionImmunity?: boolean; // Whether player is immune after resurrection
+  resurrectionImmunityEndTick?: number; // tick when resurrection immunity expires
   // Heal/External animations (real-time for UI)
   lastHealTime?: number;
   lastHealAmount?: number;

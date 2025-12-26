@@ -224,7 +224,90 @@ export function createSmartSkillConfig(skillId: string): SkillUsageConfig {
         ...createDefaultSkillConfig('damage'),
         priority: 7,
         targetCount: 'three_plus', // AoE ability
-        targetType: 'any'
+        targetType: 'any',
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+      
+    case 'ice_lance':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 5,
+        targetCount: 'any', // Fast single-target spell
+        targetType: 'any',
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+      
+    case 'lightning_bolt':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 6,
+        targetCount: 'two_plus', // Chaining spell - better with multiple targets
+        targetType: 'any',
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+      
+    case 'blizzard':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 7,
+        targetCount: 'three_plus', // AoE DoT - best with many targets
+        targetType: 'any',
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+      
+    case 'meteor':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 8,
+        targetCount: 'three_plus', // Big AoE nuke
+        targetType: 'any',
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+      
+    case 'arcane_missiles':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 5,
+        targetCount: 'any', // Channeled single-target
+        targetType: 'elite_plus', // Good for sustained damage on tough enemies
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+      
+    case 'disintegrate':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 6,
+        targetCount: 'any', // Ramping channeled single-target
+        targetType: 'elite_plus', // Best on bosses/elites due to ramp-up
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+      
+    case 'soul_siphon':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 5,
+        targetCount: 'any', // Channeled drain - provides sustain
+        targetType: 'any',
+        selfHealth: { enabled: true, target: 'self', operator: 'less_than', threshold: 80 }, // Use when need healing
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+      
+    case 'storm_call':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 7,
+        targetCount: 'three_plus', // Channeled AoE - best with many targets
+        targetType: 'any',
+        cooldown: { enabled: true, mode: 'on_cooldown' }
+      };
+      
+    case 'incinerate':
+      return {
+        ...createDefaultSkillConfig('damage'),
+        priority: 6,
+        targetCount: 'two_plus', // Channeled cone AoE
+        targetType: 'any',
+        cooldown: { enabled: true, mode: 'on_cooldown' }
       };
       
     // === HEALING SKILLS ===
@@ -305,8 +388,8 @@ export function createSmartSkillConfig(skillId: string): SkillUsageConfig {
       return {
         ...createDefaultSkillConfig('damage'),
         priority: 5,
-        targetCount: 'single',
-        targetType: 'any',
+        targetCount: 'any', // Single-target skill but can be used regardless of enemy count
+        targetType: 'elite_plus', // Prioritize dangerous enemies with high single-target damage
         cooldown: { enabled: true, mode: 'on_cooldown' }
       };
       
@@ -359,8 +442,8 @@ export function createSmartSkillConfig(skillId: string): SkillUsageConfig {
       return {
         ...createDefaultSkillConfig('damage'),
         priority: 5,
-        targetCount: 'single', // Single-target focused skill
-        targetType: 'lowest_health', // Focus fire on weak enemies
+        targetCount: 'any', // Single-target focused skill but can be used anytime
+        targetType: 'elite_plus', // High single-target damage best on dangerous enemies
         cooldown: { enabled: true, mode: 'on_cooldown' }
       };
     
@@ -378,7 +461,7 @@ export function createSmartSkillConfig(skillId: string): SkillUsageConfig {
         ...createDefaultSkillConfig('damage'),
         priority: 5,
         targetCount: 'any', // Can be used on any target count
-        targetType: 'elite_plus', // Slow is more valuable on dangerous enemies
+        targetType: 'any', // Flexible single-target skill
         cooldown: { enabled: true, mode: 'on_cooldown' }
       };
     
@@ -404,9 +487,9 @@ export function createSmartSkillConfig(skillId: string): SkillUsageConfig {
     case 'heavy_strike':
       return {
         ...createDefaultSkillConfig('damage'),
-        priority: 6,
-        targetCount: 'single', // Single-target high damage skill
-        targetType: 'elite_plus', // High damage is best on dangerous enemies
+        priority: 5,
+        targetCount: 'any', // Single-target high damage skill - use on any target
+        targetType: 'any',
         cooldown: { enabled: true, mode: 'on_cooldown' }
       };
     
@@ -415,7 +498,7 @@ export function createSmartSkillConfig(skillId: string): SkillUsageConfig {
         ...createDefaultSkillConfig('damage'),
         priority: 5,
         targetCount: 'any', // Flexible single-target skill
-        targetType: 'lowest_health', // Fast attacks good for finishing off enemies
+        targetType: 'any', // Fast attacks - use on any target
         cooldown: { enabled: true, mode: 'on_cooldown' }
       };
     
@@ -440,16 +523,9 @@ export function createSmartSkillConfig(skillId: string): SkillUsageConfig {
     case 'lacerate':
       return {
         ...createDefaultSkillConfig('damage'),
-        priority: 6,
+        priority: 5,
         targetCount: 'any', // Can apply DoT to any target
-        targetType: 'elite_plus', // DoT is more valuable on tanky enemies
-        effectApplication: { 
-          enabled: true, 
-          targetGroup: 'enemies', 
-          operator: 'less_than', 
-          count: 99, // Apply DoT to all enemies
-          prioritizeWithout: true 
-        },
+        targetType: 'any', // Flexible single-target with DoT
         cooldown: { enabled: true, mode: 'on_cooldown' }
       };
     

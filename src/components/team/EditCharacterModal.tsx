@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Character } from '../../types/character';
 import { GiFeather } from 'react-icons/gi';
-import { getClassById, getClassPortrait, getClassColor } from '../../types/classes';
+import { getClassById, getClassPortrait, getClassColor, getDefaultDpsPortrait } from '../../types/classes';
 
 
 // Animation variants
@@ -60,7 +60,10 @@ export function EditCharacterModal({
   // Get class colors for styling
   const classData = character.classId ? getClassById(character.classId) : null;
   const classColors = character.classId ? getClassColor(character.classId) : null;
-  const portrait = character.classId ? getClassPortrait(character.classId) : null;
+  // Use defaultdps.png for DPS characters without a class
+  const portrait = character.classId 
+    ? getClassPortrait(character.classId) 
+    : (character.role === 'dps' ? getDefaultDpsPortrait() : null);
   const primaryColor = classColors?.primary || '#c9a227';
 
   return (

@@ -50,12 +50,13 @@ export function initializeCombat(
   combatRef.current.stop = false;
   combatRef.current.paused = false;
   
+  // Initialize verbose combat logger first (so it can log equipment loading)
+  const verboseLogger = resetVerboseLogger();
+  
   // Initialize team states with equipment bonuses from inventory
-  const initialTeamStates = initTeamStates(team, inventory);
+  const initialTeamStates = initTeamStates(team, inventory, verboseLogger);
   const initialAbilities = initAbilities();
   
-  // Initialize verbose combat logger
-  const verboseLogger = resetVerboseLogger();
   verboseLogger.initialize(team, initialTeamStates, dungeon, selectedKeyLevel, mapContext);
   
   const combatState: CombatState = {

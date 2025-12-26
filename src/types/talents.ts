@@ -476,7 +476,7 @@ const WARDBREAKER_TALENTS: ClassTalentTree = {
           tier: 15,
           classId: 'wardbreaker',
           effects: [
-            { type: 'blockEffectiveness', value: 5, description: 'Suppressed Spell Damage deals 55% instead of 50%', condition: 'suppression' }
+            { type: 'spellSuppressionEffect', value: 5, description: 'Suppressed Spell Damage deals 45% instead of 50% (5% improvement)' }
           ]
         },
         {

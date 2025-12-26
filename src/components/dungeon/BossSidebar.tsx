@@ -100,20 +100,20 @@ export function BossSidebar({ boss, keyLevel, onClose }: BossSidebarProps) {
   
   if (isGateBoss) {
     // Gate boss stats (matching createPullEnemies calculations)
-    // Minibosses: target ~20k HP at +2 (doubled from 10k)
-    const healthMultiplier = (bossEnemy.type === 'miniboss') ? 104.16 : 10; // DOUBLED: from 52.08
+    // Minibosses: target ~16-20k HP at +2
+    const healthMultiplier = (bossEnemy.type === 'miniboss') ? 30 : 50; // Miniboss: 30x, Boss: 50x
     const isBossType = bossEnemy.type === 'boss' || bossEnemy.type === 'miniboss';
-    const damageMultiplier = isBossType ? 0.35 : 0.16; // INCREASED: Bosses/minibosses now 0.35x (was 0.1872)
+    const damageMultiplier = isBossType ? 1.5 : 0.35; // Match travel.ts damage multipliers
     finalHealth = baseStats.baseHealth * scaling.healthMultiplier * healthMod * healthMultiplier;
-    finalDamage = baseStats.baseDamage * scaling.damageMultiplier * damageMultiplier * damageMod * 1.6;
+    finalDamage = baseStats.baseDamage * scaling.damageMultiplier * damageMultiplier * damageMod * 1.3;
     finalArmor = (bossEnemy.baseArmor || 0) * scaling.healthMultiplier;
     finalEvasion = (bossEnemy.baseEvasion || 0) * scaling.healthMultiplier;
     finalEnergyShield = (bossEnemy.baseEnergyShield || 0) * scaling.healthMultiplier;
   } else {
     // Final boss stats (matching bossFight.ts calculations)
-    // Final boss: target ~40k HP at +2 (doubled from 20k)
-    finalHealth = baseStats.baseHealth * scaling.healthMultiplier * 104.16 * healthMod; // DOUBLED: from 52.08
-    finalDamage = baseStats.baseDamage * scaling.damageMultiplier * 0.4 * damageMod * 4; // INCREASED: Final boss 0.4x (was 0.2128)
+    // Final boss: target ~16-20k HP at +2
+    finalHealth = baseStats.baseHealth * scaling.healthMultiplier * 20 * healthMod; // 20x multiplier for final boss
+    finalDamage = baseStats.baseDamage * scaling.damageMultiplier * 1.0 * damageMod * 4; // Match bossFight.ts
     finalArmor = (bossEnemy.baseArmor || 0) * scaling.healthMultiplier;
     finalEvasion = (bossEnemy.baseEvasion || 0) * scaling.healthMultiplier;
     finalEnergyShield = (bossEnemy.baseEnergyShield || 0) * scaling.healthMultiplier;

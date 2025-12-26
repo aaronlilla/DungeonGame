@@ -27,6 +27,8 @@ import { findAvailablePosition, buildOccupancyGrid } from '../utils/gridUtils';
 import { getRandomBossName } from '../utils/bossNames';
 import type { DungeonBoss } from '../types/dungeon';
 import loadingScreen3 from '../assets/loadingscreen3.png';
+import { VolumeControl } from './ui/VolumeControl';
+import { LootFilterSettings } from './ui/LootFilterSettings';
 
 
 export function DungeonTab() {
@@ -49,8 +51,12 @@ export function DungeonTab() {
     activeStashTabId,
     addItemToStash,
     clearActivatedMap,
-    activeTab
+    activeTab,
+    volume,
+    setVolume
   } = useGameStore();
+  
+  const [showFilterSettings, setShowFilterSettings] = useState(false);
 
   const [routePulls, setRoutePulls] = useState<RoutePull[]>([]);
   const [runResult, setRunResult] = useState<DungeonRunResult | null>(null);
@@ -951,7 +957,7 @@ export function DungeonTab() {
       <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr 280px', gap: '0.75rem', flex: 1, minHeight: 0, overflow: 'hidden' }}>
         
         {/* LEFT COLUMN - Combat & Log */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', minHeight: 0 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', minHeight: 0, position: 'relative', zIndex: 1 }}>
           <CombatPanel 
             isRunning={isRunning} 
             combatState={combatState} 
@@ -1025,7 +1031,79 @@ export function DungeonTab() {
           </div>
 
         {/* CENTER COLUMN - MAP */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, minWidth: 0, overflow: 'hidden', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, minWidth: 0, overflow: 'hidden', gap: '0.5rem', position: 'relative', zIndex: 10 }}>
+          {/* Volume Control and Filter Button - Bottom Left of Play Area */}
+          <div style={{
+            position: 'absolute',
+            bottom: '1rem',
+            left: '1rem',
+            zIndex: 100,
+            display: 'flex',
+            gap: '0.75rem',
+          }}>
+            <VolumeControl volume={volume} onVolumeChange={setVolume} />
+            
+            {/* Loot Filter Button */}
+            <button
+              onClick={() => setShowFilterSettings(!showFilterSettings)}
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '50%',
+                background: showFilterSettings 
+                  ? 'linear-gradient(135deg, rgba(139, 90, 43, 0.95) 0%, rgba(101, 67, 33, 0.95) 100%)'
+                  : 'linear-gradient(135deg, rgba(35, 29, 22, 0.95) 0%, rgba(20, 16, 12, 0.95) 100%)',
+                border: '2px solid rgba(139, 90, 43, 0.6)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                fontFamily: "'Cinzel', Georgia, serif",
+                color: 'rgba(230, 188, 47, 0.9)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                transition: 'all 0.2s ease',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.5)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.05)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(139, 90, 43, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.5)';
+              }}
+              title="Loot Filter Settings"
+            >
+              FILTER
+            </button>
+          </div>
+          
+          {/* Loot Filter Settings Modal */}
+          {showFilterSettings && (
+            <div
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 2000,
+              }}
+              onClick={() => setShowFilterSettings(false)}
+            >
+              <div onClick={(e) => e.stopPropagation()}>
+                <LootFilterSettings />
+              </div>
+            </div>
+          )}
+          
           <DungeonControls
             isRunning={isRunning}
             isPaused={isPaused}
@@ -1088,14 +1166,10 @@ export function DungeonTab() {
             activatedMap={activatedMap ?? undefined}
             onPackClick={handlePackClick}
             onBossClick={(boss) => {
-              if (!isRunning) {
-                setSelectedBoss(boss);
-              }
+              setSelectedBoss(boss);
             }}
             onGateBossClick={(pack) => {
-              if (!isRunning) {
-                setSelectedBoss(pack);
-              }
+              setSelectedBoss(pack);
             }}
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
@@ -1120,7 +1194,7 @@ export function DungeonTab() {
         </div>
 
         {/* RIGHT SIDEBAR */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', minHeight: 0, overflow: 'hidden' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', minHeight: 0, overflow: 'hidden', position: 'relative', zIndex: 1 }}>
           <RoutePlanner
             isRunning={isRunning}
             isCreatingPull={isCreatingPull}

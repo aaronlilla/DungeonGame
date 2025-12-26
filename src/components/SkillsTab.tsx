@@ -67,7 +67,8 @@ export function SkillsTab() {
 
   const handleSelectSkill = (skillId: string) => {
     if (selectedSlot !== null) {
-      equipSkillGem(selectedCharacter.id, selectedSlot, skillId);
+      const slotToEquip = selectedSlot; // Capture the slot value before clearing state
+      equipSkillGem(selectedCharacter.id, slotToEquip, skillId);
       setShowSkillPicker(false);
       setSelectedSlot(null);
     }
@@ -75,10 +76,11 @@ export function SkillsTab() {
 
   const handleSelectSupport = (supportId: string) => {
     if (selectedSupportSlot) {
+      const slotToEquip = selectedSupportSlot; // Capture the slot value before clearing state
       equipSupportGem(
         selectedCharacter.id, 
-        selectedSupportSlot.skillSlot, 
-        selectedSupportSlot.supportSlot, 
+        slotToEquip.skillSlot, 
+        slotToEquip.supportSlot, 
         supportId
       );
       setShowSupportPicker(false);

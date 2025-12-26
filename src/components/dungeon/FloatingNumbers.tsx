@@ -2,6 +2,7 @@ import { memo, useMemo } from 'react';
 import type { FloatingNumber } from '../../types/combat';
 
 const FLOAT_LIFETIME = 1500;
+const MAX_VISIBLE_NUMBERS = 20; // Limit simultaneous floating numbers for performance
 
 interface FloatingNumbersProps {
   floatingNumbers: FloatingNumber[];
@@ -59,12 +60,14 @@ const FloatingNumberItem = memo(({ fn, baseX, baseY }: {
         pointerEvents: 'none',
         textShadow: '1px 1px 3px rgba(0,0,0,0.7), 0 0 8px rgba(0,0,0,0.4)',
         transform: 'translateX(-50%)',
-        zIndex: 1000,
+        zIndex: 99999,
         whiteSpace: 'nowrap',
         letterSpacing: '0.02em',
         animation: `float-up ${FLOAT_LIFETIME}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
         willChange: 'transform, opacity',
-        backfaceVisibility: 'hidden'
+        backfaceVisibility: 'hidden',
+        transform: 'translateZ(0)',
+        perspective: '1000px'
       }}
     >
       {typeof fn.value === 'number' && (isNaN(fn.value) || !isFinite(fn.value)) ? '0' : fn.value}
@@ -76,13 +79,16 @@ FloatingNumberItem.displayName = 'FloatingNumberItem';
 
 export const FloatingNumbers = memo(({ floatingNumbers, teamPosition }: FloatingNumbersProps) => {
   // Filter valid numbers - use timestamp comparison directly to avoid Date.now() on every render
+  // Also limit to MAX_VISIBLE_NUMBERS for performance
   const validNumbers = useMemo(() => {
     const now = Date.now();
-    return floatingNumbers.filter(fn => {
+    const filtered = floatingNumbers.filter(fn => {
       if (fn.type === 'levelup') return false;
       const age = now - fn.timestamp;
       return age < FLOAT_LIFETIME;
     });
+    // Keep only the most recent numbers if we exceed the limit
+    return filtered.slice(-MAX_VISIBLE_NUMBERS);
   }, [floatingNumbers]);
 
   if (validNumbers.length === 0) return null;
@@ -93,19 +99,19 @@ export const FloatingNumbers = memo(({ floatingNumbers, teamPosition }: Floating
         @keyframes float-up {
           0% {
             opacity: 0.9;
-            transform: translateX(-50%) translateY(0) scale(0.95);
+            transform: translate3d(-50%, 0, 0) scale3d(0.95, 0.95, 1);
           }
           15% {
             opacity: 1;
-            transform: translateX(-50%) translateY(-10px) scale(1);
+            transform: translate3d(-50%, -10px, 0) scale3d(1, 1, 1);
           }
           50% {
             opacity: 1;
-            transform: translateX(-50%) translateY(-35px) scale(1);
+            transform: translate3d(-50%, -35px, 0) scale3d(1, 1, 1);
           }
           100% {
             opacity: 0;
-            transform: translateX(-50%) translateY(-70px) scale(0.9);
+            transform: translate3d(-50%, -70px, 0) scale3d(0.9, 0.9, 1);
           }
         }
       `}</style>

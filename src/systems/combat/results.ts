@@ -11,13 +11,18 @@ export function createWipeResult(
   scaling: ReturnType<typeof import('../../types/dungeon').calculateKeyScaling>,
   dungeon: { requiredForces: number; timeLimitSeconds: number },
   currentCombatState: CombatState,
-  deathCauses: Record<string, string>
+  deathCauses: Record<string, string>,
+  mapQuantityBonus: number = 0,
+  mapRarityBonus: number = 0
 ): DungeonRunResult {
   const progressPercent = totalForcesCleared / dungeon.requiredForces;
   const wipeLootCount = Math.max(1, Math.floor(progressPercent * 3) + Math.floor(selectedKeyLevel / 5));
-  const loot = generateDungeonLoot(selectedKeyLevel, false, 0).slice(0, wipeLootCount);
+  // Add map bonuses to scaling bonuses
+  const totalQuantity = scaling.itemQuantity + mapQuantityBonus;
+  const totalRarity = scaling.itemRarity + mapRarityBonus;
+  const loot = generateDungeonLoot(selectedKeyLevel, false, 0, totalQuantity, totalRarity).slice(0, wipeLootCount);
   const orbDrops = generateOrbDrops(selectedKeyLevel, false, progressPercent);
-  const fragmentDrops = generateFragmentDrops(selectedKeyLevel, false, 0, scaling.itemQuantity);
+  const fragmentDrops = generateFragmentDrops(selectedKeyLevel, false, 0, totalQuantity);
   const xp = Math.floor(200 * scaling.rewardMultiplier * progressPercent);
 
   return {
@@ -46,11 +51,16 @@ export function createTimeoutResult(
   selectedKeyLevel: number,
   scaling: ReturnType<typeof import('../../types/dungeon').calculateKeyScaling>,
   dungeon: { requiredForces: number; timeLimitSeconds: number },
-  currentCombatState: CombatState
+  currentCombatState: CombatState,
+  mapQuantityBonus: number = 0,
+  mapRarityBonus: number = 0
 ): DungeonRunResult {
-  const loot = generateDungeonLoot(selectedKeyLevel, true, 0, scaling.itemQuantity, scaling.itemRarity);
+  // Add map bonuses to scaling bonuses
+  const totalQuantity = scaling.itemQuantity + mapQuantityBonus;
+  const totalRarity = scaling.itemRarity + mapRarityBonus;
+  const loot = generateDungeonLoot(selectedKeyLevel, true, 0, totalQuantity, totalRarity);
   const orbDrops = generateOrbDrops(selectedKeyLevel, true);
-  const fragmentDrops = generateFragmentDrops(selectedKeyLevel, true, 0, scaling.itemQuantity);
+  const fragmentDrops = generateFragmentDrops(selectedKeyLevel, true, 0, totalQuantity);
   const xp = Math.floor(500 * scaling.rewardMultiplier);
 
   return {
@@ -79,14 +89,19 @@ export function createVictoryResult(
   scaling: ReturnType<typeof import('../../types/dungeon').calculateKeyScaling>,
   dungeon: { requiredForces: number; timeLimitSeconds: number; id: string },
   currentCombatState: CombatState,
-  totalTime: number
+  totalTime: number,
+  mapQuantityBonus: number = 0,
+  mapRarityBonus: number = 0
 ): DungeonRunResult {
   const timeRemaining = dungeon.timeLimitSeconds - totalTime;
   const upgradeLevel = timeRemaining > dungeon.timeLimitSeconds * 0.4 ? 3 : timeRemaining > dungeon.timeLimitSeconds * 0.2 ? 2 : 1;
   
-  const loot = generateDungeonLoot(selectedKeyLevel, true, upgradeLevel, scaling.itemQuantity, scaling.itemRarity);
+  // Add map bonuses to scaling bonuses
+  const totalQuantity = scaling.itemQuantity + mapQuantityBonus;
+  const totalRarity = scaling.itemRarity + mapRarityBonus;
+  const loot = generateDungeonLoot(selectedKeyLevel, true, upgradeLevel, totalQuantity, totalRarity);
   const orbDrops = generateOrbDrops(selectedKeyLevel, true);
-  const fragmentDrops = generateFragmentDrops(selectedKeyLevel, true, upgradeLevel, scaling.itemQuantity);
+  const fragmentDrops = generateFragmentDrops(selectedKeyLevel, true, upgradeLevel, totalQuantity);
   const xp = Math.floor(1000 * scaling.rewardMultiplier * (1 + upgradeLevel * 0.25));
 
   return {

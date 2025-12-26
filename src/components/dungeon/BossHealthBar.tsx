@@ -292,7 +292,7 @@ export function BossHealthBar({ bossEnemy, bossEnemies, isRunning, phase }: Boss
                 : bossHealthPercent > 30
                 ? 'linear-gradient(90deg, #cc2222 0%, #ff4444 50%, #cc2222 100%)'
                 : 'linear-gradient(90deg, #ff4444 0%, #ff6666 50%, #ff4444 100%)',
-              transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease',
+              transition: 'width 0.15s linear, background 0.3s ease',
               boxShadow: '0 0 20px rgba(204,34,34,0.6), inset 0 0 10px rgba(255,255,255,0.1)',
               position: 'relative',
               overflow: 'hidden'
@@ -324,8 +324,8 @@ export function BossHealthBar({ bossEnemy, bossEnemies, isRunning, phase }: Boss
             fontFamily: 'Cinzel, serif'
           }}>
             {isTwinBoss 
-              ? `${Math.floor(totalHealth).toLocaleString()} / ${Math.floor(totalMaxHealth).toLocaleString()} (${bosses.length} bosses)`
-              : `${Math.floor(mainBoss.health).toLocaleString()} / ${Math.floor(mainBoss.maxHealth).toLocaleString()}`
+              ? `${Math.round(totalHealth).toLocaleString()} / ${Math.round(totalMaxHealth).toLocaleString()} (${bosses.length} bosses)`
+              : `${Math.round(mainBoss.health).toLocaleString()} / ${Math.round(mainBoss.maxHealth).toLocaleString()}`
             }
           </div>
         </div>

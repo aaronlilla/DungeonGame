@@ -251,11 +251,12 @@ export function processEnemyAttacks(
   
   console.log(`[EnemyCombat] Processing ${aliveEnemies.length} enemy attacks at tick ${currentTick}`);
   
-  const tank = teamStates.find(m => m.role === 'tank' && !m.isDead);
-  const aliveMembers = teamStates.filter(m => !m.isDead);
+  // Filter out dead members AND members with resurrection immunity
+  const tank = teamStates.find(m => m.role === 'tank' && !m.isDead && !m.resurrectionImmunity);
+  const aliveMembers = teamStates.filter(m => !m.isDead && !m.resurrectionImmunity);
   
   if (aliveMembers.length === 0) {
-    console.log(`[EnemyCombat] No alive team members to attack`);
+    console.log(`[EnemyCombat] No alive/targetable team members to attack`);
     return;
   }
   
@@ -598,10 +599,14 @@ function processEnemyCastComplete(
     const ability = enemyDef?.abilities?.find(a => a.name === enemy.castAbility);
     const abilityDamage = ability?.damage;
     damageType = (ability?.damageType || 'shadow') as 'physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'shadow' | 'holy' | 'magic';
-    let rawSpellDamage = abilityDamage !== undefined 
+    // Calculate initial raw spell damage (before reductions)
+    // Increased fallback multiplier from 0.12 to 0.2 to prevent zero damage from rounding
+    // Abilities with defined damage use 0.3 multiplier (30% of ability damage)
+    // Fallback uses 20% of enemy damage (increased from 12% to ensure meaningful damage)
+    const initialRawSpellDamage = abilityDamage !== undefined 
       ? abilityDamage * scaling.damageMultiplier * 0.3 
-      : enemy.damage * 0.12;
-    rawSpellDamage *= (shieldActive ? 0.5 : 1);
+      : enemy.damage * 0.2;
+    let rawSpellDamage = initialRawSpellDamage * (shieldActive ? 0.5 : 1);
     
     // Check for elemental to physical conversion (Wardbreaker talent)
     let convertedToPhysical = 0;
@@ -719,6 +724,25 @@ function processEnemyCastComplete(
     target.health = Math.max(0, safeCurrentHealth - safeFinalDamageToLife);
     dmg = safeFinalDamageToES + safeFinalDamageToLife;
     
+    // Minimum damage guarantee: if an ability was cast with meaningful base damage, it should deal at least 1 damage
+    // (unless fully blocked/suppressed, which is handled separately)
+    // This prevents zero damage from rounding errors with very low base damage
+    // Only apply if we had initial damage > 0.5 (meaningful damage that got reduced to 0)
+    if (dmg === 0 && initialRawSpellDamage > 0.5 && !spellBlocked && !spellSuppressed) {
+      // Only apply minimum damage if we had some initial raw damage but it got reduced to 0
+      // This means the ability should have done something, but rounding eliminated it
+      const minDamage = 1;
+      // Apply minimum damage to ES first, then life
+      if (target.energyShield > 0) {
+        const minDamageToES = Math.min(minDamage, target.energyShield);
+        target.energyShield = Math.max(0, target.energyShield - minDamageToES);
+        dmg = minDamageToES;
+      } else {
+        target.health = Math.max(0, target.health - minDamage);
+        dmg = minDamage;
+      }
+    }
+    
     // Process onLowHealth effects if health dropped below threshold
     if (target.maxHealth > 0 && target.health / target.maxHealth < 0.5) {
       processOnLowHealthEffects(target, _currentTick, teamStates);
@@ -768,44 +792,73 @@ function processEnemyCastComplete(
   const esAfter = target.energyShield || 0;
   
   trackDamageTaken(target, dmg, enemy.name, enemy.castAbility || 'Auto Attack', _currentTick, !blocked);
-  setTeamFightAnim(prev => prev + 1);
-  setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 }));
-  const jitterX = (Math.random() * 80) - 40;
-  const jitterY = (Math.random() * 60) - 30;
-  const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 40 + jitterY);
   
-  // Create verbose log entry with full stats
+  // Create verbose log entry with full stats (always log, even if 0 damage for debugging)
+  // For zero damage, add debug info to help diagnose the issue
+  const logData: Parameters<typeof createVerboseDamageLog>[4] = {
+    healthBefore,
+    healthAfter,
+    esBefore,
+    esAfter,
+    maxHealth: target.maxHealth,
+    maxES: target.maxEnergyShield || 0,
+    damageBlocked: damageBlocked > 0 ? damageBlocked : undefined,
+    abilityName: enemy.castAbility || 'Auto Attack',
+    damageType
+  };
+  
+  // Add debug info for zero damage spells to help diagnose
+  if (dmg === 0 && enemy.castAbility && !blocked) {
+    // Calculate what the initial damage would have been for debugging
+    const enemyDef = getEnemyById(enemy.enemyId);
+    const ability = enemyDef?.abilities?.find(a => a.name === enemy.castAbility);
+    const abilityDamage = ability?.damage;
+    const initialRawSpellDamage = abilityDamage !== undefined 
+      ? abilityDamage * scaling.damageMultiplier * 0.3 
+      : enemy.damage * 0.12;
+    logData.damageReduced = initialRawSpellDamage; // Show initial damage that got reduced to 0
+  }
+  
   const verboseLog = createVerboseDamageLog(
     _totalTime,
     enemy.name,
     target.name,
     dmg,
     target,
-    {
-      healthBefore,
-      healthAfter,
-      esBefore,
-      esAfter,
-      maxHealth: target.maxHealth,
-      maxES: target.maxEnergyShield || 0,
-      damageBlocked: damageBlocked > 0 ? damageBlocked : undefined,
-      abilityName: enemy.castAbility || 'Auto Attack',
-      damageType
-    },
+    logData,
     enemy, // sourceState
     teamStates, // allTeamStates
     context.currentCombatState?.enemies || [] // allEnemies
   );
   
-  if (batchedFloatingNumbers && batchedLogEntries) {
-    batchedFloatingNumbers.push(floatNum);
-    batchedLogEntries.push(verboseLog);
+  // Only create floating number and animations if damage > 0
+  if (dmg > 0) {
+    setTeamFightAnim(prev => prev + 1);
+    setEnemyFightAnims(prev => ({ ...prev, [enemy.id]: (prev[enemy.id] || 0) + 1 }));
+    const jitterX = (Math.random() * 80) - 40;
+    const jitterY = (Math.random() * 60) - 30;
+    const floatNum = createFloatingNumber(dmg, blocked ? 'blocked' : 'enemy', currentCombatState.teamPosition.x + jitterX, currentCombatState.teamPosition.y - 40 + jitterY);
+    
+    if (batchedFloatingNumbers && batchedLogEntries) {
+      batchedFloatingNumbers.push(floatNum);
+      batchedLogEntries.push(verboseLog);
+    } else {
+      updateCombatState(prev => ({ 
+        ...prev, 
+        floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum], 
+        combatLog: [...prev.combatLog, verboseLog] 
+      }));
+    }
   } else {
-    updateCombatState(prev => ({ 
-      ...prev, 
-      floatingNumbers: [...prev.floatingNumbers.slice(-20), floatNum], 
-      combatLog: [...prev.combatLog, verboseLog] 
-    }));
+    // Still log zero damage for debugging, but don't show floating number
+    if (batchedLogEntries) {
+      batchedLogEntries.push(verboseLog);
+    } else {
+      updateCombatState(prev => ({ 
+        ...prev, 
+        combatLog: [...prev.combatLog, verboseLog] 
+      }));
+    }
   }
   if (target.health <= 0 && !target.isDead) {
     target.isDead = true;

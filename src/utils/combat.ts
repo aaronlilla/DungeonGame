@@ -159,7 +159,7 @@ function applyTeamAffectingTalents(
 
 // Initialize team states from characters (PoE style stats)
 // Includes passive bonuses, MoP-style talent bonuses, and equipment bonuses
-export function initTeamStates(team: Character[], inventory: Item[] = []): TeamMemberState[] {
+export function initTeamStates(team: Character[], inventory: Item[] = [], verboseLogger?: any): TeamMemberState[] {
   let teamStates = team.map(char => {
     // Get passive bonuses from allocated nodes (legacy system)
     const classId = char.classId || getDefaultClassForRole(char.role);
@@ -223,12 +223,24 @@ export function initTeamStates(team: Character[], inventory: Item[] = []): TeamM
     
     // Get equipment bonuses from equipped items
     const equippedItems: Item[] = [];
-    for (const itemId of Object.values(char.equippedGear)) {
-      if (itemId) {
-        const item = inventory.find(i => i.id === itemId);
+    
+    // First, check if character has equippedItems directly (new format)
+    if (char.equippedItems) {
+      for (const item of Object.values(char.equippedItems)) {
         if (item) equippedItems.push(item);
       }
     }
+    
+    // Fallback: check equippedGear with inventory lookup (legacy format)
+    if (equippedItems.length === 0 && char.equippedGear) {
+      for (const itemId of Object.values(char.equippedGear)) {
+        if (itemId) {
+          const item = inventory.find(i => i.id === itemId);
+          if (item) equippedItems.push(item);
+        }
+      }
+    }
+    
     const equipmentBonuses = calculateEquipmentStats(equippedItems);
     
     // Helper to get stat with passive + equipment bonus
@@ -360,7 +372,7 @@ export function initTeamStates(team: Character[], inventory: Item[] = []): TeamM
     }
     
     // Get weapon damage from equipped weapons (start with mainHand for dual wielding)
-    const weaponDamage = getEquippedWeaponDamage(equippedItems, null);
+    const weaponDamage = getEquippedWeaponDamage(equippedItems, null, verboseLogger, char.name);
     
     return {
       id: char.id,
@@ -651,7 +663,7 @@ export function updateTeamMemberStats(
 // Initialize player abilities
 export function initAbilities(): PlayerAbility[] {
   return [
-    { id: 'bloodlust', name: 'Bloodlust', icon: '⚡', cooldown: 600, currentCooldown: 0, duration: 15, description: '+30% Haste for 15s (10m CD)' },
+    { id: 'bloodlust', name: 'Bloodlust', icon: '⚡', cooldown: 600, currentCooldown: 0, duration: 15, description: '+30% Haste & Damage for 15s (10m CD)' },
     { id: 'battlerez', name: 'Battle Res', icon: '✟', cooldown: 240, currentCooldown: 0, description: 'Resurrect a random dead ally (4m CD)' },
   ];
 }

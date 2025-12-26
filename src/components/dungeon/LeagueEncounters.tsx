@@ -15,8 +15,8 @@ export function LeagueEncounters({
 }: LeagueEncountersProps) {
   if (!encounters || encounters.length === 0) return null;
   
-  // Filter to show only non-completed encounters
-  const activeEncounters = encounters.filter(e => !e.completed);
+  // Filter to show only non-completed encounters with valid mechanics
+  const activeEncounters = encounters.filter(e => !e.completed && e.mechanic);
   
   if (activeEncounters.length === 0) return null;
   

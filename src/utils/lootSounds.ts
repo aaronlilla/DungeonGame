@@ -3,6 +3,8 @@
  * Uses Web Audio API to generate synthetic sounds
  */
 
+import { useGameStore } from '../store/gameStore';
+
 // Audio context (lazy initialized)
 let audioContext: AudioContext | null = null;
 
@@ -11,6 +13,11 @@ function getAudioContext(): AudioContext {
     audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
   }
   return audioContext;
+}
+
+// Get current volume from game store
+function getVolume(): number {
+  return useGameStore.getState().volume;
 }
 
 // Sound configurations for each rarity tier
@@ -26,40 +33,40 @@ interface SoundConfig {
 const SOUND_CONFIGS: Record<string, SoundConfig> = {
   common: {
     frequency: 400,
-    duration: 0.1,
+    duration: 0.08,
     type: 'sine',
-    gain: 0.1
+    gain: 0.03
   },
   uncommon: {
     frequency: 600,
-    duration: 0.15,
-    type: 'triangle',
-    gain: 0.15,
+    duration: 0.1,
+    type: 'sine',
+    gain: 0.04,
     harmonics: [1.5]
   },
   rare: {
     frequency: 800,
-    duration: 0.2,
-    type: 'square',
-    gain: 0.2,
-    harmonics: [1.25, 1.5],
-    sweep: { from: 800, to: 1000 }
+    duration: 0.12,
+    type: 'sine',
+    gain: 0.05,
+    harmonics: [1.25],
+    sweep: { from: 800, to: 950 }
   },
   epic: {
     frequency: 1000,
-    duration: 0.3,
-    type: 'sawtooth',
-    gain: 0.25,
-    harmonics: [1.25, 1.5, 2],
-    sweep: { from: 800, to: 1200 }
+    duration: 0.15,
+    type: 'sine',
+    gain: 0.06,
+    harmonics: [1.25, 1.5],
+    sweep: { from: 900, to: 1100 }
   },
   legendary: {
     frequency: 1200,
-    duration: 0.5,
-    type: 'sawtooth',
-    gain: 0.35,
-    harmonics: [1.25, 1.5, 2, 2.5],
-    sweep: { from: 600, to: 1400 }
+    duration: 0.2,
+    type: 'sine',
+    gain: 0.08,
+    harmonics: [1.25, 1.5, 2],
+    sweep: { from: 1000, to: 1300 }
   }
 };
 
@@ -70,15 +77,19 @@ export function playLootSound(rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 
   // Skip common sounds to avoid spam
   if (rarity === 'common') return;
   
+  // Get volume from store
+  const volume = getVolume();
+  if (volume === 0) return; // Muted
+  
   try {
     const ctx = getAudioContext();
     const config = SOUND_CONFIGS[rarity];
     const now = ctx.currentTime;
     
-    // Master gain node
+    // Master gain node with volume multiplier
     const masterGain = ctx.createGain();
     masterGain.connect(ctx.destination);
-    masterGain.gain.setValueAtTime(config.gain, now);
+    masterGain.gain.setValueAtTime(config.gain * volume, now);
     masterGain.gain.exponentialRampToValueAtTime(0.01, now + config.duration);
     
     // Main oscillator
@@ -105,7 +116,7 @@ export function playLootSound(rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 
         harmOsc.frequency.setValueAtTime(config.frequency * ratio, now);
         
         const harmGain = ctx.createGain();
-        harmGain.gain.setValueAtTime(config.gain * (0.3 / (i + 1)), now);
+        harmGain.gain.setValueAtTime(config.gain * (0.3 / (i + 1)) * volume, now);
         harmGain.gain.exponentialRampToValueAtTime(0.01, now + config.duration);
         
         harmOsc.connect(harmGain);
@@ -115,24 +126,24 @@ export function playLootSound(rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 
       });
     }
     
-    // For epic and legendary, add a "sparkle" effect
+    // For epic and legendary, add a subtle "sparkle" effect
     if (rarity === 'epic' || rarity === 'legendary') {
-      const numSparkles = rarity === 'legendary' ? 5 : 3;
+      const numSparkles = rarity === 'legendary' ? 3 : 2;
       for (let i = 0; i < numSparkles; i++) {
         const sparkleOsc = ctx.createOscillator();
         sparkleOsc.type = 'sine';
-        const sparkleFreq = 2000 + Math.random() * 2000;
-        sparkleOsc.frequency.setValueAtTime(sparkleFreq, now + i * 0.05);
+        const sparkleFreq = 2000 + Math.random() * 1000;
+        sparkleOsc.frequency.setValueAtTime(sparkleFreq, now + i * 0.04);
         
         const sparkleGain = ctx.createGain();
         sparkleGain.gain.setValueAtTime(0, now);
-        sparkleGain.gain.linearRampToValueAtTime(0.1, now + i * 0.05);
-        sparkleGain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.05 + 0.1);
+        sparkleGain.gain.linearRampToValueAtTime(0.03 * volume, now + i * 0.04);
+        sparkleGain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.04 + 0.08);
         
         sparkleOsc.connect(sparkleGain);
         sparkleGain.connect(ctx.destination);
-        sparkleOsc.start(now + i * 0.05);
-        sparkleOsc.stop(now + i * 0.05 + 0.15);
+        sparkleOsc.start(now + i * 0.04);
+        sparkleOsc.stop(now + i * 0.04 + 0.1);
       }
     }
   } catch (e) {
@@ -145,38 +156,41 @@ export function playLootSound(rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 
  * Play a map drop sound (special sound for maps)
  */
 export function playMapDropSound(): void {
+  const volume = getVolume();
+  if (volume === 0) return; // Muted
+  
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
     
-    // Low "thunk" for map drop
+    // Subtle low tone for map drop
     const osc1 = ctx.createOscillator();
     osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(150, now);
-    osc1.frequency.exponentialRampToValueAtTime(50, now + 0.3);
+    osc1.frequency.setValueAtTime(200, now);
+    osc1.frequency.exponentialRampToValueAtTime(100, now + 0.15);
     
     const gain1 = ctx.createGain();
-    gain1.gain.setValueAtTime(0.3, now);
-    gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+    gain1.gain.setValueAtTime(0.06 * volume, now);
+    gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
     
     osc1.connect(gain1);
     gain1.connect(ctx.destination);
     osc1.start(now);
-    osc1.stop(now + 0.3);
+    osc1.stop(now + 0.15);
     
-    // Higher "ding" for attention
+    // Subtle higher tone
     const osc2 = ctx.createOscillator();
-    osc2.type = 'triangle';
-    osc2.frequency.setValueAtTime(1200, now + 0.1);
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(1000, now + 0.05);
     
     const gain2 = ctx.createGain();
-    gain2.gain.setValueAtTime(0.2, now + 0.1);
-    gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+    gain2.gain.setValueAtTime(0.05 * volume, now + 0.05);
+    gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
     
     osc2.connect(gain2);
     gain2.connect(ctx.destination);
-    osc2.start(now + 0.1);
-    osc2.stop(now + 0.4);
+    osc2.start(now + 0.05);
+    osc2.stop(now + 0.2);
   } catch (e) {
     console.warn('Could not play map drop sound:', e);
   }
@@ -186,26 +200,29 @@ export function playMapDropSound(): void {
  * Play a fragment drop sound
  */
 export function playFragmentDropSound(): void {
+  const volume = getVolume();
+  if (volume === 0) return; // Muted
+  
   try {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
     
-    // Crystal/gem-like sound
-    const frequencies = [1500, 2000, 2500];
+    // Subtle crystal/gem-like sound
+    const frequencies = [1500, 2000];
     
     frequencies.forEach((freq, i) => {
       const osc = ctx.createOscillator();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now + i * 0.05);
+      osc.frequency.setValueAtTime(freq, now + i * 0.03);
       
       const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.15, now + i * 0.05);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.05 + 0.2);
+      gain.gain.setValueAtTime(0.04 * volume, now + i * 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.03 + 0.12);
       
       osc.connect(gain);
       gain.connect(ctx.destination);
-      osc.start(now + i * 0.05);
-      osc.stop(now + i * 0.05 + 0.2);
+      osc.start(now + i * 0.03);
+      osc.stop(now + i * 0.03 + 0.12);
     });
   } catch (e) {
     console.warn('Could not play fragment drop sound:', e);

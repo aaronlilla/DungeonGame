@@ -1,5 +1,42 @@
 {
   "item_class": "Strength/Intelligence Body Armour",
-  "prefixes": "as provided",
-  "suffixes": "as provided"
+  "prefixes": [
+    {
+      "group": "IncreasedMana",
+      "desc": "+# to maximum Mana",
+      "tiers": [
+        {
+          "name": "Beryl",
+          "ilvl": 1,
+          "stats": [
+            "+(15-19) to maximum Mana"
+          ],
+          "tags": [
+            "resource",
+            "mana"
+          ]
+        }
+      ]
+    }
+  ],
+  "suffixes": [
+    {
+      "group": "FireResistance",
+      "stat_line": "+#% to Fire Resistance",
+      "modifiers": [
+        {
+          "name": "of the Whelpling",
+          "ilvl": 1,
+          "stats": [
+            "+(6-11)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        }
+      ]
+    }
+  ]
 }

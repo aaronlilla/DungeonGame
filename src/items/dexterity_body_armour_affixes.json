@@ -1,5 +1,42 @@
 {
   "item_class": "Dexterity Body Armour",
-  "prefixes": "as provided",
-  "suffixes": "as provided"
+  "prefixes": [
+    {
+      "group": "IncreasedLife",
+      "stat_line": "+# to maximum Life",
+      "modifiers": [
+        {
+          "name": "Hale",
+          "ilvl": 1,
+          "stats": [
+            "+(3-9) to maximum Life"
+          ],
+          "tags": [
+            "resource",
+            "life"
+          ]
+        }
+      ]
+    }
+  ],
+  "suffixes": [
+    {
+      "group": "FireResistance",
+      "stat_line": "+#% to Fire Resistance",
+      "modifiers": [
+        {
+          "name": "of the Whelpling",
+          "ilvl": 1,
+          "stats": [
+            "+(6-11)% to Fire Resistance"
+          ],
+          "tags": [
+            "elemental",
+            "fire",
+            "resistance"
+          ]
+        }
+      ]
+    }
+  ]
 }

@@ -363,34 +363,35 @@ export const SAMPLE_ENEMIES: DungeonEnemy[] = [
   // ========== TANKBUSTERS - DANGEROUS ==========
   // Crushing Blow chunks the tank - multiple tankbusters require cooldowns
   // Base stats will be calculated from PoE monster data based on dangerLevel and type
-  // Reduced base damage values to prevent one-shots on level 1 tanks (110 HP)
-  // At tier 1: 70 base * 1.0 scaling * 1.25 multiplier = 87.5 raw → ~45-50 damage after armor (40-45% of HP)
+  // TUNED FOR TIER 1: Tankbusters should be threatening but not one-shot
+  // At tier 1: 40 base * 0.9 scaling * 0.45 multiplier = 16.2 raw → ~8-10 damage after armor (7-9% of tank HP)
   { id: 'bone_crusher', name: 'Bone Crusher', icon: React.createElement(GiShieldBash), type: 'normal', baseHealth: 0, baseDamage: 0, enemyForces: 2, dangerLevel: 3, abilities: [
-    { id: 'crushing_blow', name: 'Crushing Blow', description: 'Deals massive physical damage to the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 70, castTime: 2.0, cooldown: 4.0, interruptible: false, avoidable: false, effects: [] }
+    { id: 'crushing_blow', name: 'Crushing Blow', description: 'Deals massive physical damage to the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 40, castTime: 2.0, cooldown: 4.0, interruptible: false, avoidable: false, effects: [] }
   ]},
   { id: 'grave_executioner', name: 'Grave Executioner', icon: React.createElement(GiSkullShield), type: 'normal', baseHealth: 0, baseDamage: 0, enemyForces: 2, dangerLevel: 3, abilities: [
-    { id: 'crushing_blow', name: 'Crushing Blow', description: 'Deals massive physical damage to the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 70, castTime: 2.0, cooldown: 4.0, interruptible: false, avoidable: false, effects: [] }
+    { id: 'crushing_blow', name: 'Crushing Blow', description: 'Deals massive physical damage to the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 40, castTime: 2.0, cooldown: 4.0, interruptible: false, avoidable: false, effects: [] }
   ]},
   { id: 'tomb_smasher', name: 'Tomb Smasher', icon: React.createElement(GiShieldBash), type: 'elite', baseHealth: 0, baseDamage: 0, enemyForces: 4, dangerLevel: 4, abilities: [
-    { id: 'crushing_blow', name: 'Crushing Blow', description: 'Deals massive physical damage to the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 85, castTime: 2.0, cooldown: 4.0, interruptible: false, avoidable: false, effects: [] }
+    { id: 'crushing_blow', name: 'Crushing Blow', description: 'Deals massive physical damage to the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 50, castTime: 2.0, cooldown: 4.0, interruptible: false, avoidable: false, effects: [] }
   ]},
   
   // ========== ELITE CASTERS - DANGEROUS ==========
-  // Spell damage reduced by 40% from baseline
+  // TUNED FOR TIER 1: Spell damage should be survivable with 0% resistances
+  // DPS should survive 8-10 hits before needing healing
   { id: 'dark_sorcerer', name: 'Dark Sorcerer', icon: React.createElement(GiWizardStaff), type: 'elite', baseHealth: 0, baseDamage: 0, enemyForces: 4, dangerLevel: 3, abilities: [
-    { id: 'ice_bolt', name: 'Ice Bolt', description: 'Fires a shard of ice at a random party member', damageType: 'cold', tags: ['spell', 'ranged', 'projectile', 'cold'], damage: 30, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
+    { id: 'ice_bolt', name: 'Ice Bolt', description: 'Fires a shard of ice at a random party member', damageType: 'cold', tags: ['spell', 'ranged', 'projectile', 'cold'], damage: 18, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
   ]},
   { id: 'necromancer', name: 'Lesser Necromancer', icon: React.createElement(GiWizardStaff), type: 'elite', baseHealth: 0, baseDamage: 0, enemyForces: 5, dangerLevel: 4, abilities: [
-    { id: 'lightning_bolt', name: 'Lightning Bolt', description: 'Fires a bolt of lightning at a random party member', damageType: 'lightning', tags: ['spell', 'ranged', 'projectile', 'lightning'], damage: 36, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
+    { id: 'lightning_bolt', name: 'Lightning Bolt', description: 'Fires a bolt of lightning at a random party member', damageType: 'lightning', tags: ['spell', 'ranged', 'projectile', 'lightning'], damage: 20, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
   ]},
   
   // ========== NORMAL CASTERS - MODERATE ==========
-  // Spell damage reduced by 40% from baseline
+  // TUNED FOR TIER 1: Low damage spells that add up over time
   { id: 'skeleton_mage', name: 'Skeleton Mage', icon: React.createElement(GiWizardStaff), type: 'normal', baseHealth: 0, baseDamage: 0, enemyForces: 2, dangerLevel: 2, abilities: [
-    { id: 'fire_bolt', name: 'Fire Bolt', description: 'Fires a bolt of fire at a random party member', damageType: 'fire', tags: ['spell', 'ranged', 'projectile', 'fire'], damage: 21, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
+    { id: 'fire_bolt', name: 'Fire Bolt', description: 'Fires a bolt of fire at a random party member', damageType: 'fire', tags: ['spell', 'ranged', 'projectile', 'fire'], damage: 12, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
   ]},
   { id: 'crypt_warlock', name: 'Crypt Warlock', icon: React.createElement(GiWizardStaff), type: 'normal', baseHealth: 0, baseDamage: 0, enemyForces: 2, dangerLevel: 2, abilities: [
-    { id: 'shadow_bolt', name: 'Shadow Bolt', description: 'Fires a bolt of shadow at a random party member', damageType: 'shadow', tags: ['spell', 'ranged', 'projectile', 'shadow'], damage: 24, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
+    { id: 'shadow_bolt', name: 'Shadow Bolt', description: 'Fires a bolt of shadow at a random party member', damageType: 'shadow', tags: ['spell', 'ranged', 'projectile', 'shadow'], damage: 14, castTime: 1.5, cooldown: 2.5, interruptible: true, avoidable: false, effects: [] }
   ]},
   
   // ========== HARD MELEE - ABOVE AVERAGE DAMAGE ==========
@@ -413,22 +414,27 @@ export const SAMPLE_ENEMIES: DungeonEnemy[] = [
   { id: 'tomb_guardian', name: 'Tomb Guardian', icon: React.createElement(GiShieldBash), type: 'elite', baseHealth: 0, baseDamage: 0, enemyForces: 5, dangerLevel: 4, abilities: [] },
   
   // ========== MINIBOSS - GATE BOSSES ==========
-  // Tough fights - require active tanking and healing!
-  // Reduced base damage to ~50-60% of tank HP instead of one-shotting
-  { id: 'bone_golem', name: 'Bone Golem', icon: React.createElement(GiShieldBash), type: 'miniboss', baseHealth: 0, baseDamage: 0, enemyForces: 0, dangerLevel: 5, abilities: [
-    { id: 'ground_slam', name: 'Ground Slam', description: 'Slams the ground with devastating force, crushing the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 100, castTime: 1.5, cooldown: 5.0, interruptible: false, avoidable: false, effects: [] }
+  // TUNED FOR TIER 1: Minibosses are unique enemies with explicit stats
+  // No type multipliers applied - these ARE the actual health values
+  // Only affected by: key level scaling (0.9x at T1, 1.0x at T2, etc.) and map mods
+  // Final HP: ~6.3k at T1 (+1), ~7k at T2 (+2), ~9.8k at T5 (+5)
+  { id: 'bone_golem', name: 'Bone Golem', icon: React.createElement(GiShieldBash), type: 'miniboss', baseHealth: 7000, baseDamage: 15, enemyForces: 0, dangerLevel: 5, abilities: [
+    { id: 'ground_slam', name: 'Ground Slam', description: 'Slams the ground with devastating force, crushing the tank', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 60, castTime: 1.5, cooldown: 5.0, interruptible: false, avoidable: false, effects: [] }
   ]},
-  { id: 'death_knight', name: 'Death Knight', icon: React.createElement(GiSkullShield), type: 'miniboss', baseHealth: 0, baseDamage: 0, enemyForces: 0, dangerLevel: 5, abilities: [
-    { id: 'mortal_strike', name: 'Mortal Strike', description: 'A brutal strike that wounds the tank deeply', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 110, castTime: 1.5, cooldown: 5.0, interruptible: false, avoidable: false, effects: [] }
+  { id: 'death_knight', name: 'Death Knight', icon: React.createElement(GiSkullShield), type: 'miniboss', baseHealth: 7000, baseDamage: 15, enemyForces: 0, dangerLevel: 5, abilities: [
+    { id: 'mortal_strike', name: 'Mortal Strike', description: 'A brutal strike that wounds the tank deeply', damageType: 'physical', tags: ['attack', 'melee', 'physical'], damage: 65, castTime: 1.5, cooldown: 5.0, interruptible: false, avoidable: false, effects: [] }
   ]},
-  { id: 'lich', name: 'Undying Lich', icon: React.createElement(GiWizardStaff), type: 'miniboss', baseHealth: 0, baseDamage: 0, enemyForces: 0, dangerLevel: 5, abilities: [
-    { id: 'soul_rend', name: 'Soul Rend', description: 'Tears at the tank\'s soul with dark magic', damageType: 'shadow', tags: ['spell', 'ranged', 'shadow'], damage: 90, castTime: 1.5, cooldown: 5.0, interruptible: false, avoidable: false, effects: [] }
+  { id: 'lich', name: 'Undying Lich', icon: React.createElement(GiWizardStaff), type: 'miniboss', baseHealth: 7000, baseDamage: 15, enemyForces: 0, dangerLevel: 5, abilities: [
+    { id: 'soul_rend', name: 'Soul Rend', description: 'Tears at the tank\'s soul with dark magic', damageType: 'shadow', tags: ['spell', 'ranged', 'shadow'], damage: 55, castTime: 1.5, cooldown: 5.0, interruptible: false, avoidable: false, effects: [] }
   ]},
   
   // ========== FINAL BOSS ==========
-  // The ultimate challenge - requires coordination and cooldowns!
-  { id: 'necromancer_lord', name: 'Necromancer Lord', icon: React.createElement(GiSkullShield), type: 'boss', baseHealth: 0, baseDamage: 0, enemyForces: 0, dangerLevel: 5, abilities: [
-    { id: 'death_coil', name: 'Death Coil', description: 'Unleashes a devastating blast of necrotic energy at the tank', damageType: 'shadow', tags: ['spell', 'ranged', 'shadow'], damage: 350, castTime: 1.5, cooldown: 5.0, interruptible: false, avoidable: false, effects: [] }
+  // TUNED FOR TIER 1: Final boss is a unique enemy with explicit stats
+  // No type multipliers applied - these ARE the actual health values
+  // Only affected by: key level scaling (0.9x at T1, 1.0x at T2, etc.) and map mods
+  // Final HP: ~18k at T1 (+1), ~20k at T2 (+2), ~28k at T5 (+5)
+  { id: 'necromancer_lord', name: 'Necromancer Lord', icon: React.createElement(GiSkullShield), type: 'boss', baseHealth: 20000, baseDamage: 20, enemyForces: 0, dangerLevel: 5, abilities: [
+    { id: 'death_coil', name: 'Death Coil', description: 'Unleashes a devastating blast of necrotic energy at the tank', damageType: 'shadow', tags: ['spell', 'ranged', 'shadow'], damage: 80, castTime: 1.5, cooldown: 5.0, interruptible: false, avoidable: false, effects: [] }
   ]}
 ];
 
@@ -632,18 +638,22 @@ export const SAMPLE_DUNGEON: Dungeon = {
 // Helper functions
 export function calculateKeyScaling(level: number): KeyLevel {
   // BALANCED SCALING SYSTEM
-  // +2 is baseline (1.0x) - designed for fresh teams with base stats
-  // Scaling ramps up quickly so higher keys REQUIRE gear upgrades
+  // +1 is baseline (0.9x) - designed for fresh level 2 teams with minimal gear
+  // +2 is comfortable (1.0x) - baseline difficulty with some gear
+  // Scaling ramps up gradually so higher keys REQUIRE gear upgrades
   // +10 expects ~40% resistances and proportionally more armor from gear
   
-  // 12% multiplicative per level above +2 (steeper than before)
-  // +2: 1.0x, +5: 1.40x, +10: 2.49x, +15: 4.40x, +20: 7.79x
+  // Start at 0.9x for +1 (slightly easier), 1.0x at +2, then scale up
+  // +1: 0.9x, +2: 1.0x, +5: 1.40x, +10: 2.49x, +15: 4.40x, +20: 7.79x
   const scalingLevel = Math.max(0, level - 2);
   
+  // Base multiplier: 0.9x at +1, 1.0x at +2+
+  const baseMultiplier = level === 1 ? 0.9 : 1.0;
+  
   // Health scales slightly faster than damage to make fights longer at high keys
-  const healthMultiplier = Math.pow(1.14, scalingLevel);
+  const healthMultiplier = baseMultiplier * Math.pow(1.14, scalingLevel);
   // Damage scales at 12% per level
-  const damageMultiplier = Math.pow(1.12, scalingLevel);
+  const damageMultiplier = baseMultiplier * Math.pow(1.12, scalingLevel);
   
   return {
     level,

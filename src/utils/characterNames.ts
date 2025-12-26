@@ -36,3 +36,6 @@ export function generateRandomCharacterName(): string {
   return `${firstName} ${lastName}`;
 }
 
+
+
+

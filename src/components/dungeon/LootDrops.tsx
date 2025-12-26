@@ -1,6 +1,10 @@
-import { useState, memo, useCallback, useMemo } from 'react';
+import { useState, memo, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { MapLootDrop } from '../../types/combat';
 import { ItemTooltip } from '../shared/ItemTooltip';
+import { LootBeam } from './LootBeam';
+import { playDropSound } from '../../utils/lootSoundsHowler';
+import { useGameStore } from '../../store/gameStore';
+import { evaluateItemFilter, getDropStyle, getBeamEffect } from '../../utils/lootFilterEngine';
 
 interface LootDropsProps {
   lootDrops: MapLootDrop[];
@@ -15,24 +19,24 @@ interface LootDropsProps {
   viewportHeight?: number;
 }
 
-// PoE-style rarity colors and backgrounds (solid colors, no gradients)
-const RARITY_STYLES: Record<string, { bg: string; text: string; border: string }> = {
-  // Currency/orbs - gold text on dark brown
-  orb: { bg: '#2a2419', text: '#c8b88a', border: '#5a4d3a' },
-  // Common items - white text on grey
-  common: { bg: '#2a2a2a', text: '#c8c8c8', border: '#4a4a4a' },
-  // Magic items - blue text on dark blue
-  uncommon: { bg: '#152d4a', text: '#8888ff', border: '#3a5a8a' },
-  // Rare items - yellow text on dark brown
-  rare: { bg: '#2a2419', text: '#ffff77', border: '#5a4d3a' },
-  // Epic/Unique - orange text on dark red-brown
-  epic: { bg: '#301810', text: '#af6025', border: '#6a3a2a' }, 
-  // Legendary - purple text on dark purple
-  legendary: { bg: '#251030', text: '#b35dff', border: '#5a3a6a' },
-  // Maps - special tan/gold
-  map: { bg: '#302a20', text: '#d4af37', border: '#6a5a3a' },
-  // Fragments - teal/cyan
-  fragment: { bg: '#102525', text: '#5fd4d4', border: '#3a5a5a' },
+// PoE-style rarity colors - matching exact PoE filter colors
+const RARITY_STYLES: Record<string, { bg: string; text: string; border: string; borderWidth: number }> = {
+  // Currency/orbs - gold/orange text (PoE currency style)
+  orb: { bg: 'rgba(20, 20, 0, 0.9)', text: '#ebc86e', border: '#ebc86e', borderWidth: 2 },
+  // Common items - white text
+  common: { bg: 'rgba(30, 30, 30, 0.85)', text: '#c8c8c8', border: '#808080', borderWidth: 1 },
+  // Magic items - blue text (PoE magic blue)
+  uncommon: { bg: 'rgba(0, 20, 40, 0.9)', text: '#8888ff', border: '#8888ff', borderWidth: 2 },
+  // Rare items - yellow text (PoE rare yellow)
+  rare: { bg: 'rgba(20, 20, 0, 0.9)', text: '#ffff77', border: '#ffff77', borderWidth: 2 },
+  // Epic/Unique - orange/brown text (PoE unique orange)
+  epic: { bg: 'rgba(30, 15, 10, 0.9)', text: '#af6025', border: '#af6025', borderWidth: 2 }, 
+  // Legendary - purple text (high tier)
+  legendary: { bg: 'rgba(25, 10, 40, 0.95)', text: '#b35dff', border: '#b35dff', borderWidth: 3 },
+  // Maps - yellow/gold (high value)
+  map: { bg: 'rgba(20, 20, 0, 0.95)', text: '#d4af37', border: '#d4af37', borderWidth: 3 },
+  // Fragments - purple (PoE fragment style)
+  fragment: { bg: 'rgba(20, 10, 35, 0.9)', text: '#911ed4', border: '#911ed4', borderWidth: 2 },
 };
 
 // PoE-style orb names
@@ -63,16 +67,88 @@ export const LootDrops = memo(function LootDrops({
   viewportWidth = 800,
   viewportHeight = 600,
 }: LootDropsProps) {
+  // Get loot filter from store
+  const { lootFilter, lootFilterEnabled, activatedMap } = useGameStore();
+  
   // Tooltip state
   const [hoveredDrop, setHoveredDrop] = useState<MapLootDrop | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   
-  // Filter to only show uncollected drops
-  const visibleDrops = lootDrops.filter(drop => !drop.collected);
+  // Track which drops have had sounds played
+  const playedSoundsRef = useRef<Set<string>>(new Set());
+  
+  // Filter to only show uncollected drops, and apply loot filter if enabled
+  const visibleDrops = useMemo(() => {
+    const uncollected = lootDrops.filter(drop => !drop.collected);
+    
+    // If loot filter is not enabled or not loaded, show all
+    if (!lootFilterEnabled || !lootFilter) {
+      return uncollected;
+    }
+    
+    // Apply loot filter
+    const areaLevel = activatedMap?.tier || 1;
+    return uncollected.filter(drop => {
+      const filterResult = evaluateItemFilter(
+        drop.item || null,
+        drop.orbType || null,
+        drop.orbCount || 1,
+        drop.map || null,
+        drop.fragment || null,
+        lootFilter.rules,
+        areaLevel
+      );
+      return filterResult.show;
+    });
+  }, [lootDrops, lootFilterEnabled, lootFilter, activatedMap]);
+  
+  // Play sounds for new drops (PoE style)
+  useEffect(() => {
+    visibleDrops.forEach(drop => {
+      if (!playedSoundsRef.current.has(drop.id)) {
+        playedSoundsRef.current.add(drop.id);
+        // Play sound immediately
+        playDropSound(drop.type, drop.rarity);
+      }
+    });
+    
+    // Clean up old entries
+    const currentIds = new Set(visibleDrops.map(d => d.id));
+    playedSoundsRef.current.forEach(id => {
+      if (!currentIds.has(id)) {
+        playedSoundsRef.current.delete(id);
+      }
+    });
+  }, [visibleDrops]);
   
   if (visibleDrops.length === 0) return null;
   
   const getStyle = (drop: MapLootDrop) => {
+    // If loot filter is enabled, use filter styles
+    if (lootFilterEnabled && lootFilter) {
+      const areaLevel = activatedMap?.tier || 1;
+      const filterResult = evaluateItemFilter(
+        drop.item || null,
+        drop.orbType || null,
+        drop.orbCount || 1,
+        drop.map || null,
+        drop.fragment || null,
+        lootFilter.rules,
+        areaLevel
+      );
+      
+      if (filterResult.matchedRule) {
+        const style = getDropStyle(filterResult);
+        return {
+          bg: style.backgroundColor,
+          text: style.textColor,
+          border: style.borderColor,
+          borderWidth: style.borderWidth
+        };
+      }
+    }
+    
+    // Fallback to default styles
     // Special styles for maps and fragments
     if (drop.type === 'map') return RARITY_STYLES.map;
     if (drop.type === 'fragment') return RARITY_STYLES.fragment;
@@ -235,29 +311,29 @@ export const LootDrops = memo(function LootDrops({
           marginBottom: isOffScreenItem ? '2px' : undefined,
         }}
       >
-        {/* PoE-style loot label */}
+        {/* PoE-style loot label with prominent border */}
         <div
           className={isCollected ? 'loot-collected-animation' : ''}
           style={{
             display: 'inline-flex',
             alignItems: 'center',
             gap: '6px',
-            padding: '4px 12px',
+            padding: '5px 14px',
             background: style.bg,
-            border: `1px solid ${style.border}`,
-            borderRadius: '3px',
+            border: `${style.borderWidth}px solid ${style.border}`,
+            borderRadius: '2px',
             boxShadow: isOffScreenItem 
-              ? '0 2px 8px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05)' 
-              : '0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)',
+              ? `0 0 12px ${style.border}40, 0 3px 10px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.08)` 
+              : `0 0 8px ${style.border}30, 0 2px 6px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)`,
             whiteSpace: 'nowrap',
-            transition: isCollected ? 'none' : 'all 0.1s ease',
-            opacity: isCollected ? 0 : (isOffScreenItem ? 0.9 : 1),
+            transition: isCollected ? 'none' : 'all 0.15s ease',
+            opacity: isCollected ? 0 : (isOffScreenItem ? 0.95 : 1),
             transform: isCollected ? 'scale(1.3)' : 'scale(1)',
           }}
           onMouseEnter={(e) => {
             if (!isCollected) {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1)';
+              e.currentTarget.style.transform = 'scale(1.08)';
+              e.currentTarget.style.boxShadow = `0 0 16px ${style.border}60, 0 4px 12px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.15)`;
               e.currentTarget.style.opacity = '1';
             }
           }}
@@ -265,9 +341,9 @@ export const LootDrops = memo(function LootDrops({
             if (!isCollected) {
               e.currentTarget.style.transform = 'scale(1)';
               e.currentTarget.style.boxShadow = isOffScreenItem 
-                ? '0 2px 8px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05)'
-                : '0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)';
-              e.currentTarget.style.opacity = isOffScreenItem ? '0.9' : '1';
+                ? `0 0 12px ${style.border}40, 0 3px 10px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.08)`
+                : `0 0 8px ${style.border}30, 0 2px 6px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)`;
+              e.currentTarget.style.opacity = isOffScreenItem ? '0.95' : '1';
             }
           }}
         >
@@ -283,20 +359,33 @@ export const LootDrops = memo(function LootDrops({
             </span>
           )}
           
-          {/* Item name */}
+          {/* Item name - PoE style with strong text shadow */}
           <span style={{
             color: style.text,
-            fontSize: '0.75rem',
-            fontWeight: 600,
+            fontSize: '0.8rem',
+            fontWeight: 700,
             fontFamily: '"Fontin", "Palatino Linotype", serif',
-            textShadow: '0 1px 2px rgba(0,0,0,0.8)',
-            letterSpacing: '0.02em',
+            textShadow: `0 0 4px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.9), 0 0 8px ${style.border}40`,
+            letterSpacing: '0.03em',
           }}>
             {label}
           </span>
         </div>
       </div>
     );
+  };
+  
+  // Group drops by position to calculate beam stacking
+  const getBeamIntensity = (drop: MapLootDrop, drops: MapLootDrop[]): number => {
+    // Count how many drops are at similar position (within 120x60 px)
+    const nearbyDrops = drops.filter(d => {
+      const dx = Math.abs(d.position.x - drop.position.x);
+      const dy = Math.abs(d.position.y - drop.position.y);
+      return dx < 120 && dy < 60;
+    });
+    
+    // More drops = brighter beam (up to 3x intensity)
+    return Math.min(nearbyDrops.length * 0.5, 1.5);
   };
   
   return (
@@ -321,6 +410,35 @@ export const LootDrops = memo(function LootDrops({
           animation: loot-collected 0.4s ease-out forwards;
         }
       `}</style>
+      
+      {/* Light beams for on-screen drops */}
+      {onScreenDrops.map((drop, index) => {
+        const intensity = getBeamIntensity(drop, onScreenDrops);
+        const pos = getSpreadPosition(drop, onScreenDrops);
+        
+        return (
+          <div
+            key={`beam-${drop.id}`}
+            style={{
+              position: 'absolute',
+              left: `${pos.x}px`,
+              top: `${pos.y}px`,
+              transform: 'translate(-50%, -100%)',
+              zIndex: 9000 + index,
+              width: '60px',
+              height: '60px',
+            }}
+          >
+            <LootBeam 
+              rarity={drop.rarity}
+              type={drop.type}
+              intensity={intensity}
+              delay={index * 50}
+            />
+          </div>
+        );
+      })}
+      
       {/* On-screen drops at their actual positions */}
       {onScreenDrops.map((drop, index) => {
         const pos = getSpreadPosition(drop, onScreenDrops);
@@ -427,22 +545,24 @@ export const LootDrops = memo(function LootDrops({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
-                  padding: '4px 12px',
+                  padding: '5px 14px',
                   background: dropStyle.bg,
-                  border: `1px solid ${dropStyle.border}`,
-                  borderRadius: '3px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05)',
+                  border: `${dropStyle.borderWidth}px solid ${dropStyle.border}`,
+                  borderRadius: '2px',
+                  boxShadow: `0 0 12px ${dropStyle.border}40, 0 3px 10px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.08)`,
                   whiteSpace: 'nowrap',
-                  transition: 'all 0.1s ease',
-                  opacity: 0.9,
+                  transition: 'all 0.15s ease',
+                  opacity: 0.95,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.transform = 'scale(1.08)';
                   e.currentTarget.style.opacity = '1';
+                  e.currentTarget.style.boxShadow = `0 0 16px ${dropStyle.border}60, 0 4px 12px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.15)`;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.opacity = '0.9';
+                  e.currentTarget.style.opacity = '0.95';
+                  e.currentTarget.style.boxShadow = `0 0 12px ${dropStyle.border}40, 0 3px 10px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.08)`;
                 }}
               >
                 {getDropIndicator(drop) && (
@@ -452,11 +572,11 @@ export const LootDrops = memo(function LootDrops({
                 )}
                 <span style={{
                   color: dropStyle.text,
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
                   fontFamily: '"Fontin", "Palatino Linotype", serif',
-                  textShadow: '0 1px 2px rgba(0,0,0,0.8)',
-                  letterSpacing: '0.02em',
+                  textShadow: `0 0 4px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.9), 0 0 8px ${dropStyle.border}40`,
+                  letterSpacing: '0.03em',
                 }}>
                   {dropLabel}
                 </span>

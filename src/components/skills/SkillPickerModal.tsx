@@ -400,14 +400,12 @@ export function SkillPickerModal({ characterName, characterLevel, availableSkill
     return tabs;
   }, [availableSkills]);
 
-  // Fixed: Ensure onSelect is called synchronously before modal closes
+  // Call onSelect synchronously, then close modal
   const handleSelectSkill = useCallback((skillId: string) => {
-    // Call onSelect immediately
+    // Call onSelect immediately - this will trigger equipSkillGem in parent
     onSelect(skillId);
-    // Close modal after a tiny delay to ensure state updates
-    setTimeout(() => {
-      onClose();
-    }, 0);
+    // Close modal immediately after - parent has already captured the slot value
+    onClose();
   }, [onSelect, onClose]);
 
   return createPortal(

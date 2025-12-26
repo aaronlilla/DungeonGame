@@ -16,6 +16,7 @@ import type { RolledAffix, RolledStat } from '../types/poeAffixes';
 import { parseStatRange } from '../types/poeAffixes';
 import { isOffHandWeapon } from '../utils/equipmentValidation';
 import { calculateTalentBonuses } from '../types/talents';
+import { ALL_POE_BASE_ITEMS } from '../data/poeBaseItems';
 
 // Stat text pattern matching
 // Each entry maps a regex pattern to a stat key and optionally handles special cases
@@ -26,7 +27,7 @@ interface StatPattern {
 }
 
 const STAT_PATTERNS: StatPattern[] = [
-  // Life and Mana
+  // Life and Mana - flat values
   { pattern: /\+?(\d+)\s*to\s*maximum\s*life/i, stat: 'life' },
   { pattern: /\+?(\d+)\s*to\s*maximum\s*mana/i, stat: 'mana' },
   { pattern: /\+?(\d+)\s*to\s*maximum\s*energy\s*shield/i, stat: 'energyShield' },
@@ -71,6 +72,14 @@ const STAT_PATTERNS: StatPattern[] = [
   { pattern: /(\d+)%?\s*increased\s*damage/i, stat: 'increasedDamage' },
   { pattern: /(\d+)%?\s*increased\s*physical\s*damage/i, stat: 'increasedDamage' },
   { pattern: /(\d+)%?\s*increased\s*elemental\s*damage/i, stat: 'increasedDamage' },
+  { pattern: /(\d+)%?\s*increased\s*spell\s*damage/i, stat: 'increasedDamage' },
+  { pattern: /(\d+)%?\s*increased\s*fire\s*damage/i, stat: 'increasedDamage' },
+  { pattern: /(\d+)%?\s*increased\s*cold\s*damage/i, stat: 'increasedDamage' },
+  { pattern: /(\d+)%?\s*increased\s*lightning\s*damage/i, stat: 'increasedDamage' },
+  
+  // Speed
+  { pattern: /(\d+)%?\s*increased\s*attack\s*speed/i, stat: 'increasedAttackSpeed' },
+  { pattern: /(\d+)%?\s*increased\s*cast\s*speed/i, stat: 'increasedCastSpeed' },
 ];
 
 // Stat ID to BaseStats mapping for implicits that have statId set
@@ -126,6 +135,13 @@ const STAT_ID_TO_BASESTATS: Record<string, keyof BaseStats> = {
   'life_regeneration_rate_per_minute_%': 'lifeRegeneration',
   'base_life_regeneration_rate_per_minute': 'lifeRegeneration',
   'mana_regeneration_rate_+%': 'manaRegeneration',
+  
+  // Speed
+  'attack_speed_+%': 'increasedAttackSpeed',
+  'cast_speed_+%': 'increasedCastSpeed',
+  'local_attack_speed_+%': 'increasedAttackSpeed',
+  'base_attack_speed_+%': 'increasedAttackSpeed',
+  'base_cast_speed_+%': 'increasedCastSpeed',
 };
 
 /**
@@ -257,6 +273,56 @@ function parseAffixStats(affix: RolledAffix): Map<keyof BaseStats, number> {
 }
 
 /**
+ * Parse flat added spell damage from an affix
+ * Handles "Adds X to Y [Element] Damage to Spells" mods
+ */
+function parseAddedSpellDamage(affix: RolledAffix, bonuses: Partial<BaseStats>): void {
+  for (const stat of affix.stats) {
+    const text = stat.text?.toLowerCase() || '';
+    const statIdLower = stat.statId?.toLowerCase() || '';
+    
+    // Check if this is a "adds damage to spells" mod
+    if ((text.includes('adds') && text.includes('damage') && text.includes('spell')) ||
+        (statIdLower.includes('spell') && (statIdLower.includes('added') || statIdLower.includes('damage')))) {
+      
+      const value = stat.value;
+      
+      // Extract min and max values
+      let min = 0;
+      let max = 0;
+      
+      if (Array.isArray(value) && value.length === 2) {
+        min = value[0];
+        max = value[1];
+      } else {
+        // Parse from text as fallback
+        const { min: parsedMin, max: parsedMax } = parseStatRange(stat.text);
+        min = parsedMin;
+        max = parsedMax;
+      }
+      
+      // Determine damage type and add to appropriate fields
+      if (text.includes('physical') || statIdLower.includes('physical')) {
+        bonuses.addedPhysicalSpellDamageMin = (bonuses.addedPhysicalSpellDamageMin || 0) + min;
+        bonuses.addedPhysicalSpellDamageMax = (bonuses.addedPhysicalSpellDamageMax || 0) + max;
+      } else if (text.includes('fire') || statIdLower.includes('fire')) {
+        bonuses.addedFireSpellDamageMin = (bonuses.addedFireSpellDamageMin || 0) + min;
+        bonuses.addedFireSpellDamageMax = (bonuses.addedFireSpellDamageMax || 0) + max;
+      } else if (text.includes('cold') || statIdLower.includes('cold')) {
+        bonuses.addedColdSpellDamageMin = (bonuses.addedColdSpellDamageMin || 0) + min;
+        bonuses.addedColdSpellDamageMax = (bonuses.addedColdSpellDamageMax || 0) + max;
+      } else if (text.includes('lightning') || statIdLower.includes('lightning')) {
+        bonuses.addedLightningSpellDamageMin = (bonuses.addedLightningSpellDamageMin || 0) + min;
+        bonuses.addedLightningSpellDamageMax = (bonuses.addedLightningSpellDamageMax || 0) + max;
+      } else if (text.includes('chaos') || statIdLower.includes('chaos')) {
+        bonuses.addedChaosSpellDamageMin = (bonuses.addedChaosSpellDamageMin || 0) + min;
+        bonuses.addedChaosSpellDamageMax = (bonuses.addedChaosSpellDamageMax || 0) + max;
+      }
+    }
+  }
+}
+
+/**
  * Calculate all stats from an array of equipped items
  */
 export function calculateEquipmentStats(items: Item[]): Partial<BaseStats> {
@@ -313,6 +379,8 @@ export function calculateEquipmentStats(items: Item[]): Partial<BaseStats> {
           for (const [stat, value] of affixStats) {
             bonuses[stat] = (bonuses[stat] || 0) + value;
           }
+          // Also check for flat added spell damage
+          parseAddedSpellDamage(implicit, bonuses);
         }
       }
       
@@ -323,6 +391,8 @@ export function calculateEquipmentStats(items: Item[]): Partial<BaseStats> {
           for (const [stat, value] of affixStats) {
             bonuses[stat] = (bonuses[stat] || 0) + value;
           }
+          // Also check for flat added spell damage
+          parseAddedSpellDamage(prefix, bonuses);
         }
       }
       
@@ -333,6 +403,8 @@ export function calculateEquipmentStats(items: Item[]): Partial<BaseStats> {
           for (const [stat, value] of affixStats) {
             bonuses[stat] = (bonuses[stat] || 0) + value;
           }
+          // Also check for flat added spell damage
+          parseAddedSpellDamage(suffix, bonuses);
         }
       }
     } else {
@@ -361,15 +433,55 @@ export interface WeaponDamage {
 }
 
 // Get weapon damage from a specific weapon item
-function getWeaponDamageFromItem(item: Item): WeaponDamage | null {
+function getWeaponDamageFromItem(item: Item, verboseLogger?: any, characterName?: string): WeaponDamage | null {
   const poeItem = item._poeItem as PoeItem | undefined;
-  if (!poeItem || !poeItem.baseItem) return null;
-  
-  const props = poeItem.baseItem.properties;
-  if (!props || typeof props !== 'object') return null;
-  
-  // Check for weapon properties
-  const weaponProps = props as WeaponProperties;
+
+  // Try to get properties from _poeItem first
+  let props: Record<string, unknown> | null = null;
+  let allAffixes: RolledAffix[] = [];
+
+  if (poeItem?.baseItem?.properties) {
+    props = poeItem.baseItem.properties as Record<string, unknown>;
+    allAffixes = [...(poeItem.prefixes || []), ...(poeItem.suffixes || [])];
+  }
+
+  // Fallback: Look up base item from ALL_POE_BASE_ITEMS using item.baseId
+  if (!props && item.baseId) {
+    const baseItem = ALL_POE_BASE_ITEMS.find(b => b.id === item.baseId);
+    if (baseItem?.properties) {
+      props = baseItem.properties as Record<string, unknown>;
+      if (verboseLogger && characterName) {
+        verboseLogger.logDebug(0, 'WeaponLoading', `${characterName}: Loaded weapon properties for ${item.name} (${item.baseId})`, {
+          itemName: item.name,
+          baseId: item.baseId,
+          properties: props
+        });
+      }
+    } else {
+      if (verboseLogger && characterName) {
+        verboseLogger.logDebug(0, 'WeaponLoading', `${characterName}: ⚠️ No base item found for ${item.name} with baseId: ${item.baseId}`, {
+          itemName: item.name,
+          baseId: item.baseId,
+          slot: item.slot
+        });
+      }
+    }
+  }
+
+  if (!props || typeof props !== 'object') {
+    if (verboseLogger && characterName) {
+      verboseLogger.logDebug(0, 'WeaponLoading', `${characterName}: ⚠️ No properties found for weapon ${item.name} (${item.baseId})`, {
+        itemName: item.name,
+        baseId: item.baseId,
+        hasPoeItem: !!poeItem,
+        slot: item.slot
+      });
+    }
+    return null;
+  }
+
+  // Check for weapon properties - cast through unknown to avoid type error
+  const weaponProps = props as unknown as WeaponProperties;
   
   const damage: WeaponDamage = {
     physicalMin: weaponProps.physical_damage_min || 0,
@@ -386,9 +498,19 @@ function getWeaponDamageFromItem(item: Item): WeaponDamage | null {
     criticalStrikeChance: weaponProps.critical_strike_chance ? weaponProps.critical_strike_chance / 100 : 5,
   };
   
-  // Add any elemental damage from affixes
-  const allAffixes = [...(poeItem.prefixes || []), ...(poeItem.suffixes || [])];
-  
+  if (verboseLogger && characterName) {
+    verboseLogger.logDebug(0, 'WeaponLoading', `${characterName}: Calculated weapon damage for ${item.name}`, {
+      itemName: item.name,
+      baseId: item.baseId,
+      damage: {
+        physical: `${damage.physicalMin}-${damage.physicalMax}`,
+        attackSpeed: damage.attackSpeed.toFixed(2),
+        crit: `${damage.criticalStrikeChance}%`
+      }
+    });
+  }
+
+  // Add any elemental damage from affixes (allAffixes was already populated above)
   for (const affix of allAffixes) {
     for (const stat of affix.stats) {
       const text = stat.text.toLowerCase();
@@ -435,6 +557,32 @@ function getWeaponDamageFromItem(item: Item): WeaponDamage | null {
     }
   }
   
+  // If weapon has no damage at all (all values are 0), return null
+  // This will trigger the fallback damage calculation in calculateSkillDamage
+  const totalDamage = damage.physicalMin + damage.physicalMax + 
+                      damage.fireMin + damage.fireMax +
+                      damage.coldMin + damage.coldMax +
+                      damage.lightningMin + damage.lightningMax +
+                      damage.chaosMin + damage.chaosMax;
+  
+  if (totalDamage <= 0) {
+    if (verboseLogger && characterName) {
+      verboseLogger.logDebug(0, 'WeaponLoading', `${characterName}: ❌ Weapon ${item.name} has ZERO damage! This will cause 0 DPS.`, {
+        itemName: item.name,
+        baseId: item.baseId,
+        slot: item.slot,
+        weaponProps: {
+          physical_damage_min: weaponProps.physical_damage_min,
+          physical_damage_max: weaponProps.physical_damage_max,
+          attack_time: weaponProps.attack_time,
+          critical_strike_chance: weaponProps.critical_strike_chance
+        },
+        calculatedDamage: damage
+      });
+    }
+    return null;
+  }
+  
   return damage;
 }
 
@@ -453,13 +601,17 @@ export function isDualWielding(items: Item[]): boolean {
 // lastWeaponUsed: 'mainHand' | 'offHand' | null - tracks which weapon was used last
 export function getEquippedWeaponDamage(
   items: Item[],
-  lastWeaponUsed: 'mainHand' | 'offHand' | null = null
+  lastWeaponUsed: 'mainHand' | 'offHand' | null = null,
+  verboseLogger?: any,
+  characterName?: string
 ): WeaponDamage | null {
   const mainHand = items.find(item => item.slot === 'mainHand');
   const offHand = items.find(item => item.slot === 'offHand');
   
   // Check if dual wielding
   const dualWielding = mainHand && offHand && isOffHandWeapon(mainHand) && isOffHandWeapon(offHand);
+  
+  let weaponDamage: WeaponDamage | null = null;
   
   if (dualWielding) {
     // Dual wielding: alternate between weapons
@@ -469,21 +621,100 @@ export function getEquippedWeaponDamage(
     const weaponToUse = useMainHand ? mainHand : offHand;
     
     if (weaponToUse) {
-      const damage = getWeaponDamageFromItem(weaponToUse);
-      if (damage) {
+      weaponDamage = getWeaponDamageFromItem(weaponToUse, verboseLogger, characterName);
+      if (weaponDamage) {
         // Apply dual wielding attack speed bonus: 10% more attack speed
-        damage.attackSpeed = damage.attackSpeed * 1.1;
-        return damage;
+        weaponDamage.attackSpeed = weaponDamage.attackSpeed * 1.1;
       }
+    }
+  } else if (mainHand) {
+    // Single weapon or no dual wielding: use main hand
+    weaponDamage = getWeaponDamageFromItem(mainHand, verboseLogger, characterName);
+  }
+  
+  // Add flat damage from ALL equipped items (rings, amulets, belts, etc.)
+  if (weaponDamage) {
+    for (const item of items) {
+      // Skip the weapon itself (already counted)
+      if (item.slot === 'mainHand' || item.slot === 'offHand') continue;
+      
+      const poeItem = item._poeItem as PoeItem | undefined;
+      if (!poeItem) continue;
+      
+      // Check implicits, prefixes, and suffixes for added damage
+      const allAffixes = [
+        ...(poeItem.implicits || []),
+        ...(poeItem.prefixes || []),
+        ...(poeItem.suffixes || [])
+      ];
+      
+      for (const affix of allAffixes) {
+        for (const stat of affix.stats) {
+          const statIdLower = stat.statId?.toLowerCase() || '';
+          const text = stat.text?.toLowerCase() || '';
+          
+          // Check for added attack damage
+          if (statIdLower.includes('attack') && (statIdLower.includes('added') || statIdLower.includes('damage'))) {
+            const value = stat.value;
+            
+            if (Array.isArray(value) && value.length === 2) {
+              if (statIdLower.includes('physical')) {
+                weaponDamage.physicalMin += value[0];
+                weaponDamage.physicalMax += value[1];
+              } else if (statIdLower.includes('fire')) {
+                weaponDamage.fireMin += value[0];
+                weaponDamage.fireMax += value[1];
+              } else if (statIdLower.includes('cold')) {
+                weaponDamage.coldMin += value[0];
+                weaponDamage.coldMax += value[1];
+              } else if (statIdLower.includes('lightning')) {
+                weaponDamage.lightningMin += value[0];
+                weaponDamage.lightningMax += value[1];
+              } else if (statIdLower.includes('chaos')) {
+                weaponDamage.chaosMin += value[0];
+                weaponDamage.chaosMax += value[1];
+              }
+            }
+          } else if (text.includes('adds') && text.includes('damage') && text.includes('attack')) {
+            // Parse from text as fallback
+            const { min, max } = parseStatRange(stat.text);
+            if (text.includes('physical')) {
+              weaponDamage.physicalMin += min;
+              weaponDamage.physicalMax += max;
+            } else if (text.includes('fire')) {
+              weaponDamage.fireMin += min;
+              weaponDamage.fireMax += max;
+            } else if (text.includes('cold')) {
+              weaponDamage.coldMin += min;
+              weaponDamage.coldMax += max;
+            } else if (text.includes('lightning')) {
+              weaponDamage.lightningMin += min;
+              weaponDamage.lightningMax += max;
+            } else if (text.includes('chaos')) {
+              weaponDamage.chaosMin += min;
+              weaponDamage.chaosMax += max;
+            }
+          }
+        }
+      }
+    }
+    
+    if (verboseLogger && characterName) {
+      verboseLogger.logDebug(0, 'WeaponLoading', `${characterName}: Final weapon damage (including equipment bonuses)`, {
+        damage: {
+          physical: `${weaponDamage.physicalMin}-${weaponDamage.physicalMax}`,
+          fire: `${weaponDamage.fireMin}-${weaponDamage.fireMax}`,
+          cold: `${weaponDamage.coldMin}-${weaponDamage.coldMax}`,
+          lightning: `${weaponDamage.lightningMin}-${weaponDamage.lightningMax}`,
+          chaos: `${weaponDamage.chaosMin}-${weaponDamage.chaosMax}`,
+          attackSpeed: weaponDamage.attackSpeed.toFixed(2),
+          crit: `${weaponDamage.criticalStrikeChance}%`
+        }
+      });
     }
   }
   
-  // Single weapon or no dual wielding: use main hand
-  if (mainHand) {
-    return getWeaponDamageFromItem(mainHand);
-  }
-  
-  return null;
+  return weaponDamage;
 }
 
 /**
@@ -585,6 +816,48 @@ export function calculateTotalCharacterStats(
       totalStats.fireResistance += talentBonuses.elementalResistanceBonus;
       totalStats.coldResistance += talentBonuses.elementalResistanceBonus;
       totalStats.lightningResistance += talentBonuses.elementalResistanceBonus;
+    }
+    
+    // Apply Energy Shield bonuses
+    if (talentBonuses.maxESBonus > 0) {
+      totalStats.energyShield = Math.floor(totalStats.energyShield * (1 + talentBonuses.maxESBonus / 100));
+    }
+    
+    // Apply ES recharge rate bonus
+    if (talentBonuses.esRechargeRate > 0) {
+      totalStats.energyShieldRechargeRate = totalStats.energyShieldRechargeRate * (1 + talentBonuses.esRechargeRate / 100);
+    }
+    
+    // Apply ES recharge delay reduction (negative values reduce delay)
+    if (talentBonuses.esRechargeDelay !== 0) {
+      totalStats.energyShieldRechargeDelay = totalStats.energyShieldRechargeDelay * (1 - talentBonuses.esRechargeDelay / 100);
+    }
+    
+    // Apply ES regeneration bonus
+    if (talentBonuses.esRegeneration > 0) {
+      // ES regeneration is a flat % of max ES per second
+      totalStats.lifeRegeneration += talentBonuses.esRegeneration;
+    }
+    
+    // Apply max life reduction (e.g., Crystalline Ascendant talent)
+    if (talentBonuses.maxLifeReduction > 0) {
+      totalStats.life = Math.floor(totalStats.life * (1 - talentBonuses.maxLifeReduction / 100));
+      totalStats.maxLife = totalStats.life;
+    }
+    
+    // Apply cast speed bonus
+    if (talentBonuses.castSpeedBonus > 0) {
+      totalStats.increasedCastSpeed += talentBonuses.castSpeedBonus;
+    }
+    
+    // Apply mana regeneration multiplier
+    if (talentBonuses.manaRegenMultiplier > 0) {
+      totalStats.manaRegeneration = totalStats.manaRegeneration * (1 + talentBonuses.manaRegenMultiplier / 100);
+    }
+    
+    // Apply increased damage bonus
+    if (talentBonuses.damageMultiplier > 0) {
+      totalStats.increasedDamage += talentBonuses.damageMultiplier;
     }
   }
   

@@ -1266,7 +1266,9 @@ export async function runDungeonCombat(params: DungeonCombatParams): Promise<Dun
               const skillId = getSkillIdFromAbilityName(abilityName);
               const skill = skillId ? getSkillGemById(skillId) : undefined;
               
-              if (!skill || !skill.baseDamage) {
+              // Attack skills can have baseDamage: 0 because they use weapon damage
+              const isAttackSkill = skill?.tags?.includes('attack');
+              if (!skill || (!skill.baseDamage && !isAttackSkill)) {
                 // Fallback if skill not found
                 member.isCasting = false;
                 member.castAbility = undefined;
@@ -1384,9 +1386,14 @@ export async function runDungeonCombat(params: DungeonCombatParams): Promise<Dun
             const hasFireball = equippedSkillIds.includes('fireball');
             
             // Get equipped skills as SkillGem objects
+            // Include skills with baseDamage defined OR attack skills (which use weapon damage)
             const equippedSkills = equippedSkillIds
               .map(id => getSkillGemById(id))
-              .filter((skill): skill is NonNullable<typeof skill> => skill !== undefined && skill.baseDamage !== undefined);
+              .filter((skill): skill is NonNullable<typeof skill> => {
+                if (!skill) return false;
+                const isAttackSkill = skill.tags?.includes('attack');
+                return skill.baseDamage !== undefined || isAttackSkill;
+              });
             
             if (equippedSkills.length === 0) {
               return; // No damage skills equipped

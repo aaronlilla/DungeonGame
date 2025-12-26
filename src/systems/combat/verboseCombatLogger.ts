@@ -209,6 +209,13 @@ export class VerboseCombatLogger {
   }
 
   /**
+   * Add an entry to the log
+   */
+  private logEntry(entry: CombatLogEntry): void {
+    this.logEntries.push(entry);
+  }
+
+  /**
    * Log damage with full details
    */
   logDamage(
@@ -571,6 +578,28 @@ export class VerboseCombatLogger {
       target: '',
       message: `Pull ${pullIndex + 1} started with ${enemies.length} enemies`,
       metadata
+    });
+  }
+
+  /**
+   * Log debug information (weapon loading, initialization, etc.)
+   */
+  logDebug(
+    timestamp: number,
+    category: string,
+    message: string,
+    data?: Record<string, any>
+  ): void {
+    this.logEntry({
+      timestamp,
+      type: 'system',
+      source: 'DEBUG',
+      target: category,
+      message,
+      metadata: {
+        tick: this.currentTick,
+        debugData: data
+      }
     });
   }
 

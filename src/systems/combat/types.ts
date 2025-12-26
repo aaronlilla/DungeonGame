@@ -123,6 +123,14 @@ export const secondsToTicks = (seconds: number): number => Math.ceil(seconds * T
 // Helper to convert ticks to seconds
 export const ticksToSeconds = (ticks: number): number => ticks / TICKS_PER_SECOND;
 
+// Helper to calculate hasted GCD - haste reduces GCD and cast times
+// 30% haste = 1 / 1.3 = ~0.769 multiplier (actions happen ~30% faster)
+export const getHastedTicks = (baseTicks: number, bloodlustActive: boolean): number => {
+  if (!bloodlustActive) return baseTicks;
+  // 30% haste means actions take 1/1.3 of the original time
+  return Math.ceil(baseTicks / 1.3);
+};
+
 // Sleep function - throttled in simulation mode to prevent UI freezing
 export const sleep = (ms: number, combatRef?: React.MutableRefObject<{ simulationContextRef?: any }> | { current?: { simulationContextRef?: any } }) => {
   const ref = combatRef as any;

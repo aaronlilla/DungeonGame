@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, MotionConfig } from 'framer-motion';
 import { GiHealthPotion, GiShieldBash, GiSkullCrossedBones, GiBroadsword } from 'react-icons/gi';
 import type { CombatState } from '../../types/combat';
 import type { Character } from '../../types/character';
-import { getClassById, getClassPortrait, getClassBackground, getClassColor } from '../../types/classes';
+import { getClassById, getClassPortrait, getClassBackground, getClassColor, getDefaultDpsPortrait } from '../../types/classes';
 import { LevelUpFrameAnimation } from './LevelUpFrameAnimation';
 
 const ROLE_ICONS: Record<string, React.ReactNode> = {
@@ -41,17 +41,26 @@ export function TeamStatusPanel({
   onLevelUpComplete
 }: TeamStatusPanelProps) {
   // Local state to force re-renders for real-time cast bar updates
-  const [currentTime, setCurrentTime] = useState(Date.now());
+  // Using requestAnimationFrame for smooth, frame-synced updates
+  const [renderTick, setRenderTick] = useState(0);
   
   useEffect(() => {
     if (!isRunning) return;
     
-    // Update current time every 50ms for smooth cast bar animation
-    const interval = setInterval(() => {
-      setCurrentTime(Date.now());
-    }, 50);
+    let rafId: number;
+    let lastUpdate = 0;
+    const updateInterval = 1000 / 30; // 30 FPS - smooth but not excessive
     
-    return () => clearInterval(interval);
+    const animate = (timestamp: number) => {
+      if (timestamp - lastUpdate >= updateInterval) {
+        setRenderTick(prev => prev + 1);
+        lastUpdate = timestamp;
+      }
+      rafId = requestAnimationFrame(animate);
+    };
+    
+    rafId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafId);
   }, [isRunning]);
   
   if (!isRunning) return null;
@@ -67,10 +76,11 @@ export function TeamStatusPanel({
   const memberCount = sortedTeamStates.length;
 
   return (
+    <MotionConfig reducedMotion="user">
     <motion.div 
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
       style={{ 
         display: 'flex', 
         flexDirection: 'column', 
@@ -94,7 +104,10 @@ export function TeamStatusPanel({
           const primaryColor = classColors?.primary || ROLE_COLORS[member.role].primary;
           const secondaryColor = classColors?.secondary || ROLE_COLORS[member.role].secondary;
           const glowColor = classColors?.primary ? `${classColors.primary}99` : ROLE_COLORS[member.role].glow;
-          const portrait = classId ? getClassPortrait(classId) : null;
+          // Use defaultdps.png for DPS characters without a class
+          const portrait = classId 
+            ? getClassPortrait(classId) 
+            : (character?.role === 'dps' ? getDefaultDpsPortrait() : null);
           const background = classId ? getClassBackground(classId) : null;
           
           const recentlyBlocked = member.lastBlockTime && (Date.now() - member.lastBlockTime) < 600;
@@ -124,7 +137,7 @@ export function TeamStatusPanel({
           
           const buffs: Array<{ icon: string; color: string; duration: number; tooltip: string }> = [];
           if (hasBloodlust && combatState.bloodlustTimer > 0.1) {
-            buffs.push({ icon: '⚡', color: '#f1c40f', duration: combatState.bloodlustTimer, tooltip: 'Bloodlust\n+30% Haste & Damage' });
+            buffs.push({ icon: '⚡', color: '#f1c40f', duration: combatState.bloodlustTimer, tooltip: 'Bloodlust\n+30% Haste & Damage\nFaster attacks & casts' });
           }
           const damageReductionDuration = ticksToSeconds(member.damageReductionEndTick);
           if (member.damageReduction && damageReductionDuration > 0.1) {
@@ -149,11 +162,14 @@ export function TeamStatusPanel({
           const isCasting = member.isCasting && !isChanneling;
           const castAbility = member.castAbility || '';
           
-          // Calculate cast progress based on elapsed time (using currentTime for real-time updates)
+          // Calculate cast progress based on tick-based timing for extreme accuracy
           let castProgress = 0;
-          if (isCasting && member.castStartTime && member.castTotalTime) {
-            const elapsed = (currentTime - member.castStartTime) / 1000; // elapsed in seconds
-            castProgress = Math.min(1, Math.max(0, elapsed / member.castTotalTime));
+          if (isCasting && member.castStartTick !== undefined && member.castEndTick !== undefined) {
+            const totalCastTicks = member.castEndTick - member.castStartTick;
+            if (totalCastTicks > 0) {
+              const elapsedTicks = currentTick - member.castStartTick;
+              castProgress = Math.min(1, Math.max(0, elapsedTicks / totalCastTicks));
+            }
           }
           
           return (
@@ -173,7 +189,6 @@ export function TeamStatusPanel({
                 flexDirection: 'column',
                 justifyContent: 'center',
                 minHeight: '80px',
-                zIndex: memberCount - index,
                 // Premium frame styling
                 background: member.isDead 
                   ? 'linear-gradient(145deg, rgba(20, 18, 16, 0.98) 0%, rgba(10, 8, 6, 0.99) 100%)'
@@ -454,11 +469,10 @@ export function TeamStatusPanel({
                   initial={false}
                   animate={{ width: `${healthPercent * 100}%` }}
                   transition={{ 
-                    duration: 0.6, 
-                    ease: [0.25, 0.46, 0.45, 0.94],
-                    type: "spring",
-                    damping: 25,
-                    stiffness: 200
+                    type: 'spring',
+                    stiffness: 300,
+                    damping: 30,
+                    mass: 0.5
                   }}
                   className="health-bar-fill"
                   style={{ 
@@ -490,6 +504,10 @@ export function TeamStatusPanel({
                   <motion.div 
                     initial={false}
                     animate={{ width: `${Math.max(0, Math.min(100, (safeEnergyShield / (safeMaxHealth + safeMaxEnergyShield)) * 100))}%` }}
+                    transition={{ 
+                      duration: 0.1,
+                      ease: 'linear'
+                    }}
                     style={{
                       position: 'absolute',
                       top: 0,
@@ -514,10 +532,10 @@ export function TeamStatusPanel({
                   textShadow: '0 1px 3px rgba(0,0,0,0.9)',
                   fontFamily: 'monospace',
                 }}>
-                  {Math.floor(safeHealth)} / {Math.floor(safeMaxHealth)}
+                  {Math.round(safeHealth)} / {Math.round(safeMaxHealth)}
                   {safeEnergyShield > 0 && (
                     <span style={{ color: '#87ceeb', marginLeft: '6px' }}>
-                      +{Math.floor(safeEnergyShield)}
+                      +{Math.round(safeEnergyShield)}
                     </span>
                   )}
                 </div>
@@ -538,11 +556,10 @@ export function TeamStatusPanel({
                     initial={false}
                     animate={{ width: `${manaPercent * 100}%` }}
                     transition={{ 
-                      duration: 0.5, 
-                      ease: [0.25, 0.46, 0.45, 0.94],
-                      type: "spring",
-                      damping: 20,
-                      stiffness: 150
+                      type: 'spring',
+                      stiffness: 350,
+                      damping: 35,
+                      mass: 0.4
                     }}
                     style={{ 
                       height: '100%', 
@@ -561,7 +578,7 @@ export function TeamStatusPanel({
                     textShadow: '0 1px 2px rgba(0,0,0,0.8)',
                     fontFamily: 'monospace',
                   }}>
-                    {Math.floor(safeMana)} / {Math.floor(safeMaxMana)}
+                    {Math.round(safeMana)} / {Math.round(safeMaxMana)}
                   </div>
                 </div>
                 
@@ -586,10 +603,11 @@ export function TeamStatusPanel({
                     }} />
                   ) : isCasting ? (
                     <motion.div 
-                      key={`cast-${member.castStartTime}`}
+                      key={`cast-${member.castStartTick}`}
                       animate={{ width: `${castProgress * 100}%` }}
                       transition={{ 
-                        duration: 0.05,
+                        type: 'tween',
+                        duration: 0.033, // One frame at 30fps for ultra-smooth updates
                         ease: 'linear'
                       }}
                       style={{ 
@@ -785,5 +803,6 @@ export function TeamStatusPanel({
         </motion.div>
       )}
     </motion.div>
+    </MotionConfig>
   );
 }

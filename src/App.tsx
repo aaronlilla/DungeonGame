@@ -1,9 +1,16 @@
 import React, { useEffect, Suspense, lazy, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from './store/gameStore';
 import { GiCrossedSwords, GiCastle, GiShieldBash, GiHealthPotion, GiWizardStaff, GiTreasureMap, GiAnvil } from 'react-icons/gi';
 import { EmberBackground } from './components/shared/EmberBackground';
 import { LoadingScreen } from './components/LoadingScreen';
+import { getAvailableTalentPoints, countSelectedTalents } from './types/talents';
+import { getEnabledSkillSlots } from './types/character';
+import { PerformanceOverlay } from './components/ui/PerformanceOverlay';
+import { PatchNotesDialog } from './components/ui/PatchNotesDialog';
+import { VolumeControl } from './components/ui/VolumeControl';
+import { LootFilterSettings } from './components/ui/LootFilterSettings';
+import { unloadLootSounds } from './utils/lootSoundsHowler';
 
 // Lazy load all tab components for code splitting
 const TeamTab = lazy(() => import('./components/TeamTab').then(module => ({ default: module.TeamTab })));
@@ -26,6 +33,9 @@ const TABS = [
 
 function App() {
   const [assetsLoaded, setAssetsLoaded] = useState(false);
+  const volume = useGameStore(state => state.volume);
+  const setVolume = useGameStore(state => state.setVolume);
+  const [showPerformanceOverlay, setShowPerformanceOverlay] = useState(false);
   
   const { 
     team, 
@@ -36,6 +46,52 @@ function App() {
   } = useGameStore();
   
   const [showResetDialog, setShowResetDialog] = useState(false);
+  const [showPatchNotes, setShowPatchNotes] = useState(false);
+  const [showFilterSettings, setShowFilterSettings] = useState(false);
+
+  // Keyboard shortcut to toggle performance overlay (Ctrl+Shift+P)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'P') {
+        e.preventDefault();
+        setShowPerformanceOverlay(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Cleanup sounds on unmount
+  useEffect(() => {
+    return () => {
+      unloadLootSounds();
+    };
+  }, []);
+
+  // Calculate total unassigned talents across all characters
+  const calculateUnassignedTalents = (): number => {
+    return team.reduce((total, char) => {
+      // Skip characters without a class (temporary DPS characters)
+      if (!char.classId) return total;
+      
+      const availablePoints = getAvailableTalentPoints(char.level);
+      const selectedCount = countSelectedTalents(char.selectedTalents || {});
+      return total + (availablePoints - selectedCount);
+    }, 0);
+  };
+
+  // Calculate total unassigned skill slots across all characters
+  const calculateUnassignedSkills = (): number => {
+    return team.reduce((total, char) => {
+      // Include all characters (including temporary DPS) since they all have skill slots
+      const enabledSlots = getEnabledSkillSlots(char.level);
+      const assignedSkills = char.skillGems.filter(gem => gem.skillGemId && gem.skillGemId !== '').length;
+      return total + (enabledSlots - assignedSkills);
+    }, 0);
+  };
+
+  const unassignedTalentCount = calculateUnassignedTalents();
+  const unassignedSkillCount = calculateUnassignedSkills();
 
   // Initialize game only on first load if no saved data exists
   const hasCheckedInit = React.useRef(false);
@@ -123,6 +179,43 @@ function App() {
       {/* Ember particle background */}
       {showEmbers && <EmberBackground intensity="high" colorScheme="fire" />}
       
+      {/* Performance Overlay */}
+      <PerformanceOverlay 
+        visible={showPerformanceOverlay} 
+        position="top-right"
+        updateInterval={500}
+      />
+      
+      
+      {/* Loot Filter Settings Modal */}
+      <AnimatePresence>
+        {showFilterSettings && (
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.85)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 2000,
+              backdropFilter: 'blur(4px)',
+            }}
+            onClick={() => setShowFilterSettings(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <LootFilterSettings />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      
       <nav className="nav-tabs">
         <div className="nav-tabs-texture" />
         {/* Ember particles */}
@@ -137,6 +230,11 @@ function App() {
         {TABS.map(tab => {
           // Prevent navigation to other tabs until team has 5 members
           const isDisabled = team.length < 5 && tab.id !== 'team';
+          const showTalentBadge = tab.id === 'talents' && unassignedTalentCount > 0;
+          const showSkillBadge = tab.id === 'skills' && unassignedSkillCount > 0;
+          const badgeCount = showTalentBadge ? unassignedTalentCount : showSkillBadge ? unassignedSkillCount : 0;
+          const showBadge = showTalentBadge || showSkillBadge;
+          
           return (
             <button
               key={tab.id}
@@ -151,83 +249,192 @@ function App() {
               }}
               disabled={isDisabled}
               title={isDisabled ? 'Complete your team (5 members) to unlock this tab' : ''}
+              style={{ position: 'relative', zIndex: 101 }}
             >
               <span className="tab-icon">{tab.icon}</span>
               {tab.label}
+              {showBadge && (
+                <span style={{
+                  position: 'absolute',
+                  bottom: '-8px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  backgroundColor: 'rgba(220, 100, 100, 0.85)',
+                  color: '#fff',
+                  borderRadius: '50%',
+                  width: '20px',
+                  height: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  border: '2px solid rgba(30, 26, 22, 0.95)',
+                  boxShadow: '0 2px 8px rgba(220, 100, 100, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3)',
+                  zIndex: 102,
+                }}>
+                  {badgeCount}
+                </span>
+              )}
             </button>
           );
         })}
         <div style={{ flex: 1 }} />
-        <motion.button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleResetData();
-          }}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          style={{
-            padding: '0.75rem 1.5rem',
-            fontSize: '0.95rem',
-            fontWeight: 700,
-            fontFamily: "'Cinzel', Georgia, serif",
-            background: 'linear-gradient(180deg, rgba(168, 85, 247, 0.12) 0%, rgba(168, 85, 247, 0.04) 100%)',
-            border: '1px solid rgba(168, 85, 247, 0.2)',
-            borderRadius: '12px',
-            color: '#e9d5ff',
-            cursor: 'pointer',
-            boxShadow: '0 4px 20px rgba(168, 85, 247, 0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
-            transition: 'all 0.3s ease',
-            textTransform: 'uppercase',
-            letterSpacing: '0.15em',
-            position: 'relative',
-            overflow: 'hidden',
-            marginRight: '1rem',
-          }}
-        >
-          {/* Textured background overlay */}
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: 'url(/tilebackground.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            opacity: 0.025,
-            pointerEvents: 'none',
-          }} />
+        
+        {/* Action Buttons Container */}
+        <div style={{
+          display: 'flex',
+          gap: '0.5rem',
+          alignItems: 'center',
+          marginRight: '1rem',
+        }}>
+          {/* Patch Notes Button */}
+          <motion.button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowPatchNotes(true);
+            }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            style={{
+              padding: '0.4rem 0.9rem',
+              fontSize: '0.7rem',
+              fontWeight: 700,
+              fontFamily: "'Cinzel', Georgia, serif",
+              background: 'linear-gradient(180deg, rgba(168, 85, 247, 0.12) 0%, rgba(168, 85, 247, 0.04) 100%)',
+              border: '1px solid rgba(168, 85, 247, 0.2)',
+              borderRadius: '8px',
+              color: '#e9d5ff',
+              cursor: 'pointer',
+              boxShadow: '0 4px 20px rgba(168, 85, 247, 0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
+              transition: 'all 0.3s ease',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Textured background overlay */}
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: 'url(/tilebackground.png)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              opacity: 0.025,
+              pointerEvents: 'none',
+            }} />
 
-          {/* Top purple line with glow */}
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '2px',
-            background: 'linear-gradient(90deg, transparent 5%, #a855f7 50%, transparent 95%)',
-            boxShadow: '0 0 12px rgba(168, 85, 247, 0.4)',
-          }} />
+            {/* Top purple line with glow */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '2px',
+              background: 'linear-gradient(90deg, transparent 5%, #a855f7 50%, transparent 95%)',
+              boxShadow: '0 0 12px rgba(168, 85, 247, 0.4)',
+            }} />
 
-          {/* Bottom purple line with glow */}
-          <div style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '2px',
-            background: 'linear-gradient(90deg, transparent 5%, #a855f7 50%, transparent 95%)',
-            boxShadow: '0 0 12px rgba(168, 85, 247, 0.4)',
-          }} />
+            {/* Bottom purple line with glow */}
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '2px',
+              background: 'linear-gradient(90deg, transparent 5%, #a855f7 50%, transparent 95%)',
+              boxShadow: '0 0 12px rgba(168, 85, 247, 0.4)',
+            }} />
 
-          <span style={{ 
-            position: 'relative', 
-            zIndex: 1,
-            textShadow: '0 0 20px rgba(168, 85, 247, 0.5), 0 2px 4px rgba(0,0,0,0.5)',
-          }}>
-            Reset All Data
-          </span>
-        </motion.button>
+            <span style={{ 
+              position: 'relative', 
+              zIndex: 1,
+              textShadow: '0 0 20px rgba(168, 85, 247, 0.5), 0 2px 4px rgba(0,0,0,0.5)',
+            }}>
+              Patch Notes
+            </span>
+          </motion.button>
+
+          {/* Reset All Data Button */}
+          <motion.button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleResetData();
+            }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            style={{
+              padding: '0.4rem 0.9rem',
+              fontSize: '0.7rem',
+              fontWeight: 700,
+              fontFamily: "'Cinzel', Georgia, serif",
+              background: 'linear-gradient(180deg, rgba(168, 85, 247, 0.12) 0%, rgba(168, 85, 247, 0.04) 100%)',
+              border: '1px solid rgba(168, 85, 247, 0.2)',
+              borderRadius: '8px',
+              color: '#e9d5ff',
+              cursor: 'pointer',
+              boxShadow: '0 4px 20px rgba(168, 85, 247, 0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
+              transition: 'all 0.3s ease',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Textured background overlay */}
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: 'url(/tilebackground.png)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              opacity: 0.025,
+              pointerEvents: 'none',
+            }} />
+
+            {/* Top purple line with glow */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '2px',
+              background: 'linear-gradient(90deg, transparent 5%, #a855f7 50%, transparent 95%)',
+              boxShadow: '0 0 12px rgba(168, 85, 247, 0.4)',
+            }} />
+
+            {/* Bottom purple line with glow */}
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '2px',
+              background: 'linear-gradient(90deg, transparent 5%, #a855f7 50%, transparent 95%)',
+              boxShadow: '0 0 12px rgba(168, 85, 247, 0.4)',
+            }} />
+
+            <span style={{ 
+              position: 'relative', 
+              zIndex: 1,
+              textShadow: '0 0 20px rgba(168, 85, 247, 0.5), 0 2px 4px rgba(0,0,0,0.5)',
+            }}>
+              Reset All Data
+            </span>
+          </motion.button>
+        </div>
       </nav>
+
+      {/* Patch Notes Dialog */}
+      <PatchNotesDialog 
+        isOpen={showPatchNotes} 
+        onClose={() => setShowPatchNotes(false)} 
+      />
 
       {/* Reset Confirmation Dialog */}
       {showResetDialog && (

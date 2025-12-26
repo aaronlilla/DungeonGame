@@ -104,6 +104,10 @@ interface RawAffixData {
     prefixes?: RawAffixGroup[];
     suffixes?: RawAffixGroup[];
   };
+  sections?: {
+    prefixes?: RawAffixGroup[];
+    suffixes?: RawAffixGroup[];
+  };
 }
 
 /**
@@ -234,9 +238,9 @@ function normalizeGroup(raw: RawAffixGroup): AffixGroup | null {
  * Normalize raw affix data to our standard format
  */
 function normalizeAffixData(raw: RawAffixData): ItemClassAffixes {
-  // Handle nested affixes structure (shield format)
-  let prefixes = raw.prefixes || raw.affixes?.prefixes || [];
-  let suffixes = raw.suffixes || raw.affixes?.suffixes || [];
+  // Handle nested affixes structure (shield format, sections format, etc.)
+  let prefixes = raw.prefixes || raw.affixes?.prefixes || raw.sections?.prefixes || [];
+  let suffixes = raw.suffixes || raw.affixes?.suffixes || raw.sections?.suffixes || [];
   
   // Some files have placeholder strings instead of arrays - handle gracefully
   if (!Array.isArray(prefixes)) {
@@ -525,7 +529,8 @@ function rollSingleAffix(
   affixGroups: AffixGroup[],
   type: 'prefix' | 'suffix',
   itemLevel: number,
-  excludeGroups: Set<string>
+  excludeGroups: Set<string>,
+  itemTags: string[] = []
 ): RolledAffix | null {
   // Filter out groups that are already on the item
   const availableGroups = affixGroups.filter(g => !excludeGroups.has(g.group));
@@ -540,7 +545,7 @@ function rollSingleAffix(
   // Calculate weights for each group
   const groupsWithWeights = rollableGroups.map(group => ({
     group,
-    weight: getAffixGroupWeight(group)
+    weight: getAffixGroupWeight(group, itemTags)
   }));
   
   // Weighted random selection
@@ -941,6 +946,7 @@ export function generatePoeItem(
   }
   
   const usedGroups = new Set<string>();
+  const itemTags = baseItem.tags || [];
   
   if (rarity === 'magic') {
     // Magic items: MUST have 1-2 affixes, max 1 prefix and 1 suffix
@@ -950,7 +956,7 @@ export function generatePoeItem(
     let gotFirstAffix = false;
     
     // Try prefix
-    const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', itemLevel, usedGroups);
+    const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', itemLevel, usedGroups, itemTags);
     if (prefixAffix) {
       item.prefixes.push(prefixAffix);
       usedGroups.add(prefixAffix.group);
@@ -959,7 +965,7 @@ export function generatePoeItem(
     
     // If we didn't get a prefix, try suffix for first affix
     if (!gotFirstAffix) {
-      const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', itemLevel, usedGroups);
+      const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', itemLevel, usedGroups, itemTags);
       if (suffixAffix) {
         item.suffixes.push(suffixAffix);
         usedGroups.add(suffixAffix.group);
@@ -969,7 +975,7 @@ export function generatePoeItem(
     
     // If we want 2 affixes and got a prefix, try to add a suffix
     if (targetAffixes === 2 && item.prefixes.length === 1) {
-      const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', itemLevel, usedGroups);
+      const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', itemLevel, usedGroups, itemTags);
       if (suffixAffix) {
         item.suffixes.push(suffixAffix);
         usedGroups.add(suffixAffix.group);
@@ -977,7 +983,7 @@ export function generatePoeItem(
     }
     // If we want 2 affixes and got a suffix, try to add a prefix
     else if (targetAffixes === 2 && item.suffixes.length === 1) {
-      const prefixAffix2 = rollSingleAffix(affixData.prefixes, 'prefix', itemLevel, usedGroups);
+      const prefixAffix2 = rollSingleAffix(affixData.prefixes, 'prefix', itemLevel, usedGroups, itemTags);
       if (prefixAffix2) {
         item.prefixes.push(prefixAffix2);
         usedGroups.add(prefixAffix2.group);
@@ -998,14 +1004,14 @@ export function generatePoeItem(
     const totalAffixes = 3 + Math.floor(Math.random() * 4); // 3, 4, 5, or 6
     
     // Guarantee at least 1 prefix
-    const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', itemLevel, usedGroups);
+    const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', itemLevel, usedGroups, itemTags);
     if (prefixAffix) {
       item.prefixes.push(prefixAffix);
       usedGroups.add(prefixAffix.group);
     }
     
     // Guarantee at least 1 suffix
-    const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', itemLevel, usedGroups);
+    const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', itemLevel, usedGroups, itemTags);
     if (suffixAffix) {
       item.suffixes.push(suffixAffix);
       usedGroups.add(suffixAffix.group);
@@ -1028,7 +1034,7 @@ export function generatePoeItem(
       else type = Math.random() < 0.5 ? 'prefix' : 'suffix';
       
       const groups = type === 'prefix' ? affixData.prefixes : affixData.suffixes;
-      const affix = rollSingleAffix(groups, type, itemLevel, usedGroups);
+      const affix = rollSingleAffix(groups, type, itemLevel, usedGroups, itemTags);
       if (affix) {
         if (type === 'prefix') item.prefixes.push(affix);
         else item.suffixes.push(affix);
@@ -1173,6 +1179,8 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
     ...newItem.suffixes.map(a => a.group)
   ]);
   
+  const itemTags = item.baseItem.tags || [];
+  
   switch (orbType) {
     case 'transmutation': {
       if (item.rarity !== 'normal') {
@@ -1192,7 +1200,7 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
         let gotFirstAffix = false;
         
         // Try prefix
-        const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups);
+        const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups, itemTags);
         if (prefixAffix) {
           newItem.prefixes.push(prefixAffix);
           usedGroups.add(prefixAffix.group);
@@ -1201,7 +1209,7 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
         
         // If we didn't get a prefix, try suffix for first affix
         if (!gotFirstAffix) {
-          const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups);
+          const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups, itemTags);
           if (suffixAffix) {
             newItem.suffixes.push(suffixAffix);
             usedGroups.add(suffixAffix.group);
@@ -1211,7 +1219,7 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
         
         // If we want 2 affixes and got a prefix, try to add a suffix
         if (targetAffixes === 2 && newItem.prefixes.length === 1) {
-          const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups);
+          const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups, itemTags);
           if (suffixAffix) {
             newItem.suffixes.push(suffixAffix);
             usedGroups.add(suffixAffix.group);
@@ -1219,7 +1227,7 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
         }
         // If we want 2 affixes and got a suffix, try to add a prefix
         else if (targetAffixes === 2 && newItem.suffixes.length === 1) {
-          const prefixAffix2 = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups);
+          const prefixAffix2 = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups, itemTags);
           if (prefixAffix2) {
             newItem.prefixes.push(prefixAffix2);
             usedGroups.add(prefixAffix2.group);
@@ -1255,7 +1263,7 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
         let gotFirstAffix = false;
         
         // Try prefix
-        const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups);
+        const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups, itemTags);
         if (prefixAffix) {
           newItem.prefixes.push(prefixAffix);
           usedGroups.add(prefixAffix.group);
@@ -1264,7 +1272,7 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
         
         // If we didn't get a prefix, try suffix for first affix
         if (!gotFirstAffix) {
-          const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups);
+          const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups, itemTags);
           if (suffixAffix) {
             newItem.suffixes.push(suffixAffix);
             usedGroups.add(suffixAffix.group);
@@ -1274,7 +1282,7 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
         
         // If we want 2 affixes and got a prefix, try to add a suffix
         if (targetAffixes === 2 && newItem.prefixes.length === 1) {
-          const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups);
+          const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups, itemTags);
           if (suffixAffix) {
             newItem.suffixes.push(suffixAffix);
             usedGroups.add(suffixAffix.group);
@@ -1282,7 +1290,7 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
         }
         // If we want 2 affixes and got a suffix, try to add a prefix
         else if (targetAffixes === 2 && newItem.suffixes.length === 1) {
-          const prefixAffix2 = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups);
+          const prefixAffix2 = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups, itemTags);
           if (prefixAffix2) {
             newItem.prefixes.push(prefixAffix2);
             usedGroups.add(prefixAffix2.group);
@@ -1313,7 +1321,7 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
         else type = Math.random() < 0.5 ? 'prefix' : 'suffix';
         
         const groups = type === 'prefix' ? affixData.prefixes : affixData.suffixes;
-        const affix = rollSingleAffix(groups, type, item.itemLevel, usedGroups);
+        const affix = rollSingleAffix(groups, type, item.itemLevel, usedGroups, itemTags);
         if (affix) {
           if (type === 'prefix') newItem.prefixes.push(affix);
           else newItem.suffixes.push(affix);
@@ -1344,14 +1352,14 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
       
       if (affixData) {
         // Guarantee at least 1 prefix
-        const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups);
+        const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups, itemTags);
         if (prefixAffix) {
           newItem.prefixes.push(prefixAffix);
           usedGroups.add(prefixAffix.group);
         }
         
         // Guarantee at least 1 suffix
-        const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups);
+        const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups, itemTags);
         if (suffixAffix) {
           newItem.suffixes.push(suffixAffix);
           usedGroups.add(suffixAffix.group);
@@ -1374,7 +1382,7 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
           else type = Math.random() < 0.5 ? 'prefix' : 'suffix';
           
           const groups = type === 'prefix' ? affixData.prefixes : affixData.suffixes;
-          const affix = rollSingleAffix(groups, type, item.itemLevel, usedGroups);
+          const affix = rollSingleAffix(groups, type, item.itemLevel, usedGroups, itemTags);
           if (affix) {
             if (type === 'prefix') newItem.prefixes.push(affix);
             else newItem.suffixes.push(affix);
@@ -1413,14 +1421,14 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
       
       if (affixData) {
         // Guarantee at least 1 prefix
-        const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups);
+        const prefixAffix = rollSingleAffix(affixData.prefixes, 'prefix', item.itemLevel, usedGroups, itemTags);
         if (prefixAffix) {
           newItem.prefixes.push(prefixAffix);
           usedGroups.add(prefixAffix.group);
         }
         
         // Guarantee at least 1 suffix
-        const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups);
+        const suffixAffix = rollSingleAffix(affixData.suffixes, 'suffix', item.itemLevel, usedGroups, itemTags);
         if (suffixAffix) {
           newItem.suffixes.push(suffixAffix);
           usedGroups.add(suffixAffix.group);
@@ -1443,7 +1451,7 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
           else type = Math.random() < 0.5 ? 'prefix' : 'suffix';
           
           const groups = type === 'prefix' ? affixData.prefixes : affixData.suffixes;
-          const affix = rollSingleAffix(groups, type, item.itemLevel, usedGroups);
+          const affix = rollSingleAffix(groups, type, item.itemLevel, usedGroups, itemTags);
           if (affix) {
             if (type === 'prefix') newItem.prefixes.push(affix);
             else newItem.suffixes.push(affix);
@@ -1487,7 +1495,7 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
         else type = Math.random() < 0.5 ? 'prefix' : 'suffix';
         
         const groups = type === 'prefix' ? affixData.prefixes : affixData.suffixes;
-        const affix = rollSingleAffix(groups, type, item.itemLevel, usedGroups);
+        const affix = rollSingleAffix(groups, type, item.itemLevel, usedGroups, itemTags);
         if (affix) {
           if (type === 'prefix') newItem.prefixes.push(affix);
           else newItem.suffixes.push(affix);
@@ -1549,7 +1557,7 @@ export function applyCraftingOrb(item: PoeItem, orbType: CraftingOrbType): Craft
         else type = Math.random() < 0.5 ? 'prefix' : 'suffix';
         
         const groups = type === 'prefix' ? affixData.prefixes : affixData.suffixes;
-        const affix = rollSingleAffix(groups, type, item.itemLevel, usedGroups);
+        const affix = rollSingleAffix(groups, type, item.itemLevel, usedGroups, itemTags);
         if (affix) {
           if (type === 'prefix') newItem.prefixes.push(affix);
           else newItem.suffixes.push(affix);

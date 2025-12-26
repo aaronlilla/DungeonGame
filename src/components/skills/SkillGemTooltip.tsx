@@ -8,15 +8,45 @@ interface SkillGemTooltipProps {
   gemLevel?: number;
 }
 
-// Color coding for gem types
-const getGemColors = (category: string): { primary: string; glow: string; bg: string } => {
-  if (category === 'attack') return { primary: '#ff4757', glow: 'rgba(255, 71, 87, 0.4)', bg: 'rgba(255, 71, 87, 0.08)' };
-  if (category === 'spell') return { primary: '#3498db', glow: 'rgba(52, 152, 219, 0.4)', bg: 'rgba(52, 152, 219, 0.08)' };
-  if (category === 'heal') return { primary: '#2ecc71', glow: 'rgba(46, 204, 113, 0.4)', bg: 'rgba(46, 204, 113, 0.08)' };
-  if (category === 'buff' || category === 'defensive') return { primary: '#f1c40f', glow: 'rgba(241, 196, 15, 0.4)', bg: 'rgba(241, 196, 15, 0.08)' };
-  if (category === 'utility') return { primary: '#9b59b6', glow: 'rgba(155, 89, 182, 0.4)', bg: 'rgba(155, 89, 182, 0.08)' };
+// Get skill color based on category, damage type, and tags (same logic as skill icons)
+function getSkillColor(skill: SkillGem): { primary: string; glow: string; bg: string } {
+  // Elemental skills use their element color
+  if (skill.damageType && ['fire', 'cold', 'lightning', 'chaos', 'nature', 'arcane', 'holy'].includes(skill.damageType)) {
+    const elementColors: Record<string, { primary: string; glow: string; bg: string }> = {
+      fire: { primary: '#ff6b35', glow: 'rgba(255, 107, 53, 0.4)', bg: 'rgba(255, 107, 53, 0.08)' },
+      cold: { primary: '#36c5f4', glow: 'rgba(54, 197, 244, 0.4)', bg: 'rgba(54, 197, 244, 0.08)' },
+      lightning: { primary: '#ffd700', glow: 'rgba(255, 215, 0, 0.4)', bg: 'rgba(255, 215, 0, 0.08)' },
+      chaos: { primary: '#b366ff', glow: 'rgba(179, 102, 255, 0.4)', bg: 'rgba(179, 102, 255, 0.08)' },
+      nature: { primary: '#66cc66', glow: 'rgba(102, 204, 102, 0.4)', bg: 'rgba(102, 204, 102, 0.08)' },
+      arcane: { primary: '#cc66ff', glow: 'rgba(204, 102, 255, 0.4)', bg: 'rgba(204, 102, 255, 0.08)' },
+      holy: { primary: '#fff2cc', glow: 'rgba(255, 242, 204, 0.4)', bg: 'rgba(255, 242, 204, 0.08)' },
+    };
+    return elementColors[skill.damageType] || { primary: '#e0e0e0', glow: 'rgba(224, 224, 224, 0.4)', bg: 'rgba(224, 224, 224, 0.08)' };
+  }
+  
+  // Physical attack skills: melee = red, ranged/bow = green
+  if (skill.category === 'attack' && skill.damageType === 'physical') {
+    const tags = skill.tags || [];
+    if (tags.includes('ranged') || tags.includes('projectile')) {
+      // Physical bow/ranged skills = green
+      return { primary: '#22c55e', glow: 'rgba(34, 197, 94, 0.4)', bg: 'rgba(34, 197, 94, 0.08)' };
+    } else if (tags.includes('melee')) {
+      // Physical melee skills = red
+      return { primary: '#ff4757', glow: 'rgba(255, 71, 87, 0.4)', bg: 'rgba(255, 71, 87, 0.08)' };
+    }
+    // Default physical attack = red
+    return { primary: '#ff4757', glow: 'rgba(255, 71, 87, 0.4)', bg: 'rgba(255, 71, 87, 0.08)' };
+  }
+  
+  // Category-based colors
+  if (skill.category === 'attack') return { primary: '#ff4757', glow: 'rgba(255, 71, 87, 0.4)', bg: 'rgba(255, 71, 87, 0.08)' };
+  if (skill.category === 'spell') return { primary: '#3498db', glow: 'rgba(52, 152, 219, 0.4)', bg: 'rgba(52, 152, 219, 0.08)' };
+  if (skill.category === 'heal') return { primary: '#2ecc71', glow: 'rgba(46, 204, 113, 0.4)', bg: 'rgba(46, 204, 113, 0.08)' };
+  if (skill.category === 'buff' || skill.category === 'defensive') return { primary: '#f1c40f', glow: 'rgba(241, 196, 15, 0.4)', bg: 'rgba(241, 196, 15, 0.08)' };
+  if (skill.category === 'utility') return { primary: '#9b59b6', glow: 'rgba(155, 89, 182, 0.4)', bg: 'rgba(155, 89, 182, 0.08)' };
+  
   return { primary: '#95a5a6', glow: 'rgba(149, 165, 166, 0.4)', bg: 'rgba(149, 165, 166, 0.08)' };
-};
+}
 
 // Get damage type color
 const getDamageTypeColor = (damageType?: string): string => {
@@ -38,12 +68,12 @@ export const SkillGemTooltip: React.FC<SkillGemTooltipProps> = ({
   position,
   gemLevel = 1
 }) => {
-  const colors = getGemColors(skill.category);
+  const colors = getSkillColor(skill);
   const isAttack = skill.category === 'attack';
   
   // Calculate position to keep on screen
   const tooltipWidth = 380;
-  const tooltipHeight = 550;
+  const tooltipHeight = 550; // Estimated height
   
   let x = position.x + 20;
   let y = position.y + 15;
@@ -54,11 +84,16 @@ export const SkillGemTooltip: React.FC<SkillGemTooltipProps> = ({
   }
   if (x < 10) x = 10;
   
-  // Keep on screen vertically
-  if (y + tooltipHeight > window.innerHeight - 10) {
-    y = window.innerHeight - tooltipHeight - 10;
+  // Keep on screen vertically - ensure tooltip is always above bottom of screen
+  const bottomPadding = 10;
+  const maxY = window.innerHeight - tooltipHeight - bottomPadding;
+  if (y > maxY) {
+    y = maxY;
   }
-  if (y < 10) y = 10;
+  // Also ensure it doesn't go above the top
+  if (y < 10) {
+    y = 10;
+  }
   
   const tooltipStyle: React.CSSProperties = {
     position: 'fixed',
@@ -66,8 +101,7 @@ export const SkillGemTooltip: React.FC<SkillGemTooltipProps> = ({
     top: y,
     zIndex: 100000,
     pointerEvents: 'none',
-    maxHeight: 'calc(100vh - 20px)',
-    overflowY: 'auto',
+    overflow: 'hidden', // Disable scrollbars
   };
 
   return (
@@ -359,7 +393,41 @@ export const SkillGemTooltip: React.FC<SkillGemTooltipProps> = ({
             borderTop: '1px solid rgba(60, 60, 80, 0.3)',
           }}>
             {/* Damage/Healing line */}
-            {skill.baseDamage && skill.baseDamage > 0 && (
+            {/* Attack skills use weapon damage */}
+            {isAttack && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                marginBottom: '8px',
+                padding: '8px 12px',
+                background: 'rgba(255, 71, 87, 0.05)',
+                borderRadius: '6px',
+                border: '1px solid rgba(255, 71, 87, 0.15)',
+              }}>
+                <span style={{
+                  fontSize: '18px',
+                  width: '28px',
+                  textAlign: 'center',
+                  filter: `drop-shadow(0 0 4px ${getDamageTypeColor(skill.damageType || 'physical')})`
+                }}>⚔️</span>
+                <div>
+                  <div style={{ fontSize: '10px', color: '#666', marginBottom: '2px' }}>DAMAGE</div>
+                  <div style={{
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    color: '#ff4757',
+                  }}>
+                    Weapon Damage × {skill.damageEffectiveness}%
+                  </div>
+                  <div style={{ fontSize: '10px', color: '#888', marginTop: '2px' }}>
+                    Scales with equipped weapon
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* Spell skills show base damage */}
+            {!isAttack && skill.baseDamage && skill.baseDamage > 0 && (
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -370,17 +438,17 @@ export const SkillGemTooltip: React.FC<SkillGemTooltipProps> = ({
                 borderRadius: '6px',
                 border: '1px solid rgba(255, 255, 255, 0.05)',
               }}>
-                <span style={{ 
-                  fontSize: '18px', 
-                  width: '28px', 
+                <span style={{
+                  fontSize: '18px',
+                  width: '28px',
                   textAlign: 'center',
-                  filter: `drop-shadow(0 0 4px ${getDamageTypeColor(skill.damageType)})` 
+                  filter: `drop-shadow(0 0 4px ${getDamageTypeColor(skill.damageType)})`
                 }}>⚔️</span>
                 <div>
                   <div style={{ fontSize: '10px', color: '#666', marginBottom: '2px' }}>DAMAGE</div>
-                  <div style={{ 
-                    fontSize: '16px', 
-                    fontWeight: 700, 
+                  <div style={{
+                    fontSize: '16px',
+                    fontWeight: 700,
                     color: getDamageTypeColor(skill.damageType),
                     textShadow: `0 0 10px ${getDamageTypeColor(skill.damageType)}44`
                   }}>

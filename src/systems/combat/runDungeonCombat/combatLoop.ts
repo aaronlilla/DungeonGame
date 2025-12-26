@@ -10,6 +10,7 @@ import { calculateExperienceFromEnemy } from '../../../utils/leveling';
 import { generateEnemyLootDrops } from '../../crafting';
 import { createVerboseTickSummary } from '../verboseLogging';
 import { updateTeamMemberStats } from '../../../utils/combat';
+import { startTimer, endTimer } from '../../../utils/performanceMonitor';
 
 export interface CombatLoopResult {
   teamStates: TeamMemberState[];
@@ -136,7 +137,7 @@ export async function runCombatLoop(
   let ticksSinceLastVisualUpdate = 0;
   const batchedFloatingNumbers: FloatingNumber[] = [];
   const batchedLogEntries: import('../../../types/dungeon').CombatLogEntry[] = [];
-  const MAX_COMBAT_LOG_SIZE = 100; // Limit combat log to last 100 entries
+  const MAX_UI_LOG_SIZE = 50; // Limit UI combat log to last 50 entries for performance
   const MAX_FLOATING_NUMBERS = 15; // Limit floating numbers to last 15
   
   // Add batch arrays to context so enemyCombat and bossFight can use them
@@ -146,8 +147,11 @@ export async function runCombatLoop(
   let tickCount = 0;
   // Continue combat while there are alive enemies OR queued enemies still trickling in
   while ((currentEnemies.some(e => e.health > 0) || queuedEnemies.length > 0) && teamStates.some(m => !m.isDead) && !timedOut) {
+    startTimer(`combat.tick.${currentTick}`);
+    
     if (combatRef.current.stop) {
       console.log(`[Combat] Loop stopped by combatRef.stop at tick ${currentTick}`);
+      endTimer(`combat.tick.${currentTick}`);
       break;
     }
     
@@ -336,23 +340,35 @@ export async function runCombatLoop(
           
           // Check if cast complete
           if (combatRef.current.resurrectCastEndTick !== undefined && currentTick >= combatRef.current.resurrectCastEndTick) {
-            // Apply resurrection
+            // Apply resurrection - 100% HP/mana with 2 second immunity
+            const resurrectionImmunityDuration = 2; // seconds
+            const resurrectionImmunityEndTick = currentTick + (resurrectionImmunityDuration * TICKS_PER_SECOND);
+            
             teamStates = teamStates.map(m => 
               m.id === rezTargetId 
-                ? { ...m, isDead: false, health: Math.floor(m.maxHealth * 0.6), mana: Math.floor(m.maxMana * 0.3), lastResurrectTime: Date.now() } 
+                ? { 
+                    ...m, 
+                    isDead: false, 
+                    health: m.maxHealth, // 100% HP
+                    mana: m.maxMana, // 100% mana
+                    lastResurrectTime: Date.now(),
+                    resurrectionImmunity: true,
+                    resurrectionImmunityEndTick: resurrectionImmunityEndTick
+                  } 
                 : m
             );
             
-            // Clear casting state
+            // Clear casting state and update teamStates immediately so UI sees the resurrected member
             updateCombatState(prev => ({ 
               ...prev, 
+              teamStates: teamStates,
               healerCasting: undefined,
               combatLog: [...prev.combatLog, { 
                 timestamp: totalTime, 
                 type: 'heal', 
                 source: healer.name, 
                 target: rezTarget.name, 
-                message: `💫 ${rezTarget.name} has been resurrected!` 
+                message: `💫 ${rezTarget.name} has been resurrected! (Immune for ${resurrectionImmunityDuration}s)` 
               }]
             }));
             
@@ -399,7 +415,9 @@ export async function runCombatLoop(
     }
     
     // Process buffs, HoTs, regen using module
+    startTimer('combat.processBuffsAndRegen');
     teamStates = processBuffsAndRegen(context, teamStates, currentTick);
+    endTimer('combat.processBuffsAndRegen');
     
     // Log tick summary every 10 ticks (1 second) for verbose logging
     if (context.verboseLogger && tickCount % 10 === 0) {
@@ -420,7 +438,9 @@ export async function runCombatLoop(
     
     // Process enemy attacks using module
     if (!stunActive && currentAliveEnemies.length > 0) {
+      startTimer('combat.processEnemyAttacks');
       processEnemyAttacks(context, currentAliveEnemies, teamStates, currentEnemies, currentTick);
+      endTimer('combat.processEnemyAttacks');
     }
     
     // Capture alive enemies ONCE at start of tick - all DPS hit the same targets simultaneously
@@ -437,7 +457,9 @@ export async function runCombatLoop(
     if (tickCount % 10 === 0) {
       console.log(`[Combat] Processing player actions - Team: ${aliveMembers.length} alive, Targets: ${tickAliveEnemies.length} alive enemies`);
     }
+    startTimer('combat.processPlayerActions');
     const playerActionResult = processPlayerActions(context, teamStates, currentEnemies, tickAliveEnemies, currentTick);
+    endTimer('combat.processPlayerActions');
     if (tickCount % 10 === 0 && playerActionResult.dpsFloatNumbers.length > 0) {
       console.log(`[Combat] Player actions generated ${playerActionResult.dpsFloatNumbers.length} floating numbers`);
     }
@@ -457,14 +479,21 @@ export async function runCombatLoop(
       
       // Apply batched updates
       if (batchedFloatingNumbers.length > 0 || batchedLogEntries.length > 0) {
+        startTimer('combat.updateCombatState');
         updateCombatState(prev => {
           const newFloatingNumbers = batchedFloatingNumbers.length > 0
             ? [...prev.floatingNumbers.slice(-5), ...batchedFloatingNumbers].slice(-MAX_FLOATING_NUMBERS)
             : prev.floatingNumbers;
           
+          // UI log: Keep only last 50 entries for performance
           const newCombatLog = batchedLogEntries.length > 0
-            ? [...prev.combatLog, ...batchedLogEntries].slice(-MAX_COMBAT_LOG_SIZE)
+            ? [...prev.combatLog, ...batchedLogEntries].slice(-MAX_UI_LOG_SIZE)
             : prev.combatLog;
+          
+          // Full log: Add to verbose logger for complete export (no truncation)
+          if (batchedLogEntries.length > 0 && context.verboseLogger) {
+            batchedLogEntries.forEach(entry => context.verboseLogger!.logEntry(entry));
+          }
           
           // Clear batches
           batchedFloatingNumbers.length = 0;
@@ -476,6 +505,7 @@ export async function runCombatLoop(
             combatLog: newCombatLog
           };
         });
+        endTimer('combat.updateCombatState');
       }
     }
     
@@ -622,6 +652,8 @@ export async function runCombatLoop(
       bloodlustTimer: bloodlustActive ? ticksToSeconds(bloodlustEndTick - currentTick) : 0, 
       timeElapsed: totalTime 
     }));
+    
+    endTimer(`combat.tick.${currentTick}`);
   }
 
   // Check for wipe after loop exits (party died while loop was processing)

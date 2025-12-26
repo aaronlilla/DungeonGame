@@ -49,6 +49,22 @@ export interface BaseStats {
   // Damage Modifiers (PoE style - separate increased vs more)
   increasedDamage: number;          // Sum of all "increased damage" modifiers (%)
   // Note: "more" damage modifiers are handled per-skill as they stack multiplicatively
+  
+  // Flat Added Damage to Spells (PoE style)
+  addedPhysicalSpellDamageMin: number;  // Flat physical damage added to spells (min)
+  addedPhysicalSpellDamageMax: number;  // Flat physical damage added to spells (max)
+  addedFireSpellDamageMin: number;      // Flat fire damage added to spells (min)
+  addedFireSpellDamageMax: number;      // Flat fire damage added to spells (max)
+  addedColdSpellDamageMin: number;      // Flat cold damage added to spells (min)
+  addedColdSpellDamageMax: number;      // Flat cold damage added to spells (max)
+  addedLightningSpellDamageMin: number; // Flat lightning damage added to spells (min)
+  addedLightningSpellDamageMax: number; // Flat lightning damage added to spells (max)
+  addedChaosSpellDamageMin: number;     // Flat chaos damage added to spells (min)
+  addedChaosSpellDamageMax: number;     // Flat chaos damage added to spells (max)
+  
+  // Speed Modifiers (PoE style - increased attack/cast speed)
+  increasedAttackSpeed: number;     // Sum of all "increased attack speed" modifiers (%)
+  increasedCastSpeed: number;       // Sum of all "increased cast speed" modifiers (%)
 }
 
 // Derived/computed stats from gear, talents, etc.
@@ -269,6 +285,8 @@ export function applyScaledClassModifiers(
     'energyShieldRechargeRate',
     'energyShieldRechargeDelay',
     'increasedDamage',
+    'increasedAttackSpeed',
+    'increasedCastSpeed',
   ];
   
   Object.entries(classModifiers).forEach(([key, value]) => {
@@ -330,6 +348,22 @@ export function createDefaultBaseStats(): BaseStats {
     
     // Damage Modifiers
     increasedDamage: 0,
+    
+    // Flat Added Damage to Spells
+    addedPhysicalSpellDamageMin: 0,
+    addedPhysicalSpellDamageMax: 0,
+    addedFireSpellDamageMin: 0,
+    addedFireSpellDamageMax: 0,
+    addedColdSpellDamageMin: 0,
+    addedColdSpellDamageMax: 0,
+    addedLightningSpellDamageMin: 0,
+    addedLightningSpellDamageMax: 0,
+    addedChaosSpellDamageMin: 0,
+    addedChaosSpellDamageMax: 0,
+    
+    // Speed Modifiers
+    increasedAttackSpeed: 0,
+    increasedCastSpeed: 0,
   };
 }
 

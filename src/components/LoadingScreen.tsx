@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { preloadAllAssets } from '../utils/assetPreloader';
+import { preloadLootSounds } from '../utils/lootSoundsHowler';
 // Import all loading screen images (base + 0, 2, 3, 4, 5 - note: loadingscreen1.png doesn't exist)
 import loadingScreenBase from '../assets/loadingscreen.png';
 import loadingScreen0 from '../assets/loadingscreen0.png';
@@ -32,10 +33,17 @@ export function LoadingScreen({ onLoadComplete }: LoadingScreenProps) {
   }, []); // Only select once when component mounts
 
   const preloadAssets = useCallback(async () => {
-    // Preload all assets (static images + item art)
+    // Preload all assets (static images + item art + sounds)
+    // Start sound preloading in parallel with visual assets
+    const soundsPromise = preloadLootSounds();
+    
+    // Preload visual assets with progress tracking
     await preloadAllAssets((progress) => {
       setProgress(progress);
     });
+    
+    // Ensure sounds are fully loaded before continuing
+    await soundsPromise;
   }, []);
 
   useEffect(() => {

@@ -10,8 +10,9 @@ import { FloatingNumbers } from './FloatingNumbers';
 import { LootDrops } from './LootDrops';
 import { LeagueEncounters } from './LeagueEncounters';
 import { getEnemyImage, getEnemyIconComponent, ENEMY_TYPE_COLORS } from '../../utils/enemyImages';
-import { getClassById, getClassPortrait } from '../../types/classes';
+import { getClassById, getClassPortrait, getDefaultDpsPortrait } from '../../types/classes';
 import { BOSS_NAMES } from '../../utils/bossNames';
+import { getPullNumberForPack, getPullColor } from '../../utils/pullColors';
 
 // Memoized role icons to prevent recreation
 const ROLE_ICONS_MEMO = {
@@ -77,7 +78,10 @@ const TeamMarker = memo(function TeamMarker({
           const memberState = combatState.teamStates.find(m => m.id === member.id);
           const isDead = memberState?.isDead || false;
           const healthPercent = memberState ? (memberState.health / memberState.maxHealth) : 1;
-          const portrait = member.classId ? getClassPortrait(member.classId) : null;
+          // Use defaultdps.png for DPS characters without a class
+          const portrait = member.classId 
+            ? getClassPortrait(member.classId) 
+            : (member.role === 'dps' ? getDefaultDpsPortrait() : null);
 
           const roleColors = {
             tank: { bg: '#4a6a8c', border: '#5a7a9c', glow: 'rgba(74,106,140,0.5)', gradient: 'linear-gradient(135deg, rgba(74,106,140,0.9) 0%, rgba(45,74,92,0.95) 100%)' },
@@ -412,6 +416,10 @@ export const DungeonMap = memo(function DungeonMap({
     const mobCount = getPackMobCount(pack);
     const isGateBoss = pack.isGateBoss;
     
+    // Get pull color if this pack is in a route
+    const pullNumber = getPullNumberForPack(pack.id, routePulls);
+    const pullColor = pullNumber ? getPullColor(pullNumber) : null;
+    
     const baseSize = isGateBoss ? 180 : dominantType === 'elite' ? 62 : dominantType === 'miniboss' ? 100 : 54;
     const orbitRadius = baseSize * 0.75;
     
@@ -524,21 +532,23 @@ export const DungeonMap = memo(function DungeonMap({
                 ? 'linear-gradient(135deg, rgba(160,55,50,0.9) 0%, rgba(120,40,35,0.95) 100%)'
                 : inCurrentPull
                   ? 'linear-gradient(135deg, rgba(60,110,65,0.9) 0%, rgba(40,80,45,0.95) 100%)'
-                  : inRoute
-                    ? 'linear-gradient(135deg, rgba(50,90,55,0.8) 0%, rgba(35,65,40,0.85) 100%)'
+                  : inRoute && pullColor
+                    ? pullColor.bg
                     : isAvailable && isCreatingPull
                       ? 'linear-gradient(135deg, rgba(180,150,60,0.7) 0%, rgba(140,110,40,0.8) 100%)'
                       : isSelected
                         ? 'linear-gradient(135deg, rgba(180,150,60,0.8) 0%, rgba(140,110,40,0.9) 100%)'
                         : ENEMY_TYPE_COLORS[dominantType].bg,
-            border: isGateBoss ? 'none' : `2px solid ${isCurrentTarget ? 'rgba(160,55,50,0.8)' : inCurrentPull ? 'rgba(60,110,65,0.8)' : inRoute ? 'rgba(50,90,55,0.7)' : isAvailable && isCreatingPull ? 'rgba(180,150,60,0.7)' : ENEMY_TYPE_COLORS[dominantType].primary}80`,
+            border: isGateBoss ? 'none' : `3px solid ${isCurrentTarget ? 'rgba(160,55,50,0.8)' : inCurrentPull ? 'rgba(60,110,65,0.8)' : inRoute && pullColor ? pullColor.border : isAvailable && isCreatingPull ? 'rgba(180,150,60,0.7)' : ENEMY_TYPE_COLORS[dominantType].primary}80`,
             boxShadow: isGateBoss
               ? 'none'
               : isCurrentTarget
                 ? '0 0 12px rgba(160,55,50,0.5), 0 0 24px rgba(160,55,50,0.2), inset 0 0 8px rgba(0,0,0,0.3)'
                 : inCurrentPull
                   ? '0 0 10px rgba(60,110,65,0.4), 0 0 20px rgba(60,110,65,0.15), inset 0 0 6px rgba(0,0,0,0.3)'
-                  : `0 4px 12px rgba(0,0,0,0.6), 0 0 6px ${ENEMY_TYPE_COLORS[dominantType].glow}, inset 0 0 6px rgba(0,0,0,0.3)`,
+                  : inRoute && pullColor
+                    ? `${pullColor.shadow}, inset 0 0 6px rgba(0,0,0,0.3)`
+                    : `0 4px 12px rgba(0,0,0,0.6), 0 0 6px ${ENEMY_TYPE_COLORS[dominantType].glow}, inset 0 0 6px rgba(0,0,0,0.3)`,
             animation: isCurrentTarget ? 'pulse 0.6s ease-in-out infinite' : 'none',
             position: 'relative',
             zIndex: isGateBoss ? 9999 : (inCurrentPull || isCurrentTarget ? 15 : 10),
@@ -659,14 +669,25 @@ export const DungeonMap = memo(function DungeonMap({
             fontSize: '0.65rem',
             fontWeight: '600',
             color: '#c8b88a',
-            border: `1px solid ${ENEMY_TYPE_COLORS[dominantType].primary}40`,
-            boxShadow: `0 2px 6px rgba(0,0,0,0.5), 0 0 4px ${ENEMY_TYPE_COLORS[dominantType].glow}`,
+            border: `1px solid ${pullColor ? pullColor.border : ENEMY_TYPE_COLORS[dominantType].primary + '40'}`,
+            boxShadow: pullColor ? pullColor.shadow : `0 2px 6px rgba(0,0,0,0.5), 0 0 4px ${ENEMY_TYPE_COLORS[dominantType].glow}`,
             whiteSpace: 'nowrap',
             pointerEvents: 'none',
             display: 'flex',
             alignItems: 'center',
             gap: '4px'
           }}>
+            {pullNumber && pullColor && (
+              <>
+                <span style={{ 
+                  color: pullColor.primary, 
+                  fontWeight: 700,
+                  fontSize: '0.7rem',
+                  textShadow: `0 0 4px ${pullColor.glow}`
+                }}>#{pullNumber}</span>
+                <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.5rem' }}>•</span>
+              </>
+            )}
             <span style={{ color: ENEMY_TYPE_COLORS[dominantType].primary, opacity: 0.9 }}>{mobCount}</span>
             <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.5rem' }}>•</span>
             <span style={{

@@ -156,6 +156,11 @@ export interface SkillGem {
   // Lower for multi-hit/chain/aoe skills, higher for single target
   damageEffectiveness: number; // Percentage (100 = 100%, 140 = 140%)
   
+  // Target Cap (for AOE skills)
+  // Limits how many enemies can be hit by this skill
+  // undefined = unlimited targets
+  maxTargets?: number;
+  
   // Critical Strike (PoE style)
   baseCriticalStrikeChance: number; // Base crit chance for this skill (e.g., 8%)
   
@@ -164,6 +169,11 @@ export interface SkillGem {
   
   // Requirements
   levelRequirement: number;
+  
+  // Level Scaling (optional - for skills that need to scale with character level)
+  // If true, skill damage scales from 40% at level 1 to 100% at level 90
+  // Primarily used for melee skills that are too strong early game
+  levelScaling?: boolean;
   
   // Skill tags (for support gems and mechanics)
   tags?: string[]; // e.g., ['projectile', 'fire', 'aoe', 'physical']
@@ -271,8 +281,9 @@ export const SKILL_GEMS: SkillGem[] = [
     maxSupportSlots: 4,
     supportTags: ['attack', 'melee', 'physical', 'strike', 'hit'],
     tags: ['attack', 'melee', 'physical', 'strike', 'hit', 'slam'],
-    damageEffectiveness: 120,
+    damageEffectiveness: 180, // 120 * 1.5
     baseCriticalStrikeChance: 5,
+    levelScaling: true, // Scales from 40% at level 1 to 100% at level 90
     effects: [
       { type: 'damage', value: 75 }
     ],
@@ -281,24 +292,26 @@ export const SKILL_GEMS: SkillGem[] = [
   {
     id: 'thunder_clap',
     name: 'Thunder Clap',
-    description: 'Smash the ground to create a shockwave that hits ALL enemies in range. Lower effectiveness per target due to AoE nature.',
+    description: 'Smash the ground to create a shockwave that hits up to 5 nearby enemies. Lower effectiveness per target due to AoE nature.',
     icon: React.createElement(GiSonicShout),
     category: 'attack',
     damageType: 'physical',
     targetType: 'allEnemies',
     allowedRoles: ['tank'],
-    baseDamage: 10,
-    baseDamageMax: 15,
+    baseDamage: 5,
+    baseDamageMax: 7.5,
     manaCost: 4,
     cooldown: 4,
     castTime: 0,
+    maxTargets: 5, // Cap at 5 enemies
     maxSupportSlots: 4,
     supportTags: ['attack', 'melee', 'physical', 'aoe', 'hit'],
     tags: ['attack', 'melee', 'physical', 'aoe', 'hit', 'slam', 'warcry'],
-    damageEffectiveness: 80,
+    damageEffectiveness: 120, // 80 * 1.5
     baseCriticalStrikeChance: 5,
+    levelScaling: true, // Scales from 40% at level 1 to 100% at level 90
     effects: [
-      { type: 'damage', value: 50 }
+      { type: 'damage', value: 25 }
     ],
     levelRequirement: 1
   },
@@ -376,7 +389,7 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'holy',
     targetType: 'ally',
     allowedRoles: ['healer'],
-    baseHealing: 150,
+    baseHealing: 60, // BALANCED: 60 base * 2.5 scaling = ~150 HP per cast at level 2, ~12.5 HPS (1.2s cast)
     manaCost: 5,
     cooldown: 0,
     castTime: 1.2,
@@ -386,7 +399,7 @@ export const SKILL_GEMS: SkillGem[] = [
     damageEffectiveness: 150,
     baseCriticalStrikeChance: 8,
     effects: [
-      { type: 'heal', value: 150 }
+      { type: 'heal', value: 60 }
     ],
     levelRequirement: 1
   },
@@ -399,7 +412,7 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'holy',
     targetType: 'ally',
     allowedRoles: ['healer'],
-    baseHealing: 525,
+    baseHealing: 250, // BALANCED: 250 base * 3.0 scaling = ~750 HP, emergency heal
     manaCost: 22,
     cooldown: 0,
     castTime: 2.4,
@@ -409,7 +422,7 @@ export const SKILL_GEMS: SkillGem[] = [
     damageEffectiveness: 200,
     baseCriticalStrikeChance: 8,
     effects: [
-      { type: 'heal', value: 525 }
+      { type: 'heal', value: 250 }
     ],
     levelRequirement: 1
   },
@@ -545,8 +558,8 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'cold',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 80,
-    baseDamageMax: 120,
+    baseDamage: 55,
+    baseDamageMax: 80,
     manaCost: 4,
     cooldown: 0,
     castTime: 0.8,
@@ -570,15 +583,15 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'lightning',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 20,
-    baseDamageMax: 60,
+    baseDamage: 55,
+    baseDamageMax: 85,
     manaCost: 7,
     cooldown: 0,
     castTime: 1.0,
     maxSupportSlots: 5,
     supportTags: ['spell', 'lightning', 'hit', 'chaining'],
     tags: ['spell', 'lightning', 'hit', 'chaining', 'elemental'],
-    damageEffectiveness: 90,
+    damageEffectiveness: 120,
     chainCount: 2,
     chainDamageBonus: 15,
     baseCriticalStrikeChance: 8,
@@ -596,15 +609,15 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'chaos',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 30,
-    baseDamageMax: 50,
+    baseDamage: 60,
+    baseDamageMax: 90,
     manaCost: 8,
     cooldown: 0,
     castTime: 1.4,
     maxSupportSlots: 5,
     supportTags: ['spell', 'chaos', 'projectile', 'hit', 'chaining'],
     tags: ['spell', 'chaos', 'projectile', 'hit', 'chaining'],
-    damageEffectiveness: 95,
+    damageEffectiveness: 125,
     chainCount: 2,
     chainDamageBonus: 20,
     baseCriticalStrikeChance: 6,
@@ -622,15 +635,15 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'arcane',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 9,
-    baseDamageMax: 14,
+    baseDamage: 26,
+    baseDamageMax: 38,
     manaCost: 8,
     cooldown: 0,
     castTime: 0.5,
     maxSupportSlots: 5,
     supportTags: ['spell', 'projectile', 'hit', 'channelling'],
     tags: ['spell', 'arcane', 'projectile', 'hit', 'channelling'],
-    damageEffectiveness: 35,
+    damageEffectiveness: 50,
     isChanneled: true,
     channelTickRate: 0.4,
     channelDuration: 0,
@@ -644,21 +657,22 @@ export const SKILL_GEMS: SkillGem[] = [
   {
     id: 'blow_up',
     name: 'Blow Up',
-    description: 'Explosive AoE that hits ALL enemies. Lower effectiveness per target due to AoE nature, but total damage scales with enemy count. Best for large packs.',
+    description: 'Explosive AoE that hits up to 10 enemies. Lower effectiveness per target due to AoE nature. Best for large packs.',
     icon: React.createElement(GiExplosiveMaterials),
     category: 'spell',
     damageType: 'fire',
     targetType: 'allEnemies',
     allowedRoles: ['dps'],
-    baseDamage: 80,
-    baseDamageMax: 120,
+    baseDamage: 75,
+    baseDamageMax: 110,
     manaCost: 6,
     cooldown: 0,
     castTime: 2.4,
+    maxTargets: 10, // Cap at 10 enemies
     maxSupportSlots: 5,
     supportTags: ['spell', 'fire', 'aoe', 'hit'],
     tags: ['spell', 'fire', 'aoe', 'hit', 'elemental'],
-    damageEffectiveness: 70,
+    damageEffectiveness: 75,
     baseCriticalStrikeChance: 8,
     effects: [
       { type: 'damage', value: 100 }
@@ -668,21 +682,22 @@ export const SKILL_GEMS: SkillGem[] = [
   {
     id: 'blizzard',
     name: 'Blizzard',
-    description: 'Creates a blizzard that damages ALL enemies over 8 seconds. Very low effectiveness per tick but hits all enemies every second. Also slows by 30%.',
+    description: 'Creates a blizzard that damages up to 12 enemies over 8 seconds. Very low effectiveness per tick but hits multiple enemies every second. Also slows by 30%.',
     icon: React.createElement(GiSnowflake1),
     category: 'spell',
     damageType: 'cold',
     targetType: 'allEnemies',
     allowedRoles: ['dps'],
-    baseDamage: 10,
-    baseDamageMax: 15,
+    baseDamage: 35,
+    baseDamageMax: 50,
     manaCost: 8,
     cooldown: 0,
     castTime: 2.5,
+    maxTargets: 12, // Cap at 12 enemies (DOT skills can hit more)
     maxSupportSlots: 5,
     supportTags: ['spell', 'cold', 'aoe', 'duration', 'dot'],
     tags: ['spell', 'cold', 'aoe', 'duration', 'dot', 'elemental'],
-    damageEffectiveness: 35,
+    damageEffectiveness: 50,
     baseCriticalStrikeChance: 6,
     effects: [
       { type: 'dot', value: 25, duration: 8 },
@@ -693,17 +708,18 @@ export const SKILL_GEMS: SkillGem[] = [
   {
     id: 'meteor',
     name: 'Meteor',
-    description: 'Massive AoE nuke with a long cast time and cooldown. Despite hitting all enemies, high effectiveness due to the significant cast time and cooldown investment.',
+    description: 'Massive AoE nuke that hits up to 12 enemies with a long cast time and cooldown. High effectiveness due to the significant cast time and cooldown investment.',
     icon: React.createElement(GiMeteorImpact),
     category: 'spell',
     damageType: 'fire',
     targetType: 'allEnemies',
     allowedRoles: ['dps'],
-    baseDamage: 150,
-    baseDamageMax: 225,
+    baseDamage: 800,
+    baseDamageMax: 1200,
     manaCost: 35,
     cooldown: 30,
     castTime: 4.0,
+    maxTargets: 12, // Cap at 12 enemies (long cooldown justifies more targets)
     maxSupportSlots: 4,
     supportTags: ['spell', 'fire', 'aoe', 'hit'],
     tags: ['spell', 'fire', 'aoe', 'hit', 'elemental', 'projectile'],
@@ -717,21 +733,21 @@ export const SKILL_GEMS: SkillGem[] = [
   {
     id: 'corruption',
     name: 'Corruption',
-    description: 'Instant cast DoT curse that deals chaos damage over 18 seconds. Very low effectiveness per tick, but instant cast and long duration make it mana-efficient. Apply to all enemies.',
+    description: 'Instant cast DoT curse that deals chaos damage over 18 seconds. Very low effectiveness per tick, but instant cast and long duration make it mana-efficient. Apply to multiple enemies.',
     icon: React.createElement(GiDeathSkull),
     category: 'spell',
     damageType: 'chaos',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 8,
-    baseDamageMax: 13,
+    baseDamage: 50,
+    baseDamageMax: 75,
     manaCost: 5,
     cooldown: 0,
     castTime: 0,
     maxSupportSlots: 4,
     supportTags: ['spell', 'chaos', 'duration', 'dot'],
     tags: ['spell', 'chaos', 'duration', 'dot', 'curse'],
-    damageEffectiveness: 30,
+    damageEffectiveness: 45,
     baseCriticalStrikeChance: 5,
     effects: [
       { type: 'dot', value: 20, duration: 18 }
@@ -747,19 +763,19 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'fire',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 25,
-    baseDamageMax: 40,
+    baseDamage: 35,
+    baseDamageMax: 50,
     manaCost: 8,
     cooldown: 0,
     castTime: 1.5,
     maxSupportSlots: 4,
     supportTags: ['spell', 'fire', 'duration', 'dot', 'hit'],
     tags: ['spell', 'fire', 'duration', 'dot', 'hit', 'elemental'],
-    damageEffectiveness: 80,
+    damageEffectiveness: 100,
     baseCriticalStrikeChance: 8,
     effects: [
       { type: 'damage', value: 65 },
-      { type: 'dot', value: 25, duration: 15 }
+      { type: 'dot', value: 40, duration: 12 }
     ],
     levelRequirement: 3
   },
@@ -778,15 +794,15 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'arcane',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 30,
-    baseDamageMax: 45,
+    baseDamage: 42,
+    baseDamageMax: 62,
     manaCost: 12,
     cooldown: 0,
     castTime: 0.3,
     maxSupportSlots: 5,
     supportTags: ['spell', 'hit', 'channelling'],
     tags: ['spell', 'arcane', 'hit', 'channelling', 'beam'],
-    damageEffectiveness: 55,
+    damageEffectiveness: 65,
     isChanneled: true,
     channelTickRate: 0.5,
     channelDuration: 0,
@@ -808,15 +824,15 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'chaos',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 20,
-    baseDamageMax: 35,
+    baseDamage: 38,
+    baseDamageMax: 55,
     manaCost: 10,
     cooldown: 0,
     castTime: 0.4,
     maxSupportSlots: 4,
     supportTags: ['spell', 'chaos', 'hit', 'channelling'],
     tags: ['spell', 'chaos', 'hit', 'channelling', 'drain'],
-    damageEffectiveness: 40,
+    damageEffectiveness: 55,
     isChanneled: true,
     channelTickRate: 0.6,
     channelDuration: 0,
@@ -831,21 +847,22 @@ export const SKILL_GEMS: SkillGem[] = [
   {
     id: 'storm_call',
     name: 'Storm Call',
-    description: 'Channel a violent lightning storm that strikes ALL enemies repeatedly. Each tick randomly strikes 2-4 enemies. Very high mana cost but excellent for large packs.',
+    description: 'Channel a violent lightning storm that strikes up to 8 enemies repeatedly. Each tick randomly strikes enemies. Very high mana cost but excellent for packs.',
     icon: React.createElement(GiLightningStorm),
     category: 'spell',
     damageType: 'lightning',
     targetType: 'allEnemies',
     allowedRoles: ['dps'],
-    baseDamage: 13,
-    baseDamageMax: 38,
+    baseDamage: 22,
+    baseDamageMax: 32,
     manaCost: 15,
     cooldown: 0,
     castTime: 0.8,
+    maxTargets: 8, // Cap at 8 enemies
     maxSupportSlots: 5,
     supportTags: ['spell', 'lightning', 'aoe', 'hit', 'channelling'],
     tags: ['spell', 'lightning', 'aoe', 'hit', 'channelling', 'elemental', 'storm'],
-    damageEffectiveness: 45,
+    damageEffectiveness: 60,
     isChanneled: true,
     channelTickRate: 0.7,
     channelDuration: 0,
@@ -859,21 +876,22 @@ export const SKILL_GEMS: SkillGem[] = [
   {
     id: 'incinerate',
     name: 'Incinerate',
-    description: 'Channel a torrent of fire that hits up to 3 enemies in a cone. Applies a stacking burn that increases in damage the longer you channel. Initial hit + burn DoT.',
+    description: 'Channel a torrent of fire that hits up to 5 enemies in a cone. Applies a stacking burn that increases in damage the longer you channel. Initial hit + burn DoT.',
     icon: React.createElement(GiFlameSpin),
     category: 'spell',
     damageType: 'fire',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 8,
-    baseDamageMax: 13,
+    baseDamage: 18,
+    baseDamageMax: 26,
     manaCost: 10,
     cooldown: 0,
     castTime: 0.5,
+    maxTargets: 5,
     maxSupportSlots: 5,
     supportTags: ['spell', 'fire', 'hit', 'channelling', 'aoe', 'dot'],
     tags: ['spell', 'fire', 'hit', 'channelling', 'elemental', 'cone', 'dot'],
-    damageEffectiveness: 30,
+    damageEffectiveness: 55,
     isChanneled: true,
     channelTickRate: 0.35,
     channelDuration: 0,
@@ -899,15 +917,15 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'physical',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 0, // Uses weapon damage
+    baseDamage: 0, // Attack skills use weapon damage only (PoE style)
     baseDamageMax: 0,
-    manaCost: 6,
+    manaCost: 3,
     cooldown: 0,
     castTime: 0,
     maxSupportSlots: 5,
     supportTags: ['attack', 'ranged', 'projectile', 'physical', 'hit'],
     tags: ['attack', 'ranged', 'projectile', 'physical', 'hit'],
-    damageEffectiveness: 85,
+    damageEffectiveness: 120, // 80 * 1.5 - hits 5 projectiles
     projectileCount: 5,
     baseCriticalStrikeChance: 5,
     effects: [
@@ -918,21 +936,22 @@ export const SKILL_GEMS: SkillGem[] = [
   {
     id: 'rain_of_arrows',
     name: 'Rain of Arrows',
-    description: 'Launches a volley of arrows into the air that rain down on a targeted area, hitting ALL enemies in range. Lower effectiveness per target due to AoE nature.',
+    description: 'Launches a volley of arrows into the air that rain down on a targeted area, hitting up to 10 enemies. Lower effectiveness per target due to AoE nature.',
     icon: React.createElement(GiSnowflake1),
     category: 'attack',
     damageType: 'physical',
     targetType: 'allEnemies',
     allowedRoles: ['dps'],
-    baseDamage: 0,
+    baseDamage: 0, // Attack skills use weapon damage only (PoE style)
     baseDamageMax: 0,
     manaCost: 8,
     cooldown: 0,
     castTime: 0.8,
+    maxTargets: 10, // Cap at 10 enemies
     maxSupportSlots: 5,
     supportTags: ['attack', 'ranged', 'aoe', 'physical', 'hit'],
     tags: ['attack', 'ranged', 'aoe', 'physical', 'hit'],
-    damageEffectiveness: 70,
+    damageEffectiveness: 75, // 50 * 1.5 - AoE skill
     baseCriticalStrikeChance: 5,
     effects: [
       { type: 'damage', value: 100 }
@@ -948,15 +967,15 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'physical',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 0,
+    baseDamage: 0, // Attack skills use weapon damage only (PoE style)
     baseDamageMax: 0,
-    manaCost: 7,
+    manaCost: 4,
     cooldown: 0,
     castTime: 0,
     maxSupportSlots: 5,
     supportTags: ['attack', 'ranged', 'projectile', 'physical', 'hit'],
     tags: ['attack', 'ranged', 'projectile', 'physical', 'hit'],
-    damageEffectiveness: 130,
+    damageEffectiveness: 105, // 70 * 1.5 - fires 3 arrows at same target
     projectileCount: 3,
     hitCount: 3,
     baseCriticalStrikeChance: 6,
@@ -974,7 +993,7 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'physical',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 0,
+    baseDamage: 0, // Attack skills use weapon damage only (PoE style)
     baseDamageMax: 0,
     manaCost: 8,
     cooldown: 0,
@@ -982,7 +1001,7 @@ export const SKILL_GEMS: SkillGem[] = [
     maxSupportSlots: 5,
     supportTags: ['attack', 'ranged', 'projectile', 'physical', 'hit', 'chaining'],
     tags: ['attack', 'ranged', 'projectile', 'physical', 'hit', 'chaining'],
-    damageEffectiveness: 95,
+    damageEffectiveness: 135, // 90 * 1.5 - 3 projectiles that chain
     projectileCount: 3,
     chainCount: 2,
     chainDamageBonus: 10,
@@ -1001,7 +1020,7 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'cold',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 0,
+    baseDamage: 0, // Attack skills use weapon damage only (PoE style)
     baseDamageMax: 0,
     manaCost: 6,
     cooldown: 0,
@@ -1009,7 +1028,7 @@ export const SKILL_GEMS: SkillGem[] = [
     maxSupportSlots: 5,
     supportTags: ['attack', 'ranged', 'projectile', 'cold', 'hit', 'elemental'],
     tags: ['attack', 'ranged', 'projectile', 'cold', 'hit', 'elemental'],
-    damageEffectiveness: 110,
+    damageEffectiveness: 210, // 140 * 1.5 - single target with conversion
     baseCriticalStrikeChance: 6,
     effects: [
       { type: 'damage', value: 100 },
@@ -1026,7 +1045,7 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'lightning',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 0,
+    baseDamage: 0, // Attack skills use weapon damage only (PoE style)
     baseDamageMax: 0,
     manaCost: 7,
     cooldown: 0,
@@ -1034,7 +1053,7 @@ export const SKILL_GEMS: SkillGem[] = [
     maxSupportSlots: 5,
     supportTags: ['attack', 'ranged', 'projectile', 'lightning', 'hit', 'chaining', 'elemental'],
     tags: ['attack', 'ranged', 'projectile', 'lightning', 'hit', 'chaining', 'elemental'],
-    damageEffectiveness: 100,
+    damageEffectiveness: 180, // 120 * 1.5 - chains to 3 total targets
     chainCount: 2,
     chainDamageBonus: 15,
     baseCriticalStrikeChance: 7,
@@ -1048,22 +1067,24 @@ export const SKILL_GEMS: SkillGem[] = [
   {
     id: 'cleave',
     name: 'Cleave',
-    description: 'Performs a wide horizontal swing that hits multiple enemies in front of you. Lower effectiveness per target due to AoE nature, but excellent for clearing packs.',
+    description: 'Performs a wide horizontal swing that hits up to 8 enemies in front of you. Lower effectiveness per target due to AoE nature, but excellent for clearing packs.',
     icon: React.createElement(GiSwordsPower),
     category: 'attack',
     damageType: 'physical',
     targetType: 'allEnemies',
     allowedRoles: ['dps'],
-    baseDamage: 0,
+    baseDamage: 0, // Attack skills use weapon damage only (PoE style)
     baseDamageMax: 0,
     manaCost: 5,
     cooldown: 0,
     castTime: 0,
+    maxTargets: 8, // Cap at 8 enemies
     maxSupportSlots: 5,
     supportTags: ['attack', 'melee', 'physical', 'aoe', 'hit'],
     tags: ['attack', 'melee', 'physical', 'aoe', 'hit'],
-    damageEffectiveness: 80,
+    damageEffectiveness: 120, // 80 * 1.5 - AoE melee
     baseCriticalStrikeChance: 5,
+    levelScaling: true, // Scales from 40% at level 1 to 100% at level 90
     effects: [
       { type: 'damage', value: 100 }
     ],
@@ -1078,7 +1099,7 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'physical',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 0,
+    baseDamage: 0, // Attack skills use weapon damage only (PoE style)
     baseDamageMax: 0,
     manaCost: 6,
     cooldown: 0,
@@ -1086,8 +1107,9 @@ export const SKILL_GEMS: SkillGem[] = [
     maxSupportSlots: 5,
     supportTags: ['attack', 'melee', 'physical', 'strike', 'hit'],
     tags: ['attack', 'melee', 'physical', 'strike', 'hit'],
-    damageEffectiveness: 140,
+    damageEffectiveness: 255, // 170 * 1.5 - single target, slow
     baseCriticalStrikeChance: 5,
+    levelScaling: true, // Scales from 40% at level 1 to 100% at level 90
     effects: [
       { type: 'damage', value: 100 }
     ],
@@ -1102,7 +1124,7 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'physical',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 0,
+    baseDamage: 0, // Attack skills use weapon damage only (PoE style)
     baseDamageMax: 0,
     manaCost: 4,
     cooldown: 0,
@@ -1110,7 +1132,7 @@ export const SKILL_GEMS: SkillGem[] = [
     maxSupportSlots: 5,
     supportTags: ['attack', 'melee', 'physical', 'strike', 'hit'],
     tags: ['attack', 'melee', 'physical', 'strike', 'hit'],
-    damageEffectiveness: 100,
+    damageEffectiveness: 165, // 110 * 1.5 - hits twice
     hitCount: 2,
     baseCriticalStrikeChance: 6,
     effects: [
@@ -1121,21 +1143,22 @@ export const SKILL_GEMS: SkillGem[] = [
   {
     id: 'cyclone',
     name: 'Cyclone',
-    description: 'Channel a spinning attack that hits all enemies around you repeatedly. Lower effectiveness per hit but hits many times. Can be interrupted.',
+    description: 'Channel a spinning attack that hits up to 8 enemies around you repeatedly. Lower effectiveness per hit but hits many times. Can be interrupted.',
     icon: React.createElement(GiFlameSpin),
     category: 'attack',
     damageType: 'physical',
     targetType: 'allEnemies',
     allowedRoles: ['dps'],
-    baseDamage: 0,
+    baseDamage: 0, // Attack skills use weapon damage only (PoE style)
     baseDamageMax: 0,
     manaCost: 8,
     cooldown: 0,
     castTime: 0.2,
+    maxTargets: 8, // Cap at 8 enemies
     maxSupportSlots: 5,
     supportTags: ['attack', 'melee', 'physical', 'aoe', 'hit', 'channelling'],
     tags: ['attack', 'melee', 'physical', 'aoe', 'hit', 'channelling'],
-    damageEffectiveness: 50,
+    damageEffectiveness: 90, // 60 * 1.5 - channeled AoE
     isChanneled: true,
     channelTickRate: 0.4,
     channelDuration: 0,
@@ -1149,21 +1172,22 @@ export const SKILL_GEMS: SkillGem[] = [
   {
     id: 'reave',
     name: 'Reave',
-    description: 'Slashes in a wide arc in front of you, hitting multiple enemies in a cone. Gains increased area of effect with each consecutive use.',
+    description: 'Slashes in a wide arc in front of you, hitting up to 8 enemies in a cone. Gains increased area of effect with each consecutive use.',
     icon: React.createElement(GiWaterSplash),
     category: 'attack',
     damageType: 'physical',
     targetType: 'allEnemies',
     allowedRoles: ['dps'],
-    baseDamage: 0,
+    baseDamage: 0, // Attack skills use weapon damage only (PoE style)
     baseDamageMax: 0,
     manaCost: 6,
     cooldown: 0,
     castTime: 0,
+    maxTargets: 8, // Cap at 8 enemies
     maxSupportSlots: 5,
     supportTags: ['attack', 'melee', 'physical', 'aoe', 'hit'],
     tags: ['attack', 'melee', 'physical', 'aoe', 'hit'],
-    damageEffectiveness: 85,
+    damageEffectiveness: 135, // 90 * 1.5 - AoE melee
     baseCriticalStrikeChance: 5,
     effects: [
       { type: 'damage', value: 100 }
@@ -1179,7 +1203,7 @@ export const SKILL_GEMS: SkillGem[] = [
     damageType: 'physical',
     targetType: 'enemy',
     allowedRoles: ['dps'],
-    baseDamage: 0,
+    baseDamage: 0, // Attack skills use weapon damage only (PoE style)
     baseDamageMax: 0,
     manaCost: 7,
     cooldown: 0,
@@ -1187,7 +1211,7 @@ export const SKILL_GEMS: SkillGem[] = [
     maxSupportSlots: 5,
     supportTags: ['attack', 'melee', 'physical', 'hit', 'dot'],
     tags: ['attack', 'melee', 'physical', 'hit', 'dot'],
-    damageEffectiveness: 90,
+    damageEffectiveness: 150, // 100 * 1.5 - hits twice with DoT
     hitCount: 2,
     baseCriticalStrikeChance: 6,
     effects: [
@@ -1371,7 +1395,7 @@ export function getSkillIdFromAbilityName(abilityName: string): string | undefin
     'Circle of Healing': 'circle_of_healing',
     'Pain Suppression': 'pain_suppression',
     'Dispel Magic': 'dispel_magic',
-    // DPS
+    // DPS - Spells
     'Fireball': 'fireball',
     'Ice Lance': 'ice_lance',
     'Lightning Bolt': 'lightning_bolt',
@@ -1382,6 +1406,44 @@ export function getSkillIdFromAbilityName(abilityName: string): string | undefin
     'Meteor': 'meteor',
     'Corruption': 'corruption',
     'Immolate': 'immolate',
+    // DPS - Attack Skills (use weapon damage)
+    'Split Arrow': 'split_arrow',
+    'Barrage': 'barrage',
+    'Rain of Arrows': 'rain_of_arrows',
+    'Tornado Shot': 'tornado_shot',
+    'Puncture': 'puncture',
+    'Burning Arrow': 'burning_arrow',
+    'Ice Shot': 'ice_shot',
+    'Lightning Arrow': 'lightning_arrow',
+    'Caustic Arrow': 'caustic_arrow',
+    'Elemental Hit': 'elemental_hit',
+    'Double Strike': 'double_strike',
+    'Cleave': 'cleave',
+    'Sweep': 'sweep',
+    'Ground Slam': 'ground_slam',
+    'Leap Slam': 'leap_slam',
+    'Cyclone': 'cyclone',
+    'Blade Flurry': 'blade_flurry',
+    'Lacerate': 'lacerate',
+    'Bladestorm': 'bladestorm',
+    'Reave': 'reave',
+    'Spectral Throw': 'spectral_throw',
+    'Wild Strike': 'wild_strike',
+    'Molten Strike': 'molten_strike',
+    'Frost Blades': 'frost_blades',
+    'Lightning Strike': 'lightning_strike',
+    'Viper Strike': 'viper_strike',
+    'Dual Strike': 'dual_strike',
+    'Flicker Strike': 'flicker_strike',
+    'Heavy Strike': 'heavy_strike',
+    'Glacial Hammer': 'glacial_hammer',
+    'Infernal Blow': 'infernal_blow',
+    'Static Strike': 'static_strike',
+    'Smite': 'smite',
+    'Consecrated Path': 'consecrated_path',
+    'Tectonic Slam': 'tectonic_slam',
+    'Earthquake': 'earthquake',
+    'Sunder': 'sunder',
   };
   return nameToId[abilityName];
 }
@@ -1437,7 +1499,65 @@ export function canSupportApplyToSkill(support: SupportGem, skill: SkillGem): bo
 
 // Get a default support gem for a skill (first compatible support gem)
 export function getDefaultSupportGemForSkill(skill: SkillGem): string | null {
-  // Try to find a compatible support gem, prioritizing common ones
+  // Smart support selection based on skill characteristics
+  const tags = skill.tags || [];
+  
+  // Priority 1: Skill-specific optimal supports
+  
+  // For AOE skills, prioritize AOE-enhancing supports
+  if (skill.targetType === 'allEnemies' || tags.includes('aoe')) {
+    // AOE skills benefit from: increased_damage, controlled_destruction (for spells), added_fire_damage
+    if (tags.includes('spell')) {
+      // Spell AOE: controlled_destruction is great for non-crit builds
+      if (canSupportApplyToSkill(getSupportGemById('controlled_destruction')!, skill)) {
+        return 'controlled_destruction';
+      }
+      if (canSupportApplyToSkill(getSupportGemById('increased_damage')!, skill)) {
+        return 'increased_damage';
+      }
+    } else if (tags.includes('attack')) {
+      // Attack AOE: increased_damage or added_fire_damage
+      if (canSupportApplyToSkill(getSupportGemById('increased_damage')!, skill)) {
+        return 'increased_damage';
+      }
+      if (canSupportApplyToSkill(getSupportGemById('added_fire_damage')!, skill)) {
+        return 'added_fire_damage';
+      }
+    }
+  }
+  
+  // For single-target skills, prioritize damage multipliers
+  if (skill.targetType === 'enemy' || tags.includes('strike')) {
+    if (tags.includes('spell')) {
+      // Single target spells: controlled_destruction or faster_casting
+      if (canSupportApplyToSkill(getSupportGemById('controlled_destruction')!, skill)) {
+        return 'controlled_destruction';
+      }
+      if (canSupportApplyToSkill(getSupportGemById('faster_casting')!, skill)) {
+        return 'faster_casting';
+      }
+    } else if (tags.includes('attack')) {
+      // Single target attacks: increased_damage or added_fire_damage
+      if (canSupportApplyToSkill(getSupportGemById('increased_damage')!, skill)) {
+        return 'increased_damage';
+      }
+      if (canSupportApplyToSkill(getSupportGemById('added_fire_damage')!, skill)) {
+        return 'added_fire_damage';
+      }
+    }
+  }
+  
+  // For healing skills
+  if (skill.category === 'heal') {
+    if (canSupportApplyToSkill(getSupportGemById('faster_casting')!, skill)) {
+      return 'faster_casting';
+    }
+    if (canSupportApplyToSkill(getSupportGemById('increased_damage')!, skill)) {
+      return 'increased_damage'; // Works for healing too
+    }
+  }
+  
+  // Priority 2: General good supports
   const defaultSupports = ['increased_damage', 'faster_casting', 'added_fire_damage'];
   
   for (const supportId of defaultSupports) {
@@ -1447,7 +1567,7 @@ export function getDefaultSupportGemForSkill(skill: SkillGem): string | null {
     }
   }
   
-  // If no default support matches, find any compatible support
+  // Priority 3: Find any compatible support
   for (const support of SUPPORT_GEMS) {
     if (canSupportApplyToSkill(support, skill)) {
       return support.id;

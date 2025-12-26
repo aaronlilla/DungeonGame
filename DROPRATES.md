@@ -164,3 +164,6 @@ Weighted probabilities (normalized):
 
 *All drop rates are affected by quantity and rarity bonuses from map modifiers. The formulas shown include these multipliers where applicable.*
 
+
+
+

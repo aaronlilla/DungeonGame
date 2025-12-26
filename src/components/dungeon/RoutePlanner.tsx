@@ -1,5 +1,6 @@
 import type { RoutePull, EnemyPack, Dungeon } from '../../types/dungeon';
 import { getPackMobCount } from '../../utils/combat';
+import { getPullColor } from '../../utils/pullColors';
 
 interface RoutePlannerProps {
   isRunning: boolean;
@@ -132,6 +133,8 @@ export function RoutePlanner({
               const forces = packs.reduce((s, p) => s + p.totalForces, 0);
               const mobCount = packs.reduce((s, p) => s + getPackMobCount(p), 0);
               const hasGateBoss = packs.some(p => p.isGateBoss);
+              const pullColor = getPullColor(pull.pullNumber);
+              
               return (
                 <div key={pull.pullNumber} style={{ 
                   display: 'flex', 
@@ -144,12 +147,14 @@ export function RoutePlanner({
                   border: `1px solid ${hasGateBoss ? 'rgba(124, 90, 166, 0.4)' : 'rgba(90, 70, 50, 0.4)'}`, 
                   fontSize: '0.8rem',
                   position: 'relative',
+                  borderLeft: `4px solid ${pullColor.primary}`,
+                  boxShadow: `inset 4px 0 8px ${pullColor.glow}`,
                 }}>
                   <span style={{ 
                     width: '22px', 
                     height: '22px', 
                     borderRadius: '2px', 
-                    background: hasGateBoss ? 'linear-gradient(135deg, #7c5aa6 0%, #5a4080 100%)' : 'linear-gradient(135deg, #8b6914 0%, #5a4510 100%)', 
+                    background: pullColor.primary,
                     color: '#f5edd8', 
                     display: 'flex', 
                     alignItems: 'center', 
@@ -157,6 +162,7 @@ export function RoutePlanner({
                     fontWeight: 'bold', 
                     fontSize: '0.7rem',
                     fontFamily: "'JetBrains Mono', monospace",
+                    boxShadow: pullColor.shadow,
                   }}>{pull.pullNumber}</span>
                   <span style={{ flex: 1, color: 'var(--text-secondary)', fontSize: '0.75rem' }}>{hasGateBoss ? '👑 ' : ''}{mobCount}👤</span>
                   <span style={{ color: '#2d6b3a', fontWeight: 'bold', fontSize: '0.75rem', fontFamily: "'JetBrains Mono', monospace" }}>+{forces}</span>

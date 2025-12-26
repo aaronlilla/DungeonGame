@@ -1,6 +1,7 @@
 import { calculateArmorReduction, calculateEvasionChance } from '../types/character';
 import { calculateElementalResistance, calculateChaosResistance } from '../types/character';
 import type { AnimatedEnemy } from '../types/combat';
+import { startTimer, endTimer } from './performanceMonitor';
 
 /**
  * Calculate damage to an enemy, applying armor, evasion, and resistances
@@ -19,10 +20,12 @@ export function calculatePlayerDamageToEnemy(
   esRemaining: number;
   lifeRemaining: number;
 } {
+  startTimer('damage.calculatePlayerDamageToEnemy');
   // Check evasion for physical attacks
   if (damageType === 'physical' && enemy.evasion && playerAccuracy) {
     const evasionChance = calculateEvasionChance(enemy.evasion, playerAccuracy);
     if (Math.random() < evasionChance) {
+      endTimer('damage.calculatePlayerDamageToEnemy');
       return {
         damage: 0,
         evaded: true,
@@ -66,6 +69,8 @@ export function calculatePlayerDamageToEnemy(
   
   const esRemaining = Math.max(0, enemyES - damageToES);
   const lifeRemaining = Math.max(0, enemy.health - damageToLife);
+  
+  endTimer('damage.calculatePlayerDamageToEnemy');
   
   return {
     damage: finalDamage,

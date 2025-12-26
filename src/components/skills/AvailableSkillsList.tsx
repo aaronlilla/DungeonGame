@@ -6,6 +6,46 @@ import { GiShieldBash, GiHealthPotion, GiBroadsword, GiPadlock } from 'react-ico
 import { getTagColor } from '../../utils/tagColors';
 import { SkillGemTooltip } from './SkillGemTooltip';
 
+// Get skill color based on category, damage type, and tags
+function getSkillColor(skill: SkillGem): { primary: string; glow: string; bg: string } {
+  // Elemental skills use their element color
+  if (skill.damageType && ['fire', 'cold', 'lightning', 'chaos', 'nature', 'arcane', 'holy'].includes(skill.damageType)) {
+    const elementColors: Record<string, { primary: string; glow: string; bg: string }> = {
+      fire: { primary: '#ff6b35', glow: 'rgba(255, 107, 53, 0.4)', bg: 'rgba(255, 107, 53, 0.08)' },
+      cold: { primary: '#36c5f4', glow: 'rgba(54, 197, 244, 0.4)', bg: 'rgba(54, 197, 244, 0.08)' },
+      lightning: { primary: '#ffd700', glow: 'rgba(255, 215, 0, 0.4)', bg: 'rgba(255, 215, 0, 0.08)' },
+      chaos: { primary: '#b366ff', glow: 'rgba(179, 102, 255, 0.4)', bg: 'rgba(179, 102, 255, 0.08)' },
+      nature: { primary: '#66cc66', glow: 'rgba(102, 204, 102, 0.4)', bg: 'rgba(102, 204, 102, 0.08)' },
+      arcane: { primary: '#cc66ff', glow: 'rgba(204, 102, 255, 0.4)', bg: 'rgba(204, 102, 255, 0.08)' },
+      holy: { primary: '#fff2cc', glow: 'rgba(255, 242, 204, 0.4)', bg: 'rgba(255, 242, 204, 0.08)' },
+    };
+    return elementColors[skill.damageType] || { primary: '#e0e0e0', glow: 'rgba(224, 224, 224, 0.4)', bg: 'rgba(224, 224, 224, 0.08)' };
+  }
+  
+  // Physical attack skills: melee = red, ranged/bow = green
+  if (skill.category === 'attack' && skill.damageType === 'physical') {
+    const tags = skill.tags || [];
+    if (tags.includes('ranged') || tags.includes('projectile')) {
+      // Physical bow/ranged skills = green
+      return { primary: '#22c55e', glow: 'rgba(34, 197, 94, 0.4)', bg: 'rgba(34, 197, 94, 0.08)' };
+    } else if (tags.includes('melee')) {
+      // Physical melee skills = red
+      return { primary: '#ff4757', glow: 'rgba(255, 71, 87, 0.4)', bg: 'rgba(255, 71, 87, 0.08)' };
+    }
+    // Default physical attack = red
+    return { primary: '#ff4757', glow: 'rgba(255, 71, 87, 0.4)', bg: 'rgba(255, 71, 87, 0.08)' };
+  }
+  
+  // Category-based colors (same as tooltip)
+  if (skill.category === 'attack') return { primary: '#ff4757', glow: 'rgba(255, 71, 87, 0.4)', bg: 'rgba(255, 71, 87, 0.08)' };
+  if (skill.category === 'spell') return { primary: '#3498db', glow: 'rgba(52, 152, 219, 0.4)', bg: 'rgba(52, 152, 219, 0.08)' };
+  if (skill.category === 'heal') return { primary: '#2ecc71', glow: 'rgba(46, 204, 113, 0.4)', bg: 'rgba(46, 204, 113, 0.08)' };
+  if (skill.category === 'buff' || skill.category === 'defensive') return { primary: '#f1c40f', glow: 'rgba(241, 196, 15, 0.4)', bg: 'rgba(241, 196, 15, 0.08)' };
+  if (skill.category === 'utility') return { primary: '#9b59b6', glow: 'rgba(155, 89, 182, 0.4)', bg: 'rgba(155, 89, 182, 0.08)' };
+  
+  return { primary: '#95a5a6', glow: 'rgba(149, 165, 166, 0.4)', bg: 'rgba(149, 165, 166, 0.08)' };
+}
+
 const ROLE_ICONS: Record<string, React.ReactNode> = {
   tank: <GiShieldBash />,
   healer: <GiHealthPotion />,
@@ -62,6 +102,8 @@ function SkillItem({
     }
   }, [onClick, isEquipped, isLocked]);
   
+  const skillColors = getSkillColor(skill);
+  
   return (
     <div 
       className={`available-skill-item ${isEquipped ? 'equipped' : ''} ${isHovered ? 'hovered' : ''}`}
@@ -106,12 +148,12 @@ function SkillItem({
             alignItems: 'center',
             justifyContent: 'center',
             background: isHovered
-              ? 'linear-gradient(145deg, rgba(201, 162, 39, 0.25) 0%, rgba(140, 110, 30, 0.15) 100%)'
-              : 'linear-gradient(145deg, rgba(201, 162, 39, 0.15) 0%, rgba(140, 110, 30, 0.08) 100%)',
-            border: `1.5px solid ${isHovered ? 'rgba(201, 162, 39, 0.5)' : 'rgba(201, 162, 39, 0.3)'}`,
+              ? `linear-gradient(145deg, ${skillColors.bg.replace('0.08', '0.25')} 0%, ${skillColors.bg.replace('0.08', '0.15')} 100%)`
+              : `linear-gradient(145deg, ${skillColors.bg} 0%, ${skillColors.bg.replace('0.08', '0.04')} 100%)`,
+            border: `1.5px solid ${isHovered ? skillColors.primary + '80' : skillColors.primary + '50'}`,
             borderRadius: '6px',
             boxShadow: isHovered 
-              ? '0 0 12px rgba(201, 162, 39, 0.15)' 
+              ? `0 0 12px ${skillColors.glow}` 
               : 'inset 0 1px 0 rgba(255,255,255,0.05)',
             transition: 'all 0.2s ease',
             position: 'relative',

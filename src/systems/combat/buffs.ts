@@ -51,8 +51,9 @@ export function processBuffsAndRegen(
     // Safety check: ensure maxHealth and maxMana are valid numbers
     const safeMaxHealth = (m.maxHealth && !isNaN(m.maxHealth) && m.maxHealth > 0) ? m.maxHealth : 1000;
     const safeMaxMana = (m.maxMana && !isNaN(m.maxMana) && m.maxMana > 0) ? m.maxMana : 500;
-    const safeHealth = (m.health && !isNaN(m.health)) ? m.health : safeMaxHealth;
-    const safeMana = (m.mana && !isNaN(m.mana)) ? m.mana : safeMaxMana;
+    // Use typeof check to avoid treating 0 HP as invalid (0 is falsy in JS)
+    const safeHealth = (typeof m.health === 'number' && !isNaN(m.health) && isFinite(m.health)) ? m.health : safeMaxHealth;
+    const safeMana = (typeof m.mana === 'number' && !isNaN(m.mana) && isFinite(m.mana)) ? m.mana : safeMaxMana;
     
     const hpRegenPerSecond = safeMaxHealth * (lifeRegenPercent / 100);
     const manaRegenPerSecond = safeMaxMana * (manaRegenPercent / 100);
@@ -76,6 +77,23 @@ export function processBuffsAndRegen(
     let newBlockBuff = m.blockBuff || 0;
     if (m.blockBuffEndTick && currentTick >= m.blockBuffEndTick) {
       newBlockBuff = 0;
+    }
+    
+    // Check resurrection immunity expiration
+    let newResurrectionImmunity = m.resurrectionImmunity || false;
+    if (m.resurrectionImmunityEndTick && currentTick >= m.resurrectionImmunityEndTick) {
+      newResurrectionImmunity = false;
+      // Log when immunity expires
+      updateCombatState(prev => ({
+        ...prev,
+        combatLog: [...prev.combatLog, {
+          timestamp: currentTick * TICK_DURATION,
+          type: 'phase',
+          source: m.name,
+          target: '',
+          message: `🛡️ ${m.name}'s resurrection immunity fades.`
+        }]
+      }));
     }
     
     // Decay recent damage taken
@@ -215,6 +233,8 @@ export function processBuffsAndRegen(
       armorBuffEndTick: newArmorBuff > 0 ? m.armorBuffEndTick : undefined,
       blockBuff: newBlockBuff,
       blockBuffEndTick: newBlockBuff > 0 ? m.blockBuffEndTick : undefined,
+      resurrectionImmunity: newResurrectionImmunity,
+      resurrectionImmunityEndTick: newResurrectionImmunity ? m.resurrectionImmunityEndTick : undefined,
       recentDamageTaken: newRecentDamage,
       hotEffects: newHotEffects,
       hasRejuv: newHotEffects.some(h => h.name === 'Rejuvenation')

@@ -4,6 +4,7 @@ import App from './App';
 import './styles/main.css';
 import './styles/poe-tree.css';
 import { useGameStore } from './store/gameStore';
+import './utils/performanceConsole'; // Load performance console tools
 
 // Expose store to window for debugging
 if (import.meta.env.MODE !== 'production') {

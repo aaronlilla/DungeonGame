@@ -269,7 +269,7 @@ interface InlineItemTooltipProps {
   item: Item;
 }
 
-export function InlineItemTooltip({ item }: InlineItemTooltipProps) {
+export function InlineItemTooltip({ item }: InlineItemTooltipProps): JSX.Element {
   const [showAdvanced, setShowAdvanced] = useState(false);
   
   // Listen for ALT key
@@ -315,9 +315,9 @@ export function InlineItemTooltip({ item }: InlineItemTooltipProps) {
       if (url) return url;
     }
 
-    const itemClass = currentBaseItem?.itemClass || poeItem?.baseItem?.itemClass;
-    if (itemClass) {
-      return getFallbackArtUrl(itemClass);
+    const fallbackClass = currentBaseItem?.itemClass || poeItem?.baseItem?.itemClass;
+    if (fallbackClass) {
+      return getFallbackArtUrl(fallbackClass);
     }
     return null;
   }, [poeItem, item.baseId]);
@@ -338,16 +338,16 @@ export function InlineItemTooltip({ item }: InlineItemTooltipProps) {
   // Get base item for properties
   const baseId = poeItem?.baseItem?.id || item.baseId;
   const baseItem = ALL_POE_BASE_ITEMS.find(b => b.id === baseId);
-  const itemClass = poeItem?.baseItem?.itemClass || baseItem?.itemClass || '';
-  const quality = poeItem?.quality || item.quality || 0;
+  const itemClass: string = String(poeItem?.baseItem?.itemClass || baseItem?.itemClass || '');
+  const quality: number = Number(poeItem?.quality || item.quality || 0);
   
   // Get properties from poeItem if available, otherwise from base item
   const weaponProps = poeItem?.baseItem?.properties as WeaponProperties | undefined;
   const armourProps = poeItem?.baseItem?.properties as ArmourProperties | undefined;
   
   // Check if item has weapon or armour properties
-  const hasWeaponProps = isWeapon(itemClass) && (weaponProps || baseItem?.properties?.weapon);
-  const hasArmourProps = isArmour(itemClass) && (armourProps || baseItem?.properties?.armour);
+  const hasWeaponProps = isWeapon(itemClass) && (weaponProps || (baseItem?.properties && 'weapon' in baseItem.properties));
+  const hasArmourProps = isArmour(itemClass) && (armourProps || (baseItem?.properties && 'armour' in baseItem.properties));
 
   return (
     <div style={{
@@ -429,53 +429,26 @@ export function InlineItemTooltip({ item }: InlineItemTooltipProps) {
 
       {/* Body */}
       <div style={{ padding: '8px 10px' }}>
-        {/* Item Class */}
-        {itemClass && (
-          <div style={{
-            fontSize: '11px',
-            color: '#9a9a9a',
-            textAlign: 'center',
-            marginBottom: '4px',
-          }}>
-            {itemClass}
-          </div>
-        )}
-
-        {/* Quality */}
-        {quality > 0 && (
-          <div style={{
-            fontSize: '12px',
-            color: '#8888ff',
-            textAlign: 'center',
-            marginBottom: '4px',
-          }}>
-            Quality: +{quality}%
-          </div>
-        )}
-
-        {/* Weapon Properties */}
-        {hasWeaponProps && (weaponProps || baseItem?.properties?.weapon) && (
+        {hasWeaponProps && (weaponProps || (baseItem?.properties && 'weapon' in baseItem.properties && baseItem.properties.weapon)) ? (
           <>
             <Separator />
             <WeaponPropertiesDisplay 
-              props={(weaponProps || baseItem?.properties?.weapon) as WeaponProperties} 
+              props={(weaponProps || (baseItem?.properties && 'weapon' in baseItem.properties ? baseItem.properties.weapon : undefined)) as WeaponProperties} 
               quality={quality} 
             />
           </>
-        )}
+        ) : null}
 
-        {/* Armour Properties */}
-        {hasArmourProps && (armourProps || baseItem?.properties?.armour) && (
+        {hasArmourProps && (armourProps || (baseItem?.properties && 'armour' in baseItem.properties && baseItem.properties.armour)) ? (
           <>
             <Separator />
             <ArmourPropertiesDisplay 
-              props={(armourProps || baseItem?.properties?.armour) as ArmourProperties} 
+              props={(armourProps || (baseItem?.properties && 'armour' in baseItem.properties ? baseItem.properties.armour : undefined)) as ArmourProperties} 
               quality={quality} 
             />
           </>
-        )}
+        ) : null}
 
-        {/* Requirements */}
         {(poeItem?.baseItem?.requirements || baseItem?.requirements) && (() => {
           const requirements = poeItem?.baseItem?.requirements || baseItem?.requirements;
           if (!requirements) return null;
@@ -520,7 +493,6 @@ export function InlineItemTooltip({ item }: InlineItemTooltipProps) {
           );
         })()}
 
-        {/* Item Level */}
         <Separator />
         <div style={{
           fontSize: '11px',
@@ -530,7 +502,6 @@ export function InlineItemTooltip({ item }: InlineItemTooltipProps) {
           Item Level: {item.itemLevel}
         </div>
 
-        {/* Implicits */}
         {implicits.length > 0 && (
           <>
             <Separator />
@@ -545,7 +516,6 @@ export function InlineItemTooltip({ item }: InlineItemTooltipProps) {
           </>
         )}
 
-        {/* Explicit Mods */}
         {(prefixes.length > 0 || suffixes.length > 0) && (
           <>
             <Separator />
@@ -603,7 +573,6 @@ export function InlineItemTooltip({ item }: InlineItemTooltipProps) {
           </>
         )}
 
-        {/* Rarity indicator at bottom */}
         <div style={{
           fontSize: '10px',
           color: '#5a5a5a',

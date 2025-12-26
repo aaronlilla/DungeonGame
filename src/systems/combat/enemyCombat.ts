@@ -795,7 +795,7 @@ function processEnemyCastComplete(
   
   // Create verbose log entry with full stats (always log, even if 0 damage for debugging)
   // For zero damage, add debug info to help diagnose the issue
-  const logData: Parameters<typeof createVerboseDamageLog>[4] = {
+  const logData: Parameters<typeof createVerboseDamageLog>[5] = {
     healthBefore,
     healthAfter,
     esBefore,

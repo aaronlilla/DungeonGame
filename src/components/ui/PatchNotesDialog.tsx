@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GiScrollUnfurled, GiCrossedSwords, GiBugNet, GiSpeedometer, GiPaintBrush, GiWrench, GiBookCover } from 'react-icons/gi';
+import { GiScrollUnfurled, GiCrossedSwords, GiBugNet, GiSpeedometer, GiPaintBrush, GiWrench } from 'react-icons/gi';
 
 interface PatchNotesDialogProps {
   isOpen: boolean;

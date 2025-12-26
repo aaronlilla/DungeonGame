@@ -59,14 +59,13 @@ const FloatingNumberItem = memo(({ fn, baseX, baseY }: {
         fontFamily: 'system-ui, -apple-system, sans-serif',
         pointerEvents: 'none',
         textShadow: '1px 1px 3px rgba(0,0,0,0.7), 0 0 8px rgba(0,0,0,0.4)',
-        transform: 'translateX(-50%)',
         zIndex: 99999,
         whiteSpace: 'nowrap',
         letterSpacing: '0.02em',
         animation: `float-up ${FLOAT_LIFETIME}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
         willChange: 'transform, opacity',
         backfaceVisibility: 'hidden',
-        transform: 'translateZ(0)',
+        transform: 'translateX(-50%) translateZ(0)',
         perspective: '1000px'
       }}
     >

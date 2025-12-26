@@ -224,15 +224,8 @@ export function initTeamStates(team: Character[], inventory: Item[] = [], verbos
     // Get equipment bonuses from equipped items
     const equippedItems: Item[] = [];
     
-    // First, check if character has equippedItems directly (new format)
-    if (char.equippedItems) {
-      for (const item of Object.values(char.equippedItems)) {
-        if (item) equippedItems.push(item);
-      }
-    }
-    
-    // Fallback: check equippedGear with inventory lookup (legacy format)
-    if (equippedItems.length === 0 && char.equippedGear) {
+    // Check equippedGear with inventory lookup
+    if (char.equippedGear) {
       for (const itemId of Object.values(char.equippedGear)) {
         if (itemId) {
           const item = inventory.find(i => i.id === itemId);

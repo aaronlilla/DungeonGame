@@ -529,9 +529,11 @@ export function executeBossAbility(
         }
         
         // Apply damage through energy shield first (PoE mechanic)
+        // Convert 'mixed' damage type to 'physical' for calculation
+        const effectiveDamageType = (ability.damageType === 'mixed' ? 'physical' : ability.damageType) || 'chaos';
         const damageResult = calculateDamageWithResistances(
           dmg,
-          ability.damageType || 'chaos',
+          effectiveDamageType as 'physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'shadow' | 'holy' | 'magic',
           {
             health: target.health,
             maxHealth: target.maxHealth,
@@ -665,9 +667,11 @@ export function executeBossAbility(
       }
       
       // Apply damage through energy shield first (PoE mechanic)
+      // Convert 'mixed' damage type to 'physical' for calculation
+      const effectiveDamageType = (ability.damageType === 'mixed' ? 'physical' : ability.damageType) || 'physical';
       const damageResult = calculateDamageWithResistances(
         dmg,
-        ability.damageType || 'physical',
+        effectiveDamageType as 'physical' | 'fire' | 'cold' | 'lightning' | 'chaos' | 'shadow' | 'holy' | 'magic',
         {
           health: target.health,
           maxHealth: target.maxHealth,

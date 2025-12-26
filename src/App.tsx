@@ -8,7 +8,6 @@ import { getAvailableTalentPoints, countSelectedTalents } from './types/talents'
 import { getEnabledSkillSlots } from './types/character';
 import { PerformanceOverlay } from './components/ui/PerformanceOverlay';
 import { PatchNotesDialog } from './components/ui/PatchNotesDialog';
-import { VolumeControl } from './components/ui/VolumeControl';
 import { LootFilterSettings } from './components/ui/LootFilterSettings';
 import { unloadLootSounds } from './utils/lootSoundsHowler';
 
@@ -33,8 +32,6 @@ const TABS = [
 
 function App() {
   const [assetsLoaded, setAssetsLoaded] = useState(false);
-  const volume = useGameStore(state => state.volume);
-  const setVolume = useGameStore(state => state.setVolume);
   const [showPerformanceOverlay, setShowPerformanceOverlay] = useState(false);
   
   const { 

@@ -1,17 +1,17 @@
 // Engine for evaluating items against loot filter rules
-import type { Item, OrbType } from '../types/items';
-import type { MapItem, MapFragment } from '../types/maps';
-import type { FilterRule, FilterCondition, FilterResult, FilterStyle } from '../types/lootFilter';
+import type { Item } from '../types/items';
+import type { MapItem, Fragment } from '../types/maps';
+import type { FilterRule, FilterCondition, FilterResult } from '../types/lootFilter';
 
 /**
  * Evaluate an item against filter rules to determine visibility and styling
  */
 export function evaluateItemFilter(
   item: Item | null,
-  orbType: OrbType | null,
+  orbType: string | null,
   orbCount: number,
   map: MapItem | null,
-  fragment: MapFragment | null,
+  fragment: Fragment | null,
   rules: FilterRule[],
   areaLevel: number = 1
 ): FilterResult {
@@ -40,10 +40,10 @@ export function evaluateItemFilter(
  */
 function matchesConditions(
   item: Item | null,
-  orbType: OrbType | null,
+  orbType: string | null,
   orbCount: number,
   map: MapItem | null,
-  fragment: MapFragment | null,
+  fragment: Fragment | null,
   conditions: FilterCondition,
   areaLevel: number
 ): boolean {
@@ -66,14 +66,14 @@ function matchesConditions(
     let itemName = '';
     
     if (item) {
-      // Check both the item name and base type
+      // Check both the item name and base id
       itemName = item.name;
-      const baseName = item.baseType || '';
+      const baseId = item.baseId || '';
       const matches = conditions.baseType.some(baseType => 
         itemName.includes(baseType) || 
-        baseName.includes(baseType) ||
+        baseId.includes(baseType) ||
         itemName.toLowerCase().includes(baseType.toLowerCase()) ||
-        baseName.toLowerCase().includes(baseType.toLowerCase())
+        baseId.toLowerCase().includes(baseType.toLowerCase())
       );
       if (!matches) return false;
     } else if (orbType) {
@@ -140,7 +140,7 @@ function matchesConditions(
         'belt': 'Belts'
       };
       
-      itemClass = slotToClass[item.slot] || '';
+      itemClass = item.slot ? (slotToClass[item.slot] || '') : '';
       const matches = conditions.itemClass.some(cls =>
         itemClass.includes(cls) || cls.includes(itemClass)
       );

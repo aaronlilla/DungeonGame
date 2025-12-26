@@ -4,7 +4,7 @@ import { ItemTooltip } from '../shared/ItemTooltip';
 import { LootBeam } from './LootBeam';
 import { playDropSound } from '../../utils/lootSoundsHowler';
 import { useGameStore } from '../../store/gameStore';
-import { evaluateItemFilter, getDropStyle, getBeamEffect } from '../../utils/lootFilterEngine';
+import { evaluateItemFilter, getDropStyle } from '../../utils/lootFilterEngine';
 
 interface LootDropsProps {
   lootDrops: MapLootDrop[];

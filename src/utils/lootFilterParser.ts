@@ -1,5 +1,5 @@
 // Parser for Path of Exile .filter files
-import type { FilterRule, FilterAction, FilterCondition, FilterStyle, LootFilterConfig, RGBColor } from '../types/lootFilter';
+import type { FilterRule, FilterAction, LootFilterConfig, RGBColor } from '../types/lootFilter';
 
 /**
  * Parse a PoE filter file content into a structured filter configuration

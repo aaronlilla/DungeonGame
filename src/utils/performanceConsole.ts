@@ -196,13 +196,13 @@ export const performanceTools = {
       countDiff: number;
     }> = [];
     
-    allKeys.forEach((key: string) => {
-      const m1 = metrics1.get(key) as any;
-      const m2 = metrics2.get(key) as any;
+    allKeys.forEach((key) => {
+      const m1 = metrics1.get(key as string) as any;
+      const m2 = metrics2.get(key as string) as any;
       
       if (m1 && m2) {
         changes.push({
-          name: key,
+          name: String(key),
           totalDiff: (m2.totalTime || 0) - (m1.totalTime || 0),
           avgDiff: (m2.averageTime || 0) - (m1.averageTime || 0),
           countDiff: (m2.callCount || 0) - (m1.callCount || 0)

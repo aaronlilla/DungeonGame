@@ -42,7 +42,7 @@ export function TeamStatusPanel({
 }: TeamStatusPanelProps) {
   // Local state to force re-renders for real-time cast bar updates
   // Using requestAnimationFrame for smooth, frame-synced updates
-  const [renderTick, setRenderTick] = useState(0);
+  const [, setRenderTick] = useState(0);
   
   useEffect(() => {
     if (!isRunning) return;
@@ -72,8 +72,6 @@ export function TeamStatusPanel({
     const bOrder = roleOrder[b.role] ?? 99;
     return aOrder - bOrder;
   });
-
-  const memberCount = sortedTeamStates.length;
 
   return (
     <MotionConfig reducedMotion="user">

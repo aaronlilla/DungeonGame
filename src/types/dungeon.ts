@@ -292,6 +292,8 @@ export interface CombatLogMetadata {
     accessories?: any[];
     totalStats?: Record<string, number>;
   };
+  // Debug data (for development/testing)
+  debugData?: any;
 }
 
 export interface EntitySnapshot {

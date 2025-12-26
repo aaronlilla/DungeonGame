@@ -17,7 +17,6 @@ import type { CombatLogEntry } from '../../types/dungeon';
 import { checkSkillConditions, createSmartSkillConfig, type SkillUsageConfig } from '../../types/skillUsage';
 import { createVerboseDamageLog, createVerboseHealLog } from './verboseLogging';
 import { getEquippedWeaponDamage } from '../../systems/equipmentStats';
-import { startTimer, endTimer } from '../../utils/performanceMonitor';
 
 /**
  * Extract icon string from skill icon (handles React components)

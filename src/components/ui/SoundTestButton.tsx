@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { playLootSound, playMapDropSound, playFragmentDropSound } from '../../utils/lootSoundsHowler';
 import { SoundBrowser } from './SoundBrowser';
 

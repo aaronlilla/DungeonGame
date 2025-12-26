@@ -211,7 +211,7 @@ export class VerboseCombatLogger {
   /**
    * Add an entry to the log
    */
-  private logEntry(entry: CombatLogEntry): void {
+  logEntry(entry: CombatLogEntry): void {
     this.logEntries.push(entry);
   }
 
@@ -601,13 +601,6 @@ export class VerboseCombatLogger {
         debugData: data
       }
     });
-  }
-
-  /**
-   * Internal method to add log entry
-   */
-  private logEntry(entry: CombatLogEntry): void {
-    this.logEntries.push(entry);
   }
 
   /**

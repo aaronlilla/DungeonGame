@@ -1118,7 +1118,10 @@ function processCasterAttack(
   
   if (targetPool.length === 0) return;
   
-  const casterTarget = targetPool[Math.floor(Math.random() * targetPool.length)];
+  // Casters have 70% chance to target the tank if available, 30% chance to target random party member
+  const tank = targetPool.find(m => m.role === 'tank');
+  const shouldTargetTank = tank && Math.random() < 0.7;
+  const casterTarget = shouldTargetTank ? tank : targetPool[Math.floor(Math.random() * targetPool.length)];
   if (casterTarget) {
     const castTimeTicks = secondsToTicks(castTimeSeconds);
     startEnemyCast(enemy, castTimeTicks, currentTick, casterTarget.id, abilityName);
@@ -1141,7 +1144,10 @@ function processArcherAttack(
   
   const targetPool = aliveMembers.filter(m => m.id !== enemy.lastShotTarget || aliveMembers.length === 1);
   if (targetPool.length > 0) {
-    const target = targetPool[Math.floor(Math.random() * targetPool.length)];
+    // Archers have 60% chance to target the tank if available, 40% chance to target random party member
+    const tank = targetPool.find(m => m.role === 'tank');
+    const shouldTargetTank = tank && Math.random() < 0.6;
+    const target = shouldTargetTank ? tank : targetPool[Math.floor(Math.random() * targetPool.length)];
     enemy.lastShotTarget = target.id;
     const baseArmor = target.armor * (1 + (target.armorBuff || 0) / 100);
     const generalTalentDR = target.talentBonuses?.damageReduction || 0;

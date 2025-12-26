@@ -250,6 +250,15 @@ export function initTeamStates(team: Character[], inventory: Item[] = [], verbos
     let evasion = getStat(char.baseStats.evasion ?? 0, 'evasion');
     let energyShield = getStat(char.baseStats.energyShield ?? 0, 'energyShield');
     
+    // Apply attribute-derived bonuses from equipment (PoE style)
+    // +1 Life per 2 Strength from equipment
+    const equipStr = (equipmentBonuses.strength || 0);
+    const equipInt = (equipmentBonuses.intelligence || 0);
+    
+    maxLife += Math.floor(equipStr / 2);
+    maxMana += Math.floor(equipInt / 2);
+    // Note: Accuracy and Evasion bonuses from dex are already included in getStat
+    
     // Apply talent percentage bonuses
     if (talentBonuses.healthMultiplier > 0) {
       maxLife = Math.floor(maxLife * (1 + talentBonuses.healthMultiplier / 100));
@@ -512,6 +521,15 @@ export function updateTeamMemberStats(
   let armor = getStat(character.baseStats.armor, 'armor');
   let evasion = getStat(character.baseStats.evasion ?? 0, 'evasion');
   let energyShield = getStat(character.baseStats.energyShield ?? 0, 'energyShield');
+  
+  // Apply attribute-derived bonuses from equipment (PoE style)
+  // +1 Life per 2 Strength from equipment
+  const equipStr = (equipmentBonuses.strength || 0);
+  const equipInt = (equipmentBonuses.intelligence || 0);
+  
+  maxLife += Math.floor(equipStr / 2);
+  maxMana += Math.floor(equipInt / 2);
+  // Note: Accuracy and Evasion bonuses from dex are already included in getStat
   
   // Apply talent percentage bonuses
   if (talentBonuses.healthMultiplier > 0) {

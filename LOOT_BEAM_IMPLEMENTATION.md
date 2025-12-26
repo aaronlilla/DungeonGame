@@ -117,3 +117,4 @@ The system automatically works with existing loot drops. No configuration needed
 - Beam color customization per item type
 
 
+

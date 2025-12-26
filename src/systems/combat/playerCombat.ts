@@ -986,7 +986,24 @@ function processHealerHealing(
       
       if (currentHealer.mana < effectiveManaCost) return false;
       if (skill.id === 'pain_suppression' && currentTick < healerCooldowns.painSuppressionEndTick) return false;
-      return checkSkillConditions(config, conditionContext);
+      
+      // Build effectContext for this specific skill if effectApplication is enabled
+      let effectContext = undefined;
+      if (config.effectApplication?.enabled) {
+        if (skill.id === 'rejuvenation' || skill.effects?.some((e: any) => e.type === 'hot')) {
+          // Count allies with Rejuvenation HoT
+          const alliesWithRejuv = aliveTeam.filter(m => m.hasRejuv).length;
+          effectContext = {
+            alliesWithEffect: alliesWithRejuv,
+            totalAllies: aliveTeam.length,
+            enemiesWithEffect: 0,
+            totalEnemies: 0
+          };
+        }
+        // Add more effect types here as needed (other buffs, etc.)
+      }
+      
+      return checkSkillConditions(config, { ...conditionContext, effectContext });
     })
     .sort((a, b) => b.config.priority - a.config.priority);
   
@@ -2282,7 +2299,26 @@ function processDpsActions(
         const talentManaCostReduction = member.talentBonuses?.manaCostReduction || 0;
         const effectiveManaCost = Math.max(0, skill.manaCost * (1 - talentManaCostReduction / 100));
         if (member.mana < effectiveManaCost) return false;
-        return checkSkillConditions(config, conditionContext);
+        
+        // Build effectContext for this specific skill if effectApplication is enabled
+        let effectContext = undefined;
+        if (config.effectApplication?.enabled) {
+          // For DOT effects, count enemies with the effect
+          if (skill.effects?.some((e: any) => e.type === 'dot')) {
+            // Note: DOT tracking on enemies is not yet implemented in AnimatedEnemy type
+            // For now, we'll assume no enemies have the effect (conservative approach)
+            const enemiesWithDot = 0;
+            effectContext = {
+              enemiesWithEffect: enemiesWithDot,
+              totalEnemies: tickAliveEnemies.length,
+              alliesWithEffect: 0,
+              totalAllies: 0
+            };
+          }
+          // Add more effect types here as needed (debuffs, etc.)
+        }
+        
+        return checkSkillConditions(config, { ...conditionContext, effectContext });
       })
       .sort((a, b) => b.config.priority - a.config.priority);
     

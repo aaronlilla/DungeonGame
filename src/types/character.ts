@@ -129,25 +129,31 @@ export interface EquippedSkillGem {
 // These should be very small - just enough to make a character functional without a class
 export const ROLE_BONUSES: Record<CharacterRole, Partial<BaseStats>> = {
   tank: {
-    // Minimal fallback stats for characters without a class
-    // Base life is 38, so add just a small amount
-    life: 20,
-    maxLife: 20,
-    armor: 50,
+    // Fallback stats for characters without a class (BUFFED: tanks need more HP)
+    // Base life is 38, tanks should have significantly more
+    life: 150,
+    maxLife: 150,
+    armor: 100,
   },
   healer: {
-    // Minimal fallback stats for characters without a class
-    life: 10,
-    maxLife: 10,
-    mana: 20,
-    maxMana: 20,
+    // Fallback stats for characters without a class (BUFFED: healers need survivability)
+    // These are used for any legacy healer characters without a specific class
+    life: 80,
+    maxLife: 80,
+    mana: 40,
+    maxMana: 40,
+    armor: 40,
+    evasion: 40,
   },
   dps: {
-    // Minimal fallback stats for characters without a class
-    // Should be similar to base stats, not huge bonuses
-    life: 10,
-    maxLife: 10,
-    accuracy: 20,
+    // Fallback stats for characters without a class (BUFFED: DPS need more survivability at low levels)
+    // These are used for generated DPS characters without a specific class
+    life: 100,
+    maxLife: 100,
+    accuracy: 50,
+    // DPS get some defensive stats too
+    armor: 30,
+    evasion: 50,
   }
 };
 
@@ -248,12 +254,12 @@ export function calculateBaseEvasionFromLevel(level: number): number {
   return 50 + (level - 1) * 3;
 }
 
-// Class bonus level scaling - bonuses scale from 10% at level 1 to 100% at level 100
-// This ensures characters grow into their class identity as they level
+// Class bonus level scaling - bonuses scale from 50% at level 1 to 100% at level 100
+// This ensures characters are viable at low levels while still growing into their class identity
 export function calculateClassBonusMultiplier(level: number): number {
-  // Linear scaling: 10% at level 1, 100% at level 100
-  // Formula: 0.1 + 0.9 * (level - 1) / 99
-  const minMultiplier = 0.10; // 10% at level 1
+  // Linear scaling: 50% at level 1, 100% at level 100
+  // Formula: 0.5 + 0.5 * (level - 1) / 99
+  const minMultiplier = 0.50; // 50% at level 1 (was 10%, too punishing)
   const maxMultiplier = 1.00; // 100% at level 100
   const levelProgress = (level - 1) / 99;
   return minMultiplier + (maxMultiplier - minMultiplier) * levelProgress;

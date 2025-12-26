@@ -89,3 +89,4 @@ health: boss.enemy.baseHealth * scaling.healthMultiplier * 20 * healthMod,
 4. Confirm boss fights are completable within time limits
 5. Check that boss difficulty feels appropriate for the tier
 
+

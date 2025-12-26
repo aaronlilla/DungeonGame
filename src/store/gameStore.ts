@@ -14,7 +14,7 @@ import type {
 } from '../types';
 import type { LootFilterConfig } from '../types/lootFilter';
 import { generateMap } from '../types/maps';
-import { createCharacter, type Character, calculateBaseLifeFromLevel, calculateBaseManaFromLevel, calculateLifeFromStrength, calculateManaFromIntelligence, calculateAccuracyFromDexterity, calculateEvasionBonus } from '../types/character';
+import { createCharacter, type Character, calculateBaseLifeFromLevel, calculateBaseManaFromLevel, calculateLifeFromStrength, calculateManaFromIntelligence, calculateAccuracyFromDexterity, calculateEvasionBonus, recalculateStatsForLevel } from '../types/character';
 import { SAMPLE_DUNGEON } from '../types/dungeon';
 import { generateRandomItem } from '../systems/crafting';
 import { SKILL_GEMS, SUPPORT_GEMS, getSkillGemById, getSupportGemById, canSupportApplyToSkill, getDefaultSupportGemForSkill } from '../types/skills';
@@ -209,6 +209,9 @@ export interface GameState {
   
   // Initialize starter content
   initializeNewGame: () => void;
+  
+  // Recalculate stats for all characters (useful after balance changes)
+  recalculateAllCharacterStats: () => void;
 }
 
 /**
@@ -645,16 +648,16 @@ export const useGameStore = create<GameState>()(
           if (isCaster) {
             dpsBuildType = 'caster';
             // Caster DPS: High intelligence, moderate dexterity, low strength
-            // Energy shield focus
-            char.baseStats.intelligence += 15; // Level 2 appropriate bonus
-            char.baseStats.dexterity += 5;
-            char.baseStats.strength += 2;
+            // Energy shield focus (BUFFED: increased attribute bonuses for low-level viability)
+            char.baseStats.intelligence += 30; // Increased from 15
+            char.baseStats.dexterity += 10; // Increased from 5
+            char.baseStats.strength += 5; // Increased from 2
             // Recalculate mana from intelligence
             const manaFromInt = calculateManaFromIntelligence(char.baseStats.intelligence);
             char.baseStats.mana = 40 + manaFromInt; // Base level 2 mana + int bonus
             char.baseStats.maxMana = char.baseStats.mana;
-            // Energy shield from intelligence
-            const baseES = 20; // Small base ES for casters
+            // Energy shield from intelligence (BUFFED: increased base ES)
+            const baseES = 80; // Increased from 20 for better survivability
             const esMultiplier = 1 + (char.baseStats.intelligence * 0.002);
             char.baseStats.energyShield = Math.floor(baseES * esMultiplier);
           } else {
@@ -664,10 +667,10 @@ export const useGameStore = create<GameState>()(
             if (isRanged) {
               dpsBuildType = 'attack_ranged';
               // Ranged attack DPS: High dexterity, moderate intelligence, low strength
-              // Evasion focus
-              char.baseStats.dexterity += 18;
-              char.baseStats.intelligence += 8;
-              char.baseStats.strength += 2;
+              // Evasion focus (BUFFED: increased attribute bonuses for low-level viability)
+              char.baseStats.dexterity += 35; // Increased from 18
+              char.baseStats.intelligence += 15; // Increased from 8
+              char.baseStats.strength += 5; // Increased from 2
               // Recalculate accuracy from dexterity
               const accuracyFromDex = calculateAccuracyFromDexterity(char.baseStats.dexterity);
               char.baseStats.accuracy = 102 + accuracyFromDex; // Base level 2 accuracy + dex bonus
@@ -676,10 +679,10 @@ export const useGameStore = create<GameState>()(
             } else {
               dpsBuildType = 'attack_melee';
               // Melee attack DPS: High strength, moderate dexterity, low intelligence
-              // Armor focus
-              char.baseStats.strength += 18;
-              char.baseStats.dexterity += 8;
-              char.baseStats.intelligence += 2;
+              // Armor focus (BUFFED: increased attribute bonuses for low-level viability)
+              char.baseStats.strength += 35; // Increased from 18
+              char.baseStats.dexterity += 15; // Increased from 8
+              char.baseStats.intelligence += 5; // Increased from 2
               // Recalculate life from strength
               const lifeFromStr = calculateLifeFromStrength(char.baseStats.strength);
               char.baseStats.life = 50 + lifeFromStr; // Base level 2 life + str bonus
@@ -1159,7 +1162,7 @@ export const useGameStore = create<GameState>()(
         // Check if slot exists, create if not
         let skillSlot = char.skillGems.find(s => s.slotIndex === slotIndex);
         if (!skillSlot) {
-          skillSlot = { slotIndex, skillGemId: '', supportGemIds: [], usageConfig: createSmartSkillConfig(skillGemId) };
+          skillSlot = { slotIndex, skillGemId, supportGemIds: [], usageConfig: createSmartSkillConfig(skillGemId) };
           char.skillGems.push(skillSlot);
         } else {
           // Update existing slot with new skill and new config
@@ -1837,6 +1840,13 @@ export const useGameStore = create<GameState>()(
         
         return result;
       },
+
+      // Recalculate stats for all characters (useful after balance changes)
+      recalculateAllCharacterStats: () => set(state => {
+        state.team.forEach(character => {
+          recalculateStatsForLevel(character);
+        });
+      }),
 
       initializeNewGame: () => set(state => {
         // Start with empty team - user must create characters

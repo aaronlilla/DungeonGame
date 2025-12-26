@@ -379,9 +379,9 @@ const NULL_TEMPLAR: CharacterClass = {
     strength: 5,
     dexterity: 15,
     intelligence: 50,
-    // Defenses - ES + spell suppression
-    life: 100,
-    maxLife: 100,
+    // Defenses - ES + spell suppression (BUFFED: +150 HP for tank survivability)
+    life: 250,
+    maxLife: 250,
     armor: 200,
     evasion: 200,
     energyShield: 550,

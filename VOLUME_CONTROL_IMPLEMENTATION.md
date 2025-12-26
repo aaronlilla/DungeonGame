@@ -189,3 +189,4 @@ Added a comprehensive volume control system with a beautiful UI that integrates 
 - Per-tab volume settings
 
 
+

@@ -1103,7 +1103,7 @@ export const SKILL_GEMS: SkillGem[] = [
     baseDamageMax: 0,
     manaCost: 6,
     cooldown: 0,
-    castTime: 0.3,
+    castTime: 0,
     maxSupportSlots: 5,
     supportTags: ['attack', 'melee', 'physical', 'strike', 'hit'],
     tags: ['attack', 'melee', 'physical', 'strike', 'hit'],
